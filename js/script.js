@@ -58,14 +58,14 @@ const sounds = {
   click: new Audio('audio/start.wav'),
   start: new Audio('audio/start.wav'),
   pause: new Audio('audio/pause.wav'),
-  complete: new Audio('audio/ringtone.mp3')
+  complete: new Audio('audio/alarm.mp3')
 };
 
 // Set custom volumes for each sound
 sounds.click.volume = 0.5;  // Quieter click
 sounds.start.volume = 0.6;  // Medium volume start
 sounds.pause.volume = 0.5;  // Quieter pause
-sounds.complete.volume = 1.0;  // Full volume for ringtone
+sounds.complete.volume = 1.0;  // Full volume for alarm
 
 // Play sound with error handling
 function playSound(soundName) {
@@ -185,7 +185,7 @@ function updateTimerDisplay() {
 // Toggle timer between start and pause
 function toggleTimer() {
   if (!isRunning) {
-    playSound('start');
+    playSound('start'); // Play start/click sound
     showToast(motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)]);
 
     // Start timer
@@ -227,7 +227,8 @@ function toggleTimer() {
       }
     }, 1000);
   } else {
-    playSound('pause');
+    sounds.pause.currentTime = 0;
+    sounds.pause.play().catch(err => console.log('Audio playback disabled')); // Only play pause sound
 
     // Pause timer
     clearInterval(timerInterval);
@@ -362,26 +363,12 @@ function updateTimeValue(type, change) {
 
 // Enhanced notification sound
 function playNotification() {
-  // Play ringtone with proper loop handling
+  // Play alarm for its full duration
   const completeSound = sounds.complete;
   completeSound.currentTime = 0; // Reset to start
-  
-  // Play for 3 seconds then fade out
   completeSound.play().catch(err => console.log('Audio playback disabled'));
-  
-  setTimeout(() => {
-    // Fade out over 1 second
-    const fadeInterval = setInterval(() => {
-      if (completeSound.volume > 0.1) {
-        completeSound.volume -= 0.1;
-      } else {
-        completeSound.pause();
-        completeSound.volume = 1.0; // Reset volume for next time
-        clearInterval(fadeInterval);
-      }
-    }, 100);
-  }, 3000);
 
+  // Show notification
   if ('Notification' in window && Notification.permission === 'granted') {
     let title, body, icon;
 
@@ -470,8 +457,8 @@ function addTask() {
   }
 }
 
-// Add click sound to buttons
-document.querySelectorAll('.time-btn, .primary-btn, .secondary-btn, .tab').forEach(button => {
+// Add click sound to buttons (excluding start/pause button)
+document.querySelectorAll('.time-btn, .secondary-btn, .tab').forEach(button => {
   button.addEventListener('click', () => playSound('click'));
 });
 
