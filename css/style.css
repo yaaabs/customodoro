@@ -38,6 +38,10 @@ body.long-break-mode {
   background-color: var(--long-break-color);
 }
 
+body.reverse-mode {
+  background-color: #8b5fbf;
+}
+
 .container {
   width: 100%;
   max-width: 600px;
@@ -287,6 +291,54 @@ header {
 
 .time-btn:hover {
   background-color: #f5f5f5;
+}
+
+.switch-mode {
+  margin: 10px 0;
+}
+
+.switch-btn {
+  color: var(--text-light);
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: var(--transition);
+}
+
+.switch-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.max-time {
+  color: var(--text-light);
+  opacity: 0.8;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.info-section {
+  background-color: white;
+  border-radius: 16px;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: var(--shadow);
+}
+
+.info-box h3 {
+  color: var(--text-dark);
+  margin-bottom: 10px;
+}
+
+.info-box ul {
+  list-style: none;
+  padding: 10px 0;
+}
+
+.info-box li {
+  color: var(--text-dark);
+  padding: 5px 0;
+  opacity: 0.8;
 }
 
 .footer {

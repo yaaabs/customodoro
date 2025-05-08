@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FocusKaya - Reverse Timer</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="reverse-mode">
+  <div class="container">
+    <header>
+      <h1 class="app-title">FocusKaya - Reverse Timer</h1>
+      <div class="mode-tabs">
+        <div class="tab active" id="reverse-tab">Reverse Pomodoro</div>
+        <div class="tab" id="break-tab">Break Accumulated</div>
+      </div>
+      <div class="switch-mode">
+        <a href="index.html" class="switch-btn">Switch to Classic Pomodoro</a>
+      </div>
+    </header>
+    
+    <div class="timer-container">
+      <div class="timer" id="timer">00:00</div>
+      <div class="max-time">Max Time: 01:00:00</div>
+      <div class="timer-actions">
+        <button class="primary-btn" id="start-btn">START</button>
+        <button class="secondary-btn" id="reset-btn">Reset</button>
+      </div>
+      <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+    </div>
+    
+    <div class="info-section">
+      <div class="info-box">
+        <h3>How it works</h3>
+        <p>Work for up to 1 hour. The longer you work, the longer break you earn:</p>
+        <ul>
+          <li>0-15 mins = 3 min break</li>
+          <li>16-30 mins = 5 min break</li>
+          <li>31-45 mins = 8 min break</li>
+          <li>46-60 mins = 15 min break</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="tasks-section">
+      <div class="tasks-header">
+        <div class="tasks-title">Tasks</div>
+      </div>
+      <div class="task-input-container">
+        <input type="text" class="task-input" id="task-input" placeholder="What are you working on?">
+        <button class="add-task-btn" id="add-task-btn">Add</button>
+      </div>
+      <ul class="task-list" id="task-list"></ul>
+    </div>
+    
+    <div class="footer">
+      © 2025 FocusKaya Timer - All Rights Reserved
+    </div>
+  </div>
+  
+  <div class="toast" id="toast"></div>
+
+  <script src="js/reversePomodoro.js"></script>
+</body>
+</html>
