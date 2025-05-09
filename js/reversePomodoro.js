@@ -24,6 +24,7 @@ const toast = document.getElementById('toast');
 // Timer variables
 const MAX_TIME = 3600; // 1 hour in seconds
 let currentSeconds = 0;
+let initialSeconds = MAX_TIME;
 let isRunning = false;
 let timerInterval = null;
 let currentMode = 'reverse';
@@ -33,10 +34,10 @@ let earnedBreakTime = 0;
 function calculateBreakTime(workedSeconds) {
     const minutes = Math.floor(workedSeconds / 60);
     
-    if (minutes <= 15) return 3;
-    if (minutes <= 30) return 5;
-    if (minutes <= 45) return 8;
-    return 15;
+    if (minutes <= 15) return 5;
+    if (minutes <= 30) return 10;
+    if (minutes <= 45) return 15;
+    return 30;
 }
 
 // Update timer display
@@ -45,8 +46,10 @@ function updateDisplay() {
     const seconds = currentSeconds % 60;
     timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     
-    // Update progress bar
-    const progress = (currentSeconds / MAX_TIME) * 100;
+    // Update progress bar based on mode
+    const progress = currentMode === 'break' 
+        ? ((initialSeconds - currentSeconds) / initialSeconds) * 100
+        : (currentSeconds / MAX_TIME) * 100;
     progressBar.style.width = `${progress}%`;
     
     // Update document title
@@ -56,23 +59,37 @@ function updateDisplay() {
 // Toggle timer
 function toggleTimer() {
     if (!isRunning) {
-        if (currentSeconds >= MAX_TIME) {
+        if (currentMode === 'break') {
+            if (currentSeconds <= 0) {
+                showToast("Break time is over!");
+                return;
+            }
+        } else if (currentSeconds >= MAX_TIME) {
             showToast("You've reached the maximum time!");
             return;
         }
         
         sounds.start.play().catch(err => console.log('Audio disabled'));
-        showToast("Time to focus! 💪");
+        showToast(currentMode === 'break' ? "Enjoy your break! 😌" : "Time to focus! 💪");
         
         isRunning = true;
         startButton.textContent = 'STOP';
         
         timerInterval = setInterval(() => {
-            if (currentSeconds < MAX_TIME) {
-                currentSeconds++;
-                updateDisplay();
+            if (currentMode === 'break') {
+                if (currentSeconds > 0) {
+                    currentSeconds--;
+                    updateDisplay();
+                } else {
+                    completeBreak();
+                }
             } else {
-                completeSession();
+                if (currentSeconds < MAX_TIME) {
+                    currentSeconds++;
+                    updateDisplay();
+                } else {
+                    completeSession();
+                }
             }
         }, 1000);
     } else {
@@ -83,20 +100,22 @@ function toggleTimer() {
         isRunning = false;
         startButton.textContent = 'START';
         
-        if (confirm('Do you want to end this session and take your break?')) {
-            completeSession();
+        if (currentMode === 'reverse' && confirm('Do you want to end this session and take your break?')) {
+            completeSession(false); // Pass false to indicate manual completion
         }
     }
 }
 
 // Complete session
-function completeSession() {
+function completeSession(playSound = true) {
     clearInterval(timerInterval);
     isRunning = false;
     
-    // Play completion sound
-    sounds.complete.currentTime = 0;
-    sounds.complete.play().catch(err => console.log('Audio disabled'));
+    // Only play completion sound if the timer reached max time or playSound is true
+    if (currentSeconds >= MAX_TIME || playSound) {
+        sounds.complete.currentTime = 0;
+        sounds.complete.play().catch(err => console.log('Audio disabled'));
+    }
     
     // Calculate earned break
     earnedBreakTime = calculateBreakTime(currentSeconds);
@@ -108,11 +127,26 @@ function completeSession() {
     switchMode('break');
 }
 
+// Complete break
+function completeBreak() {
+    clearInterval(timerInterval);
+    isRunning = false;
+    
+    // Play completion sound when break is done
+    sounds.complete.currentTime = 0;
+    sounds.complete.play().catch(err => console.log('Audio disabled'));
+    
+    showToast("Break time is over! Ready to work again? 💪");
+    startButton.textContent = 'START';
+    switchMode('reverse');
+}
+
 // Reset timer
 function resetTimer() {
     clearInterval(timerInterval);
     isRunning = false;
     currentSeconds = 0;
+    initialSeconds = MAX_TIME;
     updateDisplay();
     startButton.textContent = 'START';
 }
@@ -124,12 +158,20 @@ function switchMode(mode) {
     breakTab.classList.toggle('active', mode === 'break');
     
     if (mode === 'break') {
+        // Set break time in seconds
         currentSeconds = earnedBreakTime * 60;
-        timerElement.textContent = `${earnedBreakTime}:00`;
+        initialSeconds = currentSeconds;
+        updateDisplay();
     } else {
         currentSeconds = 0;
+        initialSeconds = MAX_TIME;
         updateDisplay();
     }
+    
+    // Reset timer state
+    isRunning = false;
+    startButton.textContent = 'START';
+    if (timerInterval) clearInterval(timerInterval);
 }
 
 // Show toast notification
