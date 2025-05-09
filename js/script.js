@@ -52,6 +52,8 @@ let timerInterval = null;
 let isRunning = false;
 let currentSession = 1;
 let completedPomodoros = 0;
+let hasUnsavedTasks = false;
+let hasUnfinishedTasks = false;
 
 // Update audio variables
 const sounds = {
@@ -163,6 +165,9 @@ sessionsPlus.addEventListener('click', () => updateTimeValue('sessions', 1));
 
 // Task event listeners
 addTaskBtn.addEventListener('click', addTask);
+taskInput.addEventListener('input', () => {
+  hasUnsavedTasks = taskInput.value.trim().length > 0;
+});
 taskInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') addTask();
 });
@@ -268,6 +273,16 @@ function switchMode(mode) {
     if (!confirmed) return;
   }
 
+  if (taskList.children.length > 0) {
+    const confirmed = confirm('Switching modes will delete all your tasks. Do you want to continue?');
+    if (!confirmed) return;
+  }
+
+  // Clear all tasks if user confirms
+  taskList.innerHTML = '';
+  hasUnfinishedTasks = false;
+  hasUnsavedTasks = false;
+
   currentMode = mode;
 
   // Reset active tab styles
@@ -300,6 +315,17 @@ function switchMode(mode) {
   updateTimerDisplay();
   progressBar.style.width = '0%';
 }
+
+// Add link handler for mode switching
+document.querySelector('.switch-btn').addEventListener('click', (e) => {
+  const hasTasks = taskList.children.length > 0;
+  if (hasTasks) {
+    const confirmed = confirm('Switching modes will delete all your tasks. Do you want to continue?');
+    if (!confirmed) {
+      e.preventDefault();
+    }
+  }
+});
 
 // Update session dots display
 function updateSessionDots() {
@@ -421,47 +447,75 @@ function showToast(message) {
   }, 3000);
 }
 
+// Create task element
+function createTaskElement(text, completed = false) {
+  const taskItem = document.createElement('li');
+  taskItem.className = 'task-item';
+  if (completed) taskItem.classList.add('task-completed');
+
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.className = 'task-checkbox';
+  checkbox.checked = completed;
+  checkbox.addEventListener('change', () => {
+    taskItem.classList.toggle('task-completed', checkbox.checked);
+    updateUnfinishedTasks();
+  });
+
+  const taskText = document.createElement('span');
+  taskText.className = 'task-text';
+  taskText.textContent = text;
+
+  const deleteBtn = document.createElement('button');
+  deleteBtn.className = 'task-delete';
+  deleteBtn.textContent = '×';
+  deleteBtn.addEventListener('click', () => {
+    if (confirm('Are you sure you want to delete this task?')) {
+      taskList.removeChild(taskItem);
+      updateUnfinishedTasks();
+    }
+  });
+
+  taskItem.appendChild(checkbox);
+  taskItem.appendChild(taskText);
+  taskItem.appendChild(deleteBtn);
+  taskList.appendChild(taskItem);
+}
+
 // Add task to task list
 function addTask() {
   const taskText = taskInput.value.trim();
 
   if (taskText !== '') {
-    // Create task item
-    const taskItem = document.createElement('li');
-    taskItem.className = 'task-item';
+    if (!confirm('Add this task to your list?')) {
+      return;
+    }
 
-    // Create checkbox
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.className = 'task-checkbox';
-    checkbox.addEventListener('change', () => {
-      taskItem.classList.toggle('task-completed', checkbox.checked);
-    });
+    // Check for unfinished tasks
+    const unfinishedTasks = Array.from(taskList.children).filter(task => 
+      !task.querySelector('.task-checkbox').checked
+    );
 
-    // Create task text
-    const text = document.createElement('span');
-    text.className = 'task-text';
-    text.textContent = taskText;
+    if (unfinishedTasks.length > 0) {
+      if (!confirm('You have unfinished tasks. Add another one anyway?')) {
+        return;
+      }
+    }
 
-    // Create delete button
-    const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'task-delete';
-    deleteBtn.textContent = '×';
-    deleteBtn.addEventListener('click', () => {
-      taskList.removeChild(taskItem);
-    });
-
-    // Append elements to task item
-    taskItem.appendChild(checkbox);
-    taskItem.appendChild(text);
-    taskItem.appendChild(deleteBtn);
-
-    // Add task to list
-    taskList.appendChild(taskItem);
+    createTaskElement(taskText);
 
     // Clear input
     taskInput.value = '';
+    hasUnsavedTasks = false;
   }
+}
+
+// Add function to update unfinished tasks status
+function updateUnfinishedTasks() {
+  const unfinishedTasks = Array.from(taskList.children).filter(task => 
+    !task.querySelector('.task-checkbox').checked
+  );
+  hasUnfinishedTasks = unfinishedTasks.length > 0;
 }
 
 // Add click sound to buttons (excluding start/pause button)
@@ -471,10 +525,13 @@ document.querySelectorAll('.time-btn, .secondary-btn, .tab').forEach(button => {
 
 // Handle page leave/refresh
 window.addEventListener('beforeunload', (e) => {
-  if (isRunning) {
-    // Show warning message
+  if (isRunning || hasUnsavedTasks || hasUnfinishedTasks) {
     e.preventDefault();
-    e.returnValue = 'Timer is still running. Are you sure you want to leave?';
+    let message = '';
+    if (isRunning) message = 'Timer is still running.';
+    if (hasUnsavedTasks) message = 'You have unsaved tasks.';
+    if (hasUnfinishedTasks) message = 'You have unfinished tasks.';
+    e.returnValue = `${message} Are you sure you want to leave?`;
     return e.returnValue;
   }
 });
