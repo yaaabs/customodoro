@@ -21,6 +21,11 @@ const reverseTab = document.getElementById('reverse-tab');
 const breakTab = document.getElementById('break-tab');
 const toast = document.getElementById('toast');
 
+// Add task elements
+const taskInput = document.getElementById('task-input');
+const addTaskBtn = document.getElementById('add-task-btn');
+const taskList = document.getElementById('task-list');
+
 // Timer variables
 const MAX_TIME = 3600; // 1 hour in seconds
 let currentSeconds = 0;
@@ -181,11 +186,60 @@ function showToast(message) {
     setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
+// Add task function
+function addTask() {
+    const taskText = taskInput.value.trim();
+
+    if (taskText !== '') {
+        // Create task item
+        const taskItem = document.createElement('li');
+        taskItem.className = 'task-item';
+
+        // Create checkbox
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'task-checkbox';
+        checkbox.addEventListener('change', () => {
+            taskItem.classList.toggle('task-completed', checkbox.checked);
+        });
+
+        // Create task text
+        const text = document.createElement('span');
+        text.className = 'task-text';
+        text.textContent = taskText;
+
+        // Create delete button
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'task-delete';
+        deleteBtn.textContent = '×';
+        deleteBtn.addEventListener('click', () => {
+            taskList.removeChild(taskItem);
+        });
+
+        // Append elements to task item
+        taskItem.appendChild(checkbox);
+        taskItem.appendChild(text);
+        taskItem.appendChild(deleteBtn);
+
+        // Add task to list
+        taskList.appendChild(taskItem);
+
+        // Clear input
+        taskInput.value = '';
+    }
+}
+
 // Event listeners
 startButton.addEventListener('click', toggleTimer);
 resetButton.addEventListener('click', resetTimer);
 reverseTab.addEventListener('click', () => switchMode('reverse'));
 breakTab.addEventListener('click', () => switchMode('break'));
+
+// Add task event listeners
+addTaskBtn.addEventListener('click', addTask);
+taskInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') addTask();
+});
 
 // Add click sounds to buttons
 document.querySelectorAll('.time-btn, .secondary-btn, .tab').forEach(button => {
