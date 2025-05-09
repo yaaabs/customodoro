@@ -462,6 +462,16 @@ document.querySelectorAll('.time-btn, .secondary-btn, .tab').forEach(button => {
   button.addEventListener('click', () => playSound('click'));
 });
 
+// Handle page leave/refresh
+window.addEventListener('beforeunload', (e) => {
+  if (isRunning) {
+    // Show warning message
+    e.preventDefault();
+    e.returnValue = 'Timer is still running. Are you sure you want to leave?';
+    return e.returnValue;
+  }
+});
+
 // Request notification permission
 if ('Notification' in window) {
   Notification.requestPermission();

@@ -196,5 +196,15 @@ document.querySelectorAll('.time-btn, .secondary-btn, .tab').forEach(button => {
     });
 });
 
+// Handle page leave/refresh
+window.addEventListener('beforeunload', (e) => {
+    if (isRunning) {
+        // Show warning message
+        e.preventDefault();
+        e.returnValue = 'Timer is still running. Are you sure you want to leave?';
+        return e.returnValue;
+    }
+});
+
 // Initialize display
 updateDisplay();
