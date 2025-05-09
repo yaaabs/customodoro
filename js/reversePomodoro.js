@@ -49,7 +49,8 @@ function calculateBreakTime(workedSeconds) {
 function updateDisplay() {
     const minutes = Math.floor(currentSeconds / 60);
     const seconds = currentSeconds % 60;
-    timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    timerElement.textContent = timeString;
     
     // Update progress bar based on mode
     const progress = currentMode === 'break' 
@@ -57,8 +58,10 @@ function updateDisplay() {
         : (currentSeconds / MAX_TIME) * 100;
     progressBar.style.width = `${progress}%`;
     
-    // Update document title
-    document.title = `${timerElement.textContent} - FocusKaya Reverse`;
+    // Update document title with status
+    const modeText = currentMode === 'break' ? 'Break' : 'Reverse';
+    const statusText = isRunning ? timeString : 'Paused';
+    document.title = `${statusText} - FocusKaya ${modeText}`;
 }
 
 // Toggle timer
@@ -156,27 +159,31 @@ function resetTimer() {
     startButton.textContent = 'START';
 }
 
-// Switch between reverse and break modes
+// Switch between reverse and break modes with validation
 function switchMode(mode) {
+    if (isRunning) {
+        const confirmed = confirm('Timer is still running. Are you sure you want to switch modes? This will reset your current progress.');
+        if (!confirmed) return;
+    }
+
     currentMode = mode;
     reverseTab.classList.toggle('active', mode === 'reverse');
     breakTab.classList.toggle('active', mode === 'break');
     
+    // Reset timer state
+    clearInterval(timerInterval);
+    isRunning = false;
+    startButton.textContent = 'START';
+    
     if (mode === 'break') {
-        // Set break time in seconds
         currentSeconds = earnedBreakTime * 60;
         initialSeconds = currentSeconds;
-        updateDisplay();
     } else {
         currentSeconds = 0;
         initialSeconds = MAX_TIME;
-        updateDisplay();
     }
     
-    // Reset timer state
-    isRunning = false;
-    startButton.textContent = 'START';
-    if (timerInterval) clearInterval(timerInterval);
+    updateDisplay();
 }
 
 // Show toast notification

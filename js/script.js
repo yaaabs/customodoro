@@ -171,9 +171,13 @@ taskInput.addEventListener('keypress', (e) => {
 function updateTimerDisplay() {
   const minutes = Math.floor(currentSeconds / 60);
   const seconds = currentSeconds % 60;
-  timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  timerElement.textContent = timeString;
 
-  document.title = `${timerElement.textContent} - FocusKaya Timer`;
+  // Update document title with status
+  const modeText = currentMode.charAt(0).toUpperCase() + currentMode.slice(1);
+  const statusText = isRunning ? timeString : 'Paused';
+  document.title = `${statusText} - FocusKaya ${modeText}`;
 
   // Update progress bar
   if (initialSeconds > 0) {
@@ -257,8 +261,13 @@ function resetTimer() {
   progressBar.style.width = '0%';
 }
 
-// Switch between pomodoro, short break, and long break modes
+// Switch between pomodoro, short break, and long break modes with validation
 function switchMode(mode) {
+  if (isRunning) {
+    const confirmed = confirm('Timer is still running. Are you sure you want to switch modes? This will reset your current progress.');
+    if (!confirmed) return;
+  }
+
   currentMode = mode;
 
   // Reset active tab styles
@@ -283,12 +292,10 @@ function switchMode(mode) {
 
   initialSeconds = currentSeconds;
 
-  // Reset timer if it was running
-  if (isRunning) {
-    clearInterval(timerInterval);
-    isRunning = false;
-    startButton.textContent = 'START';
-  }
+  // Reset timer state
+  clearInterval(timerInterval);
+  isRunning = false;
+  startButton.textContent = 'START';
 
   updateTimerDisplay();
   progressBar.style.width = '0%';
