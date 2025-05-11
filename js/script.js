@@ -179,10 +179,27 @@ function updateTimerDisplay() {
   const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   timerElement.textContent = timeString;
 
-  // Update document title with status
-  const modeText = currentMode.charAt(0).toUpperCase() + currentMode.slice(1);
-  const statusText = isRunning ? timeString : 'Paused';
-  document.title = `${statusText} - FocusKaya ${modeText}`;
+  // Update document title - Reverted logic
+  let titleText;
+  if (!isRunning && currentSeconds === initialSeconds) {
+    // Initial/reset state - show mode name
+    switch(currentMode) {
+      case 'pomodoro':
+        titleText = `${timeString} - Pomodoro`;
+        break;
+      case 'shortBreak':
+        titleText = `${timeString} - Short Break`;
+        break;
+      case 'longBreak':
+        titleText = `${timeString} - Long Break`;
+        break;
+    }
+  } else {
+    titleText = isRunning 
+      ? `${timeString} - ${currentMode.charAt(0).toUpperCase() + currentMode.slice(1)}`
+      : `${timeString} - Paused`;
+  }
+  document.title = titleText;
 
   // Update progress bar
   if (initialSeconds > 0) {

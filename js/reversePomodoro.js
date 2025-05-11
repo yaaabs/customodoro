@@ -71,10 +71,20 @@ function updateDisplay() {
         : (currentSeconds / MAX_TIME) * 100;
     progressBar.style.width = `${progress}%`;
     
-    // Update document title with status
-    const modeText = currentMode === 'break' ? 'Break' : 'Reverse';
-    const statusText = isRunning ? timeString : 'Paused';
-    document.title = `${statusText} - FocusKaya ${modeText}`;
+    // Update document title - Reverted logic
+    let titleText = `${timeString} - `;
+    
+    if (!isRunning && currentSeconds === 0 && currentMode === 'reverse') {
+        titleText += 'Reverse Pomodoro';
+    } else if (!isRunning && currentSeconds === initialSeconds && currentMode === 'break') {
+        titleText += 'Break Accumulated';
+    } else {
+        titleText += isRunning 
+            ? (currentMode === 'break' ? 'Break Accumulated' : 'Reverse Pomodoro')
+            : 'Paused';
+    }
+    
+    document.title = titleText;
 }
 
 // Toggle timer
