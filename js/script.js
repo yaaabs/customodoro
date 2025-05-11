@@ -191,6 +191,25 @@ function updateTimerDisplay() {
   }
 }
 
+// Add this new function after the DOM Elements section
+function updateFavicon(status) {
+  const favicon = document.getElementById('favicon');
+  switch(status) {
+    case 'pomodoro':
+      favicon.href = 'images/Pomodoro.png';
+      break;
+    case 'shortBreak':
+      favicon.href = 'images/Short Break.png';
+      break;
+    case 'longBreak':
+      favicon.href = 'images/Long Break.png';
+      break;
+    case 'paused':
+      favicon.href = 'images/Paused.png';
+      break;
+  }
+}
+
 // Toggle timer between start and pause
 function toggleTimer() {
   if (!isRunning) {
@@ -200,6 +219,7 @@ function toggleTimer() {
     // Start timer
     isRunning = true;
     startButton.textContent = 'PAUSE';
+    updateFavicon(currentMode); // Add this line
 
     timerInterval = setInterval(() => {
       if (currentSeconds > 0) {
@@ -243,6 +263,7 @@ function toggleTimer() {
     clearInterval(timerInterval);
     isRunning = false;
     startButton.textContent = 'START';
+    updateFavicon('paused'); // Add this line
   }
 }
 
@@ -262,6 +283,7 @@ function resetTimer() {
   initialSeconds = currentSeconds;
   isRunning = false;
   startButton.textContent = 'START';
+  updateFavicon('paused'); // Add this line
   updateTimerDisplay();
   progressBar.style.width = '0%';
 }
@@ -312,6 +334,7 @@ function switchMode(mode) {
   isRunning = false;
   startButton.textContent = 'START';
 
+  updateFavicon(mode); // Add this line before updateTimerDisplay()
   updateTimerDisplay();
   progressBar.style.width = '0%';
 }
