@@ -26,6 +26,16 @@ const taskInput = document.getElementById('task-input');
 const addTaskBtn = document.getElementById('add-task-btn');
 const taskList = document.getElementById('task-list');
 
+// Add favicon update function
+function updateFavicon(status) {
+    const favicon = document.getElementById('favicon');
+    if (status === 'paused') {
+        favicon.href = 'images/Paused.png';
+    } else {
+        favicon.href = 'images/Reverse Pomodoro.png';
+    }
+}
+
 // Timer variables
 const MAX_TIME = 3600; // 1 hour in seconds
 let currentSeconds = 0;
@@ -85,6 +95,7 @@ function toggleTimer() {
         
         isRunning = true;
         startButton.textContent = 'STOP';
+        updateFavicon('running');
         
         timerInterval = setInterval(() => {
             if (currentMode === 'break') {
@@ -110,6 +121,7 @@ function toggleTimer() {
         clearInterval(timerInterval);
         isRunning = false;
         startButton.textContent = 'START';
+        updateFavicon('paused');
         
         if (currentMode === 'reverse' && confirm('Do you want to end this session and take your break?')) {
             completeSession(false); // Pass false to indicate manual completion
@@ -158,6 +170,7 @@ function resetTimer() {
     isRunning = false;
     currentSeconds = 0;
     initialSeconds = MAX_TIME;
+    updateFavicon('paused');
     updateDisplay();
     startButton.textContent = 'START';
 }
