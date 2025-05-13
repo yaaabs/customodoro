@@ -527,21 +527,6 @@ function addTask() {
   const taskText = taskInput.value.trim();
 
   if (taskText !== '') {
-    if (!confirm('Add this task to your list?')) {
-      return;
-    }
-
-    // Check for unfinished tasks
-    const unfinishedTasks = Array.from(taskList.children).filter(task => 
-      !task.querySelector('.task-checkbox').checked
-    );
-
-    if (unfinishedTasks.length > 0) {
-      if (!confirm('You have unfinished tasks. Add another one anyway?')) {
-        return;
-      }
-    }
-
     createTaskElement(taskText);
 
     // Clear input

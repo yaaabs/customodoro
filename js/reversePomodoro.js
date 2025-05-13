@@ -265,32 +265,17 @@ function createTaskElement(text, completed = false) {
     taskList.appendChild(taskItem);
 }
 
-// Add task function
+// Add task to task list
 function addTask() {
-    const taskText = taskInput.value.trim();
+  const taskText = taskInput.value.trim();
 
-    if (taskText !== '') {
-        if (!confirm('Add this task to your list?')) {
-            return;
-        }
+  if (taskText !== '') {
+    createTaskElement(taskText);
 
-        // Check for unfinished tasks
-        const unfinishedTasks = Array.from(taskList.children).filter(task => 
-            !task.querySelector('.task-checkbox').checked
-        );
-
-        if (unfinishedTasks.length > 0) {
-            if (!confirm('You have unfinished tasks. Add another one anyway?')) {
-                return;
-            }
-        }
-
-        createTaskElement(taskText);
-
-        // Clear input
-        taskInput.value = '';
-        hasUnsavedTasks = false;
-    }
+    // Clear input
+    taskInput.value = '';
+    hasUnsavedTasks = false;
+  }
 }
 
 // Add function to update unfinished tasks status
