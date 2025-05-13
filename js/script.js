@@ -247,29 +247,26 @@ function toggleTimer() {
         clearInterval(timerInterval);
         playNotification();
         showToast(getCompletionMessage());
+        isRunning = false;
 
-        // Move to next timer phase
+        // Move to next timer phase with auto-start
         if (currentMode === 'pomodoro') {
           completedPomodoros++;
           updateStats();
           if (completedPomodoros % maxSessions === 0) {
-            switchMode('longBreak');
+            switchMode('longBreak', true);
           } else {
-            switchMode('shortBreak');
+            switchMode('shortBreak', true);
           }
         } else {
-          // After a break, go back to pomodoro
           if (currentMode === 'longBreak') {
             currentSession = 1;
           } else {
             currentSession++;
           }
-          switchMode('pomodoro');
+          switchMode('pomodoro', true);
         }
-
         updateSessionDots();
-        startButton.textContent = 'START';
-        isRunning = false;
       }
     }, 1000);
   } else {
@@ -281,6 +278,29 @@ function toggleTimer() {
     isRunning = false;
     startButton.textContent = 'START';
     updateFavicon('paused'); // Add this line
+
+    // Auto-start next phase if timer is complete
+    if (currentSeconds === 0) {
+      if (currentMode === 'pomodoro') {
+        completedPomodoros++;
+        updateStats();
+        if (completedPomodoros % maxSessions === 0) {
+          switchMode('longBreak', true);
+        } else {
+          switchMode('shortBreak', true);
+        }
+        toggleTimer(); // Auto-start break
+      } else {
+        if (currentMode === 'longBreak') {
+          currentSession = 1;
+        } else {
+          currentSession++;
+        }
+        switchMode('pomodoro', true);
+        toggleTimer(); // Auto-start next pomodoro
+      }
+      updateSessionDots();
+    }
   }
 }
 
@@ -306,8 +326,9 @@ function resetTimer() {
 }
 
 // Switch between pomodoro, short break, and long break modes with validation
-function switchMode(mode) {
-  if (isRunning) {
+function switchMode(mode, autoStart = false) {
+  // Remove the running timer check since we want automatic transitions
+  if (!autoStart && isRunning) {
     const confirmed = confirm('Timer is still running. Are you sure you want to switch modes? This will reset your current progress.');
     if (!confirmed) return;
   }
@@ -354,6 +375,11 @@ function switchMode(mode) {
   updateFavicon(mode); // Add this line before updateTimerDisplay()
   updateTimerDisplay();
   progressBar.style.width = '0%';
+
+  // Auto-start if requested
+  if (autoStart) {
+    setTimeout(() => toggleTimer(), 500);
+  }
 }
 
 // Add link handler for mode switching

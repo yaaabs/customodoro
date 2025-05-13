@@ -135,8 +135,15 @@ function toggleTimer() {
         startButton.textContent = 'START';
         updateFavicon('paused');
         
-        if (currentMode === 'reverse' && confirm('Do you want to end this session and take your break?')) {
-            completeSession(false); // Pass false to indicate manual completion
+        if (currentMode === 'reverse') {
+            const minutes = Math.floor(currentSeconds / 60);
+            if (minutes < 5) {
+                if (confirm('You worked less than 5 minutes. No break earned. Do you want to reset the timer?')) {
+                    resetTimer();
+                }
+            } else {
+                completeSession(false); // Auto-start break without confirmation
+            }
         }
     }
 }
@@ -160,6 +167,11 @@ function completeSession(playSound = true) {
     
     startButton.textContent = 'START';
     switchMode('break');
+    
+    // Auto-start the break
+    if (earnedBreakTime > 0) {
+        setTimeout(() => toggleTimer(), 500);
+    }
 }
 
 // Complete break
