@@ -52,10 +52,12 @@ let tasks = [];
 function calculateBreakTime(workedSeconds) {
     const minutes = Math.floor(workedSeconds / 60);
     
-    if (minutes <= 15) return 5;
-    if (minutes <= 30) return 10;
-    if (minutes <= 45) return 15;
-    return 30;
+    if (minutes <= 4) return 0;        // Less than 5 mins = no break
+    if (minutes <= 20) return 2;       // 5-20 mins = 2 min break
+    if (minutes <= 30) return 5;       // 21-30 mins = 5 min break
+    if (minutes <= 45) return 10;      // 31-45 mins = 10 min break
+    if (minutes <= 55) return 15;      // 46-55 mins = 15 min break
+    return 30;                         // 56-60 mins = 30 min break
 }
 
 // Update timer display
