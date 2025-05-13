@@ -422,43 +422,89 @@ function toggleSettings() {
 
 // Update time values (pomodoro, short break, long break, sessions)
 function updateTimeValue(type, change) {
-  let currentValue, minValue = 1, maxValue = 60;
+    const settings = {
+        pomodoro: {
+            input: document.getElementById('pomodoro-value'),
+            minValue: 1,
+            maxValue: 60,
+            updateFn: (value) => {
+                pomodoroTime = value;
+                if (currentMode === 'pomodoro') resetTimer();
+            }
+        },
+        shortBreak: {
+            input: document.getElementById('short-value'),
+            minValue: 1,
+            maxValue: 60,
+            updateFn: (value) => {
+                shortBreakTime = value;
+                if (currentMode === 'shortBreak') resetTimer();
+            }
+        },
+        longBreak: {
+            input: document.getElementById('long-value'),
+            minValue: 1,
+            maxValue: 60,
+            updateFn: (value) => {
+                longBreakTime = value;
+                if (currentMode === 'longBreak') resetTimer();
+            }
+        },
+        sessions: {
+            input: document.getElementById('sessions-value'),
+            minValue: 1,
+            maxValue: 12,
+            updateFn: (value) => {
+                maxSessions = value;
+                updateSessionDots();
+            }
+        }
+    };
 
-  if (type === 'pomodoro') {
-    currentValue = pomodoroTime;
-    pomodoroTime = Math.max(minValue, Math.min(maxValue, currentValue + change));
-    pomodoroValue.textContent = pomodoroTime;
+    const setting = settings[type];
+    if (!setting) return;
 
-    if (currentMode === 'pomodoro') {
-      resetTimer();
+    const handleUpdate = () => {
+        let value = parseInt(setting.input.value) || setting.minValue;
+        value = Math.max(setting.minValue, Math.min(setting.maxValue, value));
+        setting.input.value = value;
+        setting.updateFn(value);
+    };
+
+    // For plus/minus buttons
+    if (change !== undefined) {
+        let currentValue = parseInt(setting.input.value) || setting.minValue;
+        setting.input.value = Math.max(setting.minValue, Math.min(setting.maxValue, currentValue + change));
+        handleUpdate();
+        return;
     }
-  } else if (type === 'shortBreak') {
-    currentValue = shortBreakTime;
-    shortBreakTime = Math.max(minValue, Math.min(maxValue, currentValue + change));
-    shortValue.textContent = shortBreakTime;
 
-    if (currentMode === 'shortBreak') {
-      resetTimer();
+    // Remove existing listeners to prevent duplicates
+    setting.input.removeEventListener('input', handleUpdate);
+    setting.input.removeEventListener('change', handleUpdate);
+    setting.input.removeEventListener('blur', handleUpdate);
+    setting.input.removeEventListener('keypress', handleKeyPress);
+
+    // Add new listeners
+    setting.input.addEventListener('input', handleUpdate);
+    setting.input.addEventListener('change', handleUpdate);
+    setting.input.addEventListener('blur', handleUpdate);
+
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') {
+            handleUpdate();
+            setting.input.blur();
+        }
     }
-  } else if (type === 'longBreak') {
-    currentValue = longBreakTime;
-    longBreakTime = Math.max(minValue, Math.min(maxValue, currentValue + change));
-    longValue.textContent = longBreakTime;
-
-    if (currentMode === 'longBreak') {
-      resetTimer();
-    }
-  } else if (type === 'sessions') {
-    minValue = 1;
-    maxValue = 12;
-    currentValue = maxSessions;
-    maxSessions = Math.max(minValue, Math.min(maxValue, currentValue + change));
-    sessionsValue.textContent = maxSessions;
-
-    // Update session dots
-    updateSessionDots();
-  }
+    setting.input.addEventListener('keypress', handleKeyPress);
 }
+
+// Initialize all input listeners
+document.addEventListener('DOMContentLoaded', () => {
+    ['pomodoro', 'shortBreak', 'longBreak', 'sessions'].forEach(type => {
+        updateTimeValue(type);
+    });
+});
 
 // Enhanced notification sound
 function playNotification() {

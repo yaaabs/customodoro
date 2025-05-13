@@ -272,6 +272,16 @@ header {
   font-size: 18px;
   font-weight: 600;
   color: var(--text-dark);
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 4px;
+  -moz-appearance: textfield;
+}
+
+.time-value::-webkit-outer-spin-button,
+.time-value::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .time-btn {
