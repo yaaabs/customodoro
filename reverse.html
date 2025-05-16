@@ -8,6 +8,7 @@
   <link rel="apple-touch-icon" href="images/Reverse Pomodoro.png">
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/settings.css">
 </head>
 <body class="reverse-mode">
   <div class="container">
@@ -64,8 +65,116 @@
     </div>
   </div>
   
+  <!-- Settings Button -->
+  <button class="settings-btn" id="settings-btn">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    </svg>
+  </button>
+  
+  <!-- Settings Modal -->
+  <div class="settings-modal" id="settings-modal">
+    <div class="settings-content">
+      <div class="settings-header">
+        <h2 class="settings-title">Settings</h2>
+        <button class="settings-close" id="settings-close">&times;</button>
+      </div>
+      <div class="settings-body">
+        <div class="settings-section">
+          <h3 class="settings-section-title">Reverse Timer Settings</h3>
+          <div class="settings-row">
+            <div class="settings-label">Max Work Time (minutes)</div>
+            <div class="time-input-group">
+              <button class="time-btn" id="max-time-minus-btn">-</button>
+              <input type="number" class="time-input" id="max-time" value="60" min="15" max="120">
+              <button class="time-btn" id="max-time-plus-btn">+</button>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-label">Break Time (5-20 mins work)</div>
+            <div class="time-input-group">
+              <button class="time-btn" id="break1-minus-btn">-</button>
+              <input type="number" class="time-input" id="break1-time" value="2" min="1" max="10">
+              <button class="time-btn" id="break1-plus-btn">+</button>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-label">Break Time (21-30 mins work)</div>
+            <div class="time-input-group">
+              <button class="time-btn" id="break2-minus-btn">-</button>
+              <input type="number" class="time-input" id="break2-time" value="5" min="2" max="15">
+              <button class="time-btn" id="break2-plus-btn">+</button>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-label">Break Time (31-45 mins work)</div>
+            <div class="time-input-group">
+              <button class="time-btn" id="break3-minus-btn">-</button>
+              <input type="number" class="time-input" id="break3-time" value="10" min="5" max="20">
+              <button class="time-btn" id="break3-plus-btn">+</button>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-label">Break Time (46-55 mins work)</div>
+            <div class="time-input-group">
+              <button class="time-btn" id="break4-minus-btn">-</button>
+              <input type="number" class="time-input" id="break4-time" value="15" min="10" max="25">
+              <button class="time-btn" id="break4-plus-btn">+</button>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-label">Break Time (56-60 mins work)</div>
+            <div class="time-input-group">
+              <button class="time-btn" id="break5-minus-btn">-</button>
+              <input type="number" class="time-input" id="break5-time" value="30" min="15" max="45">
+              <button class="time-btn" id="break5-plus-btn">+</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="settings-section">
+          <h3 class="settings-section-title">Sound Settings</h3>
+          <div class="settings-row">
+            <div class="settings-label">Sound Volume</div>
+            <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="60">
+          </div>
+          <div class="settings-row">
+            <div class="settings-label">Timer Sound Effects</div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="sound-effects-toggle" checked>
+              <span class="slider-toggle"></span>
+            </label>
+          </div>
+          <div class="settings-row">
+            <div class="settings-label">End of Session Alarm</div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="alarm-toggle" checked>
+              <span class="slider-toggle"></span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="settings-section">
+          <h3 class="settings-section-title">Auto Start</h3>
+          <div class="settings-row">
+            <div class="settings-label">Auto-start Breaks</div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="auto-break-toggle" checked>
+              <span class="slider-toggle"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="settings-footer">
+        <button class="save-btn" id="save-settings-btn">Save Settings</button>
+      </div>
+    </div>
+  </div>
+  
   <div class="toast" id="toast"></div>
 
   <script src="js/reversePomodoro.js"></script>
+  <script src="js/settings.js"></script>
 </body>
 </html>

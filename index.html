@@ -8,6 +8,7 @@
   <link rel="apple-touch-icon" href="images/Pomodoro.png">
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/settings.css">
 </head>
 <body class="focus-mode">
   <div class="container">
@@ -104,8 +105,107 @@
     </div>
   </div>
   
+  <!-- Settings Button -->
+  <button class="settings-btn" id="settings-btn">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    </svg>
+  </button>
+  
+  <!-- Settings Modal -->
+  <div class="settings-modal" id="settings-modal">
+    <div class="settings-content">
+      <div class="settings-header">
+        <h2 class="settings-title">Settings</h2>
+        <button class="settings-close" id="settings-close">&times;</button>
+      </div>
+      <div class="settings-body">
+        <div class="settings-section">
+          <h3 class="settings-section-title">Timer Settings</h3>
+          <div class="settings-row">
+            <div class="settings-label">Pomodoro Length</div>
+            <div class="time-input-group">
+              <button class="time-btn" id="pomodoro-minus-btn">-</button>
+              <input type="number" class="time-input" id="pomodoro-time" value="25" min="1" max="60">
+              <button class="time-btn" id="pomodoro-plus-btn">+</button>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-label">Short Break Length</div>
+            <div class="time-input-group">
+              <button class="time-btn" id="short-break-minus-btn">-</button>
+              <input type="number" class="time-input" id="short-break-time" value="5" min="1" max="30">
+              <button class="time-btn" id="short-break-plus-btn">+</button>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-label">Long Break Length</div>
+            <div class="time-input-group">
+              <button class="time-btn" id="long-break-minus-btn">-</button>
+              <input type="number" class="time-input" id="long-break-time" value="15" min="5" max="60">
+              <button class="time-btn" id="long-break-plus-btn">+</button>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-label">Sessions until Long Break</div>
+            <div class="time-input-group">
+              <button class="time-btn" id="sessions-minus-btn">-</button>
+              <input type="number" class="time-input" id="sessions-count" value="4" min="1" max="10">
+              <button class="time-btn" id="sessions-plus-btn">+</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="settings-section">
+          <h3 class="settings-section-title">Sound Settings</h3>
+          <div class="settings-row">
+            <div class="settings-label">Sound Volume</div>
+            <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="60">
+          </div>
+          <div class="settings-row">
+            <div class="settings-label">Timer Sound Effects</div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="sound-effects-toggle" checked>
+              <span class="slider-toggle"></span>
+            </label>
+          </div>
+          <div class="settings-row">
+            <div class="settings-label">End of Session Alarm</div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="alarm-toggle" checked>
+              <span class="slider-toggle"></span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="settings-section">
+          <h3 class="settings-section-title">Auto Start</h3>
+          <div class="settings-row">
+            <div class="settings-label">Auto-start Breaks</div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="auto-break-toggle" checked>
+              <span class="slider-toggle"></span>
+            </label>
+          </div>
+          <div class="settings-row">
+            <div class="settings-label">Auto-start Pomodoros</div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="auto-pomodoro-toggle" checked>
+              <span class="slider-toggle"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="settings-footer">
+        <button class="save-btn" id="save-settings-btn">Save Settings</button>
+      </div>
+    </div>
+  </div>
+  
   <div class="toast" id="toast"></div>
 
   <script src="js/script.js"></script>
+  <script src="js/settings.js"></script>
 </body>
 </html>
