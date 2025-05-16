@@ -604,6 +604,9 @@ function addTask() {
     // Clear input
     taskInput.value = '';
     hasUnsavedTasks = false;
+  } else {
+    // Alert the user when trying to add an empty task
+    alert("Please enter a task before adding!");
   }
 }
 
