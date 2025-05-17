@@ -166,16 +166,22 @@
   border-radius: 4px;
   font-size: 16px;
   font-weight: 500;
+  /* Improved approach to remove spinner buttons */
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
-/* Remove spinner buttons from number inputs */
+/* Hide spinner buttons in WebKit browsers (Chrome, Safari, Edge) */
 .time-input::-webkit-outer-spin-button,
 .time-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+  -webkit-appearance: none !important;
+  margin: 0 !important;
 }
+
+/* Hide spinner buttons in Firefox */
 .time-input[type=number] {
-  -moz-appearance: textfield;
+  -moz-appearance: textfield !important;
 }
 
 .settings-footer {

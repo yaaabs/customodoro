@@ -275,20 +275,23 @@ header {
   border: 1px solid #ddd;
   border-radius: 4px;
   padding: 4px;
-  /* Modern approach to remove spinner buttons */
-  appearance: none;
+  /* Improved approach to remove spinner buttons */
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+  appearance: textfield;
+  margin: 0;
 }
 
-/* Explicit styling for Firefox */
-.time-value[type='number'] {
-  appearance: none;
-}
-
-/* Explicit styling for Chrome, Safari, Edge, Opera */
+/* Hide spinner buttons in WebKit browsers (Chrome, Safari, Edge) */
 .time-value::-webkit-outer-spin-button,
 .time-value::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+/* Hide spinner buttons in Firefox */
+.time-value[type=number] {
+  -moz-appearance: textfield;
 }
 
 .time-btn {
