@@ -168,6 +168,8 @@
   font-weight: 500;
   /* Improved approach to remove spinner buttons */
   -webkit-appearance: none;
+  appearance: none;
+  appearance: none;
   -moz-appearance: textfield;
   appearance: textfield;
 }
@@ -182,6 +184,7 @@
 /* Hide spinner buttons in Firefox */
 .time-input[type=number] {
   -moz-appearance: textfield !important;
+  appearance: textfield !important;
 }
 
 .settings-footer {
@@ -212,6 +215,7 @@
   width: 150px;
   height: 6px;
   -webkit-appearance: none;
+  appearance: none; /* Add standard property for compatibility */
   background: #ddd;
   outline: none;
   border-radius: 3px;
@@ -219,6 +223,7 @@
 
 .volume-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
+  appearance: none; /* Add standard property for compatibility */
   width: 16px;
   height: 16px;
   border-radius: 50%;
