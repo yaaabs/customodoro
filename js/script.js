@@ -12,39 +12,16 @@ const pomodoroTab = document.getElementById('pomodoro-tab');
 const shortBreakTab = document.getElementById('short-break-tab');
 const longBreakTab = document.getElementById('long-break-tab');
 
-// Settings elements
-const settingsToggle = document.getElementById('settings-toggle');
-const settingsContent = document.getElementById('settings-content');
-
 // Task elements
 const taskInput = document.getElementById('task-input');
 const addTaskBtn = document.getElementById('add-task-btn');
 const taskList = document.getElementById('task-list');
 
-// Time setting elements
-const pomodoroValue = document.getElementById('pomodoro-value');
-const shortValue = document.getElementById('short-value');
-const longValue = document.getElementById('long-value');
-const sessionsValue = document.getElementById('sessions-value');
-
-// Time setting buttons
-const pomodoroMinus = document.getElementById('pomodoro-minus');
-const pomodoroPlus = document.getElementById('pomodoro-plus');
-const shortMinus = document.getElementById('short-minus');
-const shortPlus = document.getElementById('short-plus');
-const longMinus = document.getElementById('long-minus');
-const longPlus = document.getElementById('long-plus');
-const sessionsMinus = document.getElementById('sessions-minus');
-const sessionsPlus = document.getElementById('sessions-plus');
-
-// Toast notification
-const toast = document.getElementById('toast');
-
-// Timer variables
-let pomodoroTime = 25;
-let shortBreakTime = 5;
-let longBreakTime = 15;
-let maxSessions = 4;
+// Timer variables - Load from localStorage or use defaults
+let pomodoroTime = parseInt(localStorage.getItem('pomodoroTime')) || 25;
+let shortBreakTime = parseInt(localStorage.getItem('shortBreakTime')) || 5;
+let longBreakTime = parseInt(localStorage.getItem('longBreakTime')) || 15;
+let maxSessions = parseInt(localStorage.getItem('sessionsCount')) || 4;
 let currentMode = 'pomodoro';
 let currentSeconds = pomodoroTime * 60;
 let initialSeconds = currentSeconds;
@@ -150,19 +127,6 @@ pomodoroTab.addEventListener('click', () => switchMode('pomodoro'));
 shortBreakTab.addEventListener('click', () => switchMode('shortBreak'));
 longBreakTab.addEventListener('click', () => switchMode('longBreak'));
 
-// Settings toggle
-settingsToggle.addEventListener('click', toggleSettings);
-
-// Time setting event listeners
-pomodoroMinus.addEventListener('click', () => updateTimeValue('pomodoro', -1));
-pomodoroPlus.addEventListener('click', () => updateTimeValue('pomodoro', 1));
-shortMinus.addEventListener('click', () => updateTimeValue('shortBreak', -1));
-shortPlus.addEventListener('click', () => updateTimeValue('shortBreak', 1));
-longMinus.addEventListener('click', () => updateTimeValue('longBreak', -1));
-longPlus.addEventListener('click', () => updateTimeValue('longBreak', 1));
-sessionsMinus.addEventListener('click', () => updateTimeValue('sessions', -1));
-sessionsPlus.addEventListener('click', () => updateTimeValue('sessions', 1));
-
 // Task event listeners
 addTaskBtn.addEventListener('click', addTask);
 taskInput.addEventListener('input', () => {
@@ -236,7 +200,7 @@ function toggleTimer() {
     // Start timer
     isRunning = true;
     startButton.textContent = 'PAUSE';
-    updateFavicon(currentMode); // Add this line
+    updateFavicon(currentMode);
 
     timerInterval = setInterval(() => {
       if (currentSeconds > 0) {
@@ -277,7 +241,7 @@ function toggleTimer() {
     clearInterval(timerInterval);
     isRunning = false;
     startButton.textContent = 'START';
-    updateFavicon('paused'); // Add this line
+    updateFavicon('paused');
 
     // Auto-start next phase if timer is complete
     if (currentSeconds === 0) {
@@ -304,23 +268,27 @@ function toggleTimer() {
   }
 }
 
-// Reset the current timer
+// Reset the current timer - modified to be more robust
 function resetTimer() {
   clearInterval(timerInterval);
 
-  // Reset to initial time based on current mode
+  // Reset to initial time based on current mode - use latest values
   if (currentMode === 'pomodoro') {
+    // Grab latest value from localStorage for immediate updates
+    pomodoroTime = parseInt(localStorage.getItem('pomodoroTime')) || pomodoroTime;
     currentSeconds = pomodoroTime * 60;
   } else if (currentMode === 'shortBreak') {
+    shortBreakTime = parseInt(localStorage.getItem('shortBreakTime')) || shortBreakTime;
     currentSeconds = shortBreakTime * 60;
   } else {
+    longBreakTime = parseInt(localStorage.getItem('longBreakTime')) || longBreakTime;
     currentSeconds = longBreakTime * 60;
   }
 
   initialSeconds = currentSeconds;
   isRunning = false;
   startButton.textContent = 'START';
-  updateFavicon('paused'); // Add this line
+  updateFavicon('paused');
   updateTimerDisplay();
   progressBar.style.width = '0%';
 }
@@ -350,16 +318,19 @@ function switchMode(mode, autoStart = false) {
   shortBreakTab.classList.remove('active');
   longBreakTab.classList.remove('active');
 
-  // Set up the new mode
+  // Set up the new mode - always use the latest values from localStorage
   if (mode === 'pomodoro') {
+    pomodoroTime = parseInt(localStorage.getItem('pomodoroTime')) || pomodoroTime;
     currentSeconds = pomodoroTime * 60;
     body.className = 'focus-mode';
     pomodoroTab.classList.add('active');
   } else if (mode === 'shortBreak') {
+    shortBreakTime = parseInt(localStorage.getItem('shortBreakTime')) || shortBreakTime;
     currentSeconds = shortBreakTime * 60;
     body.className = 'short-break-mode';
     shortBreakTab.classList.add('active');
   } else {
+    longBreakTime = parseInt(localStorage.getItem('longBreakTime')) || longBreakTime;
     currentSeconds = longBreakTime * 60;
     body.className = 'long-break-mode';
     longBreakTab.classList.add('active');
@@ -372,7 +343,7 @@ function switchMode(mode, autoStart = false) {
   isRunning = false;
   startButton.textContent = 'START';
 
-  updateFavicon(mode); // Add this line before updateTimerDisplay()
+  updateFavicon(mode);
   updateTimerDisplay();
   progressBar.style.width = '0%';
 
@@ -412,99 +383,6 @@ function updateSessionDots() {
 
   sessionText.textContent = `#${currentSession}`;
 }
-
-// Toggle settings panel
-function toggleSettings() {
-  settingsContent.classList.toggle('open');
-  const isOpen = settingsContent.classList.contains('open');
-  settingsToggle.querySelector('span').textContent = isOpen ? 'Hide' : 'Show';
-}
-
-// Update time values (pomodoro, short break, long break, sessions)
-function updateTimeValue(type, change) {
-    const settings = {
-        pomodoro: {
-            input: document.getElementById('pomodoro-value'),
-            minValue: 1,
-            maxValue: 60,
-            updateFn: (value) => {
-                pomodoroTime = value;
-                if (currentMode === 'pomodoro') resetTimer();
-            }
-        },
-        shortBreak: {
-            input: document.getElementById('short-value'),
-            minValue: 1,
-            maxValue: 60,
-            updateFn: (value) => {
-                shortBreakTime = value;
-                if (currentMode === 'shortBreak') resetTimer();
-            }
-        },
-        longBreak: {
-            input: document.getElementById('long-value'),
-            minValue: 1,
-            maxValue: 60,
-            updateFn: (value) => {
-                longBreakTime = value;
-                if (currentMode === 'longBreak') resetTimer();
-            }
-        },
-        sessions: {
-            input: document.getElementById('sessions-value'),
-            minValue: 1,
-            maxValue: 12,
-            updateFn: (value) => {
-                maxSessions = value;
-                updateSessionDots();
-            }
-        }
-    };
-
-    const setting = settings[type];
-    if (!setting) return;
-
-    const handleUpdate = () => {
-        let value = parseInt(setting.input.value) || setting.minValue;
-        value = Math.max(setting.minValue, Math.min(setting.maxValue, value));
-        setting.input.value = value;
-        setting.updateFn(value);
-    };
-
-    // For plus/minus buttons
-    if (change !== undefined) {
-        let currentValue = parseInt(setting.input.value) || setting.minValue;
-        setting.input.value = Math.max(setting.minValue, Math.min(setting.maxValue, currentValue + change));
-        handleUpdate();
-        return;
-    }
-
-    // Remove existing listeners to prevent duplicates
-    setting.input.removeEventListener('input', handleUpdate);
-    setting.input.removeEventListener('change', handleUpdate);
-    setting.input.removeEventListener('blur', handleUpdate);
-    setting.input.removeEventListener('keypress', handleKeyPress);
-
-    // Add new listeners
-    setting.input.addEventListener('input', handleUpdate);
-    setting.input.addEventListener('change', handleUpdate);
-    setting.input.addEventListener('blur', handleUpdate);
-
-    function handleKeyPress(e) {
-        if (e.key === 'Enter') {
-            handleUpdate();
-            setting.input.blur();
-        }
-    }
-    setting.input.addEventListener('keypress', handleKeyPress);
-}
-
-// Initialize all input listeners
-document.addEventListener('DOMContentLoaded', () => {
-    ['pomodoro', 'shortBreak', 'longBreak', 'sessions'].forEach(type => {
-        updateTimeValue(type);
-    });
-});
 
 // Enhanced notification sound
 function playNotification() {
@@ -551,6 +429,9 @@ function getCompletionMessage() {
 
 // Show toast notification
 function showToast(message) {
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+  
   toast.textContent = message;
   toast.classList.add('show');
 
@@ -619,7 +500,7 @@ function updateUnfinishedTasks() {
 }
 
 // Add click sound to buttons (excluding start/pause button)
-document.querySelectorAll('.time-btn, .secondary-btn, .tab').forEach(button => {
+document.querySelectorAll('.secondary-btn, .tab').forEach(button => {
   button.addEventListener('click', () => playSound('click'));
 });
 
@@ -640,3 +521,60 @@ window.addEventListener('beforeunload', (e) => {
 if ('Notification' in window) {
   Notification.requestPermission();
 }
+
+// Near the beginning of the file after initializing timer variables, add this initialization
+document.addEventListener('DOMContentLoaded', function() {
+  // Apply any saved settings immediately when page loads
+  pomodoroTime = parseInt(localStorage.getItem('pomodoroTime')) || 25;
+  shortBreakTime = parseInt(localStorage.getItem('shortBreakTime')) || 5;
+  longBreakTime = parseInt(localStorage.getItem('longBreakTime')) || 15;
+  maxSessions = parseInt(localStorage.getItem('sessionsCount')) || 4;
+  
+  // Set the initial timer based on current mode
+  if (currentMode === 'pomodoro') {
+    currentSeconds = pomodoroTime * 60;
+  } else if (currentMode === 'shortBreak') {
+    currentSeconds = shortBreakTime * 60;
+  } else if (currentMode === 'longBreak') {
+    currentSeconds = longBreakTime * 60;
+  }
+  
+  initialSeconds = currentSeconds;
+  updateTimerDisplay();
+  updateSessionDots();
+  
+  console.log("Timer initialized with:", 
+    {pomodoro: pomodoroTime, short: shortBreakTime, long: longBreakTime, sessions: maxSessions});
+});
+
+// Make functions available to settings.js
+window.updateTimerDisplay = updateTimerDisplay;
+window.updateSessionDots = updateSessionDots;
+window.resetTimer = resetTimer;
+
+// Initialize variables based on localStorage or defaults
+(function initializeSettings() {
+  // Load settings from localStorage if available
+  pomodoroTime = parseInt(localStorage.getItem('pomodoroTime')) || 25;
+  shortBreakTime = parseInt(localStorage.getItem('shortBreakTime')) || 5;
+  longBreakTime = parseInt(localStorage.getItem('longBreakTime')) || 15;
+  maxSessions = parseInt(localStorage.getItem('sessionsCount')) || 4;
+  
+  // Set initial timer based on current mode
+  if (currentMode === 'pomodoro') {
+    currentSeconds = pomodoroTime * 60;
+  } else if (currentMode === 'shortBreak') {
+    currentSeconds = shortBreakTime * 60;
+  } else if (currentMode === 'longBreak') {
+    currentSeconds = longBreakTime * 60;
+  }
+  
+  initialSeconds = currentSeconds;
+  
+  // Make updateTimerDisplay available globally
+  window.updateTimerDisplay = updateTimerDisplay;
+  window.updateSessionDots = updateSessionDots;
+  
+  console.log("Initial timer values:", 
+    {pomodoro: pomodoroTime, short: shortBreakTime, long: longBreakTime, sessions: maxSessions});
+})();

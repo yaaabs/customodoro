@@ -20,7 +20,7 @@
     settingsModal.classList.remove('show');
   }
   
-  // Save settings
+  // Save settings and apply them immediately
   function saveSettings() {
     if (isReversePage) {
       saveReverseSettings();
@@ -34,8 +34,133 @@
     // Apply settings immediately to update the timer
     applySettingsToTimer();
     
+    // Force an immediate timer reset to apply new settings
+    forceTimerReset();
+    
     closeSettings();
     showToast('Settings saved successfully!');
+  }
+  
+  // Force timer reset to update with new settings
+  function forceTimerReset() {
+    if (isReversePage) {
+      // For reverse timer, update MAX_TIME and reset timer display
+      if (typeof window.resetTimer === 'function') {
+        window.resetTimer();
+      }
+    } else {
+      // For pomodoro timer, we need to:
+      // 1. Update all timer variables
+      // 2. Reset the current timer based on active mode
+      // 3. Force DOM update of the timer
+      
+      // Update main timer variables from localStorage
+      window.pomodoroTime = parseInt(localStorage.getItem('pomodoroTime')) || 25;
+      window.shortBreakTime = parseInt(localStorage.getItem('shortBreakTime')) || 5;
+      window.longBreakTime = parseInt(localStorage.getItem('longBreakTime')) || 15;
+      window.maxSessions = parseInt(localStorage.getItem('sessionsCount')) || 4;
+      
+      // Force reset timer based on current mode
+      if (window.currentMode === 'pomodoro') {
+        window.currentSeconds = window.pomodoroTime * 60;
+      } else if (window.currentMode === 'shortBreak') {
+        window.currentSeconds = window.shortBreakTime * 60;
+      } else if (window.currentMode === 'longBreak') {
+        window.currentSeconds = window.longBreakTime * 60;
+      }
+      
+      // Update initialSeconds to match currentSeconds
+      window.initialSeconds = window.currentSeconds;
+      
+      // Reset the timer display
+      if (typeof window.resetTimer === 'function') {
+        window.resetTimer();
+      } else {
+        // Direct timer update as fallback
+        const timer = document.getElementById('timer');
+        if (timer) {
+          const minutes = Math.floor(window.currentSeconds / 60);
+          const seconds = window.currentSeconds % 60;
+          timer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        // Reset progress bar
+        const progressBar = document.getElementById('progress-bar');
+        if (progressBar) {
+          progressBar.style.width = '0%';
+        }
+      }
+      
+      // Update session dots
+      if (typeof window.updateSessionDots === 'function') {
+        window.updateSessionDots();
+      }
+    }
+  }
+  
+  // Add this new function to directly update the timer display
+  function forceTimerUpdate() {
+    if (isReversePage) {
+      // For reverse timer
+      const newMaxTime = parseInt(localStorage.getItem('reverseMaxTime')) || 60;
+      document.querySelector('.max-time').textContent = `Max Time: ${Math.floor(newMaxTime / 60).toString().padStart(2, '0')}:${(newMaxTime % 60).toString().padStart(2, '0')}:00`;
+      
+      // Update timer if not running and in reverse mode
+      if (!window.isRunning && window.currentMode === 'reverse') {
+        window.currentSeconds = 0;
+        document.getElementById('timer').textContent = '00:00';
+      }
+    } else {
+      // For pomodoro timer
+      const timerDisplay = document.getElementById('timer');
+      if (!timerDisplay) return;
+      
+      // Get the latest settings
+      const pomodoroTime = parseInt(localStorage.getItem('pomodoroTime')) || 25;
+      const shortBreakTime = parseInt(localStorage.getItem('shortBreakTime')) || 5;
+      const longBreakTime = parseInt(localStorage.getItem('longBreakTime')) || 15;
+      
+      // If not running, update the display immediately based on current mode
+      if (!window.isRunning) {
+        let minutes, seconds;
+        
+        if (window.currentMode === 'pomodoro') {
+          minutes = pomodoroTime;
+          seconds = 0;
+          window.currentSeconds = minutes * 60 + seconds;
+          window.initialSeconds = window.currentSeconds;
+        } else if (window.currentMode === 'shortBreak') {
+          minutes = shortBreakTime;
+          seconds = 0;
+          window.currentSeconds = minutes * 60 + seconds;
+          window.initialSeconds = window.currentSeconds;
+        } else if (window.currentMode === 'longBreak') {
+          minutes = longBreakTime;
+          seconds = 0;
+          window.currentSeconds = minutes * 60 + seconds;
+          window.initialSeconds = window.currentSeconds;
+        }
+        
+        // Directly update timer display without relying on other functions
+        timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        // Reset progress bar
+        const progressBar = document.getElementById('progress-bar');
+        if (progressBar) progressBar.style.width = '0%';
+      }
+      
+      // Also update the document title
+      const currentTimeDisplay = timerDisplay.textContent;
+      let modeName = '';
+      
+      switch(window.currentMode) {
+        case 'pomodoro': modeName = 'Pomodoro'; break;
+        case 'shortBreak': modeName = 'Short Break'; break;
+        case 'longBreak': modeName = 'Long Break'; break;
+      }
+      
+      document.title = `${currentTimeDisplay} - ${modeName}`;
+    }
   }
   
   // Function to apply settings to the active timer
@@ -55,41 +180,28 @@
     const newLongBreakTime = parseInt(localStorage.getItem('longBreakTime')) || 15;
     const newSessionsCount = parseInt(localStorage.getItem('sessionsCount')) || 4;
     
-    // Update global variables
+    console.log("Applying new settings:", 
+      {pomodoro: newPomodoroTime, short: newShortBreakTime, long: newLongBreakTime, sessions: newSessionsCount});
+    
+    // Update global variables - these must be updated for any mode
     window.pomodoroTime = newPomodoroTime;
     window.shortBreakTime = newShortBreakTime;
     window.longBreakTime = newLongBreakTime;
     window.maxSessions = newSessionsCount;
     
-    // Update the timer display if it's not running
-    if (window.isRunning !== true) {
+    // Always update the current timer based on active mode
+    if (!window.isRunning) {
       if (window.currentMode === 'pomodoro') {
         window.currentSeconds = newPomodoroTime * 60;
-        window.initialSeconds = window.currentSeconds;
       } else if (window.currentMode === 'shortBreak') {
         window.currentSeconds = newShortBreakTime * 60;
-        window.initialSeconds = window.currentSeconds;
       } else if (window.currentMode === 'longBreak') {
         window.currentSeconds = newLongBreakTime * 60;
-        window.initialSeconds = window.currentSeconds;
       }
-      
-      // Update the timer display
-      if (typeof window.updateTimerDisplay === 'function') {
-        window.updateTimerDisplay();
-      }
-      
-      // Reset progress bar
-      const progressBar = document.getElementById('progress-bar');
-      if (progressBar) {
-        progressBar.style.width = '0%';
-      }
+      window.initialSeconds = window.currentSeconds;
     }
     
-    // Update session dots to reflect new max sessions
-    if (typeof window.updateSessionDots === 'function') {
-      window.updateSessionDots();
-    }
+    // We'll rely on forceTimerReset() to update the display
   }
   
   // Apply Reverse timer settings to the active timer
@@ -170,6 +282,9 @@
     localStorage.setItem('sessionsCount', sessionsCount);
     localStorage.setItem('autoBreak', autoBreak);
     localStorage.setItem('autoPomodoro', autoPomodoro);
+    
+    console.log("Saved settings:", 
+      {pomodoro: pomodoroTime, short: shortBreakTime, long: longBreakTime, sessions: sessionsCount});
   }
   
   // Load Pomodoro settings
@@ -181,13 +296,16 @@
     const autoBreakToggle = document.getElementById('auto-break-toggle');
     const autoPomoToggle = document.getElementById('auto-pomodoro-toggle');
     
+    if (!pomodoroTimeInput) return;
+    
     // Get from localStorage or set defaults
     pomodoroTimeInput.value = localStorage.getItem('pomodoroTime') || 25;
     shortBreakTimeInput.value = localStorage.getItem('shortBreakTime') || 5;
     longBreakTimeInput.value = localStorage.getItem('longBreakTime') || 15;
     sessionsCountInput.value = localStorage.getItem('sessionsCount') || 4;
-    autoBreakToggle.checked = localStorage.getItem('autoBreak') !== 'false';
-    autoPomoToggle.checked = localStorage.getItem('autoPomodoro') !== 'false';
+    
+    if (autoBreakToggle) autoBreakToggle.checked = localStorage.getItem('autoBreak') !== 'false';
+    if (autoPomoToggle) autoPomoToggle.checked = localStorage.getItem('autoPomodoro') !== 'false';
   }
   
   // Save Reverse timer settings
@@ -350,7 +468,14 @@
   // Initialize settings on page load
   document.addEventListener('DOMContentLoaded', () => {
     loadSettings();
-    // Also apply settings immediately on page load to ensure timer starts with correct values
-    applySettingsToTimer();
+    
+    // Apply settings immediately on page load
+    setTimeout(() => {
+      applySettingsToTimer();
+      forceTimerReset();
+    }, 100); // Small delay to ensure all values are initialized
+    
+    console.log("Settings initialized with:", 
+      {pomodoro: window.pomodoroTime, short: window.shortBreakTime, long: window.longBreakTime});
   });
 })();

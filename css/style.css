@@ -358,16 +358,6 @@ header {
   opacity: 0.8;
 }
 
-.info-box .settings-note {
-  color: var(--text-dark);
-  margin-top: 12px;
-  padding: 8px 12px;
-  background-color: rgba(139, 95, 191, 0.1);
-  border-left: 3px solid #8b5fbf;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
 .footer {
   margin-top: 30px;
   text-align: center;
