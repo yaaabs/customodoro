@@ -14,11 +14,9 @@
   <script>
     // Apply saved theme before the page renders to prevent flashing
     (function() {
-      const savedTheme = localStorage.getItem('siteTheme');
-      if (savedTheme) {
-        document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-nature');
-        document.body.classList.add('theme-' + savedTheme);
-      }
+      const savedTheme = localStorage.getItem('siteTheme') || 'light';
+      document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-nature');
+      document.body.classList.add('theme-' + savedTheme);
     })();
   </script>
 </head>
@@ -202,15 +200,14 @@
               <div class="settings-label">Select theme</div>
               <div class="select-wrapper">
                 <select class="theme-selector" id="theme-selector">
-                  <option value="default">Default</option>
+                  <option value="light" selected>Light Mode (Default)</option>
                   <option value="dark">Dark Mode</option>
-                  <option value="light">Light Mode</option>
                   <option value="nature">Nature</option>
                 </select>
               </div>
             </div>
             <div class="settings-note">
-              The default theme provides the classic Reverse Pomodoro experience with purple for the focus mode.
+              The Light Mode provides a clean, bright experience. Switch to Dark Mode for reduced eye strain in low light environments.
             </div>
           </div>
         </div>

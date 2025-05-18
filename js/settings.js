@@ -168,14 +168,12 @@
       case 'dark':
         document.body.classList.add('theme-dark');
         break;
-      case 'light':
-        document.body.classList.add('theme-light');
-        break;
       case 'nature':
         document.body.classList.add('theme-nature');
         break;
+      case 'light':
       default:
-        document.body.classList.add('theme-default');
+        document.body.classList.add('theme-light');
     }
     
     // Store theme preference - using a common key without page prefix for site-wide theme
@@ -197,7 +195,7 @@
     const themeSelector = document.getElementById('theme-selector');
     if (themeSelector) {
       // Use site-wide theme setting
-      const savedTheme = localStorage.getItem('siteTheme') || 'default';
+      const savedTheme = localStorage.getItem('siteTheme') || 'light';
       themeSelector.value = savedTheme;
       
       // Apply the theme immediately
@@ -825,7 +823,7 @@ function testSound(type) {
 
 // Initialize site theme immediately on page load before DOM is fully loaded
 (function initializeSiteTheme() {
-  const savedTheme = localStorage.getItem('siteTheme') || 'default';
+  const savedTheme = localStorage.getItem('siteTheme') || 'light';
   applyTheme(savedTheme);
 })();
 })();
