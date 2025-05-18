@@ -485,6 +485,43 @@ header {
   color: #d95550;
 }
 
+/* Theme: Dark */
+body.theme-dark {
+  background-color: #121212;
+  color: #f1f1f1;
+}
+
+body.theme-dark .info-section,
+body.theme-dark .tasks-section {
+  background-color: #1e1e1e;
+  color: #f1f1f1;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+body.theme-dark .info-box h3,
+body.theme-dark .tasks-title,
+body.theme-dark .task-text {
+  color: #f1f1f1;
+}
+
+body.theme-dark .info-box li {
+  color: #ddd;
+}
+
+body.theme-dark .task-input {
+  background-color: #2a2a2a;
+  color: #f1f1f1;
+  border-color: #444;
+}
+
+body.theme-dark .task-item {
+  border-bottom-color: #333;
+}
+
+body.theme-dark .task-completed .task-text {
+  color: #888;
+}
+
 /* Mobile responsiveness */
 @media (max-width: 768px) {
   .container {

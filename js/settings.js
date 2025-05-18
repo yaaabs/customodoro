@@ -127,11 +127,39 @@
     }
   }
   
+  // Add this function to apply the selected theme
+  function applyTheme(themeName) {
+    const root = document.documentElement;
+    
+    // Remove any previous theme classes from body
+    document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-nature');
+    
+    // Apply selected theme
+    switch(themeName) {
+      case 'dark':
+        document.body.classList.add('theme-dark');
+        break;
+      case 'light':
+        document.body.classList.add('theme-light');
+        break;
+      case 'nature':
+        document.body.classList.add('theme-nature');
+        break;
+      default:
+        document.body.classList.add('theme-default');
+    }
+    
+    // Store theme preference
+    localStorage.setItem('theme', themeName);
+  }
+  
   // Save theme settings
   function saveThemeSettings() {
     const themeSelector = document.getElementById('theme-selector');
     if (themeSelector) {
-      localStorage.setItem('theme', themeSelector.value);
+      const selectedTheme = themeSelector.value;
+      localStorage.setItem('theme', selectedTheme);
+      applyTheme(selectedTheme);
     }
   }
   
@@ -139,7 +167,11 @@
   function loadThemeSettings() {
     const themeSelector = document.getElementById('theme-selector');
     if (themeSelector) {
-      themeSelector.value = localStorage.getItem('theme') || 'default';
+      const savedTheme = localStorage.getItem('theme') || 'dark'; // Default to dark theme
+      themeSelector.value = savedTheme;
+      
+      // Apply the theme immediately
+      applyTheme(savedTheme);
     }
   }
   

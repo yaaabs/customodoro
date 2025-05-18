@@ -194,6 +194,7 @@
   line-height: 1.4;
 }
 
+/* Dark theme form elements */
 .theme-selector {
   width: 100%;
   background-color: #252525;
@@ -208,6 +209,12 @@
 .theme-selector:focus {
   outline: none;
   border-color: #8b5fbf;
+  box-shadow: 0 0 0 2px rgba(139, 95, 191, 0.2);
+}
+
+.theme-selector option {
+  background-color: #252525;
+  color: #fff;
 }
 
 .select-wrapper {
@@ -288,6 +295,7 @@
 .settings-footer {
   padding: 20px 25px;
   border-top: 1px solid #333;
+  background-color: #1a1a1a;
   display: flex;
   justify-content: space-between;
 }
@@ -309,7 +317,7 @@
 }
 
 .save-btn {
-  background-color: #8b5fbf; /* Match reverse-mode color */
+  background-color: #8b5fbf;
   color: white;
   border: none;
   padding: 12px 24px;
@@ -429,6 +437,27 @@ input:checked + .slider-toggle:before {
   border-radius: 4px;
   margin-left: 8px;
   font-weight: 600;
+}
+
+/* Sound test buttons */
+.sound-test-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.sound-test-btn {
+  background-color: #252525;
+  color: #ddd;
+  border: 1px solid #444;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sound-test-btn:hover {
+  background-color: #333;
+  color: #fff;
 }
 
 /* Responsive adjustments */
