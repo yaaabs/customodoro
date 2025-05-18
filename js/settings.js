@@ -31,8 +31,115 @@
     // Save sound settings for both modes
     saveSoundSettings();
     
+    // Apply settings immediately to update the timer
+    applySettingsToTimer();
+    
     closeSettings();
     showToast('Settings saved successfully!');
+  }
+  
+  // Function to apply settings to the active timer
+  function applySettingsToTimer() {
+    if (isReversePage) {
+      applyReverseSettings();
+    } else {
+      applyPomodoroSettings();
+    }
+  }
+  
+  // Apply Pomodoro settings to the active timer
+  function applyPomodoroSettings() {
+    // Get values from localStorage
+    const newPomodoroTime = parseInt(localStorage.getItem('pomodoroTime')) || 25;
+    const newShortBreakTime = parseInt(localStorage.getItem('shortBreakTime')) || 5;
+    const newLongBreakTime = parseInt(localStorage.getItem('longBreakTime')) || 15;
+    const newSessionsCount = parseInt(localStorage.getItem('sessionsCount')) || 4;
+    
+    // Update global variables
+    window.pomodoroTime = newPomodoroTime;
+    window.shortBreakTime = newShortBreakTime;
+    window.longBreakTime = newLongBreakTime;
+    window.maxSessions = newSessionsCount;
+    
+    // Update the timer display if it's not running
+    if (window.isRunning !== true) {
+      if (window.currentMode === 'pomodoro') {
+        window.currentSeconds = newPomodoroTime * 60;
+        window.initialSeconds = window.currentSeconds;
+      } else if (window.currentMode === 'shortBreak') {
+        window.currentSeconds = newShortBreakTime * 60;
+        window.initialSeconds = window.currentSeconds;
+      } else if (window.currentMode === 'longBreak') {
+        window.currentSeconds = newLongBreakTime * 60;
+        window.initialSeconds = window.currentSeconds;
+      }
+      
+      // Update the timer display
+      if (typeof window.updateTimerDisplay === 'function') {
+        window.updateTimerDisplay();
+      }
+      
+      // Reset progress bar
+      const progressBar = document.getElementById('progress-bar');
+      if (progressBar) {
+        progressBar.style.width = '0%';
+      }
+    }
+    
+    // Update session dots to reflect new max sessions
+    if (typeof window.updateSessionDots === 'function') {
+      window.updateSessionDots();
+    }
+  }
+  
+  // Apply Reverse timer settings to the active timer
+  function applyReverseSettings() {
+    // Get max time from localStorage
+    const newMaxTime = parseInt(localStorage.getItem('reverseMaxTime')) || 60;
+    
+    // Update global MAX_TIME variable
+    if (typeof window.MAX_TIME !== 'undefined') {
+      window.MAX_TIME = newMaxTime * 60;
+      
+      // Update max time display
+      const maxTimeElement = document.querySelector('.max-time');
+      if (maxTimeElement) {
+        const hours = Math.floor(newMaxTime / 60);
+        const mins = newMaxTime % 60;
+        maxTimeElement.textContent = `Max Time: ${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:00`;
+      }
+      
+      // If in reverse mode and timer is not running, update the timer
+      if (window.currentMode === 'reverse' && window.isRunning !== true) {
+        window.initialSeconds = window.MAX_TIME;
+        
+        // Update the timer display
+        if (typeof window.updateDisplay === 'function') {
+          window.updateDisplay();
+        }
+      }
+    }
+    
+    // Override the calculateBreakTime function to use our custom settings
+    if (typeof window.calculateBreakTime === 'function') {
+      window.calculateBreakTime = function(workedSeconds) {
+        const minutes = Math.floor(workedSeconds / 60);
+        
+        if (minutes <= 4) return 0;
+        
+        const break1 = parseInt(localStorage.getItem('reverseBreak1')) || 2;
+        const break2 = parseInt(localStorage.getItem('reverseBreak2')) || 5;
+        const break3 = parseInt(localStorage.getItem('reverseBreak3')) || 10;
+        const break4 = parseInt(localStorage.getItem('reverseBreak4')) || 15;
+        const break5 = parseInt(localStorage.getItem('reverseBreak5')) || 30;
+        
+        if (minutes <= 20) return break1;
+        if (minutes <= 30) return break2;
+        if (minutes <= 45) return break3;
+        if (minutes <= 55) return break4;
+        return break5;
+      };
+    }
   }
   
   // Load settings based on the current page
@@ -63,32 +170,6 @@
     localStorage.setItem('sessionsCount', sessionsCount);
     localStorage.setItem('autoBreak', autoBreak);
     localStorage.setItem('autoPomodoro', autoPomodoro);
-    
-    // Update the timer if it exists
-    if (typeof pomodoroTimer !== 'undefined' && typeof pomodoroTimer.updateSettings === 'function') {
-      pomodoroTimer.updateSettings({
-        pomodoroTime: parseInt(pomodoroTime),
-        shortBreakTime: parseInt(shortBreakTime),
-        longBreakTime: parseInt(longBreakTime),
-        sessionsCount: parseInt(sessionsCount),
-        autoBreak: autoBreak,
-        autoPomodoro: autoPomodoro
-      });
-    } else {
-      // Direct update for compatibility with existing code
-      if (typeof pomodoroTime !== 'undefined') {
-        window.pomodoroTime = parseInt(pomodoroTime);
-      }
-      if (typeof shortBreakTime !== 'undefined') {
-        window.shortBreakTime = parseInt(shortBreakTime);
-      }
-      if (typeof longBreakTime !== 'undefined') {
-        window.longBreakTime = parseInt(longBreakTime);
-      }
-      if (typeof maxSessions !== 'undefined') {
-        window.maxSessions = parseInt(sessionsCount);
-      }
-    }
   }
   
   // Load Pomodoro settings
@@ -127,19 +208,6 @@
     localStorage.setItem('reverseBreak4', break4Time);
     localStorage.setItem('reverseBreak5', break5Time);
     localStorage.setItem('reverseAutoBreak', autoBreak);
-    
-    // Update max time display
-    const maxTimeElement = document.querySelector('.max-time');
-    if (maxTimeElement) {
-      const hours = Math.floor(maxTime / 60);
-      const mins = maxTime % 60;
-      maxTimeElement.textContent = `Max Time: ${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:00`;
-    }
-    
-    // Update MAX_TIME constant if it exists
-    if (typeof MAX_TIME !== 'undefined') {
-      window.MAX_TIME = parseInt(maxTime) * 60;
-    }
   }
   
   // Load Reverse timer settings
@@ -173,15 +241,15 @@
     localStorage.setItem('alarm', alarmToggle.checked);
     
     // Update sound volumes
-    if (typeof sounds !== 'undefined') {
+    if (typeof window.sounds !== 'undefined') {
       const volume = volumeSlider.value / 100;
       const soundsEnabled = soundEffectsToggle.checked;
       const alarmEnabled = alarmToggle.checked;
       
-      if (sounds.click) sounds.click.volume = soundsEnabled ? volume * 0.5 : 0;
-      if (sounds.start) sounds.start.volume = soundsEnabled ? volume * 0.6 : 0;
-      if (sounds.pause) sounds.pause.volume = soundsEnabled ? volume * 0.5 : 0;
-      if (sounds.complete) sounds.complete.volume = alarmEnabled ? volume : 0;
+      if (window.sounds.click) window.sounds.click.volume = soundsEnabled ? volume * 0.5 : 0;
+      if (window.sounds.start) window.sounds.start.volume = soundsEnabled ? volume * 0.6 : 0;
+      if (window.sounds.pause) window.sounds.pause.volume = soundsEnabled ? volume * 0.5 : 0;
+      if (window.sounds.complete) window.sounds.complete.volume = alarmEnabled ? volume : 0;
     }
   }
   
@@ -280,5 +348,9 @@
   setupTimeControls();
   
   // Initialize settings on page load
-  document.addEventListener('DOMContentLoaded', loadSettings);
+  document.addEventListener('DOMContentLoaded', () => {
+    loadSettings();
+    // Also apply settings immediately on page load to ensure timer starts with correct values
+    applySettingsToTimer();
+  });
 })();
