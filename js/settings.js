@@ -591,7 +591,7 @@ function testSound(type) {
 
 // Add these to your settings modal in both HTML files (optional)
 // Add these sound test buttons to the sound settings section:
-/*
+ /*
 <div class="settings-row">
   <div class="settings-label">Test Sounds</div>
   <div class="sound-test-buttons">
@@ -685,6 +685,12 @@ document.addEventListener('DOMContentLoaded', function() {
   
   if (closeBtn) {
     closeBtn.addEventListener('click', closeSettings);
+  }
+  
+  // Add event listener for the new close button in footer
+  const closeSettingsBtn = document.getElementById('close-settings-btn');
+  if (closeSettingsBtn) {
+    closeSettingsBtn.addEventListener('click', closeSettings);
   }
   
   if (saveBtn) {
