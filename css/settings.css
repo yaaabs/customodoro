@@ -116,6 +116,7 @@
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid #333;
+  background-color: #1a1a1a;
 }
 
 .settings-title {
@@ -145,11 +146,14 @@
   padding: 25px;
   overflow-y: auto;
   flex: 1;
+  background-color: #1a1a1a;  /* Explicitly set background color */
+  color: #ddd;
 }
 
 .settings-section {
   margin-bottom: 30px;
   display: none;
+  background-color: #1a1a1a;  /* Explicitly set background color */
 }
 
 .settings-section.active {
