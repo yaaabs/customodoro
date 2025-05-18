@@ -30,6 +30,7 @@ Work for up to **1 hour**, earning a single, accumulated break based on how long
 This mode is perfect for those who want more flexibility and control over their workflow. You set the pace, and the breaks adjust accordingly. 💥  
 
 💡 Pro tip: You can customize all timer settings, including max work time and break durations, by clicking the settings icon in the bottom right corner!
+
 ---
 
 ## **🎯 How to Use**  
