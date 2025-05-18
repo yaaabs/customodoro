@@ -21,13 +21,15 @@ Work for up to **1 hour**, earning a single, accumulated break based on how long
 
 | **Work Duration** | **Break Time** |  
 |--------------------|----------------|  
-| 0-15 mins          | 5 min break    |  
-| 16-30 mins         | 10 min break   |  
-| 31-45 mins         | 15 min break   |  
-| 46-60 mins         | 30 min break   |  
+| 5-20 mins          | 2 min break    |  
+| 21-30 mins         | 5 min break   |  
+| 31-45 mins         | 10 min break   |  
+| 46-55 mins         | 15 min break   |  
+| 56-60 mins         | 30 min break   |  
 
 This mode is perfect for those who want more flexibility and control over their workflow. You set the pace, and the breaks adjust accordingly. 💥  
 
+💡 Pro tip: You can customize all timer settings, including max work time and break durations, by clicking the settings icon in the bottom right corner!
 ---
 
 ## **🎯 How to Use**  
