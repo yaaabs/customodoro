@@ -601,8 +601,8 @@ function testSound(type) {
 </div>
 */
 
-// Event listeners for sound test buttons (if added)
-document.addEventListener('DOMContentLoaded', function() {
+  // Event listeners for sound test buttons (if added)
+  document.addEventListener('DOMContentLoaded', function() {
     const clickTestBtn = document.getElementById('test-click-sound');
     const alarmTestBtn = document.getElementById('test-alarm-sound');
     
@@ -724,4 +724,72 @@ document.addEventListener('DOMContentLoaded', function() {
       forceTimerReset();
     }, 100); // Small delay to ensure all values are initialized
   });
+  
+  // Add event listener for volume slider to update percentage display
+  document.addEventListener('DOMContentLoaded', function() {
+    const volumeSlider = document.getElementById('volume-slider');
+    const volumePercentage = document.getElementById('volume-percentage');
+    
+    if (volumeSlider && volumePercentage) {
+      // Update percentage display when slider value changes
+      volumeSlider.addEventListener('input', function() {
+        volumePercentage.textContent = volumeSlider.value + '%';
+      });
+      
+      // Initial setup of percentage display
+      volumeSlider.addEventListener('DOMContentLoaded', function() {
+        const prefix = isReversePage ? 'reverse_' : 'classic_';
+        const savedVolume = localStorage.getItem(prefix + 'volume') || 60;
+        volumePercentage.textContent = savedVolume + '%';
+      });
+      
+      // Set initial value on load
+      const prefix = isReversePage ? 'reverse_' : 'classic_';
+      const savedVolume = localStorage.getItem(prefix + 'volume') || 60;
+      volumePercentage.textContent = savedVolume + '%';
+    }
+  });
+  
+  // Update the loadSoundSettings function to also update the percentage display
+  function loadSoundSettings() {
+    const volumeSlider = document.getElementById('volume-slider');
+    const soundEffectsToggle = document.getElementById('sound-effects-toggle');
+    const alarmToggle = document.getElementById('alarm-toggle');
+    
+    if (!volumeSlider || !soundEffectsToggle || !alarmToggle) {
+        return;
+    }
+    
+    // Use page-specific prefix for sound settings
+    const prefix = isReversePage ? 'reverse_' : 'classic_';
+    
+    // Get from localStorage or set defaults
+    volumeSlider.value = localStorage.getItem(prefix + 'volume') || 60;
+    
+    // Explicitly convert to boolean to handle 'false' string correctly
+    const soundEffectsEnabled = localStorage.getItem(prefix + 'soundEffects') !== 'false';
+    const alarmEnabled = localStorage.getItem(prefix + 'alarm') !== 'false';
+    
+    soundEffectsToggle.checked = soundEffectsEnabled;
+    alarmToggle.checked = alarmEnabled;
+    
+    console.log(`Sound settings loaded for ${prefix}:`, {
+        volume: volumeSlider.value,
+        soundEffects: soundEffectsEnabled,
+        alarm: alarmEnabled
+    });
+    
+    // Apply settings immediately after loading
+    if (typeof window.updateSoundVolumes === 'function') {
+        window.updateSoundVolumes();
+    } else {
+        updateSoundsDirectly();
+    }
+    
+    // Also update percentage display if it exists
+    const volumePercentage = document.getElementById('volume-percentage');
+    if (volumePercentage && volumeSlider) {
+        volumePercentage.textContent = volumeSlider.value + '%';
+    }
+}
 })();
