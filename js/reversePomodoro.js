@@ -8,9 +8,15 @@ const sounds = {
 
 // Initialize sound settings from localStorage
 function initializeSoundSettings() {
-    const volume = localStorage.getItem('volume') ? parseInt(localStorage.getItem('volume')) / 100 : 0.6;
-    const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
-    const alarmEnabled = localStorage.getItem('alarm') !== 'false';
+    // Use page-specific prefix for sound settings
+    const prefix = 'reverse_';
+    
+    const volume = localStorage.getItem(prefix + 'volume') ? 
+                  parseInt(localStorage.getItem(prefix + 'volume')) / 100 : 0.6;
+    
+    // Explicitly check for 'false' string
+    const soundEffectsEnabled = localStorage.getItem(prefix + 'soundEffects') !== 'false';
+    const alarmEnabled = localStorage.getItem(prefix + 'alarm') !== 'false';
     
     // Set initial volumes
     sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
@@ -18,7 +24,7 @@ function initializeSoundSettings() {
     sounds.pause.volume = soundEffectsEnabled ? volume * 0.5 : 0;
     sounds.complete.volume = alarmEnabled ? volume : 0;
     
-    console.log("Sound settings initialized:", { 
+    console.log(`Sound settings initialized for Reverse Timer:`, { 
         volume: volume, 
         soundEffectsEnabled: soundEffectsEnabled, 
         alarmEnabled: alarmEnabled 
@@ -33,16 +39,19 @@ function playSound(soundName) {
     const sound = sounds[soundName];
     if (!sound) return;
     
+    // Use page-specific prefix for sound settings
+    const prefix = 'reverse_';
+    
     // Check if the sound should be played based on settings
     if (soundName === 'complete') {
         // For alarm sound
-        if (localStorage.getItem('alarm') === 'false') {
+        if (localStorage.getItem(prefix + 'alarm') === 'false') {
             console.log('Alarm sounds disabled in settings');
             return;
         }
     } else {
         // For all other UI sounds
-        if (localStorage.getItem('soundEffects') === 'false') {
+        if (localStorage.getItem(prefix + 'soundEffects') === 'false') {
             console.log('Sound effects disabled in settings');
             return;
         }
@@ -381,16 +390,22 @@ window.playSound = playSound;
 
 // Add this function to update sound volumes based on settings
 function updateSoundVolumes() {
-    const volume = localStorage.getItem('volume') ? parseInt(localStorage.getItem('volume')) / 100 : 0.6;
-    const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
-    const alarmEnabled = localStorage.getItem('alarm') !== 'false';
+    // Use page-specific prefix for sound settings
+    const prefix = 'reverse_';
+    
+    const volume = localStorage.getItem(prefix + 'volume') ? 
+                  parseInt(localStorage.getItem(prefix + 'volume')) / 100 : 0.6;
+    
+    // Explicitly check for 'false' string
+    const soundEffectsEnabled = localStorage.getItem(prefix + 'soundEffects') !== 'false';
+    const alarmEnabled = localStorage.getItem(prefix + 'alarm') !== 'false';
     
     sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
     sounds.start.volume = soundEffectsEnabled ? volume * 0.6 : 0;
     sounds.pause.volume = soundEffectsEnabled ? volume * 0.5 : 0;
     sounds.complete.volume = alarmEnabled ? volume : 0;
     
-    console.log("Sound volumes updated:", { 
+    console.log("Reverse Timer: Sound volumes updated:", { 
         clickVolume: sounds.click.volume,
         startVolume: sounds.start.volume,
         pauseVolume: sounds.pause.volume,

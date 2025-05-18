@@ -464,39 +464,78 @@
         return;
     }
     
-    localStorage.setItem('volume', volumeSlider.value);
-    localStorage.setItem('soundEffects', soundEffectsToggle.checked);
-    localStorage.setItem('alarm', alarmToggle.checked);
+    // Add page-specific prefix to sound settings
+    const prefix = isReversePage ? 'reverse_' : 'classic_';
     
-    console.log("Sound settings saved:", {
+    localStorage.setItem(prefix + 'volume', volumeSlider.value);
+    localStorage.setItem(prefix + 'soundEffects', soundEffectsToggle.checked);
+    localStorage.setItem(prefix + 'alarm', alarmToggle.checked);
+    
+    console.log(`Sound settings saved for ${prefix}:`, {
         volume: volumeSlider.value,
         soundEffects: soundEffectsToggle.checked,
         alarm: alarmToggle.checked
     });
     
-    // Update sound volumes immediately if the updateSoundVolumes function exists
+    // Update sound volumes immediately 
     if (typeof window.updateSoundVolumes === 'function') {
         window.updateSoundVolumes();
     } else {
-        // Fallback if the function doesn't exist
         updateSoundsDirectly();
     }
 }
 
-// Fallback function for updating sounds
+// Load sound settings
+function loadSoundSettings() {
+    const volumeSlider = document.getElementById('volume-slider');
+    const soundEffectsToggle = document.getElementById('sound-effects-toggle');
+    const alarmToggle = document.getElementById('alarm-toggle');
+    
+    if (!volumeSlider || !soundEffectsToggle || !alarmToggle) {
+        return;
+    }
+    
+    // Use page-specific prefix for sound settings
+    const prefix = isReversePage ? 'reverse_' : 'classic_';
+    
+    // Get from localStorage or set defaults
+    volumeSlider.value = localStorage.getItem(prefix + 'volume') || 60;
+    
+    // Explicitly convert to boolean to handle 'false' string correctly
+    const soundEffectsEnabled = localStorage.getItem(prefix + 'soundEffects') !== 'false';
+    const alarmEnabled = localStorage.getItem(prefix + 'alarm') !== 'false';
+    
+    soundEffectsToggle.checked = soundEffectsEnabled;
+    alarmToggle.checked = alarmEnabled;
+    
+    console.log(`Sound settings loaded for ${prefix}:`, {
+        volume: volumeSlider.value,
+        soundEffects: soundEffectsEnabled,
+        alarm: alarmEnabled
+    });
+    
+    // Apply settings immediately after loading
+    if (typeof window.updateSoundVolumes === 'function') {
+        window.updateSoundVolumes();
+    } else {
+        updateSoundsDirectly();
+    }
+}
+
+// Update sounds directly
 function updateSoundsDirectly() {
-    // Only run if sounds object exists in the window context
     if (typeof window.sounds !== 'undefined') {
-        const volume = parseInt(localStorage.getItem('volume') || 60) / 100;
-        const soundsEnabled = localStorage.getItem('soundEffects') !== 'false';
-        const alarmEnabled = localStorage.getItem('alarm') !== 'false';
+        const prefix = isReversePage ? 'reverse_' : 'classic_';
+        const volume = parseInt(localStorage.getItem(prefix + 'volume') || 60) / 100;
+        const soundsEnabled = localStorage.getItem(prefix + 'soundEffects') !== 'false';
+        const alarmEnabled = localStorage.getItem(prefix + 'alarm') !== 'false';
         
         if (window.sounds.click) window.sounds.click.volume = soundsEnabled ? volume * 0.5 : 0;
         if (window.sounds.start) window.sounds.start.volume = soundsEnabled ? volume * 0.6 : 0;
         if (window.sounds.pause) window.sounds.pause.volume = soundsEnabled ? volume * 0.5 : 0;
         if (window.sounds.complete) window.sounds.complete.volume = alarmEnabled ? volume : 0;
         
-        console.log("Sounds updated directly:", {
+        console.log(`Sounds updated directly for ${prefix}:`, {
             clickVolume: window.sounds.click ? window.sounds.click.volume : "N/A",
             startVolume: window.sounds.start ? window.sounds.start.volume : "N/A",
             pauseVolume: window.sounds.pause ? window.sounds.pause.volume : "N/A",
