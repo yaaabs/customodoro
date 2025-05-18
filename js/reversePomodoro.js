@@ -388,24 +388,29 @@ document.querySelectorAll('.time-btn, .secondary-btn, .tab').forEach(button => {
 // Make the playSound function available globally
 window.playSound = playSound;
 
-// Add this function to update sound volumes based on settings
+// Update sound volumes based on settings
 function updateSoundVolumes() {
     // Use page-specific prefix for sound settings
     const prefix = 'reverse_';
     
+    // Use the default value (60) if not found in localStorage
     const volume = localStorage.getItem(prefix + 'volume') ? 
                   parseInt(localStorage.getItem(prefix + 'volume')) / 100 : 0.6;
     
-    // Explicitly check for 'false' string
+    // Explicitly check for 'false' string to handle resets properly
     const soundEffectsEnabled = localStorage.getItem(prefix + 'soundEffects') !== 'false';
     const alarmEnabled = localStorage.getItem(prefix + 'alarm') !== 'false';
     
+    // Set volumes based on settings
     sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
     sounds.start.volume = soundEffectsEnabled ? volume * 0.6 : 0;
     sounds.pause.volume = soundEffectsEnabled ? volume * 0.5 : 0;
     sounds.complete.volume = alarmEnabled ? volume : 0;
     
     console.log("Reverse Timer: Sound volumes updated:", { 
+        volume: volume,
+        soundEffectsEnabled: soundEffectsEnabled,
+        alarmEnabled: alarmEnabled,
         clickVolume: sounds.click.volume,
         startVolume: sounds.start.volume,
         pauseVolume: sounds.pause.volume,

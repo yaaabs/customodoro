@@ -108,10 +108,11 @@
         localStorage.setItem('reverseAutoBreak', 'true');
       }
       
-      // Reset sound settings
-      localStorage.setItem('volume', '60');
-      localStorage.setItem('soundEffects', 'true');
-      localStorage.setItem('alarm', 'true');
+      // Reset sound settings for both pages
+      const prefix = isReversePage ? 'reverse_' : 'classic_';
+      localStorage.setItem(prefix + 'volume', '60');
+      localStorage.setItem(prefix + 'soundEffects', 'true');
+      localStorage.setItem(prefix + 'alarm', 'true');
       
       // Reset theme
       localStorage.setItem('theme', 'default');
@@ -119,9 +120,39 @@
       // Reload settings into form
       loadSettings();
       
-      // Apply defaults
+      // Apply theme immediately
+      applyTheme('default');
+      
+      // Update theme selector
+      const themeSelector = document.getElementById('theme-selector');
+      if (themeSelector) {
+        themeSelector.value = 'default';
+      }
+      
+      // Update sound settings visually
+      const volumeSlider = document.getElementById('volume-slider');
+      const volumePercentage = document.getElementById('volume-percentage');
+      const soundEffectsToggle = document.getElementById('sound-effects-toggle');
+      const alarmToggle = document.getElementById('alarm-toggle');
+      
+      if (volumeSlider) volumeSlider.value = 60;
+      if (volumePercentage) volumePercentage.textContent = '60%';
+      if (soundEffectsToggle) soundEffectsToggle.checked = true;
+      if (alarmToggle) alarmToggle.checked = true;
+      
+      // Update auto-start settings visually
+      const autoBreakToggle = document.getElementById('auto-break-toggle');
+      const autoPomoToggle = document.getElementById('auto-pomodoro-toggle');
+      
+      if (autoBreakToggle) autoBreakToggle.checked = true;
+      if (autoPomoToggle && !isReversePage) autoPomoToggle.checked = true;
+      
+      // Apply defaults to the timer
       applySettingsToTimer();
       forceTimerReset();
+      
+      // Update sound volumes
+      updateSoundsDirectly();
       
       showToast('Settings reset to defaults!');
     }
