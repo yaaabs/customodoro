@@ -6,11 +6,63 @@ const sounds = {
     complete: new Audio('audio/alarm.mp3')
 };
 
-// Set custom volumes
-sounds.click.volume = 0.5;
-sounds.start.volume = 0.6;
-sounds.pause.volume = 0.5;
-sounds.complete.volume = 1.0;
+// Initialize sound settings from localStorage
+function initializeSoundSettings() {
+    const volume = localStorage.getItem('volume') ? parseInt(localStorage.getItem('volume')) / 100 : 0.6;
+    const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
+    const alarmEnabled = localStorage.getItem('alarm') !== 'false';
+    
+    // Set initial volumes
+    sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
+    sounds.start.volume = soundEffectsEnabled ? volume * 0.6 : 0;
+    sounds.pause.volume = soundEffectsEnabled ? volume * 0.5 : 0;
+    sounds.complete.volume = alarmEnabled ? volume : 0;
+    
+    console.log("Sound settings initialized:", { 
+        volume: volume, 
+        soundEffectsEnabled: soundEffectsEnabled, 
+        alarmEnabled: alarmEnabled 
+    });
+}
+
+// Call this function on startup
+initializeSoundSettings();
+
+// Play a sound with error handling and respect settings
+function playSound(soundName) {
+    const sound = sounds[soundName];
+    if (!sound) return;
+    
+    // Check if the sound should be played based on settings
+    if (soundName === 'complete') {
+        // For alarm sound
+        if (localStorage.getItem('alarm') === 'false') {
+            console.log('Alarm sounds disabled in settings');
+            return;
+        }
+    } else {
+        // For all other UI sounds
+        if (localStorage.getItem('soundEffects') === 'false') {
+            console.log('Sound effects disabled in settings');
+            return;
+        }
+    }
+    
+    try {
+        // For click sounds that might overlap, clone the audio
+        if (soundName === 'click') {
+            const clone = sound.cloneNode();
+            clone.volume = sound.volume;
+            clone.play().catch(err => console.log('Audio playback disabled'));
+        } else {
+            // For other sounds, reset and play
+            sound.currentTime = 0;
+            sound.play().catch(err => console.log('Audio playback disabled'));
+        }
+    } catch (error) {
+        console.error('Error playing sound:', error);
+    }
+}
 
 // DOM Elements
 const timerElement = document.getElementById('timer');
@@ -102,7 +154,7 @@ function toggleTimer() {
             return;
         }
         
-        sounds.start.play().catch(err => console.log('Audio disabled'));
+        playSound('start');
         showToast(currentMode === 'break' ? "Enjoy your break! 😌" : "Time to focus! 💪");
         
         isRunning = true;
@@ -127,8 +179,7 @@ function toggleTimer() {
             }
         }, 1000);
     } else {
-        sounds.pause.currentTime = 0;
-        sounds.pause.play().catch(err => console.log('Audio disabled'));
+        playSound('pause');
         
         clearInterval(timerInterval);
         isRunning = false;
@@ -155,8 +206,8 @@ function completeSession(playSound = true) {
     
     // Only play completion sound if the timer reached max time or playSound is true
     if (currentSeconds >= MAX_TIME || playSound) {
-        sounds.complete.currentTime = 0;
-        sounds.complete.play().catch(err => console.log('Audio disabled'));
+        // Replace the direct play with our function
+        window.playSound('complete');
     }
     
     // Calculate earned break
@@ -321,35 +372,34 @@ taskInput.addEventListener('input', () => {
 // Add click sounds to buttons
 document.querySelectorAll('.time-btn, .secondary-btn, .tab').forEach(button => {
     button.addEventListener('click', () => {
-        const clone = sounds.click.cloneNode();
-        clone.volume = sounds.click.volume;
-        clone.play().catch(err => console.log('Audio disabled'));
+        playSound('click');
     });
 });
 
-// Add link handler for mode switching
-document.querySelector('.switch-btn').addEventListener('click', (e) => {
-    const hasTasks = taskList.children.length > 0;
-    if (hasTasks) {
-        const confirmed = confirm('Switching modes will delete all your tasks. Do you want to continue?');
-        if (!confirmed) {
-            e.preventDefault();
-        }
-    }
-});
+// Make the playSound function available globally
+window.playSound = playSound;
 
-// Handle page leave/refresh
-window.addEventListener('beforeunload', (e) => {
-    if (isRunning || hasUnsavedTasks || hasUnfinishedTasks) {
-        e.preventDefault();
-        let message = '';
-        if (isRunning) message = 'Timer is still running.';
-        if (hasUnsavedTasks) message = 'You have unsaved tasks.';
-        if (hasUnfinishedTasks) message = 'You have unfinished tasks.';
-        e.returnValue = `${message} Are you sure you want to leave?`;
-        return e.returnValue;
-    }
-});
+// Add this function to update sound volumes based on settings
+function updateSoundVolumes() {
+    const volume = localStorage.getItem('volume') ? parseInt(localStorage.getItem('volume')) / 100 : 0.6;
+    const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
+    const alarmEnabled = localStorage.getItem('alarm') !== 'false';
+    
+    sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
+    sounds.start.volume = soundEffectsEnabled ? volume * 0.6 : 0;
+    sounds.pause.volume = soundEffectsEnabled ? volume * 0.5 : 0;
+    sounds.complete.volume = alarmEnabled ? volume : 0;
+    
+    console.log("Sound volumes updated:", { 
+        clickVolume: sounds.click.volume,
+        startVolume: sounds.start.volume,
+        pauseVolume: sounds.pause.volume,
+        completeVolume: sounds.complete.volume
+    });
+}
+
+// Expose the function for settings.js
+window.updateSoundVolumes = updateSoundVolumes;
 
 // Initialize display
 updateDisplay();

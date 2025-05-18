@@ -5,6 +5,10 @@
   const settingsModal = document.getElementById('settings-modal');
   const closeBtn = document.getElementById('settings-close');
   const saveBtn = document.getElementById('save-settings-btn');
+  const resetBtn = document.getElementById('reset-settings-btn');
+  
+  // Navigation Elements
+  const navItems = document.querySelectorAll('.settings-nav-item');
   
   // Check if we're on the reverse timer page
   const isReversePage = document.body.classList.contains('reverse-mode');
@@ -13,11 +17,49 @@
   function openSettings() {
     settingsModal.classList.add('show');
     loadSettings();
+    
+    // Ensure the first tab is active
+    if (navItems.length > 0) {
+      activateTab(navItems[0]);
+    }
   }
   
   // Close settings modal
   function closeSettings() {
     settingsModal.classList.remove('show');
+  }
+  
+  // Handle tab navigation
+  function setupTabNavigation() {
+    navItems.forEach(item => {
+      item.addEventListener('click', () => {
+        activateTab(item);
+      });
+    });
+  }
+  
+  // Activate tab and show corresponding section
+  function activateTab(tabItem) {
+    // Remove active class from all navigation items
+    navItems.forEach(item => {
+      item.classList.remove('active');
+    });
+    
+    // Add active class to clicked item
+    tabItem.classList.add('active');
+    
+    // Hide all sections
+    const sections = document.querySelectorAll('.settings-section');
+    sections.forEach(section => {
+      section.classList.remove('active');
+    });
+    
+    // Show the corresponding section
+    const sectionId = tabItem.getAttribute('data-section');
+    const activeSection = document.getElementById(sectionId + '-section');
+    if (activeSection) {
+      activeSection.classList.add('active');
+    }
   }
   
   // Save settings and apply them immediately
@@ -31,6 +73,9 @@
     // Save sound settings for both modes
     saveSoundSettings();
     
+    // Save theme settings
+    saveThemeSettings();
+    
     // Apply settings immediately to update the timer
     applySettingsToTimer();
     
@@ -39,6 +84,63 @@
     
     closeSettings();
     showToast('Settings saved successfully!');
+  }
+  
+  // Reset all settings to defaults
+  function resetSettings() {
+    if (confirm('Are you sure you want to reset all settings to default values?')) {
+      // Reset Pomodoro settings
+      if (!isReversePage) {
+        localStorage.setItem('pomodoroTime', '25');
+        localStorage.setItem('shortBreakTime', '5');
+        localStorage.setItem('longBreakTime', '15');
+        localStorage.setItem('sessionsCount', '4');
+        localStorage.setItem('autoBreak', 'true');
+        localStorage.setItem('autoPomodoro', 'true');
+      } else {
+        // Reset Reverse Timer settings
+        localStorage.setItem('reverseMaxTime', '60');
+        localStorage.setItem('reverseBreak1', '2');
+        localStorage.setItem('reverseBreak2', '5');
+        localStorage.setItem('reverseBreak3', '10');
+        localStorage.setItem('reverseBreak4', '15');
+        localStorage.setItem('reverseBreak5', '30');
+        localStorage.setItem('reverseAutoBreak', 'true');
+      }
+      
+      // Reset sound settings
+      localStorage.setItem('volume', '60');
+      localStorage.setItem('soundEffects', 'true');
+      localStorage.setItem('alarm', 'true');
+      
+      // Reset theme
+      localStorage.setItem('theme', 'default');
+      
+      // Reload settings into form
+      loadSettings();
+      
+      // Apply defaults
+      applySettingsToTimer();
+      forceTimerReset();
+      
+      showToast('Settings reset to defaults!');
+    }
+  }
+  
+  // Save theme settings
+  function saveThemeSettings() {
+    const themeSelector = document.getElementById('theme-selector');
+    if (themeSelector) {
+      localStorage.setItem('theme', themeSelector.value);
+    }
+  }
+  
+  // Load theme settings
+  function loadThemeSettings() {
+    const themeSelector = document.getElementById('theme-selector');
+    if (themeSelector) {
+      themeSelector.value = localStorage.getItem('theme') || 'default';
+    }
   }
   
   // Force timer reset to update with new settings
@@ -264,6 +366,9 @@
     
     // Load sound settings for both modes
     loadSoundSettings();
+    
+    // Load theme settings
+    loadThemeSettings();
   }
   
   // Save Pomodoro settings
@@ -354,34 +459,94 @@
     const soundEffectsToggle = document.getElementById('sound-effects-toggle');
     const alarmToggle = document.getElementById('alarm-toggle');
     
+    if (!volumeSlider || !soundEffectsToggle || !alarmToggle) {
+        console.error("Sound setting elements not found");
+        return;
+    }
+    
     localStorage.setItem('volume', volumeSlider.value);
     localStorage.setItem('soundEffects', soundEffectsToggle.checked);
     localStorage.setItem('alarm', alarmToggle.checked);
     
-    // Update sound volumes
-    if (typeof window.sounds !== 'undefined') {
-      const volume = volumeSlider.value / 100;
-      const soundsEnabled = soundEffectsToggle.checked;
-      const alarmEnabled = alarmToggle.checked;
-      
-      if (window.sounds.click) window.sounds.click.volume = soundsEnabled ? volume * 0.5 : 0;
-      if (window.sounds.start) window.sounds.start.volume = soundsEnabled ? volume * 0.6 : 0;
-      if (window.sounds.pause) window.sounds.pause.volume = soundsEnabled ? volume * 0.5 : 0;
-      if (window.sounds.complete) window.sounds.complete.volume = alarmEnabled ? volume : 0;
-    }
-  }
-  
-  // Load sound settings
-  function loadSoundSettings() {
-    const volumeSlider = document.getElementById('volume-slider');
-    const soundEffectsToggle = document.getElementById('sound-effects-toggle');
-    const alarmToggle = document.getElementById('alarm-toggle');
+    console.log("Sound settings saved:", {
+        volume: volumeSlider.value,
+        soundEffects: soundEffectsToggle.checked,
+        alarm: alarmToggle.checked
+    });
     
-    // Get from localStorage or set defaults
-    volumeSlider.value = localStorage.getItem('volume') || 60;
-    soundEffectsToggle.checked = localStorage.getItem('soundEffects') !== 'false';
-    alarmToggle.checked = localStorage.getItem('alarm') !== 'false';
-  }
+    // Update sound volumes immediately if the updateSoundVolumes function exists
+    if (typeof window.updateSoundVolumes === 'function') {
+        window.updateSoundVolumes();
+    } else {
+        // Fallback if the function doesn't exist
+        updateSoundsDirectly();
+    }
+}
+
+// Fallback function for updating sounds
+function updateSoundsDirectly() {
+    // Only run if sounds object exists in the window context
+    if (typeof window.sounds !== 'undefined') {
+        const volume = parseInt(localStorage.getItem('volume') || 60) / 100;
+        const soundsEnabled = localStorage.getItem('soundEffects') !== 'false';
+        const alarmEnabled = localStorage.getItem('alarm') !== 'false';
+        
+        if (window.sounds.click) window.sounds.click.volume = soundsEnabled ? volume * 0.5 : 0;
+        if (window.sounds.start) window.sounds.start.volume = soundsEnabled ? volume * 0.6 : 0;
+        if (window.sounds.pause) window.sounds.pause.volume = soundsEnabled ? volume * 0.5 : 0;
+        if (window.sounds.complete) window.sounds.complete.volume = alarmEnabled ? volume : 0;
+        
+        console.log("Sounds updated directly:", {
+            clickVolume: window.sounds.click ? window.sounds.click.volume : "N/A",
+            startVolume: window.sounds.start ? window.sounds.start.volume : "N/A",
+            pauseVolume: window.sounds.pause ? window.sounds.pause.volume : "N/A",
+            completeVolume: window.sounds.complete ? window.sounds.complete.volume : "N/A"
+        });
+    }
+}
+
+// Test sound function
+function testSound(type) {
+    if (typeof window.playSound === 'function') {
+        window.playSound(type);
+    } else if (typeof window.sounds !== 'undefined') {
+        const sound = window.sounds[type];
+        if (sound) {
+            sound.currentTime = 0;
+            sound.play().catch(err => console.log('Audio playback disabled'));
+        }
+    }
+}
+
+// Add these to your settings modal in both HTML files (optional)
+// Add these sound test buttons to the sound settings section:
+/*
+<div class="settings-row">
+  <div class="settings-label">Test Sounds</div>
+  <div class="sound-test-buttons">
+    <button class="sound-test-btn" id="test-click-sound">UI Sound</button>
+    <button class="sound-test-btn" id="test-alarm-sound">Alarm</button>
+  </div>
+</div>
+*/
+
+// Event listeners for sound test buttons (if added)
+document.addEventListener('DOMContentLoaded', function() {
+    const clickTestBtn = document.getElementById('test-click-sound');
+    const alarmTestBtn = document.getElementById('test-alarm-sound');
+    
+    if (clickTestBtn) {
+        clickTestBtn.addEventListener('click', function() {
+            testSound('click');
+        });
+    }
+    
+    if (alarmTestBtn) {
+        alarmTestBtn.addEventListener('click', function() {
+            testSound('complete');
+        });
+    }
+});
   
   // Handle increment/decrement buttons
   function setupTimeControls() {
@@ -455,12 +620,19 @@
     saveBtn.addEventListener('click', saveSettings);
   }
   
+  if (resetBtn) {
+    resetBtn.addEventListener('click', resetSettings);
+  }
+  
   // Close when clicking outside the modal
   settingsModal.addEventListener('click', (e) => {
     if (e.target === settingsModal) {
       closeSettings();
     }
   });
+  
+  // Setup tab navigation
+  setupTabNavigation();
   
   // Setup time controls
   setupTimeControls();
@@ -474,8 +646,5 @@
       applySettingsToTimer();
       forceTimerReset();
     }, 100); // Small delay to ensure all values are initialized
-    
-    console.log("Settings initialized with:", 
-      {pomodoro: window.pomodoroTime, short: window.shortBreakTime, long: window.longBreakTime});
   });
 })();

@@ -46,21 +46,85 @@ sounds.start.volume = 0.6;  // Medium volume start
 sounds.pause.volume = 0.5;  // Quieter pause
 sounds.complete.volume = 1.0;  // Full volume for alarm
 
-// Play sound with error handling
-function playSound(soundName) {
-  const sound = sounds[soundName];
-  if (sound) {
-    // Clone the audio for overlapping sounds
-    if (soundName === 'click') {
-      const clone = sound.cloneNode();
-      clone.volume = sound.volume;
-      clone.play().catch(err => console.log('Audio playback disabled'));
-    } else {
-      sound.currentTime = 0;
-      sound.play().catch(err => console.log('Audio playback disabled'));
-    }
-  }
+// Initialize sound settings from localStorage
+function initializeSoundSettings() {
+    const volume = localStorage.getItem('volume') ? parseInt(localStorage.getItem('volume')) / 100 : 0.6;
+    const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
+    const alarmEnabled = localStorage.getItem('alarm') !== 'false';
+    
+    // Set initial volumes
+    sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
+    sounds.start.volume = soundEffectsEnabled ? volume * 0.6 : 0;
+    sounds.pause.volume = soundEffectsEnabled ? volume * 0.5 : 0;
+    sounds.complete.volume = alarmEnabled ? volume : 0;
+    
+    console.log("Sound settings initialized:", { 
+        volume: volume, 
+        soundEffectsEnabled: soundEffectsEnabled, 
+        alarmEnabled: alarmEnabled 
+    });
 }
+
+// Call this function on startup
+initializeSoundSettings();
+
+// Play sound with error handling and respect settings
+function playSound(soundName) {
+    const sound = sounds[soundName];
+    if (!sound) return;
+    
+    // Check if the sound should be played based on settings
+    if (soundName === 'complete') {
+        // For alarm sound
+        if (localStorage.getItem('alarm') === 'false') {
+            console.log('Alarm sounds disabled in settings');
+            return;
+        }
+    } else {
+        // For all other UI sounds
+        if (localStorage.getItem('soundEffects') === 'false') {
+            console.log('Sound effects disabled in settings');
+            return;
+        }
+    }
+    
+    try {
+        // For click sounds that might overlap, clone the audio
+        if (soundName === 'click') {
+            const clone = sound.cloneNode();
+            clone.volume = sound.volume;
+            clone.play().catch(err => console.log('Audio playback disabled'));
+        } else {
+            // For other sounds, reset and play
+            sound.currentTime = 0;
+            sound.play().catch(err => console.log('Audio playback disabled'));
+        }
+    } catch (error) {
+        console.error('Error playing sound:', error);
+    }
+}
+
+// Add this function to update sound volumes based on settings
+function updateSoundVolumes() {
+    const volume = localStorage.getItem('volume') ? parseInt(localStorage.getItem('volume')) / 100 : 0.6;
+    const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
+    const alarmEnabled = localStorage.getItem('alarm') !== 'false';
+    
+    sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
+    sounds.start.volume = soundEffectsEnabled ? volume * 0.6 : 0;
+    sounds.pause.volume = soundEffectsEnabled ? volume * 0.5 : 0;
+    sounds.complete.volume = alarmEnabled ? volume : 0;
+    
+    console.log("Sound volumes updated:", { 
+        clickVolume: sounds.click.volume,
+        startVolume: sounds.start.volume,
+        pauseVolume: sounds.pause.volume,
+        completeVolume: sounds.complete.volume
+    });
+}
+
+// Expose the function for settings.js
+window.updateSoundVolumes = updateSoundVolumes;
 
 // Add motivational messages
 const motivationalMessages = [
@@ -234,8 +298,7 @@ function toggleTimer() {
       }
     }, 1000);
   } else {
-    sounds.pause.currentTime = 0;
-    sounds.pause.play().catch(err => console.log('Audio playback disabled')); // Only play pause sound
+    playSound('pause'); // Use function instead of direct play
 
     // Pause timer
     clearInterval(timerInterval);
@@ -384,12 +447,10 @@ function updateSessionDots() {
   sessionText.textContent = `#${currentSession}`;
 }
 
-// Enhanced notification sound
+// Enhanced notification sound - update to use our playSound function
 function playNotification() {
   // Play alarm for its full duration
-  const completeSound = sounds.complete;
-  completeSound.currentTime = 0; // Reset to start
-  completeSound.play().catch(err => console.log('Audio playback disabled'));
+  playSound('complete');
 
   // Show notification
   if ('Notification' in window && Notification.permission === 'granted') {
@@ -499,10 +560,13 @@ function updateUnfinishedTasks() {
   hasUnfinishedTasks = unfinishedTasks.length > 0;
 }
 
-// Add click sound to buttons (excluding start/pause button)
+// Add click sound to buttons - update to use our playSound function
 document.querySelectorAll('.secondary-btn, .tab').forEach(button => {
-  button.addEventListener('click', () => playSound('click'));
+    button.addEventListener('click', () => playSound('click'));
 });
+
+// Make the playSound function available globally
+window.playSound = playSound;
 
 // Handle page leave/refresh
 window.addEventListener('beforeunload', (e) => {
