@@ -504,6 +504,7 @@ body.theme-dark .task-text {
   color: #f1f1f1;
 }
 
+body.theme-dark .info-box p,
 body.theme-dark .info-box li {
   color: #ddd;
 }
@@ -520,6 +521,25 @@ body.theme-dark .task-item {
 
 body.theme-dark .task-completed .task-text {
   color: #888;
+}
+
+/* Fix for settings-note in dark mode */
+body.theme-dark .info-box .settings-note {
+  background-color: rgba(139, 95, 191, 0.15);
+  border-left: 3px solid #8b5fbf;
+  color: #ddd;
+}
+
+body.theme-dark .add-task-btn {
+  background-color: #8b5fbf; /* Match purple theme in dark mode */
+}
+
+body.theme-dark .mode-tabs {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+body.theme-dark .mode-tabs .tab.active {
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
 /* Mobile responsiveness */

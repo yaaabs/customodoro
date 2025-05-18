@@ -9,6 +9,18 @@
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/settings.css">
+  
+  <!-- Add this script block right before the closing </head> tag -->
+  <script>
+    // Apply saved theme before the page renders to prevent flashing
+    (function() {
+      const savedTheme = localStorage.getItem('siteTheme');
+      if (savedTheme) {
+        document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-nature');
+        document.body.classList.add('theme-' + savedTheme);
+      }
+    })();
+  </script>
 </head>
 <body class="reverse-mode">
   <div class="container">

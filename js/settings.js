@@ -114,8 +114,8 @@
       localStorage.setItem(prefix + 'soundEffects', 'true');
       localStorage.setItem(prefix + 'alarm', 'true');
       
-      // Reset theme
-      localStorage.setItem('theme', 'default');
+      // Reset theme to site-wide default
+      localStorage.setItem('siteTheme', 'default');
       
       // Reload settings into form
       loadSettings();
@@ -160,8 +160,6 @@
   
   // Add this function to apply the selected theme
   function applyTheme(themeName) {
-    const root = document.documentElement;
-    
     // Remove any previous theme classes from body
     document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-nature');
     
@@ -180,8 +178,8 @@
         document.body.classList.add('theme-default');
     }
     
-    // Store theme preference
-    localStorage.setItem('theme', themeName);
+    // Store theme preference - using a common key without page prefix for site-wide theme
+    localStorage.setItem('siteTheme', themeName);
   }
   
   // Save theme settings
@@ -189,7 +187,7 @@
     const themeSelector = document.getElementById('theme-selector');
     if (themeSelector) {
       const selectedTheme = themeSelector.value;
-      localStorage.setItem('theme', selectedTheme);
+      localStorage.setItem('siteTheme', selectedTheme); // Use site-wide key
       applyTheme(selectedTheme);
     }
   }
@@ -198,7 +196,8 @@
   function loadThemeSettings() {
     const themeSelector = document.getElementById('theme-selector');
     if (themeSelector) {
-      const savedTheme = localStorage.getItem('theme') || 'dark'; // Default to dark theme
+      // Use site-wide theme setting
+      const savedTheme = localStorage.getItem('siteTheme') || 'default';
       themeSelector.value = savedTheme;
       
       // Apply the theme immediately
@@ -823,4 +822,10 @@ function testSound(type) {
         volumePercentage.textContent = volumeSlider.value + '%';
     }
 }
+
+// Initialize site theme immediately on page load before DOM is fully loaded
+(function initializeSiteTheme() {
+  const savedTheme = localStorage.getItem('siteTheme') || 'default';
+  applyTheme(savedTheme);
+})();
 })();

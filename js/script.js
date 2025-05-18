@@ -401,21 +401,28 @@ function switchMode(mode, autoStart = false) {
   shortBreakTab.classList.remove('active');
   longBreakTab.classList.remove('active');
 
+  // Save current theme class before changing body class
+  const currentTheme = localStorage.getItem('siteTheme') || 'default';
+  const themeClass = currentTheme !== 'default' ? `theme-${currentTheme}` : '';
+  
   // Set up the new mode - always use the latest values from localStorage
   if (mode === 'pomodoro') {
     pomodoroTime = parseInt(localStorage.getItem('pomodoroTime')) || pomodoroTime;
     currentSeconds = pomodoroTime * 60;
-    body.className = 'focus-mode';
+    // Preserve theme class when changing mode
+    body.className = 'focus-mode' + (themeClass ? ' ' + themeClass : '');
     pomodoroTab.classList.add('active');
   } else if (mode === 'shortBreak') {
     shortBreakTime = parseInt(localStorage.getItem('shortBreakTime')) || shortBreakTime;
     currentSeconds = shortBreakTime * 60;
-    body.className = 'short-break-mode';
+    // Preserve theme class when changing mode
+    body.className = 'short-break-mode' + (themeClass ? ' ' + themeClass : '');
     shortBreakTab.classList.add('active');
   } else {
     longBreakTime = parseInt(localStorage.getItem('longBreakTime')) || longBreakTime;
     currentSeconds = longBreakTime * 60;
-    body.className = 'long-break-mode';
+    // Preserve theme class when changing mode
+    body.className = 'long-break-mode' + (themeClass ? ' ' + themeClass : '');
     longBreakTab.classList.add('active');
   }
 
