@@ -1,3 +1,8 @@
+// Request notification permission
+if ('Notification' in window) {
+  Notification.requestPermission();
+}
+
 // Audio setup
 const sounds = {
     click: new Audio('audio/start.wav'),
