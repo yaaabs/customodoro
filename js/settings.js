@@ -706,6 +706,30 @@ function testSound(type) {
     }
   }
   
+  // Add keyboard shortcuts for the settings modal
+  document.addEventListener('keydown', function(e) {
+    // If settings modal is open (has 'show' class)
+    if (settingsModal.classList.contains('show')) {
+      // ESC key - close modal
+      if (e.key === 'Escape') {
+        closeSettings();
+      }
+      
+      // ENTER key - save settings
+      if (e.key === 'Enter') {
+        // Only trigger save if not in a text input to avoid conflicts
+        const activeElement = document.activeElement;
+        const isInput = activeElement.tagName === 'INPUT' && 
+                      (activeElement.type === 'text' || activeElement.type === 'number');
+        
+        if (!isInput) {
+          e.preventDefault();
+          saveSettings();
+        }
+      }
+    }
+  });
+  
   // Set up event listeners
   if (settingsBtn) {
     settingsBtn.addEventListener('click', openSettings);
