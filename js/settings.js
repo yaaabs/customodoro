@@ -651,7 +651,7 @@ function updateSoundsDirectly() {
             window.updateAlarmSound(selectedAlarmSound);
         } else if (window.sounds.complete) {
             // Fallback to old method
-            window.sounds.complete.src = 'audio/' + selectedAlarmSound;
+            window.sounds.complete.src = 'audio/Alert Sounds/' + selectedAlarmSound;
         }
         
         if (window.sounds.click) window.sounds.click.volume = soundsEnabled ? volume * 0.5 : 0;
@@ -685,7 +685,7 @@ function testSound(type) {
     const volume = volumeSlider ? parseInt(volumeSlider.value) / 100 : 0.6;
     
     // Create and play the test sound
-    currentTestSound = new Audio('audio/' + selectedSound);
+    currentTestSound = new Audio('audio/Alert Sounds/' + selectedSound);
     currentTestSound.volume = volume;
     
     if (volume > 0) {
@@ -894,7 +894,7 @@ function testSound(type) {
           updateSoundsDirectly();
           
           // Create and play the test sound
-          currentTestSound = new Audio('audio/' + selectedSound);
+          currentTestSound = new Audio('audio/Alert Sounds/' + selectedSound);
           currentTestSound.volume = parseInt(volumeSlider.value) / 100;
           
           // Only play if volume > 0

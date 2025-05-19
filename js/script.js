@@ -34,10 +34,10 @@ let hasUnfinishedTasks = false;
 
 // Update audio variables
 const sounds = {
-  click: new Audio('audio/start.wav'),
-  start: new Audio('audio/start.wav'),
-  pause: new Audio('audio/pause.wav'),
-  complete: new Audio('audio/alarm.mp3')
+  click: new Audio('audio/SFX/start.wav'),
+  start: new Audio('audio/SFX/start.wav'),
+  pause: new Audio('audio/SFX/pause.wav'),
+  complete: new Audio('audio/Alert Sounds/alarm.mp3')
 };
 
 // Set custom volumes for each sound
@@ -79,7 +79,7 @@ function initializeSoundSettings() {
 // NEW: Function to specifically update the alarm sound
 function updateAlarmSound(soundFileName) {
     // Create a new Audio object for the alarm instead of just changing the src
-    sounds.complete = new Audio('audio/' + soundFileName);
+    sounds.complete = new Audio('audio/Alert Sounds/' + soundFileName);
     
     // Re-apply volume settings
     const prefix = 'classic_';
