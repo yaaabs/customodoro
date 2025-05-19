@@ -709,18 +709,284 @@ body.theme-dark .mode-tabs .tab.active {
   background-color: rgba(255, 255, 255, 0.15);
 }
 
-/* Mobile responsiveness */
+/* Improved mobile responsiveness */
 @media (max-width: 768px) {
   .container {
     padding: 0 15px;
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  body {
+    padding: 10px;
+    overflow-x: hidden;
   }
   
   .timer-container {
-    padding: 20px;
+    padding: 20px 15px;
+    margin-bottom: 20px;
   }
   
   .primary-btn {
     padding: 12px 30px;
     font-size: 18px;
+  }
+  
+  .tab {
+    padding: 10px 0;
+    font-size: 14px;
+  }
+  
+  .app-title {
+    font-size: 28px;
+  }
+  
+  .settings-section, 
+  .tasks-section, 
+  .info-section {
+    padding: 20px 15px;
+  }
+  
+  .task-input {
+    font-size: 14px;
+    padding: 10px;
+  }
+  
+  .add-task-btn {
+    padding: 10px 15px;
+  }
+  
+  /* Fixed layout for task container */
+  .task-input-container {
+    flex-wrap: nowrap;
+    gap: 0;
+  }
+  
+  /* Info section improvements */
+  .info-box {
+    word-break: break-word;
+  }
+  
+  .info-box li {
+    line-height: 1.6;
+    margin-bottom: 5px;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .app-title {
+    font-size: 24px;
+    margin-bottom: 15px;
+  }
+  
+  .timer {
+    font-size: 56px;
+    margin: 15px 0;
+  }
+  
+  .primary-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    width: 100%;
+  }
+  
+  .secondary-btn {
+    font-size: 14px;
+    padding: 8px 12px;
+    margin-top: 10px;
+    margin-left: 0;
+  }
+  
+  .timer-actions {
+    flex-direction: column;
+  }
+  
+  .time-value {
+    width: 40px;
+    font-size: 16px;
+  }
+  
+  .time-btn {
+    width: 28px;
+    height: 28px;
+  }
+  
+  /* Fixed task input for mobile */
+  .task-input-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+  }
+  
+  .task-input {
+    border-radius: 8px;
+    margin-bottom: 10px;
+    width: 100%;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  .add-task-btn {
+    border-radius: 8px;
+    width: 100%;
+    padding: 12px;
+  }
+  
+  .task-item {
+    padding: 12px 0;
+  }
+  
+  .task-text {
+    font-size: 14px;
+    width: calc(100% - 70px); /* Make room for checkbox and delete button */
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+  }
+  
+  /* Fixed delete button position */
+  .task-delete {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+  }
+  
+  /* Improve mute alert for small screens */
+  .mute-alert {
+    width: 95%;
+    max-width: 95%;
+  }
+  
+  .mute-alert-content p {
+    font-size: 14px;
+  }
+  
+  .mute-btn {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+  
+  /* Improve info section readability */
+  .info-section {
+    padding: 15px;
+  }
+  
+  .info-box h3 {
+    font-size: 18px;
+  }
+  
+  .info-box p, .info-box li {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  .info-box .settings-note {
+    font-size: 13px;
+    padding: 10px;
+  }
+}
+
+/* Very small mobile devices */
+@media (max-width: 360px) {
+  .app-title {
+    font-size: 20px;
+  }
+  
+  .timer {
+    font-size: 48px;
+  }
+  
+  .mode-tabs {
+    margin-bottom: 10px;
+  }
+  
+  .tab {
+    padding: 8px 0;
+    font-size: 12px;
+  }
+  
+  /* Improve task input placeholder */
+  .task-input::placeholder {
+    font-size: 13px;
+    opacity: 0.8;
+  }
+  
+  /* Fix session dots on very small screens */
+  .session-dot {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .footer {
+    font-size: 12px;
+    margin-top: 20px;
+  }
+}
+
+/* Fix content overflow */
+* {
+  max-width: 100%;
+}
+
+html, body {
+  overflow-x: hidden;
+  position: relative;
+  width: 100%;
+  touch-action: manipulation; /* Disable double-tap zoom */
+}
+
+/* Make all interactive elements touch-friendly */
+button, 
+.tab, 
+input[type="checkbox"], 
+.task-delete, 
+.time-btn {
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Add this to prevent zoom on iOS */
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+  font-size: 16px !important;
+}
+
+/* Fix task input container for better mobile experience */
+.task-input-container {
+  width: 100%;
+}
+
+/* Prevent text overflow in tasks */
+.task-text {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+  max-width: 100%;
+}
+
+/* Make overlay modals touch-friendly */
+.mute-alert-overlay {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Settings modal full screen on mobile */
+@media (max-width: 480px) {
+  .settings-modal .settings-content {
+    width: 100%;
+    height: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+  
+  .settings-body {
+    -webkit-overflow-scrolling: touch;
   }
 }
