@@ -350,15 +350,31 @@ function updateTimerDisplay() {
         titleText = `${timeString} - Pomodoro`;
         break;
       case 'shortBreak':
-        titleText = `${timeString} - Short Break`;
+        titleText = `${timeString} - Short Break`;  // Ensure space is here
         break;
       case 'longBreak':
-        titleText = `${timeString} - Long Break`;
+        titleText = `${timeString} - Long Break`;   // Ensure space is here
         break;
     }
   } else {
+    // Fix: Add proper spacing for mode names in title
+    let modeName;
+    switch(currentMode) {
+      case 'pomodoro':
+        modeName = 'Pomodoro';
+        break;
+      case 'shortBreak':
+        modeName = 'Short Break';  // Ensure space is here
+        break;
+      case 'longBreak':
+        modeName = 'Long Break';   // Ensure space is here
+        break;
+      default:
+        modeName = currentMode.charAt(0).toUpperCase() + currentMode.slice(1);
+    }
+    
     titleText = isRunning 
-      ? `${timeString} - ${currentMode.charAt(0).toUpperCase() + currentMode.slice(1)}`
+      ? `${timeString} - ${modeName}`
       : `${timeString} - Paused`;
   }
   document.title = titleText;
@@ -644,20 +660,24 @@ function playNotification() {
   // Show mute alert with correct count (since counter is incremented BEFORE calling this)
   let message = '';
   if (currentMode === 'pomodoro') {
+    // Determine if we're heading to a long break
+    const isLongBreak = completedPomodoros % maxSessions === 0;
     // If just completed a pomodoro, the counter has already been incremented
-    message = `Great work! You've completed ${completedPomodoros} pomodoro${completedPomodoros !== 1 ? 's' : ''}. Time for a break!`;
+    message = `Great work! You've completed ${completedPomodoros} pomodoro${completedPomodoros !== 1 ? 's' : ''}. Time for a ${isLongBreak ? 'long ' : ''}break!`;
   } else {
     message = 'Break complete! Ready to focus again?';
   }
   showMuteAlert(message);
 
-  // Show notification
+  // Also update the notification
   if ('Notification' in window && Notification.permission === 'granted') {
     let title, body, icon;
 
     if (currentMode === 'pomodoro') {
+      // Determine if we're heading to a long break
+      const isLongBreak = completedPomodoros % maxSessions === 0;
       title = '🎉 Great Work!';
-      body = `You've completed ${completedPomodoros} pomodoros today! Time for a break.`;
+      body = `You've completed ${completedPomodoros} pomodoros today! Time for a ${isLongBreak ? 'long ' : ''}break.`;
       icon = '/images/break-icon.png';
     } else {
       title = '⏰ Break Complete!';
@@ -679,7 +699,9 @@ function playNotification() {
 // Get timer completion message
 function getCompletionMessage() {
   if (currentMode === 'pomodoro') {
-    return 'Time for a break!';
+    // Determine if we're heading to a long break
+    const isLongBreak = completedPomodoros % maxSessions === 0;
+    return `Time for a ${isLongBreak ? 'long ' : ''}break!`;
   } else if (currentMode === 'shortBreak') {
     return 'Break finished! Time to focus.';
   } else {
