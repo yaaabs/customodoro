@@ -407,14 +407,20 @@ function toggleTimer() {
       } else {
         // Timer completed
         clearInterval(timerInterval);
-        playNotification();
-        showToast(getCompletionMessage());
         isRunning = false;
-
-        // Move to next timer phase with auto-start
+        
+        // For pomodoro mode, increment counter BEFORE showing notification
         if (currentMode === 'pomodoro') {
           completedPomodoros++;
           updateStats();
+        }
+        
+        // Now show notification with updated counter
+        playNotification();
+        showToast(getCompletionMessage());
+
+        // Move to next timer phase with auto-start
+        if (currentMode === 'pomodoro') {
           if (completedPomodoros % maxSessions === 0) {
             switchMode('longBreak', true);
           } else {
@@ -443,8 +449,10 @@ function toggleTimer() {
     // Auto-start next phase if timer is complete
     if (currentSeconds === 0) {
       if (currentMode === 'pomodoro') {
-        completedPomodoros++;
-        updateStats();
+        // REMOVED: Don't increment here as it would cause double counting
+        // We already increment when timer completes in the interval function
+        playNotification(); // Keep notification
+        
         if (completedPomodoros % maxSessions === 0) {
           switchMode('longBreak', true);
         } else {
@@ -588,10 +596,60 @@ function updateSessionDots() {
   sessionText.textContent = `#${currentSession}`;
 }
 
-// Enhanced notification sound - update to use our playSound function
+// Mute alert elements
+const muteAlertOverlay = document.getElementById('mute-alert-overlay');
+const muteAlertMessage = document.getElementById('mute-alert-message');
+const muteAlertBtn = document.getElementById('mute-alert-btn');
+const dismissAlertBtn = document.getElementById('dismiss-alert-btn');
+
+// Show mute alert modal
+function showMuteAlert(message) {
+  if (muteAlertMessage) muteAlertMessage.textContent = message;
+  if (muteAlertOverlay) muteAlertOverlay.classList.add('show');
+  
+  // Auto-dismiss after 30 seconds
+  setTimeout(() => {
+    hideMuteAlert();
+  }, 30000);
+}
+
+// Hide mute alert modal
+function hideMuteAlert() {
+  if (muteAlertOverlay) muteAlertOverlay.classList.remove('show');
+}
+
+// Mute the currently playing alarm
+function muteAlarm() {
+  if (sounds.complete) {
+    sounds.complete.pause();
+    sounds.complete.currentTime = 0;
+  }
+  hideMuteAlert();
+}
+
+// Add event listeners for mute alert buttons
+if (muteAlertBtn) {
+  muteAlertBtn.addEventListener('click', muteAlarm);
+}
+
+if (dismissAlertBtn) {
+  dismissAlertBtn.addEventListener('click', hideMuteAlert);
+}
+
+// Enhanced notification sound - update to use mute alert
 function playNotification() {
   // Play alarm for its full duration
   playSound('complete');
+  
+  // Show mute alert with correct count (since counter is incremented BEFORE calling this)
+  let message = '';
+  if (currentMode === 'pomodoro') {
+    // If just completed a pomodoro, the counter has already been incremented
+    message = `Great work! You've completed ${completedPomodoros} pomodoro${completedPomodoros !== 1 ? 's' : ''}. Time for a break!`;
+  } else {
+    message = 'Break complete! Ready to focus again?';
+  }
+  showMuteAlert(message);
 
   // Show notification
   if ('Notification' in window && Notification.permission === 'granted') {

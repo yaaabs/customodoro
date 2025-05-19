@@ -246,8 +246,11 @@ function completeSession(playSound = true) {
     
     // Only play completion sound if the timer reached max time or playSound is true
     if (currentSeconds >= MAX_TIME || playSound) {
-        // Replace the direct play with our function
         window.playSound('complete');
+        
+        // Show mute alert
+        const workMinutes = Math.floor(currentSeconds / 60);
+        showMuteAlert(`Great work! You worked for ${workMinutes} minutes and earned a ${earnedBreakTime}-minute break!`);
     }
     
     // Calculate earned break
@@ -272,6 +275,9 @@ function completeBreak() {
     
     // Play completion sound when break is done
     playSound('complete');
+    
+    // Show mute alert
+    showMuteAlert("Break time is over! Ready to work again?");
     
     showToast("Break time is over! Ready to work again? 💪");
     startButton.textContent = 'START';
@@ -455,6 +461,46 @@ function updateSoundVolumes() {
 
 // Expose the updateAlarmSound function for settings.js
 window.updateAlarmSound = updateAlarmSound;
+
+// Mute alert elements
+const muteAlertOverlay = document.getElementById('mute-alert-overlay');
+const muteAlertMessage = document.getElementById('mute-alert-message');
+const muteAlertBtn = document.getElementById('mute-alert-btn');
+const dismissAlertBtn = document.getElementById('dismiss-alert-btn');
+
+// Show mute alert modal
+function showMuteAlert(message) {
+  if (muteAlertMessage) muteAlertMessage.textContent = message;
+  if (muteAlertOverlay) muteAlertOverlay.classList.add('show');
+  
+  // Auto-dismiss after 30 seconds
+  setTimeout(() => {
+    hideMuteAlert();
+  }, 30000);
+}
+
+// Hide mute alert modal
+function hideMuteAlert() {
+  if (muteAlertOverlay) muteAlertOverlay.classList.remove('show');
+}
+
+// Mute the currently playing alarm
+function muteAlarm() {
+  if (sounds.complete) {
+    sounds.complete.pause();
+    sounds.complete.currentTime = 0;
+  }
+  hideMuteAlert();
+}
+
+// Add event listeners for mute alert buttons
+if (muteAlertBtn) {
+  muteAlertBtn.addEventListener('click', muteAlarm);
+}
+
+if (dismissAlertBtn) {
+  dismissAlertBtn.addEventListener('click', hideMuteAlert);
+}
 
 // Initialize display
 updateDisplay();

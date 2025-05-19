@@ -233,6 +233,24 @@
   </div>
   
   <div class="toast" id="toast"></div>
+  
+  <!-- Mute Alert Modal -->
+  <div class="mute-alert-overlay" id="mute-alert-overlay">
+    <div class="mute-alert">
+      <div class="mute-alert-header">
+        <h3 class="mute-alert-title">
+          <span class="icon">🔊</span> Timer Complete
+        </h3>
+      </div>
+      <div class="mute-alert-content">
+        <p id="mute-alert-message">Your timer session has completed!</p>
+      </div>
+      <div class="mute-alert-actions">
+        <button class="mute-btn mute-btn-secondary" id="dismiss-alert-btn">Dismiss</button>
+        <button class="mute-btn mute-btn-primary" id="mute-alert-btn">Mute Sound</button>
+      </div>
+    </div>
+  </div>
 
   <script src="js/reversePomodoro.js"></script>
   <script src="js/settings.js"></script>

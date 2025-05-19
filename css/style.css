@@ -485,6 +485,148 @@ header {
   color: #d95550;
 }
 
+/* Mute Alert Modal */
+.mute-alert-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.mute-alert-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.mute-alert {
+  background-color: #fff;
+  width: 90%;
+  max-width: 400px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  animation: popIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.mute-alert-header {
+  background-color: #f5f5f5;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+}
+
+.mute-alert-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mute-alert-title .icon {
+  font-size: 22px;
+}
+
+.mute-alert-content {
+  padding: 20px;
+  text-align: center;
+}
+
+.mute-alert-content p {
+  margin-bottom: 20px;
+  color: #555;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.mute-alert-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 0 20px 20px;
+}
+
+.mute-btn {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.mute-btn-secondary {
+  background-color: #f1f1f1;
+  color: #555;
+}
+
+.mute-btn-secondary:hover {
+  background-color: #e5e5e5;
+}
+
+.mute-btn-primary {
+  background-color: var(--focus-color);
+  color: white;
+}
+
+.mute-btn-primary:hover {
+  filter: brightness(1.1);
+}
+
+/* Dark theme support */
+body.theme-dark .mute-alert {
+  background-color: #222;
+  color: #f1f1f1;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+body.theme-dark .mute-alert-header {
+  background-color: #2a2a2a;
+  border-bottom: 1px solid #333;
+}
+
+body.theme-dark .mute-alert-title {
+  color: #f1f1f1;
+}
+
+body.theme-dark .mute-alert-content p {
+  color: #ddd;
+}
+
+body.theme-dark .mute-btn-secondary {
+  background-color: #333;
+  color: #ddd;
+}
+
+body.theme-dark .mute-btn-secondary:hover {
+  background-color: #444;
+}
+
 /* Theme: Dark */
 body.theme-dark {
   background-color: #121212;
