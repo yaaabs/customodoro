@@ -58,6 +58,10 @@ function initializeSoundSettings() {
     const soundEffectsEnabled = localStorage.getItem(prefix + 'soundEffects') !== 'false';
     const alarmEnabled = localStorage.getItem(prefix + 'alarm') !== 'false';
     
+    // Get selected alarm sound or use default - FIXED: Load the sound properly
+    const selectedAlarmSound = localStorage.getItem(prefix + 'alarmSound') || 'alarm.mp3';
+    updateAlarmSound(selectedAlarmSound);
+    
     // Set initial volumes
     sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
     sounds.start.volume = soundEffectsEnabled ? volume * 0.6 : 0;
@@ -67,11 +71,110 @@ function initializeSoundSettings() {
     console.log(`Sound settings initialized for Classic Timer:`, { 
         volume: volume, 
         soundEffectsEnabled: soundEffectsEnabled, 
-        alarmEnabled: alarmEnabled 
+        alarmEnabled: alarmEnabled,
+        alarmSound: selectedAlarmSound
     });
 }
 
-// Call this function on startup
+// NEW: Function to specifically update the alarm sound
+function updateAlarmSound(soundFileName) {
+    // Create a new Audio object for the alarm instead of just changing the src
+    sounds.complete = new Audio('audio/' + soundFileName);
+    
+    // Re-apply volume settings
+    const prefix = 'classic_';
+    const volume = localStorage.getItem(prefix + 'volume') ? 
+                  parseInt(localStorage.getItem(prefix + 'volume')) / 100 : 0.6;
+    const alarmEnabled = localStorage.getItem(prefix + 'alarm') !== 'false';
+    sounds.complete.volume = alarmEnabled ? volume : 0;
+    
+    console.log(`Updated alarm sound to: ${soundFileName}`);
+}
+
+// Update sound volumes based on settings
+function updateSoundVolumes() {
+    // Use page-specific prefix for sound settings
+    const prefix = 'classic_';
+    
+    // Use the default value (60) if not found in localStorage
+    const volume = localStorage.getItem(prefix + 'volume') ? 
+                  parseInt(localStorage.getItem(prefix + 'volume')) / 100 : 0.6;
+    
+    // Explicitly check for 'false' string to handle resets properly
+    const soundEffectsEnabled = localStorage.getItem(prefix + 'soundEffects') !== 'false';
+    const alarmEnabled = localStorage.getItem(prefix + 'alarm') !== 'false';
+    
+    // FIXED: Update alarm sound when settings change
+    const selectedAlarmSound = localStorage.getItem(prefix + 'alarmSound') || 'alarm.mp3';
+    updateAlarmSound(selectedAlarmSound);
+    
+    // Set volumes based on settings
+    sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
+    sounds.start.volume = soundEffectsEnabled ? volume * 0.6 : 0;
+    sounds.pause.volume = soundEffectsEnabled ? volume * 0.5 : 0;
+    sounds.complete.volume = alarmEnabled ? volume : 0;
+    
+    console.log("Classic Timer: Sound volumes updated:", { 
+        volume: volume,
+        soundEffectsEnabled: soundEffectsEnabled,
+        alarmEnabled: alarmEnabled,
+        alarmSound: selectedAlarmSound,
+        clickVolume: sounds.click.volume,
+        startVolume: sounds.start.volume,
+        pauseVolume: sounds.pause.volume,
+        completeVolume: sounds.complete.volume
+    });
+}
+
+// Play sound with error handling and respect settings
+function playSound(soundName) {
+    const sound = sounds[soundName];
+    if (!sound) return;
+    
+    // Use page-specific prefix for sound settings
+    const prefix = 'classic_';
+    
+    // Check if the sound should be played based on settings
+    if (soundName === 'complete') {
+        // For alarm sound
+        if (localStorage.getItem(prefix + 'alarm') === 'false') {
+            console.log('Alarm sounds disabled in settings');
+            return;
+        }
+        
+        // FIXED: Ensure we're using the latest alarm sound before playing
+        const selectedAlarmSound = localStorage.getItem(prefix + 'alarmSound') || 'alarm.mp3';
+        if (sound.src.indexOf(selectedAlarmSound) === -1) {
+            updateAlarmSound(selectedAlarmSound);
+        }
+    } else {
+        // For all other UI sounds
+        if (localStorage.getItem(prefix + 'soundEffects') === 'false') {
+            console.log('Sound effects disabled in settings');
+            return;
+        }
+    }
+    
+    try {
+        // For click sounds that might overlap, clone the audio
+        if (soundName === 'click') {
+            const clone = sound.cloneNode();
+            clone.volume = sound.volume;
+            clone.play().catch(err => console.log('Audio playback disabled'));
+        } else {
+            // For other sounds, reset and play
+            sound.currentTime = 0;
+            sound.play().catch(err => console.log('Audio playback disabled'));
+        }
+    } catch (error) {
+        console.error('Error playing sound:', error);
+    }
+}
+
+// Expose the updateAlarmSound function for settings.js
+window.updateAlarmSound = updateAlarmSound;
+
+// Initialize sound settings on startup
 initializeSoundSettings();
 
 // Play sound with error handling and respect settings
@@ -88,6 +191,12 @@ function playSound(soundName) {
         if (localStorage.getItem(prefix + 'alarm') === 'false') {
             console.log('Alarm sounds disabled in settings');
             return;
+        }
+        
+        // FIXED: Ensure we're using the latest alarm sound before playing
+        const selectedAlarmSound = localStorage.getItem(prefix + 'alarmSound') || 'alarm.mp3';
+        if (sound.src.indexOf(selectedAlarmSound) === -1) {
+            updateAlarmSound(selectedAlarmSound);
         }
     } else {
         // For all other UI sounds
@@ -126,6 +235,10 @@ function updateSoundVolumes() {
     const soundEffectsEnabled = localStorage.getItem(prefix + 'soundEffects') !== 'false';
     const alarmEnabled = localStorage.getItem(prefix + 'alarm') !== 'false';
     
+    // FIXED: Update alarm sound when settings change
+    const selectedAlarmSound = localStorage.getItem(prefix + 'alarmSound') || 'alarm.mp3';
+    updateAlarmSound(selectedAlarmSound);
+    
     // Set volumes based on settings
     sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
     sounds.start.volume = soundEffectsEnabled ? volume * 0.6 : 0;
@@ -136,6 +249,7 @@ function updateSoundVolumes() {
         volume: volume,
         soundEffectsEnabled: soundEffectsEnabled,
         alarmEnabled: alarmEnabled,
+        alarmSound: selectedAlarmSound,
         clickVolume: sounds.click.volume,
         startVolume: sounds.start.volume,
         pauseVolume: sounds.pause.volume,

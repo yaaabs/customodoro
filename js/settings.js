@@ -518,6 +518,7 @@
     const volumeSlider = document.getElementById('volume-slider');
     const soundEffectsToggle = document.getElementById('sound-effects-toggle');
     const alarmToggle = document.getElementById('alarm-toggle');
+    const alarmSoundSelector = document.getElementById('alarm-sound-selector');
     
     if (!volumeSlider || !soundEffectsToggle || !alarmToggle) {
         console.error("Sound setting elements not found");
@@ -531,10 +532,16 @@
     localStorage.setItem(prefix + 'soundEffects', soundEffectsToggle.checked);
     localStorage.setItem(prefix + 'alarm', alarmToggle.checked);
     
+    // Save the selected alarm sound
+    if (alarmSoundSelector) {
+        localStorage.setItem(prefix + 'alarmSound', alarmSoundSelector.value);
+    }
+    
     console.log(`Sound settings saved for ${prefix}:`, {
         volume: volumeSlider.value,
         soundEffects: soundEffectsToggle.checked,
-        alarm: alarmToggle.checked
+        alarm: alarmToggle.checked,
+        alarmSound: alarmSoundSelector ? alarmSoundSelector.value : 'N/A'
     });
     
     // Update sound volumes immediately 
@@ -550,6 +557,7 @@ function loadSoundSettings() {
     const volumeSlider = document.getElementById('volume-slider');
     const soundEffectsToggle = document.getElementById('sound-effects-toggle');
     const alarmToggle = document.getElementById('alarm-toggle');
+    const alarmSoundSelector = document.getElementById('alarm-sound-selector');
     
     if (!volumeSlider || !soundEffectsToggle || !alarmToggle) {
         return;
@@ -568,10 +576,17 @@ function loadSoundSettings() {
     soundEffectsToggle.checked = soundEffectsEnabled;
     alarmToggle.checked = alarmEnabled;
     
+    // Set the selected alarm sound
+    if (alarmSoundSelector) {
+        const savedAlarmSound = localStorage.getItem(prefix + 'alarmSound') || 'alarm.mp3';
+        alarmSoundSelector.value = savedAlarmSound;
+    }
+    
     console.log(`Sound settings loaded for ${prefix}:`, {
         volume: volumeSlider.value,
         soundEffects: soundEffectsEnabled,
-        alarm: alarmEnabled
+        alarm: alarmEnabled,
+        alarmSound: alarmSoundSelector ? alarmSoundSelector.value : 'N/A'
     });
     
     // Apply settings immediately after loading
@@ -579,6 +594,12 @@ function loadSoundSettings() {
         window.updateSoundVolumes();
     } else {
         updateSoundsDirectly();
+    }
+    
+    // Also update percentage display if it exists
+    const volumePercentage = document.getElementById('volume-percentage');
+    if (volumePercentage && volumeSlider) {
+        volumePercentage.textContent = volumeSlider.value + '%';
     }
 }
 
@@ -590,12 +611,22 @@ function updateSoundsDirectly() {
         const soundsEnabled = localStorage.getItem(prefix + 'soundEffects') !== 'false';
         const alarmEnabled = localStorage.getItem(prefix + 'alarm') !== 'false';
         
+        // Update alarm sound file - FIXED: Use the new updateAlarmSound function if available
+        const selectedAlarmSound = localStorage.getItem(prefix + 'alarmSound') || 'alarm.mp3';
+        if (typeof window.updateAlarmSound === 'function') {
+            window.updateAlarmSound(selectedAlarmSound);
+        } else if (window.sounds.complete) {
+            // Fallback to old method
+            window.sounds.complete.src = 'audio/' + selectedAlarmSound;
+        }
+        
         if (window.sounds.click) window.sounds.click.volume = soundsEnabled ? volume * 0.5 : 0;
         if (window.sounds.start) window.sounds.start.volume = soundsEnabled ? volume * 0.6 : 0;
         if (window.sounds.pause) window.sounds.pause.volume = soundsEnabled ? volume * 0.5 : 0;
         if (window.sounds.complete) window.sounds.complete.volume = alarmEnabled ? volume : 0;
         
         console.log(`Sounds updated directly for ${prefix}:`, {
+            alarmSound: selectedAlarmSound,
             clickVolume: window.sounds.click ? window.sounds.click.volume : "N/A",
             startVolume: window.sounds.start ? window.sounds.start.volume : "N/A",
             pauseVolume: window.sounds.pause ? window.sounds.pause.volume : "N/A",
@@ -604,9 +635,19 @@ function updateSoundsDirectly() {
     }
 }
 
-// Test sound function
+// Test sound function - FIXED: Ensure we test the current alarm sound
 function testSound(type) {
     if (typeof window.playSound === 'function') {
+        // If it's the complete/alarm sound, make sure it's up to date first
+        if (type === 'complete') {
+            const prefix = isReversePage ? 'reverse_' : 'classic_';
+            const selectedAlarmSound = localStorage.getItem(prefix + 'alarmSound') || 'alarm.mp3';
+            
+            // Use the new function if available
+            if (typeof window.updateAlarmSound === 'function') {
+                window.updateAlarmSound(selectedAlarmSound);
+            }
+        }
         window.playSound(type);
     } else if (typeof window.sounds !== 'undefined') {
         const sound = window.sounds[type];
@@ -807,6 +848,7 @@ function testSound(type) {
     const volumeSlider = document.getElementById('volume-slider');
     const soundEffectsToggle = document.getElementById('sound-effects-toggle');
     const alarmToggle = document.getElementById('alarm-toggle');
+    const alarmSoundSelector = document.getElementById('alarm-sound-selector');
     
     if (!volumeSlider || !soundEffectsToggle || !alarmToggle) {
         return;
@@ -825,10 +867,17 @@ function testSound(type) {
     soundEffectsToggle.checked = soundEffectsEnabled;
     alarmToggle.checked = alarmEnabled;
     
+    // Set the selected alarm sound
+    if (alarmSoundSelector) {
+        const savedAlarmSound = localStorage.getItem(prefix + 'alarmSound') || 'alarm.mp3';
+        alarmSoundSelector.value = savedAlarmSound;
+    }
+    
     console.log(`Sound settings loaded for ${prefix}:`, {
         volume: volumeSlider.value,
         soundEffects: soundEffectsEnabled,
-        alarm: alarmEnabled
+        alarm: alarmEnabled,
+        alarmSound: alarmSoundSelector ? alarmSoundSelector.value : 'N/A'
     });
     
     // Apply settings immediately after loading
