@@ -617,6 +617,7 @@ const muteAlertOverlay = document.getElementById('mute-alert-overlay');
 const muteAlertMessage = document.getElementById('mute-alert-message');
 const muteAlertBtn = document.getElementById('mute-alert-btn');
 const dismissAlertBtn = document.getElementById('dismiss-alert-btn');
+const muteAlertCloseBtn = document.getElementById('mute-alert-close'); // Add reference to close button
 
 // Show mute alert modal
 function showMuteAlert(message) {
@@ -650,6 +651,11 @@ if (muteAlertBtn) {
 
 if (dismissAlertBtn) {
   dismissAlertBtn.addEventListener('click', hideMuteAlert);
+}
+
+// Add event listener for the close (X) button
+if (muteAlertCloseBtn) {
+  muteAlertCloseBtn.addEventListener('click', hideMuteAlert);
 }
 
 // Enhanced notification sound - update to use mute alert

@@ -467,6 +467,7 @@ const muteAlertOverlay = document.getElementById('mute-alert-overlay');
 const muteAlertMessage = document.getElementById('mute-alert-message');
 const muteAlertBtn = document.getElementById('mute-alert-btn');
 const dismissAlertBtn = document.getElementById('dismiss-alert-btn');
+const muteAlertCloseBtn = document.getElementById('mute-alert-close'); // Add reference to close button
 
 // Show mute alert modal
 function showMuteAlert(message) {
@@ -474,7 +475,7 @@ function showMuteAlert(message) {
   if (muteAlertOverlay) muteAlertOverlay.classList.add('show');
   
   // Auto-dismiss after 30 seconds
-  setTimeout(() => {
+  setTimeout(() =>
     hideMuteAlert();
   }, 30000);
 }
@@ -500,6 +501,11 @@ if (muteAlertBtn) {
 
 if (dismissAlertBtn) {
   dismissAlertBtn.addEventListener('click', hideMuteAlert);
+}
+
+// Add event listener for the close (X) button
+if (muteAlertCloseBtn) {
+  muteAlertCloseBtn.addEventListener('click', hideMuteAlert);
 }
 
 // Initialize display

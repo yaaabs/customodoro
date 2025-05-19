@@ -598,6 +598,31 @@ header {
   filter: brightness(1.1);
 }
 
+/* Mute Alert Close Button styling */
+.mute-alert-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #777;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.3s ease;
+}
+
+.mute-alert-close:hover {
+  color: #333;
+}
+
+/* Fix for dark theme */
+body.theme-dark .mute-alert-close {
+  color: #aaa;
+}
+
+body.theme-dark .mute-alert-close:hover {
+  color: #fff;
+}
+
 /* Dark theme support */
 body.theme-dark .mute-alert {
   background-color: #222;
