@@ -260,7 +260,7 @@ function completeSession(playSound = true) {
     showToast(`Great work! You worked for ${workMinutes} minutes and earned a ${earnedBreakTime}-minute break! 🎉`);
     
     startButton.textContent = 'START';
-    switchMode('break');
+    switchMode('break'); // The switchMode function will detect this as an automatic transition
     
     // Auto-start the break
     if (earnedBreakTime > 0) {
@@ -281,7 +281,7 @@ function completeBreak() {
     
     showToast("Break time is over! Ready to work again? 💪");
     startButton.textContent = 'START';
-    switchMode('reverse');
+    switchMode('reverse'); // Also detected as automatic transition
 }
 
 // Reset timer
@@ -297,39 +297,50 @@ function resetTimer() {
 
 // Switch between reverse and break modes with validation
 function switchMode(mode) {
-    if (isRunning) {
-        const confirmed = confirm('Timer is still running. Are you sure you want to switch modes? This will reset your current progress.');
-        if (!confirmed) return;
-    }
+  // Don't show task deletion confirmation for automatic mode changes
+  const isAutoSwitch = 
+    // If we're coming from a completed session
+    (currentMode === 'reverse' && mode === 'break' && currentSeconds >= MAX_TIME) || 
+    // If we're coming from a completed break
+    (currentMode === 'break' && mode === 'reverse' && currentSeconds <= 0);
+  
+  if (isRunning && !isAutoSwitch) {
+    const confirmed = confirm('Timer is still running. Are you sure you want to switch modes? This will reset your current progress.');
+    if (!confirmed) return;
+  }
 
-    if (taskList.children.length > 0) {
-        const confirmed = confirm('Switching modes will delete all your tasks. Do you want to continue?');
-        if (!confirmed) return;
-    }
+  // Only show task deletion warning for manual mode changes
+  if (taskList.children.length > 0 && !isAutoSwitch) {
+    const confirmed = confirm('Switching modes will delete all your tasks. Do you want to continue?');
+    if (!confirmed) return;
+  }
 
+  // Clear tasks only when manually switching, not during automatic transitions
+  if (!isAutoSwitch) {
     // Clear all tasks if user confirms
     taskList.innerHTML = '';
     hasUnfinishedTasks = false;
     hasUnsavedTasks = false;
+  }
 
-    currentMode = mode;
-    reverseTab.classList.toggle('active', mode === 'reverse');
-    breakTab.classList.toggle('active', mode === 'break');
-    
-    // Reset timer state
-    clearInterval(timerInterval);
-    isRunning = false;
-    startButton.textContent = 'START';
-    
-    if (mode === 'break') {
-        currentSeconds = earnedBreakTime * 60;
-        initialSeconds = currentSeconds;
-    } else {
-        currentSeconds = 0;
-        initialSeconds = MAX_TIME;
-    }
-    
-    updateDisplay();
+  currentMode = mode;
+  reverseTab.classList.toggle('active', mode === 'reverse');
+  breakTab.classList.toggle('active', mode === 'break');
+  
+  // Reset timer state
+  clearInterval(timerInterval);
+  isRunning = false;
+  startButton.textContent = 'START';
+  
+  if (mode === 'break') {
+    currentSeconds = earnedBreakTime * 60;
+    initialSeconds = currentSeconds;
+  } else {
+    currentSeconds = 0;
+    initialSeconds = MAX_TIME;
+  }
+  
+  updateDisplay();
 }
 
 // Show toast notification

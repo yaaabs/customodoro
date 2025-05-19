@@ -516,21 +516,32 @@ function resetTimer() {
 
 // Switch between pomodoro, short break, and long break modes with validation
 function switchMode(mode, autoStart = false) {
-  // Remove the running timer check since we want automatic transitions
+  // Don't show deletion confirmation when auto-switching between work/break phases
+  const isTimerPhaseSwitch = 
+    // Going from pomodoro to any break
+    (currentMode === 'pomodoro' && (mode === 'shortBreak' || mode === 'longBreak')) ||
+    // Going from any break to pomodoro
+    ((currentMode === 'shortBreak' || currentMode === 'longBreak') && mode === 'pomodoro');
+  
+  // Only show running timer confirmation for manual mode changes, not auto transitions
   if (!autoStart && isRunning) {
     const confirmed = confirm('Timer is still running. Are you sure you want to switch modes? This will reset your current progress.');
     if (!confirmed) return;
   }
 
-  if (taskList.children.length > 0) {
+  // Only show task deletion warning for manual mode changes, not auto transitions between phases
+  if (taskList.children.length > 0 && !autoStart && !isTimerPhaseSwitch) {
     const confirmed = confirm('Switching modes will delete all your tasks. Do you want to continue?');
     if (!confirmed) return;
   }
 
-  // Clear all tasks if user confirms
-  taskList.innerHTML = '';
-  hasUnfinishedTasks = false;
-  hasUnsavedTasks = false;
+  // Clear all tasks only when confirmed by user or when there's an explicit mode change
+  // (not auto phase transitions during normal timer operation)
+  if (!isTimerPhaseSwitch || !autoStart) {
+    taskList.innerHTML = '';
+    hasUnfinishedTasks = false;
+    hasUnsavedTasks = false;
+  }
 
   currentMode = mode;
 
@@ -583,9 +594,10 @@ function switchMode(mode, autoStart = false) {
 
 // Add link handler for mode switching
 document.querySelector('.switch-btn').addEventListener('click', (e) => {
+  // Only show confirmation when switching between major timer types (classic/reverse)
   const hasTasks = taskList.children.length > 0;
   if (hasTasks) {
-    const confirmed = confirm('Switching modes will delete all your tasks. Do you want to continue?');
+    const confirmed = confirm('Switching to a different timer type will delete all your tasks. Do you want to continue?');
     if (!confirmed) {
       e.preventDefault();
     }
