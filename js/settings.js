@@ -49,6 +49,16 @@
     // Stop any playing test sounds
     stopTestSound();
     
+    // Try to save BGM player state, but don't let errors prevent modal closing
+    try {
+      if (window.bgmPlayer && typeof window.bgmPlayer.saveState === 'function') {
+        window.bgmPlayer.saveState();
+      }
+    } catch (error) {
+      console.error('Error saving BGM state:', error);
+    }
+    
+    // Always close the modal, even if there was an error
     settingsModal.classList.remove('show');
   }
   
@@ -93,26 +103,34 @@
     // Stop any playing test sounds
     stopTestSound();
     
-    if (isReversePage) {
-      saveReverseSettings();
-    } else {
-      savePomodoroSettings();
+    try {
+      if (isReversePage) {
+        saveReverseSettings();
+      } else {
+        savePomodoroSettings();
+      }
+      
+      // Save sound settings for both modes
+      saveSoundSettings();
+      
+      // Save theme settings
+      saveThemeSettings();
+      
+      // Apply settings immediately to update the timer
+      applySettingsToTimer();
+      
+      // Force an immediate timer reset to apply new settings
+      forceTimerReset();
+      
+      // Close the modal with proper error handling
+      closeSettings();
+      showToast('Settings saved successfully!');
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      // Make sure modal closes even if there's an error
+      settingsModal.classList.remove('show');
+      showToast('There was an error saving settings.');
     }
-    
-    // Save sound settings for both modes
-    saveSoundSettings();
-    
-    // Save theme settings
-    saveThemeSettings();
-    
-    // Apply settings immediately to update the timer
-    applySettingsToTimer();
-    
-    // Force an immediate timer reset to apply new settings
-    forceTimerReset();
-    
-    closeSettings();
-    showToast('Settings saved successfully!');
   }
   
   // Reset all settings to defaults

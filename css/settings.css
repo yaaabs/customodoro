@@ -485,6 +485,18 @@ input:checked + .slider-toggle:before {
   font-weight: 600;
 }
 
+/* Tag with "Beta" badge */
+.beta-tag {
+  display: inline-block;
+  background-color: #D95550;
+  color: white;
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-left: 8px;
+  font-weight: 600;
+}
+
 /* Sound test buttons */
 .sound-test-buttons {
   display: flex;
@@ -559,14 +571,151 @@ input:checked + .slider-toggle:before {
   border-top-color: #9d71d0;
 }
 
-/* Style for the opened dropdown */
-#alarm-sound-selector option:checked {
-  background-color: rgba(139, 95, 191, 0.3);
+/* Make the playlist selector match other dropdown styles */
+#playlist-selector {
+  width: 100%;
+  background-color: #252525;
+  border: 1px solid #444;
   color: #fff;
-  font-weight: bold;
+  padding: 12px 16px;
+  border-radius: 8px;
+  appearance: none;
+  cursor: pointer;
+  font-size: 15px;
+  transition: all 0.2s ease;
 }
 
-/* Responsive adjustments */
+#playlist-selector:focus {
+  outline: none;
+  border-color: #8b5fbf;
+  box-shadow: 0 0 0 2px rgba(139, 95, 191, 0.2);
+  background-color: #2d2d2d;
+}
+
+#playlist-selector:hover {
+  background-color: #2a2a2a;
+  border-color: #555;
+}
+
+#playlist-selector option {
+  background-color: #252525;
+  color: #fff;
+  padding: 12px;
+  font-size: 14px;
+}
+
+/* Custom dropdown arrow for playlist selector */
+.select-wrapper:has(#playlist-selector)::after {
+  content: '';
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0; 
+  height: 0; 
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid #8b5fbf;
+  pointer-events: none;
+  transition: all 0.2s ease;
+}
+
+/* BGM Player Styles */
+.bgm-player {
+  background-color: #252525;
+  border-radius: 12px;
+  padding: 18px;
+  margin-top: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.bgm-track-info {
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.bgm-track-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bgm-track-artist {
+  font-size: 14px;
+  color: #8b5fbf;
+  opacity: 0.8;
+}
+
+.bgm-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.bgm-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+  padding: 10px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bgm-btn:hover {
+  color: #8b5fbf;
+  transform: scale(1.1);
+}
+
+.bgm-btn:active {
+  transform: scale(0.95);
+}
+
+.bgm-btn-play {
+  background-color: rgba(139, 95, 191, 0.2);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  margin: 0 15px;
+}
+
+.bgm-btn-play:hover {
+  background-color: rgba(139, 95, 191, 0.3);
+}
+
+.bgm-progress-container {
+  height: 4px;
+  background-color: #333;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 10px;
+  cursor: pointer;
+  position: relative;
+}
+
+.bgm-progress-bar {
+  height: 100%;
+  background-color: #8b5fbf;
+  width: 0%;
+  transition: width 0.2s linear;
+}
+
+.bgm-time {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #999;
+  margin-top: 5px;
+}
+
 @media (max-width: 768px) {
   .settings-content {
     flex-direction: column;

@@ -92,7 +92,8 @@
         <div class="settings-nav-item active" data-section="timer">Reverse Timer</div>
         <div class="settings-nav-item" data-section="sound">Sound</div>
         <div class="settings-nav-item" data-section="auto">Auto Start</div>
-        <div class="settings-nav-item" data-section="theme">Theme <span class="new-tag">New</span></div>
+        <div class="settings-nav-item" data-section="bgm">Music <span class="new-tag">New</span></div>
+        <div class="settings-nav-item" data-section="theme">Theme</div>
       </div>
       
       <div class="settings-main">
@@ -204,6 +205,70 @@
             </div>
           </div>
           
+          <!-- BGM Settings Section -->
+          <div class="settings-section" id="bgm-section">
+            <h3 class="settings-section-title">Background Music</h3>
+            <div class="settings-row">
+              <div class="settings-label">Enable Background Music</div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="bgm-toggle" checked>
+                <span class="slider-toggle"></span>
+              </label>
+            </div>
+            
+            <div class="settings-row">
+              <div class="settings-label">Select playlist</div>
+              <div class="select-wrapper">
+                <select class="sound-selector" id="playlist-selector">
+                  <option value="deep-focus">Deep Focus Study</option>
+                  <option value="ambient-long">Ambient Playlist (Long)</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="settings-row">
+              <div class="settings-label">Music Volume</div>
+              <div class="volume-container">
+                <input type="range" class="volume-slider" id="bgm-volume-slider" min="0" max="100" value="30">
+                <div class="volume-percentage" id="bgm-volume-percentage">30%</div>
+              </div>
+            </div>
+            
+            <div class="bgm-player">
+              <div class="bgm-track-info">
+                <div class="bgm-track-title" id="bgm-track-title">Select a playlist</div>
+                <div class="bgm-track-artist" id="bgm-track-artist">and press play</div>
+              </div>
+              
+              <div class="bgm-controls">
+                <button class="bgm-btn bgm-btn-prev" id="bgm-prev-btn">
+                  <svg viewBox="0 0 24 24" width="24" height="24">
+                    <path fill="currentColor" d="M6,18V6H8V18H6M9.5,12L18,6V18L9.5,12Z" />
+                  </svg>
+                </button>
+                
+                <button class="bgm-btn bgm-btn-play" id="bgm-play-btn">
+                  <svg viewBox="0 0 24 24" width="32" height="32" id="bgm-play-icon">
+                    <path fill="currentColor" d="M8,5.14V19.14L19,12.14L8,5.14Z" />
+                  </svg>
+                  <svg viewBox="0 0 24 24" width="32" height="32" id="bgm-pause-icon" style="display: none;">
+                    <path fill="currentColor" d="M14,19H18V5H14M6,19H10V5H6V19Z" />
+                  </svg>
+                </button>
+                
+                <button class="bgm-btn bgm-btn-next" id="bgm-next-btn">
+                  <svg viewBox="0 0 24 24" width="24" height="24">
+                    <path fill="currentColor" d="M16,18H18V6H16M6,18L14.5,12L6,6V18Z" />
+                  </svg>
+                </button>
+              </div>
+              
+              <div class="bgm-progress-container">
+                <div class="bgm-progress-bar" id="bgm-progress-bar"></div>
+              </div>
+            </div>
+          </div>
+          
           <!-- Theme Section -->
           <div class="settings-section" id="theme-section">
             <h3 class="settings-section-title">Theme Settings</h3>
@@ -255,5 +320,6 @@
   
   <script src="js/reversePomodoro.js"></script>
   <script src="js/settings.js"></script>
+  <script src="js/bgm-player.js"></script>
 </body>
 </html>
