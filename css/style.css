@@ -427,7 +427,7 @@ header {
   flex: 1;
   padding: 12px 15px;
   border: 1px solid #ddd;
-  border-radius: 8px 0 0 8px;
+  border-radius: 8px 0 0 8px; /* Rounded on left side for desktop */
   font-size: 16px;
 }
 
@@ -436,7 +436,7 @@ header {
   background-color: var(--focus-color);
   color: white;
   border: none;
-  border-radius: 0 8px 8px 0;
+  border-radius: 0 8px 8px 0; /* Rounded on right side for desktop */
   cursor: pointer;
   font-weight: 600;
 }
@@ -457,6 +457,9 @@ header {
   width: 20px;
   height: 20px;
   cursor: pointer;
+  min-height: initial;
+  min-width: initial;
+  display: inline;
 }
 
 .task-text {
@@ -812,7 +815,7 @@ body.theme-dark .mode-tabs .tab.active {
     height: 28px;
   }
   
-  /* Fixed task input for mobile */
+  /* Fixed task input for mobile - stacked layout */
   .task-input-container {
     display: flex;
     flex-direction: column;
@@ -820,14 +823,14 @@ body.theme-dark .mode-tabs .tab.active {
   }
   
   .task-input {
-    border-radius: 8px;
+    border-radius: 8px; /* Fully rounded for mobile */
     margin-bottom: 10px;
     width: 100%;
     font-size: 16px; /* Prevent zoom on iOS */
   }
   
   .add-task-btn {
-    border-radius: 8px;
+    border-radius: 8px; /* Fully rounded for mobile */
     width: 100%;
     padding: 12px;
   }
@@ -938,10 +941,9 @@ html, body {
   touch-action: manipulation; /* Disable double-tap zoom */
 }
 
-/* Make all interactive elements touch-friendly */
+/* Make all interactive elements touch-friendly - except checkboxes */
 button, 
 .tab, 
-input[type="checkbox"], 
 .task-delete, 
 .time-btn {
   min-height: 44px;
@@ -951,42 +953,27 @@ input[type="checkbox"],
   justify-content: center;
 }
 
-/* Add this to prevent zoom on iOS */
-input[type="text"],
-input[type="number"],
-select,
-textarea {
-  font-size: 16px !important;
+/* Override the touch-friendly styles specifically for task checkboxes */
+.task-item .task-checkbox {
+  min-height: initial;
+  min-width: initial;
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  flex: none;
+  margin-right: 15px;
+  cursor: pointer;
+  vertical-align: middle;
 }
 
-/* Fix task input container for better mobile experience */
-.task-input-container {
-  width: 100%;
-}
-
-/* Prevent text overflow in tasks */
-.task-text {
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  hyphens: auto;
-  max-width: 100%;
-}
-
-/* Make overlay modals touch-friendly */
-.mute-alert-overlay {
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Settings modal full screen on mobile */
+/* Fix task checkbox alignment on mobile */
 @media (max-width: 480px) {
-  .settings-modal .settings-content {
-    width: 100%;
-    height: 100%;
-    max-height: 100vh;
-    border-radius: 0;
-  }
-  
-  .settings-body {
-    -webkit-overflow-scrolling: touch;
+  .task-checkbox {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    min-height: 20px;
+    margin-right: 12px;
   }
 }
