@@ -13,6 +13,10 @@
   // Check if we're on the reverse timer page
   const isReversePage = document.body.classList.contains('reverse-mode');
   
+  // Track the currently playing test sound
+  let currentTestSound = null;
+  let volumeChangeTimeout = null;
+  
   // Open settings modal
   function openSettings() {
     settingsModal.classList.add('show');
@@ -24,8 +28,27 @@
     }
   }
   
+  // Function to stop any currently playing test sounds
+  function stopTestSound() {
+    // Clear any pending volume change timeouts
+    if (volumeChangeTimeout) {
+      clearTimeout(volumeChangeTimeout);
+      volumeChangeTimeout = null;
+    }
+    
+    // Stop any currently playing test sound
+    if (currentTestSound) {
+      currentTestSound.pause();
+      currentTestSound.currentTime = 0;
+      currentTestSound = null;
+    }
+  }
+  
   // Close settings modal
   function closeSettings() {
+    // Stop any playing test sounds
+    stopTestSound();
+    
     settingsModal.classList.remove('show');
   }
   
@@ -40,6 +63,9 @@
   
   // Activate tab and show corresponding section
   function activateTab(tabItem) {
+    // Stop any playing test sounds when switching tabs
+    stopTestSound();
+    
     // Remove active class from all navigation items
     navItems.forEach(item => {
       item.classList.remove('active');
@@ -64,6 +90,9 @@
   
   // Save settings and apply them immediately
   function saveSettings() {
+    // Stop any playing test sounds
+    stopTestSound();
+    
     if (isReversePage) {
       saveReverseSettings();
     } else {
@@ -642,25 +671,29 @@ function updateSoundsDirectly() {
 
 // Test sound function - FIXED: Ensure we test the current alarm sound
 function testSound(type) {
-    if (typeof window.playSound === 'function') {
-        // If it's the complete/alarm sound, make sure it's up to date first
-        if (type === 'complete') {
-            const prefix = isReversePage ? 'reverse_' : 'classic_';
-            const selectedAlarmSound = localStorage.getItem(prefix + 'alarmSound') || 'alarm.mp3';
-            
-            // Use the new function if available
-            if (typeof window.updateAlarmSound === 'function') {
-                window.updateAlarmSound(selectedAlarmSound);
-            }
-        }
-        window.playSound(type);
-    } else if (typeof window.sounds !== 'undefined') {
-        const sound = window.sounds[type];
-        if (sound) {
-            sound.currentTime = 0;
-            sound.play().catch(err => console.log('Audio playback disabled'));
-        }
+  // Stop any currently playing test sound
+  stopTestSound();
+  
+  // If it's the complete/alarm sound, use the selected sound
+  if (type === 'complete') {
+    const prefix = isReversePage ? 'reverse_' : 'classic_';
+    const alarmSoundSelector = document.getElementById('alarm-sound-selector');
+    const selectedSound = alarmSoundSelector ? alarmSoundSelector.value : 'alarm.mp3';
+    
+    // Apply the current volume settings
+    const volumeSlider = document.getElementById('volume-slider');
+    const volume = volumeSlider ? parseInt(volumeSlider.value) / 100 : 0.6;
+    
+    // Create and play the test sound
+    currentTestSound = new Audio('audio/' + selectedSound);
+    currentTestSound.volume = volume;
+    
+    if (volume > 0) {
+      currentTestSound.play().catch(err => console.log('Audio playback disabled'));
     }
+  } else if (typeof window.playSound === 'function') {
+    window.playSound(type);
+  }
 }
 
 // Add these to your settings modal in both HTML files (optional)
@@ -823,7 +856,7 @@ function testSound(type) {
     }, 100); // Small delay to ensure all values are initialized
   });
   
-  // Add event listener for volume slider to update percentage display
+  // Add event listener for volume slider to update percentage display and play test sound
   document.addEventListener('DOMContentLoaded', function() {
     const volumeSlider = document.getElementById('volume-slider');
     const volumePercentage = document.getElementById('volume-percentage');
@@ -832,6 +865,43 @@ function testSound(type) {
       // Update percentage display when slider value changes
       volumeSlider.addEventListener('input', function() {
         volumePercentage.textContent = volumeSlider.value + '%';
+        
+        // Get prefix based on current page
+        const prefix = isReversePage ? 'reverse_' : 'classic_';
+        
+        // Immediately update the volume in localStorage
+        localStorage.setItem(prefix + 'volume', volumeSlider.value);
+        
+        // Clear any pending timeouts to avoid multiple sounds playing
+        if (volumeChangeTimeout) {
+          clearTimeout(volumeChangeTimeout);
+        }
+        
+        // Stop the current test sound if it exists
+        if (currentTestSound) {
+          currentTestSound.pause();
+          currentTestSound.currentTime = 0;
+          currentTestSound = null;
+        }
+        
+        // Set a small timeout to avoid firing too many sounds
+        volumeChangeTimeout = setTimeout(function() {
+          // Play the selected alarm sound from the dropdown
+          const alarmSoundSelector = document.getElementById('alarm-sound-selector');
+          const selectedSound = alarmSoundSelector ? alarmSoundSelector.value : 'alarm.mp3';
+          
+          // Apply the new volume to sound settings
+          updateSoundsDirectly();
+          
+          // Create and play the test sound
+          currentTestSound = new Audio('audio/' + selectedSound);
+          currentTestSound.volume = parseInt(volumeSlider.value) / 100;
+          
+          // Only play if volume > 0
+          if (currentTestSound.volume > 0) {
+            currentTestSound.play().catch(err => console.log('Audio playback disabled'));
+          }
+        }, 150); // Small delay to debounce
       });
       
       // Initial setup of percentage display

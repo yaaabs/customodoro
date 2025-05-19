@@ -475,7 +475,7 @@ function showMuteAlert(message) {
   if (muteAlertOverlay) muteAlertOverlay.classList.add('show');
   
   // Auto-dismiss after 30 seconds
-  setTimeout(() =>
+  setTimeout(() => {
     hideMuteAlert();
   }, 30000);
 }
