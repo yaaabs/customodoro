@@ -1004,12 +1004,36 @@ button,
 
 /* Add 君の名は Theme - Kimi no Na Wa */
 body.theme-nature {
+  /* Improved path handling for the background image */
   background-image: url('../images/Kimi no Na Wa.jpg');
+  /* Fallback color in case image fails to load */
+  background-color: #1a2a4a;
   background-size: cover;
-  background-position: center;
+  background-position: center center;
   background-attachment: fixed;
+  background-repeat: no-repeat;
   color: #ffffff;
   position: relative;
+  /* Force hardware acceleration to improve rendering */
+  -webkit-transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  -o-transform: translateZ(0);
+  transform: translateZ(0);
+  /* Fix for some mobile browsers that don't support fixed backgrounds */
+  min-height: 100vh;
+}
+
+/* Mobile-specific fixes for the background image */
+@media (max-width: 768px) {
+  body.theme-nature {
+    /* Some mobile browsers don't support fixed attachment well */
+    background-attachment: scroll;
+    /* Ensure the image always covers the screen */
+    background-size: cover;
+    /* Position from top for better mobile viewing */
+    background-position: top center;
+  }
 }
 
 /* Add overlay to improve readability on nature theme */
@@ -1169,4 +1193,24 @@ body.theme-nature .add-task-btn {
 
 body.theme-nature .add-task-btn:hover {
   background-color: rgba(139, 95, 191, 1);
+}
+
+/* Ensure the theme preserves across element interactions */
+.focus-mode.theme-nature,
+.short-break-mode.theme-nature,
+.long-break-mode.theme-nature,
+.reverse-mode.theme-nature {
+  background-image: url('../images/Kimi no Na Wa.jpg');
+  background-color: #1a2a4a; /* Fallback */
+}
+
+  /* Handle iOS Safari-specific issues */
+@supports (-webkit-touch-callout: none) {
+  body.theme-nature {
+    /* iOS Safari has issues with background-attachment: fixed */
+    background-attachment: scroll;
+    /* Force hardware acceleration differently for iOS */
+    -webkit-transform: translate3d(0,0,0);
+    transform: translate3d(0,0,0);
+  }
 }

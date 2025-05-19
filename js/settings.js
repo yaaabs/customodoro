@@ -215,17 +215,53 @@
     // Remove any previous theme classes from body
     document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-nature');
     
-    // Apply selected theme
-    switch(themeName) {
-      case 'dark':
-        document.body.classList.add('theme-dark');
-        break;
-      case 'nature':
+    // If selecting nature theme, preload the image first
+    if (themeName === 'nature') {
+      // Create a new image to preload
+      const preloadImg = new Image();
+      preloadImg.src = 'images/Kimi no Na Wa.jpg';
+      
+      // Show loading indicator
+      const toast = document.getElementById('toast');
+      if (toast) {
+        toast.textContent = 'Loading theme...';
+        toast.classList.add('show');
+      }
+      
+      // When image is loaded, apply the theme
+      preloadImg.onload = function() {
         document.body.classList.add('theme-nature');
-        break;
-      case 'light':
-      default:
+        // Hide loading indicator
+        if (toast) toast.classList.remove('show');
+        console.log('Nature theme image loaded successfully');
+      };
+      
+      // If image fails to load, fall back to light theme and show error
+      preloadImg.onerror = function() {
         document.body.classList.add('theme-light');
+        console.error('Failed to load nature theme image');
+        // Show error message
+        if (toast) {
+          toast.textContent = 'Failed to load theme image. Using light theme instead.';
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        // Update the selector to match actual theme
+        const themeSelector = document.getElementById('theme-selector');
+        if (themeSelector) themeSelector.value = 'light';
+        // Save the fallback theme
+        localStorage.setItem('siteTheme', 'light');
+      };
+    } else {
+      // For other themes, apply directly
+      switch(themeName) {
+        case 'dark':
+          document.body.classList.add('theme-dark');
+          break;
+        case 'light':
+        default:
+          document.body.classList.add('theme-light');
+      }
     }
     
     // Store theme preference - using a common key without page prefix for site-wide theme
@@ -990,6 +1026,13 @@ function testSound(type) {
 // Initialize site theme immediately on page load before DOM is fully loaded
 (function initializeSiteTheme() {
   const savedTheme = localStorage.getItem('siteTheme') || 'light';
-  applyTheme(savedTheme);
+  if (savedTheme === 'nature') {
+    // For nature theme, we'll do immediate basic styling for smoother experience
+    document.body.classList.add('theme-nature');
+    // Then fully load with the preload mechanism once JS is parsed
+    setTimeout(() => applyTheme(savedTheme), 10);
+  } else {
+    applyTheme(savedTheme);
+  }
 })();
 })();
