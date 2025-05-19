@@ -113,20 +113,22 @@
       localStorage.setItem(prefix + 'volume', '60');
       localStorage.setItem(prefix + 'soundEffects', 'true');
       localStorage.setItem(prefix + 'alarm', 'true');
+      // Set Bell as the default sound
+      localStorage.setItem(prefix + 'alarmSound', 'bell.mp3');
       
-      // Reset theme to site-wide default
-      localStorage.setItem('siteTheme', 'default');
+      // Reset theme to light mode
+      localStorage.setItem('siteTheme', 'light');
       
       // Reload settings into form
       loadSettings();
       
       // Apply theme immediately
-      applyTheme('default');
+      applyTheme('light');
       
-      // Update theme selector
+      // Update theme selector to show Light Mode
       const themeSelector = document.getElementById('theme-selector');
       if (themeSelector) {
-        themeSelector.value = 'default';
+        themeSelector.value = 'light';
       }
       
       // Update sound settings visually
@@ -134,11 +136,14 @@
       const volumePercentage = document.getElementById('volume-percentage');
       const soundEffectsToggle = document.getElementById('sound-effects-toggle');
       const alarmToggle = document.getElementById('alarm-toggle');
+      const alarmSoundSelector = document.getElementById('alarm-sound-selector');
       
       if (volumeSlider) volumeSlider.value = 60;
       if (volumePercentage) volumePercentage.textContent = '60%';
       if (soundEffectsToggle) soundEffectsToggle.checked = true;
       if (alarmToggle) alarmToggle.checked = true;
+      // Set Bell as selected in the dropdown
+      if (alarmSoundSelector) alarmSoundSelector.value = 'bell.mp3';
       
       // Update auto-start settings visually
       const autoBreakToggle = document.getElementById('auto-break-toggle');
@@ -151,7 +156,7 @@
       applySettingsToTimer();
       forceTimerReset();
       
-      // Update sound volumes
+      // Update sound volumes and immediately apply the new Bell sound
       updateSoundsDirectly();
       
       showToast('Settings reset to defaults!');
