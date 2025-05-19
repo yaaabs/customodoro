@@ -1001,3 +1001,172 @@ button,
     margin-right: 12px;
   }
 }
+
+/* Add Nature Theme - Kimi no Na Wa */
+body.theme-nature {
+  background-image: url('../images/Kimi no Na Wa.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: #ffffff;
+  position: relative;
+}
+
+/* Add overlay to improve readability on nature theme */
+body.theme-nature::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: -1;
+}
+
+/* Special styling for timer containers in nature theme */
+body.theme-nature .timer-container {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Task and info sections for nature theme */
+body.theme-nature .tasks-section,
+body.theme-nature .info-section,
+body.theme-nature .settings-section {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Improve text readability in nature theme */
+body.theme-nature .app-title,
+body.theme-nature .timer,
+body.theme-nature .tasks-title,
+body.theme-nature .info-box h3 {
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Style task input for nature theme */
+body.theme-nature .task-input {
+  background-color: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+body.theme-nature .task-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Style task items for nature theme */
+body.theme-nature .task-item {
+  border-bottom-color: rgba(255, 255, 255, 0.2);
+}
+
+body.theme-nature .task-text {
+  color: #ffffff;
+}
+
+body.theme-nature .task-completed .task-text {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Style buttons for nature theme */
+body.theme-nature .primary-btn {
+  background-color: rgba(255, 255, 255, 0.25);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(5px);
+}
+
+body.theme-nature .primary-btn:hover {
+  background-color: rgba(255, 255, 255, 0.35);
+}
+
+body.theme-nature .secondary-btn,
+body.theme-nature .switch-btn {
+  background-color: rgba(0, 0, 0, 0.4);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+body.theme-nature .secondary-btn:hover,
+body.theme-nature .switch-btn:hover {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Mode tabs for nature theme */
+body.theme-nature .mode-tabs {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+body.theme-nature .tab {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+body.theme-nature .tab.active {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+/* Settings button for nature theme */
+body.theme-nature .settings-btn {
+  background-color: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+body.theme-nature .settings-btn svg {
+  color: #ffffff;
+}
+
+/* Progress bar for nature theme */
+body.theme-nature .progress-container {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+body.theme-nature .progress-bar {
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+/* Fix footer text color for nature theme */
+body.theme-nature .footer {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Session dots for nature theme */
+body.theme-nature .session-dot {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+body.theme-nature .session-dot.completed {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* Fix info box text for nature theme */
+body.theme-nature .info-box p, 
+body.theme-nature .info-box li {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+body.theme-nature .settings-note {
+  background-color: rgba(0, 0, 0, 0.4);
+  border-left: 3px solid rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Toast notification for nature theme */
+body.theme-nature .toast {
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Add-task button for nature theme */
+body.theme-nature .add-task-btn {
+  background-color: rgba(139, 95, 191, 0.8);
+}
+
+body.theme-nature .add-task-btn:hover {
+  background-color: rgba(139, 95, 191, 1);
+}
