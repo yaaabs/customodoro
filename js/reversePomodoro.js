@@ -11,20 +11,17 @@ const sounds = {
     complete: new Audio('audio/Alert Sounds/alarm.mp3')
 };
 
-// Initialize sound settings from localStorage
+// Initialize sound settings from shared localStorage keys
 function initializeSoundSettings() {
-    // Use page-specific prefix for sound settings
-    const prefix = 'reverse_';
-    
-    const volume = localStorage.getItem(prefix + 'volume') ? 
-                  parseInt(localStorage.getItem(prefix + 'volume')) / 100 : 0.6;
+    const volume = localStorage.getItem('volume') ? 
+                  parseInt(localStorage.getItem('volume')) / 100 : 0.6;
     
     // Explicitly check for 'false' string
-    const soundEffectsEnabled = localStorage.getItem(prefix + 'soundEffects') !== 'false';
-    const alarmEnabled = localStorage.getItem(prefix + 'alarm') !== 'false';
+    const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
+    const alarmEnabled = localStorage.getItem('alarm') !== 'false';
     
     // Get selected alarm sound or use default - FIXED: Load the sound properly
-    const selectedAlarmSound = localStorage.getItem(prefix + 'alarmSound') || 'alarm.mp3';
+    const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
     updateAlarmSound(selectedAlarmSound);
     
     // Set initial volumes
@@ -41,16 +38,15 @@ function initializeSoundSettings() {
     });
 }
 
-// NEW: Function to specifically update the alarm sound
+// Function to specifically update the alarm sound
 function updateAlarmSound(soundFileName) {
     // Create a new Audio object for the alarm instead of just changing the src
     sounds.complete = new Audio('audio/Alert Sounds/' + soundFileName);
     
-    // Re-apply volume settings
-    const prefix = 'reverse_';
-    const volume = localStorage.getItem(prefix + 'volume') ? 
-                  parseInt(localStorage.getItem(prefix + 'volume')) / 100 : 0.6;
-    const alarmEnabled = localStorage.getItem(prefix + 'alarm') !== 'false';
+    // Re-apply volume settings using shared keys
+    const volume = localStorage.getItem('volume') ? 
+                  parseInt(localStorage.getItem('volume')) / 100 : 0.6;
+    const alarmEnabled = localStorage.getItem('alarm') !== 'false';
     sounds.complete.volume = alarmEnabled ? volume : 0;
     
     console.log(`Updated alarm sound to: ${soundFileName}`);
@@ -59,30 +55,27 @@ function updateAlarmSound(soundFileName) {
 // Call this function on startup
 initializeSoundSettings();
 
-// Play a sound with error handling and respect settings
+// Play a sound with error handling and respect settings from shared keys
 function playSound(soundName) {
     const sound = sounds[soundName];
     if (!sound) return;
     
-    // Use page-specific prefix for sound settings
-    const prefix = 'reverse_';
-    
-    // Check if the sound should be played based on settings
+    // Check if the sound should be played based on shared settings
     if (soundName === 'complete') {
         // For alarm sound
-        if (localStorage.getItem(prefix + 'alarm') === 'false') {
+        if (localStorage.getItem('alarm') === 'false') {
             console.log('Alarm sounds disabled in settings');
             return;
         }
         
         // FIXED: Ensure we're using the latest alarm sound before playing
-        const selectedAlarmSound = localStorage.getItem(prefix + 'alarmSound') || 'alarm.mp3';
+        const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
         if (sound.src.indexOf(selectedAlarmSound) === -1) {
             updateAlarmSound(selectedAlarmSound);
         }
     } else {
         // For all other UI sounds
-        if (localStorage.getItem(prefix + 'soundEffects') === 'false') {
+        if (localStorage.getItem('soundEffects') === 'false') {
             console.log('Sound effects disabled in settings');
             return;
         }
@@ -262,8 +255,9 @@ function completeSession(playSound = true) {
     startButton.textContent = 'START';
     switchMode('break'); // The switchMode function will detect this as an automatic transition
     
-    // Auto-start the break
-    if (earnedBreakTime > 0) {
+    // Auto-start the break if enabled in settings (using shared key)
+    const autoStartBreaks = localStorage.getItem('autoBreak') !== 'false';
+    if (earnedBreakTime > 0 && autoStartBreaks) {
         setTimeout(() => toggleTimer(), 500);
     }
 }
@@ -435,21 +429,18 @@ document.querySelectorAll('.time-btn, .secondary-btn, .tab').forEach(button => {
 // Make the playSound function available globally
 window.playSound = playSound;
 
-// Update sound volumes based on settings
+// Update sound volumes based on shared settings
 function updateSoundVolumes() {
-    // Use page-specific prefix for sound settings
-    const prefix = 'reverse_';
-    
-    // Use the default value (60) if not found in localStorage
-    const volume = localStorage.getItem(prefix + 'volume') ? 
-                  parseInt(localStorage.getItem(prefix + 'volume')) / 100 : 0.6;
+    // Use shared keys for sound settings
+    const volume = localStorage.getItem('volume') ? 
+                  parseInt(localStorage.getItem('volume')) / 100 : 0.6;
     
     // Explicitly check for 'false' string to handle resets properly
-    const soundEffectsEnabled = localStorage.getItem(prefix + 'soundEffects') !== 'false';
-    const alarmEnabled = localStorage.getItem(prefix + 'alarm') !== 'false';
+    const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
+    const alarmEnabled = localStorage.getItem('alarm') !== 'false';
     
     // FIXED: Update alarm sound when settings change
-    const selectedAlarmSound = localStorage.getItem(prefix + 'alarmSound') || 'alarm.mp3';
+    const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
     updateAlarmSound(selectedAlarmSound);
     
     // Set volumes based on settings

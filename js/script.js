@@ -48,19 +48,17 @@ sounds.complete.volume = 1.0;  // Full volume for alarm
 
 // Initialize sound settings from localStorage
 function initializeSoundSettings() {
-    // Use page-specific prefix for sound settings
-    const prefix = 'classic_';
-    
-    const volume = localStorage.getItem(prefix + 'volume') ? 
-                  parseInt(localStorage.getItem(prefix + 'volume')) / 100 : 0.6;
+    // Get settings from shared localStorage keys
+    const volume = localStorage.getItem('volume') ? 
+                  parseInt(localStorage.getItem('volume')) / 100 : 0.6;
     
     // Explicitly check for 'false' string
-    const soundEffectsEnabled = localStorage.getItem(prefix + 'soundEffects') !== 'false';
-    const alarmEnabled = localStorage.getItem(prefix + 'alarm') !== 'false';
+    const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
+    const alarmEnabled = localStorage.getItem('alarm') !== 'false';
     
-    // Get selected alarm sound or use default - FIXED: Load the sound properly
-    const selectedAlarmSound = localStorage.getItem(prefix + 'alarmSound') || 'alarm.mp3';
-    updateAlarmSound(selectedAlarmSound);
+    // Get selected alarm sound or use default
+    const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
+    sounds.complete.src = 'audio/Alert Sounds/' + selectedAlarmSound;
     
     // Set initial volumes
     sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
@@ -82,10 +80,8 @@ function updateAlarmSound(soundFileName) {
     sounds.complete = new Audio('audio/Alert Sounds/' + soundFileName);
     
     // Re-apply volume settings
-    const prefix = 'classic_';
-    const volume = localStorage.getItem(prefix + 'volume') ? 
-                  parseInt(localStorage.getItem(prefix + 'volume')) / 100 : 0.6;
-    const alarmEnabled = localStorage.getItem(prefix + 'alarm') !== 'false';
+    const volume = parseInt(localStorage.getItem('volume') || 60) / 100;
+    const alarmEnabled = localStorage.getItem('alarm') !== 'false';
     sounds.complete.volume = alarmEnabled ? volume : 0;
     
     console.log(`Updated alarm sound to: ${soundFileName}`);
@@ -93,20 +89,17 @@ function updateAlarmSound(soundFileName) {
 
 // Update sound volumes based on settings
 function updateSoundVolumes() {
-    // Use page-specific prefix for sound settings
-    const prefix = 'classic_';
-    
-    // Use the default value (60) if not found in localStorage
-    const volume = localStorage.getItem(prefix + 'volume') ? 
-                  parseInt(localStorage.getItem(prefix + 'volume')) / 100 : 0.6;
+    // Get settings from shared localStorage keys
+    const volume = localStorage.getItem('volume') ? 
+                  parseInt(localStorage.getItem('volume')) / 100 : 0.6;
     
     // Explicitly check for 'false' string to handle resets properly
-    const soundEffectsEnabled = localStorage.getItem(prefix + 'soundEffects') !== 'false';
-    const alarmEnabled = localStorage.getItem(prefix + 'alarm') !== 'false';
+    const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
+    const alarmEnabled = localStorage.getItem('alarm') !== 'false';
     
-    // FIXED: Update alarm sound when settings change
-    const selectedAlarmSound = localStorage.getItem(prefix + 'alarmSound') || 'alarm.mp3';
-    updateAlarmSound(selectedAlarmSound);
+    // Update the alarm sound file
+    const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
+    sounds.complete.src = 'audio/Alert Sounds/' + selectedAlarmSound;
     
     // Set volumes based on settings
     sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
@@ -118,11 +111,7 @@ function updateSoundVolumes() {
         volume: volume,
         soundEffectsEnabled: soundEffectsEnabled,
         alarmEnabled: alarmEnabled,
-        alarmSound: selectedAlarmSound,
-        clickVolume: sounds.click.volume,
-        startVolume: sounds.start.volume,
-        pauseVolume: sounds.pause.volume,
-        completeVolume: sounds.complete.volume
+        alarmSound: selectedAlarmSound
     });
 }
 
@@ -131,40 +120,44 @@ function playSound(soundName) {
     const sound = sounds[soundName];
     if (!sound) return;
     
-    // Use page-specific prefix for sound settings
-    const prefix = 'classic_';
-    
-    // Check if the sound should be played based on settings
+    // Check if the sound should be played based on settings using shared keys
     if (soundName === 'complete') {
         // For alarm sound
-        if (localStorage.getItem(prefix + 'alarm') === 'false') {
+        if (localStorage.getItem('alarm') === 'false') {
             console.log('Alarm sounds disabled in settings');
             return;
         }
-        
-        // FIXED: Ensure we're using the latest alarm sound before playing
-        const selectedAlarmSound = localStorage.getItem(prefix + 'alarmSound') || 'alarm.mp3';
-        if (sound.src.indexOf(selectedAlarmSound) === -1) {
-            updateAlarmSound(selectedAlarmSound);
-        }
     } else {
         // For all other UI sounds
-        if (localStorage.getItem(prefix + 'soundEffects') === 'false') {
+        if (localStorage.getItem('soundEffects') === 'false') {
             console.log('Sound effects disabled in settings');
             return;
         }
     }
     
     try {
+        // Get volume from shared settings
+        const volume = parseInt(localStorage.getItem('volume') || 60) / 100;
+        
         // For click sounds that might overlap, clone the audio
         if (soundName === 'click') {
             const clone = sound.cloneNode();
-            clone.volume = sound.volume;
+            clone.volume = volume * 0.5;
             clone.play().catch(err => console.log('Audio playback disabled'));
+        } else if (soundName === 'complete') {
+          // Make sure we're using the latest selected alarm sound
+          const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
+          if (sound.src.indexOf(selectedAlarmSound) === -1) {
+            sound.src = 'audio/Alert Sounds/' + selectedAlarmSound;
+          }
+          sound.volume = volume;
+          sound.currentTime = 0;
+          sound.play().catch(err => console.log('Audio playback disabled'));
         } else {
-            // For other sounds, reset and play
-            sound.currentTime = 0;
-            sound.play().catch(err => console.log('Audio playback disabled'));
+          // For other sounds
+          sound.volume = volume * 0.6;
+          sound.currentTime = 0;
+          sound.play().catch(err => console.log('Audio playback disabled'));
         }
     } catch (error) {
         console.error('Error playing sound:', error);
@@ -182,79 +175,76 @@ function playSound(soundName) {
     const sound = sounds[soundName];
     if (!sound) return;
     
-    // Use page-specific prefix for sound settings
-    const prefix = 'classic_';
-    
-    // Check if the sound should be played based on settings
+    // Check if the sound should be played based on settings using shared keys
     if (soundName === 'complete') {
         // For alarm sound
-        if (localStorage.getItem(prefix + 'alarm') === 'false') {
+        if (localStorage.getItem('alarm') === 'false') {
             console.log('Alarm sounds disabled in settings');
             return;
         }
-        
-        // FIXED: Ensure we're using the latest alarm sound before playing
-        const selectedAlarmSound = localStorage.getItem(prefix + 'alarmSound') || 'alarm.mp3';
-        if (sound.src.indexOf(selectedAlarmSound) === -1) {
-            updateAlarmSound(selectedAlarmSound);
-        }
     } else {
         // For all other UI sounds
-        if (localStorage.getItem(prefix + 'soundEffects') === 'false') {
+        if (localStorage.getItem('soundEffects') === 'false') {
             console.log('Sound effects disabled in settings');
             return;
         }
     }
     
     try {
+        // Get volume from shared settings
+        const volume = parseInt(localStorage.getItem('volume') || 60) / 100;
+        
         // For click sounds that might overlap, clone the audio
         if (soundName === 'click') {
             const clone = sound.cloneNode();
-            clone.volume = sound.volume;
+            clone.volume = volume * 0.5;
             clone.play().catch(err => console.log('Audio playback disabled'));
+        } else if (soundName === 'complete') {
+          // Make sure we're using the latest selected alarm sound
+          const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
+          if (sound.src.indexOf(selectedAlarmSound) === -1) {
+            sound.src = 'audio/Alert Sounds/' + selectedAlarmSound;
+          }
+          sound.volume = volume;
+          sound.currentTime = 0;
+          sound.play().catch(err => console.log('Audio playback disabled'));
         } else {
-            // For other sounds, reset and play
-            sound.currentTime = 0;
-            sound.play().catch(err => console.log('Audio playback disabled'));
+          // For other sounds
+          sound.volume = volume * 0.6;
+          sound.currentTime = 0;
+          sound.play().catch(err => console.log('Audio playback disabled'));
         }
     } catch (error) {
         console.error('Error playing sound:', error);
     }
 }
 
-// Update sound volumes based on settings
+// Update sound volumes based on settings from shared keys
 function updateSoundVolumes() {
-    // Use page-specific prefix for sound settings
-    const prefix = 'classic_';
-    
-    // Use the default value (60) if not found in localStorage
-    const volume = localStorage.getItem(prefix + 'volume') ? 
-                  parseInt(localStorage.getItem(prefix + 'volume')) / 100 : 0.6;
-    
-    // Explicitly check for 'false' string to handle resets properly
-    const soundEffectsEnabled = localStorage.getItem(prefix + 'soundEffects') !== 'false';
-    const alarmEnabled = localStorage.getItem(prefix + 'alarm') !== 'false';
-    
-    // FIXED: Update alarm sound when settings change
-    const selectedAlarmSound = localStorage.getItem(prefix + 'alarmSound') || 'alarm.mp3';
-    updateAlarmSound(selectedAlarmSound);
-    
-    // Set volumes based on settings
-    sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
-    sounds.start.volume = soundEffectsEnabled ? volume * 0.6 : 0;
-    sounds.pause.volume = soundEffectsEnabled ? volume * 0.5 : 0;
-    sounds.complete.volume = alarmEnabled ? volume : 0;
-    
-    console.log("Classic Timer: Sound volumes updated:", { 
-        volume: volume,
-        soundEffectsEnabled: soundEffectsEnabled,
-        alarmEnabled: alarmEnabled,
-        alarmSound: selectedAlarmSound,
-        clickVolume: sounds.click.volume,
-        startVolume: sounds.start.volume,
-        pauseVolume: sounds.pause.volume,
-        completeVolume: sounds.complete.volume
-    });
+  // Get settings from shared localStorage keys
+  const volume = localStorage.getItem('volume') ? 
+                parseInt(localStorage.getItem('volume')) / 100 : 0.6;
+  
+  // Explicitly check for 'false' string
+  const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
+  const alarmEnabled = localStorage.getItem('alarm') !== 'false';
+  
+  // Update the alarm sound file
+  const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
+  sounds.complete.src = 'audio/Alert Sounds/' + selectedAlarmSound;
+  
+  // Set volumes based on settings
+  sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
+  sounds.start.volume = soundEffectsEnabled ? volume * 0.6 : 0;
+  sounds.pause.volume = soundEffectsEnabled ? volume * 0.5 : 0;
+  sounds.complete.volume = alarmEnabled ? volume : 0;
+  
+  console.log("Classic Timer: Sound volumes updated:", { 
+      volume: volume,
+      soundEffectsEnabled: soundEffectsEnabled,
+      alarmEnabled: alarmEnabled,
+      alarmSound: selectedAlarmSound
+  });
 }
 
 // Expose the function for settings.js
@@ -586,9 +576,16 @@ function switchMode(mode, autoStart = false) {
   updateTimerDisplay();
   progressBar.style.width = '0%';
 
-  // Auto-start if requested
+  // Auto-start if requested - Now using shared settings key
   if (autoStart) {
-    setTimeout(() => toggleTimer(), 500);
+    // Check if auto start is enabled based on the mode
+    const shouldAutoStart = mode === 'pomodoro' 
+      ? localStorage.getItem('autoPomodoro') !== 'false'
+      : localStorage.getItem('autoBreak') !== 'false';
+      
+    if (shouldAutoStart) {
+      setTimeout(toggleTimer, 500);
+    }
   }
 }
 
@@ -672,8 +669,13 @@ if (muteAlertCloseBtn) {
 
 // Enhanced notification sound - update to use mute alert
 function playNotification() {
-  // Play alarm for its full duration
-  playSound('complete');
+  // Check if alarm is enabled using shared key
+  const alarmEnabled = localStorage.getItem('alarm') !== 'false';
+  
+  if (alarmEnabled) {
+    // Play alarm for its full duration
+    playSound('complete');
+  }
   
   // Show mute alert with correct count (since counter is incremented BEFORE calling this)
   let message = '';
@@ -703,12 +705,15 @@ function playNotification() {
       icon = '/images/focus-icon.png';
     }
 
-    new Notification(title, {
-      body: body,
-      icon: icon,
-      badge: '/images/badge.png',
-      vibrate: [100, 50, 100]
-    });
+    // Only create notification if alarm is enabled
+    if (alarmEnabled) {
+      new Notification(title, {
+        body: body,
+        icon: icon,
+        badge: '/images/badge.png',
+        vibrate: [100, 50, 100]
+      });
+    }
   } else if ('Notification' in window && Notification.permission !== 'denied') {
     Notification.requestPermission();
   }
@@ -827,6 +832,9 @@ if ('Notification' in window) {
 
 // Near the beginning of the file after initializing timer variables, add this initialization
 document.addEventListener('DOMContentLoaded', function() {
+  // Initialize sounds with shared settings
+  initializeSoundSettings();
+  
   // Apply any saved settings immediately when page loads
   pomodoroTime = parseInt(localStorage.getItem('pomodoroTime')) || 25;
   shortBreakTime = parseInt(localStorage.getItem('shortBreakTime')) || 5;
@@ -850,34 +858,58 @@ document.addEventListener('DOMContentLoaded', function() {
     {pomodoro: pomodoroTime, short: shortBreakTime, long: longBreakTime, sessions: maxSessions});
 });
 
-// Make functions available to settings.js
-window.updateTimerDisplay = updateTimerDisplay;
-window.updateSessionDots = updateSessionDots;
-window.resetTimer = resetTimer;
+// Initialize sound settings using shared keys
+function initializeSoundSettings() {
+  // Get settings from shared localStorage keys
+  const volume = localStorage.getItem('volume') ? 
+                parseInt(localStorage.getItem('volume')) / 100 : 0.6;
+  
+  // Explicitly check for 'false' string
+  const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
+  const alarmEnabled = localStorage.getItem('alarm') !== 'false';
+  
+  // Get selected alarm sound or use default
+  const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
+  sounds.complete.src = 'audio/Alert Sounds/' + selectedAlarmSound;
+  
+  // Set initial volumes
+  sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
+  sounds.start.volume = soundEffectsEnabled ? volume * 0.6 : 0;
+  sounds.pause.volume = soundEffectsEnabled ? volume * 0.5 : 0;
+  sounds.complete.volume = alarmEnabled ? volume : 0;
+  
+  console.log(`Sound settings initialized for Classic Timer:`, { 
+      volume: volume, 
+      soundEffectsEnabled: soundEffectsEnabled, 
+      alarmEnabled: alarmEnabled,
+      alarmSound: selectedAlarmSound
+  });
+}
 
-// Initialize variables based on localStorage or defaults
-(function initializeSettings() {
-  // Load settings from localStorage if available
-  pomodoroTime = parseInt(localStorage.getItem('pomodoroTime')) || 25;
-  shortBreakTime = parseInt(localStorage.getItem('shortBreakTime')) || 5;
-  longBreakTime = parseInt(localStorage.getItem('longBreakTime')) || 15;
-  maxSessions = parseInt(localStorage.getItem('sessionsCount')) || 4;
+// Update sound volumes based on settings from shared keys
+function updateSoundVolumes() {
+  // Get settings from shared localStorage keys
+  const volume = localStorage.getItem('volume') ? 
+                parseInt(localStorage.getItem('volume')) / 100 : 0.6;
   
-  // Set initial timer based on current mode
-  if (currentMode === 'pomodoro') {
-    currentSeconds = pomodoroTime * 60;
-  } else if (currentMode === 'shortBreak') {
-    currentSeconds = shortBreakTime * 60;
-  } else if (currentMode === 'longBreak') {
-    currentSeconds = longBreakTime * 60;
-  }
+  // Explicitly check for 'false' string
+  const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
+  const alarmEnabled = localStorage.getItem('alarm') !== 'false';
   
-  initialSeconds = currentSeconds;
+  // Update the alarm sound file
+  const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
+  sounds.complete.src = 'audio/Alert Sounds/' + selectedAlarmSound;
   
-  // Make updateTimerDisplay available globally
-  window.updateTimerDisplay = updateTimerDisplay;
-  window.updateSessionDots = updateSessionDots;
+  // Set volumes based on settings
+  sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
+  sounds.start.volume = soundEffectsEnabled ? volume * 0.6 : 0;
+  sounds.pause.volume = soundEffectsEnabled ? volume * 0.5 : 0;
+  sounds.complete.volume = alarmEnabled ? volume : 0;
   
-  console.log("Initial timer values:", 
-    {pomodoro: pomodoroTime, short: shortBreakTime, long: longBreakTime, sessions: maxSessions});
-})();
+  console.log("Classic Timer: Sound volumes updated:", { 
+      volume: volume,
+      soundEffectsEnabled: soundEffectsEnabled,
+      alarmEnabled: alarmEnabled,
+      alarmSound: selectedAlarmSound
+  });
+}

@@ -113,6 +113,9 @@
       // Save sound settings for both modes
       saveSoundSettings();
       
+      // Save auto-start settings - now using shared keys
+      saveAutoStartSettings();
+      
       // Save theme settings
       saveThemeSettings();
       
@@ -142,8 +145,6 @@
         localStorage.setItem('shortBreakTime', '5');
         localStorage.setItem('longBreakTime', '15');
         localStorage.setItem('sessionsCount', '4');
-        localStorage.setItem('autoBreak', 'true');
-        localStorage.setItem('autoPomodoro', 'true');
       } else {
         // Reset Reverse Timer settings
         localStorage.setItem('reverseMaxTime', '60');
@@ -152,16 +153,18 @@
         localStorage.setItem('reverseBreak3', '10');
         localStorage.setItem('reverseBreak4', '15');
         localStorage.setItem('reverseBreak5', '30');
-        localStorage.setItem('reverseAutoBreak', 'true');
       }
       
-      // Reset sound settings for both pages
-      const prefix = isReversePage ? 'reverse_' : 'classic_';
-      localStorage.setItem(prefix + 'volume', '60');
-      localStorage.setItem(prefix + 'soundEffects', 'true');
-      localStorage.setItem(prefix + 'alarm', 'true');
+      // Reset auto start settings - using shared keys
+      localStorage.setItem('autoBreak', 'true');
+      localStorage.setItem('autoPomodoro', 'true');
+      
+      // Reset sound settings - using shared keys now
+      localStorage.setItem('volume', '60');
+      localStorage.setItem('soundEffects', 'true');
+      localStorage.setItem('alarm', 'true');
       // Set Bell as the default sound
-      localStorage.setItem(prefix + 'alarmSound', 'bell.mp3');
+      localStorage.setItem('alarmSound', 'bell.mp3');
       
       // Reset theme to light mode
       localStorage.setItem('siteTheme', 'light');
@@ -197,7 +200,7 @@
       const autoPomoToggle = document.getElementById('auto-pomodoro-toggle');
       
       if (autoBreakToggle) autoBreakToggle.checked = true;
-      if (autoPomoToggle && !isReversePage) autoPomoToggle.checked = true;
+      if (autoPomoToggle) autoPomoToggle.checked = true;
       
       // Apply defaults to the timer
       applySettingsToTimer();
@@ -321,6 +324,46 @@
       // Apply the theme immediately
       applyTheme(savedTheme);
     }
+  }
+  
+  // Save Auto Start Settings - Now using shared keys for both pages
+  function saveAutoStartSettings() {
+    const autoBreakToggle = document.getElementById('auto-break-toggle');
+    const autoPomoToggle = document.getElementById('auto-pomodoro-toggle');
+    
+    // Use shared keys for auto-start settings (no page-specific prefix)
+    if (autoBreakToggle) {
+      localStorage.setItem('autoBreak', autoBreakToggle.checked);
+    }
+    
+    if (autoPomoToggle) {
+      localStorage.setItem('autoPomodoro', autoPomoToggle.checked);
+    }
+    
+    console.log("Auto-start settings saved (shared):", {
+      autoBreak: autoBreakToggle ? autoBreakToggle.checked : "N/A",
+      autoPomodoro: autoPomoToggle ? autoPomoToggle.checked : "N/A"
+    });
+  }
+  
+  // Load Auto Start Settings from shared keys
+  function loadAutoStartSettings() {
+    const autoBreakToggle = document.getElementById('auto-break-toggle');
+    const autoPomoToggle = document.getElementById('auto-pomodoro-toggle');
+    
+    // Load from shared keys
+    if (autoBreakToggle) {
+      autoBreakToggle.checked = localStorage.getItem('autoBreak') !== 'false';
+    }
+    
+    if (autoPomoToggle) {
+      autoPomoToggle.checked = localStorage.getItem('autoPomodoro') !== 'false';
+    }
+    
+    console.log("Auto-start settings loaded (shared):", {
+      autoBreak: autoBreakToggle ? autoBreakToggle.checked : "N/A",
+      autoPomodoro: autoPomoToggle ? autoPomoToggle.checked : "N/A"
+    });
   }
   
   // Force timer reset to update with new settings
@@ -544,8 +587,11 @@
       loadPomodoroSettings();
     }
     
-    // Load sound settings for both modes
+    // Load sound settings
     loadSoundSettings();
+    
+    // Load auto start settings from shared keys
+    loadAutoStartSettings();
     
     // Load theme settings
     loadThemeSettings();
@@ -557,16 +603,12 @@
     const shortBreakTime = document.getElementById('short-break-time').value;
     const longBreakTime = document.getElementById('long-break-time').value;
     const sessionsCount = document.getElementById('sessions-count').value;
-    const autoBreak = document.getElementById('auto-break-toggle').checked;
-    const autoPomodoro = document.getElementById('auto-pomodoro-toggle').checked;
     
     // Save to localStorage
     localStorage.setItem('pomodoroTime', pomodoroTime);
     localStorage.setItem('shortBreakTime', shortBreakTime);
     localStorage.setItem('longBreakTime', longBreakTime);
     localStorage.setItem('sessionsCount', sessionsCount);
-    localStorage.setItem('autoBreak', autoBreak);
-    localStorage.setItem('autoPomodoro', autoPomodoro);
     
     console.log("Saved settings:", 
       {pomodoro: pomodoroTime, short: shortBreakTime, long: longBreakTime, sessions: sessionsCount});
@@ -578,8 +620,6 @@
     const shortBreakTimeInput = document.getElementById('short-break-time');
     const longBreakTimeInput = document.getElementById('long-break-time');
     const sessionsCountInput = document.getElementById('sessions-count');
-    const autoBreakToggle = document.getElementById('auto-break-toggle');
-    const autoPomoToggle = document.getElementById('auto-pomodoro-toggle');
     
     if (!pomodoroTimeInput) return;
     
@@ -588,9 +628,6 @@
     shortBreakTimeInput.value = localStorage.getItem('shortBreakTime') || 5;
     longBreakTimeInput.value = localStorage.getItem('longBreakTime') || 15;
     sessionsCountInput.value = localStorage.getItem('sessionsCount') || 4;
-    
-    if (autoBreakToggle) autoBreakToggle.checked = localStorage.getItem('autoBreak') !== 'false';
-    if (autoPomoToggle) autoPomoToggle.checked = localStorage.getItem('autoPomodoro') !== 'false';
   }
   
   // Save Reverse timer settings
@@ -601,7 +638,6 @@
     const break3Time = document.getElementById('break3-time').value;
     const break4Time = document.getElementById('break4-time').value;
     const break5Time = document.getElementById('break5-time').value;
-    const autoBreak = document.getElementById('auto-break-toggle').checked;
     
     // Save to localStorage
     localStorage.setItem('reverseMaxTime', maxTime);
@@ -610,7 +646,6 @@
     localStorage.setItem('reverseBreak3', break3Time);
     localStorage.setItem('reverseBreak4', break4Time);
     localStorage.setItem('reverseBreak5', break5Time);
-    localStorage.setItem('reverseAutoBreak', autoBreak);
   }
   
   // Load Reverse timer settings
@@ -621,7 +656,6 @@
     const break3Input = document.getElementById('break3-time');
     const break4Input = document.getElementById('break4-time');
     const break5Input = document.getElementById('break5-time');
-    const autoBreakToggle = document.getElementById('auto-break-toggle');
     
     // Get from localStorage or set defaults
     maxTimeInput.value = localStorage.getItem('reverseMaxTime') || 60;
@@ -630,10 +664,9 @@
     break3Input.value = localStorage.getItem('reverseBreak3') || 10;
     break4Input.value = localStorage.getItem('reverseBreak4') || 15;
     break5Input.value = localStorage.getItem('reverseBreak5') || 30;
-    autoBreakToggle.checked = localStorage.getItem('reverseAutoBreak') !== 'false';
   }
   
-  // Save sound settings
+  // Save sound settings - Now using shared keys for both pages
   function saveSoundSettings() {
     const volumeSlider = document.getElementById('volume-slider');
     const soundEffectsToggle = document.getElementById('sound-effects-toggle');
@@ -645,19 +678,17 @@
         return;
     }
     
-    // Add page-specific prefix to sound settings
-    const prefix = isReversePage ? 'reverse_' : 'classic_';
-    
-    localStorage.setItem(prefix + 'volume', volumeSlider.value);
-    localStorage.setItem(prefix + 'soundEffects', soundEffectsToggle.checked);
-    localStorage.setItem(prefix + 'alarm', alarmToggle.checked);
+    // Save with shared keys (no page-specific prefix)
+    localStorage.setItem('volume', volumeSlider.value);
+    localStorage.setItem('soundEffects', soundEffectsToggle.checked);
+    localStorage.setItem('alarm', alarmToggle.checked);
     
     // Save the selected alarm sound
     if (alarmSoundSelector) {
-        localStorage.setItem(prefix + 'alarmSound', alarmSoundSelector.value);
+        localStorage.setItem('alarmSound', alarmSoundSelector.value);
     }
     
-    console.log(`Sound settings saved for ${prefix}:`, {
+    console.log(`Sound settings saved (shared):`, {
         volume: volumeSlider.value,
         soundEffects: soundEffectsToggle.checked,
         alarm: alarmToggle.checked,
@@ -672,7 +703,7 @@
     }
 }
 
-// Load sound settings
+// Load sound settings - Now using shared keys for both pages
 function loadSoundSettings() {
     const volumeSlider = document.getElementById('volume-slider');
     const soundEffectsToggle = document.getElementById('sound-effects-toggle');
@@ -683,26 +714,23 @@ function loadSoundSettings() {
         return;
     }
     
-    // Use page-specific prefix for sound settings
-    const prefix = isReversePage ? 'reverse_' : 'classic_';
-    
-    // Get from localStorage or set defaults
-    volumeSlider.value = localStorage.getItem(prefix + 'volume') || 60;
+    // Load from shared keys (no page-specific prefix)
+    volumeSlider.value = localStorage.getItem('volume') || 60;
     
     // Explicitly convert to boolean to handle 'false' string correctly
-    const soundEffectsEnabled = localStorage.getItem(prefix + 'soundEffects') !== 'false';
-    const alarmEnabled = localStorage.getItem(prefix + 'alarm') !== 'false';
+    const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
+    const alarmEnabled = localStorage.getItem('alarm') !== 'false';
     
     soundEffectsToggle.checked = soundEffectsEnabled;
     alarmToggle.checked = alarmEnabled;
     
     // Set the selected alarm sound
     if (alarmSoundSelector) {
-        const savedAlarmSound = localStorage.getItem(prefix + 'alarmSound') || 'alarm.mp3';
+        const savedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
         alarmSoundSelector.value = savedAlarmSound;
     }
     
-    console.log(`Sound settings loaded for ${prefix}:`, {
+    console.log(`Sound settings loaded (shared):`, {
         volume: volumeSlider.value,
         soundEffects: soundEffectsEnabled,
         alarm: alarmEnabled,
@@ -723,16 +751,16 @@ function loadSoundSettings() {
     }
 }
 
-// Update sounds directly
+// Update sounds directly - Now using shared keys
 function updateSoundsDirectly() {
     if (typeof window.sounds !== 'undefined') {
-        const prefix = isReversePage ? 'reverse_' : 'classic_';
-        const volume = parseInt(localStorage.getItem(prefix + 'volume') || 60) / 100;
-        const soundsEnabled = localStorage.getItem(prefix + 'soundEffects') !== 'false';
-        const alarmEnabled = localStorage.getItem(prefix + 'alarm') !== 'false';
+        // Use shared keys for sound settings
+        const volume = parseInt(localStorage.getItem('volume') || 60) / 100;
+        const soundsEnabled = localStorage.getItem('soundEffects') !== 'false';
+        const alarmEnabled = localStorage.getItem('alarm') !== 'false';
         
-        // Update alarm sound file - FIXED: Use the new updateAlarmSound function if available
-        const selectedAlarmSound = localStorage.getItem(prefix + 'alarmSound') || 'alarm.mp3';
+        // Update alarm sound file
+        const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
         if (typeof window.updateAlarmSound === 'function') {
             window.updateAlarmSound(selectedAlarmSound);
         } else if (window.sounds.complete) {
@@ -745,7 +773,7 @@ function updateSoundsDirectly() {
         if (window.sounds.pause) window.sounds.pause.volume = soundsEnabled ? volume * 0.5 : 0;
         if (window.sounds.complete) window.sounds.complete.volume = alarmEnabled ? volume : 0;
         
-        console.log(`Sounds updated directly for ${prefix}:`, {
+        console.log(`Sounds updated directly with shared settings:`, {
             alarmSound: selectedAlarmSound,
             clickVolume: window.sounds.click ? window.sounds.click.volume : "N/A",
             startVolume: window.sounds.start ? window.sounds.start.volume : "N/A",
@@ -755,7 +783,7 @@ function updateSoundsDirectly() {
     }
 }
 
-// Test sound function - FIXED: Ensure we test the current alarm sound
+// Test sound function
 function testSound(type) {
   // Stop any currently playing test sound
   stopTestSound();
@@ -952,11 +980,8 @@ function testSound(type) {
       volumeSlider.addEventListener('input', function() {
         volumePercentage.textContent = volumeSlider.value + '%';
         
-        // Get prefix based on current page
-        const prefix = isReversePage ? 'reverse_' : 'classic_';
-        
-        // Immediately update the volume in localStorage
-        localStorage.setItem(prefix + 'volume', volumeSlider.value);
+        // Immediately update the volume in localStorage using shared key
+        localStorage.setItem('volume', volumeSlider.value);
         
         // Clear any pending timeouts to avoid multiple sounds playing
         if (volumeChangeTimeout) {
@@ -992,79 +1017,27 @@ function testSound(type) {
       
       // Initial setup of percentage display
       volumeSlider.addEventListener('DOMContentLoaded', function() {
-        const prefix = isReversePage ? 'reverse_' : 'classic_';
-        const savedVolume = localStorage.getItem(prefix + 'volume') || 60;
+        // Use shared key
+        const savedVolume = localStorage.getItem('volume') || 60;
         volumePercentage.textContent = savedVolume + '%';
       });
       
       // Set initial value on load
-      const prefix = isReversePage ? 'reverse_' : 'classic_';
-      const savedVolume = localStorage.getItem(prefix + 'volume') || 60;
+      const savedVolume = localStorage.getItem('volume') || 60;
       volumePercentage.textContent = savedVolume + '%';
     }
   });
   
-  // Update the loadSoundSettings function to also update the percentage display
-  function loadSoundSettings() {
-    const volumeSlider = document.getElementById('volume-slider');
-    const soundEffectsToggle = document.getElementById('sound-effects-toggle');
-    const alarmToggle = document.getElementById('alarm-toggle');
-    const alarmSoundSelector = document.getElementById('alarm-sound-selector');
-    
-    if (!volumeSlider || !soundEffectsToggle || !alarmToggle) {
-        return;
-    }
-    
-    // Use page-specific prefix for sound settings
-    const prefix = isReversePage ? 'reverse_' : 'classic_';
-    
-    // Get from localStorage or set defaults
-    volumeSlider.value = localStorage.getItem(prefix + 'volume') || 60;
-    
-    // Explicitly convert to boolean to handle 'false' string correctly
-    const soundEffectsEnabled = localStorage.getItem(prefix + 'soundEffects') !== 'false';
-    const alarmEnabled = localStorage.getItem(prefix + 'alarm') !== 'false';
-    
-    soundEffectsToggle.checked = soundEffectsEnabled;
-    alarmToggle.checked = alarmEnabled;
-    
-    // Set the selected alarm sound
-    if (alarmSoundSelector) {
-        const savedAlarmSound = localStorage.getItem(prefix + 'alarmSound') || 'alarm.mp3';
-        alarmSoundSelector.value = savedAlarmSound;
-    }
-    
-    console.log(`Sound settings loaded for ${prefix}:`, {
-        volume: volumeSlider.value,
-        soundEffects: soundEffectsEnabled,
-        alarm: alarmEnabled,
-        alarmSound: alarmSoundSelector ? alarmSoundSelector.value : 'N/A'
-    });
-    
-    // Apply settings immediately after loading
-    if (typeof window.updateSoundVolumes === 'function') {
-        window.updateSoundVolumes();
+  // Initialize site theme immediately on page load before DOM is fully loaded
+  (function initializeSiteTheme() {
+    const savedTheme = localStorage.getItem('siteTheme') || 'light';
+    if (savedTheme === 'nature') {
+      // For nature theme, we'll do immediate basic styling for smoother experience
+      document.body.classList.add('theme-nature');
+      // Then fully load with the preload mechanism once JS is parsed
+      setTimeout(() => applyTheme(savedTheme), 10);
     } else {
-        updateSoundsDirectly();
+      applyTheme(savedTheme);
     }
-    
-    // Also update percentage display if it exists
-    const volumePercentage = document.getElementById('volume-percentage');
-    if (volumePercentage && volumeSlider) {
-        volumePercentage.textContent = volumeSlider.value + '%';
-    }
-}
-
-// Initialize site theme immediately on page load before DOM is fully loaded
-(function initializeSiteTheme() {
-  const savedTheme = localStorage.getItem('siteTheme') || 'light';
-  if (savedTheme === 'nature') {
-    // For nature theme, we'll do immediate basic styling for smoother experience
-    document.body.classList.add('theme-nature');
-    // Then fully load with the preload mechanism once JS is parsed
-    setTimeout(() => applyTheme(savedTheme), 10);
-  } else {
-    applyTheme(savedTheme);
-  }
-})();
+  })();
 })();
