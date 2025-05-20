@@ -1204,9 +1204,217 @@ body.theme-nature .add-task-btn:hover {
   background-color: #1a2a4a; /* Fallback */
 }
 
-  /* Handle iOS Safari-specific issues */
+/* Handle iOS Safari-specific issues */
 @supports (-webkit-touch-callout: none) {
   body.theme-nature {
+    /* iOS Safari has issues with background-attachment: fixed */
+    background-attachment: scroll;
+    /* Force hardware acceleration differently for iOS */
+    -webkit-transform: translate3d(0,0,0);
+    transform: translate3d(0,0,0);
+  }
+}
+
+/* Custom Theme with user-uploaded background image */
+body.theme-custom {
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  color: #ffffff;
+  position: relative;
+  /* Force hardware acceleration to improve rendering */
+  -webkit-transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  -o-transform: translateZ(0);
+  transform: translateZ(0);
+  min-height: 100vh;
+}
+
+/* Add overlay to improve readability on custom theme */
+body.theme-custom::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: -1;
+}
+
+/* Special styling for timer containers in custom theme */
+body.theme-custom .timer-container {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Task and info sections for custom theme */
+body.theme-custom .tasks-section,
+body.theme-custom .info-section,
+body.theme-custom .settings-section {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Improve text readability in custom theme */
+body.theme-custom .app-title,
+body.theme-custom .timer,
+body.theme-custom .tasks-title,
+body.theme-custom .info-box h3 {
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Style task input for custom theme */
+body.theme-custom .task-input {
+  background-color: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+body.theme-custom .task-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Style task items for custom theme */
+body.theme-custom .task-item {
+  border-bottom-color: rgba(255, 255, 255, 0.2);
+}
+
+body.theme-custom .task-text {
+  color: #ffffff;
+}
+
+body.theme-custom .task-completed .task-text {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Style buttons for custom theme */
+body.theme-custom .primary-btn {
+  background-color: rgba(255, 255, 255, 0.25);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(5px);
+}
+
+body.theme-custom .primary-btn:hover {
+  background-color: rgba(255, 255, 255, 0.35);
+}
+
+body.theme-custom .secondary-btn,
+body.theme-custom .switch-btn {
+  background-color: rgba(0, 0, 0, 0.4);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+body.theme-custom .secondary-btn:hover,
+body.theme-custom .switch-btn:hover {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Mode tabs for custom theme */
+body.theme-custom .mode-tabs {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+body.theme-custom .tab {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+body.theme-custom .tab.active {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+/* Settings button for custom theme */
+body.theme-custom .settings-btn {
+  background-color: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+body.theme-custom .settings-btn svg {
+  color: #ffffff;
+}
+
+/* Progress bar for custom theme */
+body.theme-custom .progress-container {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+body.theme-custom .progress-bar {
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+/* Fix footer text color for custom theme */
+body.theme-custom .footer {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Session dots for custom theme */
+body.theme-custom .session-dot {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+body.theme-custom .session-dot.completed {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* Fix info box text for custom theme */
+body.theme-custom .info-box p, 
+body.theme-custom .info-box li {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+body.theme-custom .settings-note {
+  background-color: rgba(0, 0, 0, 0.4);
+  border-left: 3px solid rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Toast notification for custom theme */
+body.theme-custom .toast {
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Add-task button for custom theme */
+body.theme-custom .add-task-btn {
+  background-color: rgba(139, 95, 191, 0.8);
+}
+
+body.theme-custom .add-task-btn:hover {
+  background-color: rgba(139, 95, 191, 1);
+}
+
+/* Ensure the theme preserves across element interactions */
+.focus-mode.theme-custom,
+.short-break-mode.theme-custom,
+.long-break-mode.theme-custom,
+.reverse-mode.theme-custom {
+  /* Background will be applied via JavaScript */
+  background-color: #1a2a4a; /* Fallback */
+}
+
+/* Mobile-specific fixes for the custom background image */
+@media (max-width: 768px) {
+  body.theme-custom {
+    /* Some mobile browsers don't support fixed attachment well */
+    background-attachment: scroll;
+    /* Ensure the image always covers the screen */
+    background-size: cover;
+    /* Position from top for better mobile viewing */
+    background-position: top center;
+  }
+}
+
+/* Handle iOS Safari-specific issues */
+@supports (-webkit-touch-callout: none) {
+  body.theme-custom {
     /* iOS Safari has issues with background-attachment: fixed */
     background-attachment: scroll;
     /* Force hardware acceleration differently for iOS */
@@ -1282,43 +1490,6 @@ body.is-fullscreen .fullscreen-btn svg {
 body.is-fullscreen .fullscreen-btn:hover {
   transform: scale(1.15);
   background-color: rgba(255, 64, 64, 1);
-}
-
-/* Fullscreen mode styles */
-body.is-fullscreen {
-  width: 100vw;
-  height: 100vh;
-  margin: 0;
-  padding: 0;
-  overflow: hidden; /* Prevent scrolling in fullscreen */
-}
-
-body.is-fullscreen .container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 30px 20px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Theme-specific styles for fullscreen button */
-body.theme-dark .fullscreen-btn {
-  background-color: #1a1a1a;
-}
-
-body.theme-dark .fullscreen-btn svg {
-  color: #f1f1f1;
-}
-
-body.theme-nature .fullscreen-btn {
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-body.theme-nature .fullscreen-btn svg {
-  color: #ffffff;
 }
 
 /* Mobile optimizations for fullscreen button */

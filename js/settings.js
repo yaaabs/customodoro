@@ -210,14 +210,46 @@
     }
   }
   
-  // Add this function to apply the selected theme
+  // Update the applyTheme function to handle custom themes
   function applyTheme(themeName) {
     // Remove any previous theme classes from body
-    document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-nature');
+    document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-nature', 'theme-custom');
     
-    // If selecting nature theme, preload the image first
-    if (themeName === 'nature') {
-      // Create a new image to preload
+    // Reset any inline background image
+    document.body.style.backgroundImage = '';
+    
+    // If selecting custom theme, apply it using theme-manager.js
+    if (themeName === 'custom') {
+      const customTheme = localStorage.getItem('customThemeBackground');
+      
+      if (customTheme) {
+        // We have a saved custom theme
+        document.body.classList.add('theme-custom');
+        document.body.style.backgroundImage = `url(${customTheme})`;
+      } else {
+        // No custom theme saved, fallback to light theme
+        document.body.classList.add('theme-light');
+        console.error('No custom theme found, falling back to light theme');
+        
+        // Update the selector to match actual theme
+        const themeSelector = document.getElementById('theme-selector');
+        if (themeSelector) themeSelector.value = 'light';
+        
+        // Save the fallback theme
+        localStorage.setItem('siteTheme', 'light');
+        
+        // Show error message
+        const toast = document.getElementById('toast');
+        if (toast) {
+          toast.textContent = 'No custom theme found. Please upload an image in settings.';
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        return;
+      }
+    } else if (themeName === 'nature') {
+      // For nature theme, preload the image first
       const preloadImg = new Image();
       preloadImg.src = 'images/Kimi no Na Wa.jpg';
       
