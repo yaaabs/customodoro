@@ -1214,3 +1214,148 @@ body.theme-nature .add-task-btn:hover {
     transform: translate3d(0,0,0);
   }
 }
+
+/* Fullscreen Button */
+.fullscreen-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 80px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  transition: all 0.3s ease;
+}
+
+.fullscreen-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.fullscreen-btn svg {
+  width: 22px;
+  height: 22px;
+  color: #333;
+  transition: transform 0.3s ease;
+}
+
+/* Improved selector for fullscreen icon display */
+.fullscreen-btn .enter-fullscreen-icon {
+  display: block;
+}
+
+.fullscreen-btn .exit-fullscreen-icon {
+  display: none;
+}
+
+body.is-fullscreen .fullscreen-btn .enter-fullscreen-icon {
+  display: none;
+}
+
+body.is-fullscreen .fullscreen-btn .exit-fullscreen-icon {
+  display: block;
+}
+
+/* Pulse animation for the exit fullscreen button to make it more noticeable */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+body.is-fullscreen .fullscreen-btn {
+  background-color: rgba(255, 64, 64, 0.9); /* More noticeable red color */
+  animation: pulse 2s ease-in-out 1; /* Apply animation once to draw attention */
+}
+
+body.is-fullscreen .fullscreen-btn svg {
+  color: white;
+}
+
+body.is-fullscreen .fullscreen-btn:hover {
+  transform: scale(1.15);
+  background-color: rgba(255, 64, 64, 1);
+}
+
+/* Fullscreen mode styles */
+body.is-fullscreen {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* Prevent scrolling in fullscreen */
+}
+
+body.is-fullscreen .container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 30px 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Theme-specific styles for fullscreen button */
+body.theme-dark .fullscreen-btn {
+  background-color: #1a1a1a;
+}
+
+body.theme-dark .fullscreen-btn svg {
+  color: #f1f1f1;
+}
+
+body.theme-nature .fullscreen-btn {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+body.theme-nature .fullscreen-btn svg {
+  color: #ffffff;
+}
+
+/* Mobile optimizations for fullscreen button */
+@media (max-width: 768px) {
+  .fullscreen-btn {
+    width: 44px;
+    height: 44px;
+    right: 75px;
+  }
+  
+  .fullscreen-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .fullscreen-btn {
+    bottom: 80px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+  }
+  
+  .fullscreen-btn svg {
+    width: 24px;
+    height: 24px;
+  }
+  
+  /* When in fullscreen on mobile, position the button at the top for easier access */
+  body.is-fullscreen .fullscreen-btn {
+    top: 20px;
+    bottom: auto;
+    right: 20px;
+  }
+  
+  body.is-fullscreen .container {
+    padding: 60px 15px 20px; /* Add more top padding to account for button */
+  }
+}
