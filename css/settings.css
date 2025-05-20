@@ -473,6 +473,26 @@ input:checked + .slider-toggle:before {
   line-height: 1.5;
 }
 
+/* New tag with "Bug" badge */
+.bug-tag {
+  display: inline-block;
+  background-color: #D95550; /* Using a distinct color for bug reports */
+  color: white;
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-left: 8px;
+  font-weight: 600;
+  /* Add a slight animation to draw attention */
+  animation: bugPulse 2s infinite ease-in-out;
+}
+
+@keyframes bugPulse {
+  0% { opacity: 0.8; }
+  50% { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 0.8; }
+}
+
 /* Tag with "New" badge */
 .new-tag {
   display: inline-block;
@@ -483,8 +503,16 @@ input:checked + .slider-toggle:before {
   border-radius: 4px;
   margin-left: 8px;
   font-weight: 600;
+  /* Add a slight animation to draw attention */
+/*  animation: newPulse 2s infinite ease-in-out;*/
 }
-
+/* 
+@keyframes newPulse {
+  0% { opacity: 0.8; }
+  50% { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 0.8; }
+}
+*/
 /* Tag with "Beta" badge */
 .beta-tag {
   display: inline-block;
