@@ -476,7 +476,7 @@ input:checked + .slider-toggle:before {
 /* New tag with "Bug" badge */
 .bug-tag {
   display: inline-block;
-  background-color: #D95550; /* Using a distinct color for bug reports */
+  background-color: #D91802; /* Using a distinct color for bug reports */
   color: white;
   font-size: 12px;
   padding: 3px 8px;
