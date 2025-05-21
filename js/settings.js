@@ -27,10 +27,10 @@
       activateTab(navItems[0]);
     }
     
-    // Make sure focus mode toggle is visible and properly set
+    // Make sure locked in mode toggle is visible and properly set
     setTimeout(function() {
-      if (window.focusMode && typeof window.focusMode.setup === 'function') {
-        window.focusMode.setup();
+      if (window.lockedInMode && typeof window.lockedInMode.setup === 'function') {
+        window.lockedInMode.setup();
       }
     }, 100);
   }
@@ -126,8 +126,8 @@
       // Save theme settings
       saveThemeSettings();
       
-      // Save focus mode setting
-      saveFocusModeSettings();
+      // Save locked in mode setting
+      saveLockedInModeSettings();
       
       // Apply settings immediately to update the timer
       applySettingsToTimer();
@@ -376,7 +376,7 @@
     });
   }
   
-  // Save focus mode settings - renamed to Locked In Mode
+  
   function saveLockedInModeSettings() {
     const lockedInModeToggle = document.getElementById('lockedin-mode-toggle');
     if (lockedInModeToggle) {
@@ -390,7 +390,7 @@
     }
   }
   
-  // Load focus mode settings - renamed to Locked In Mode
+
   function loadLockedInModeSettings() {
     const lockedInModeToggle = document.getElementById('lockedin-mode-toggle');
     if (lockedInModeToggle) {
@@ -646,11 +646,11 @@
     loadSoundSettings();
     loadAutoStartSettings();
     loadThemeSettings();
-    loadFocusModeSettings();
+    loadLockedInModeSettings();
     
-    // Setup focus mode toggle if needed
-    if (window.focusMode && typeof window.focusMode.setup === 'function') {
-      window.focusMode.setup();
+    // Setup locked in mode toggle if needed
+    if (window.lockedInMode && typeof window.lockedInMode.setup === 'function') {
+      window.lockedInMode.setup();
     }
   }
   

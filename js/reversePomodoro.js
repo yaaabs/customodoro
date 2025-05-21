@@ -319,9 +319,9 @@ function resetTimer() {
     updateDisplay();
     startButton.textContent = 'START';
     
-    // Also update focus mode if active
-    if (window.focusMode && window.focusMode.isActive()) {
-      window.focusMode.update('00:00', 0, 'START');
+    // Also update locked in mode if active
+    if (window.lockedInMode && window.lockedInMode.isActive()) {
+      window.lockedInMode.update('00:00', 0, 'START');
     }
 }
 
@@ -372,9 +372,9 @@ function switchMode(mode) {
   
   updateDisplay();
   
-  // Exit focus mode when switching modes
-  if (window.focusMode && window.focusMode.isActive()) {
-    window.focusMode.exit();
+  // Exit locked in mode when switching modes
+  if (window.lockedInMode && window.lockedInMode.isActive()) {
+    window.lockedInMode.exit();
   }
 }
 

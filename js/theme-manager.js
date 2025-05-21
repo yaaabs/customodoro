@@ -8,8 +8,14 @@
   
   // Initialize on document ready
   document.addEventListener('DOMContentLoaded', function() {
-    // Set up theme selector
+    // Theme selector
     const themeSelector = document.getElementById('theme-selector');
+    const body = document.body;
+    
+    // Initialize locked in mode toggle
+    initializeLockedInModeToggle();
+    
+    // Set up theme selector
     if (themeSelector) {
       themeSelector.addEventListener('change', function() {
         const selectedTheme = themeSelector.value;
@@ -24,6 +30,33 @@
     setupCustomThemeUpload();
   });
   
+  // Initialize locked in mode toggle functionality
+  function initializeLockedInModeToggle() {
+    const lockedInModeToggle = document.getElementById('lockedin-mode-toggle');
+    
+    if (lockedInModeToggle) {
+      // Load saved preference
+      const enableLockedInMode = localStorage.getItem('lockedInModeEnabled') !== 'false';
+      lockedInModeToggle.checked = enableLockedInMode;
+      
+      // Add event listener
+      lockedInModeToggle.addEventListener('change', function() {
+        const isEnabled = lockedInModeToggle.checked;
+        localStorage.setItem('lockedInModeEnabled', isEnabled);
+        
+        // Update locked in mode if the global object exists
+        if (window.lockedInMode && typeof window.lockedInMode.setEnabled === 'function') {
+          window.lockedInMode.setEnabled(isEnabled);
+        }
+        
+        console.log('Locked In Mode setting changed:', isEnabled);
+      });
+    } else {
+      // Add locked in mode toggle to theme section if it doesn't exist
+      console.log('No locked in mode toggle found in the DOM');
+    }
+  }
+
   // Initialize focus mode toggle functionality
   function initFocusModeToggle() {
     const focusModeToggle = document.getElementById('focus-mode-toggle');
