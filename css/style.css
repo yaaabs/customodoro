@@ -1049,11 +1049,21 @@ body.theme-nature::before {
 }
 
 /* Special styling for timer containers in nature theme */
+/* 
 body.theme-nature .timer-container {
   background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(5px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+*/
+
+/* Make timer container fully opaque for better visibility */
+body.theme-nature .timer-container {
+  background-color: rgba(0, 0, 0, 0.0);
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
 }
 
 /* Task and info sections for nature theme */
