@@ -16,7 +16,7 @@
     // Apply saved theme before the page renders to prevent flashing
     (function() {
       const savedTheme = localStorage.getItem('siteTheme') || 'light';
-      document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-nature', 'theme-custom');
+      document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-yourname', 'theme-custom');
       
       if (savedTheme === 'custom') {
         const customBg = localStorage.getItem('customThemeBackground');
@@ -299,7 +299,7 @@
                 <select class="theme-selector" id="theme-selector">
                   <option value="light" selected>Light Mode (Default)</option>
                   <option value="dark">Dark Mode</option>
-                  <option value="nature">君の名は</option>
+                  <option value="yourname">君の名は</option>
                   <option value="custom">Custom Theme</option>
                 </select>
               </div>

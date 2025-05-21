@@ -216,7 +216,7 @@
   // Update the applyTheme function to handle custom themes
   function applyTheme(themeName) {
     // Remove any previous theme classes from body
-    document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-nature', 'theme-custom');
+    document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-yourname', 'theme-custom');
     
     // Reset any inline background image
     document.body.style.backgroundImage = '';
@@ -251,8 +251,8 @@
         
         return;
       }
-    } else if (themeName === 'nature') {
-      // For nature theme, preload the image first
+    } else if (themeName === 'yourname') {
+      // For yourname theme, preload the image first
       const preloadImg = new Image();
       preloadImg.src = 'images/Kimi no Na Wa.jpg';
       
@@ -265,7 +265,7 @@
       
       // When image is loaded, apply the theme
       preloadImg.onload = function() {
-        document.body.classList.add('theme-nature');
+        document.body.classList.add('theme-yourname');
         // Hide loading indicator
         if (toast) toast.classList.remove('show');
         console.log('Nature theme image loaded successfully');
@@ -274,7 +274,7 @@
       // If image fails to load, fall back to light theme and show error
       preloadImg.onerror = function() {
         document.body.classList.add('theme-light');
-        console.error('Failed to load nature theme image');
+        console.error('Failed to load yourname theme image');
         // Show error message
         if (toast) {
           toast.textContent = 'Failed to load theme image. Using light theme instead.';
@@ -1031,9 +1031,9 @@ function testSound(type) {
   // Initialize site theme immediately on page load before DOM is fully loaded
   (function initializeSiteTheme() {
     const savedTheme = localStorage.getItem('siteTheme') || 'light';
-    if (savedTheme === 'nature') {
-      // For nature theme, we'll do immediate basic styling for smoother experience
-      document.body.classList.add('theme-nature');
+    if (savedTheme === 'yourname') {
+      // For yourname theme, we'll do immediate basic styling for smoother experience
+      document.body.classList.add('theme-yourname');
       // Then fully load with the preload mechanism once JS is parsed
       setTimeout(() => applyTheme(savedTheme), 10);
     } else {

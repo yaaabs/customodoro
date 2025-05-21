@@ -287,7 +287,7 @@
     
     if (savedTheme) {
       // Remove any existing theme classes
-      document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-nature');
+      document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-yourname');
       
       // Add custom theme class
       document.body.classList.add('theme-custom');

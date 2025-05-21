@@ -1003,7 +1003,7 @@ button,
 }
 
 /* Add 君の名は Theme - Kimi no Na Wa */
-body.theme-nature {
+body.theme-yourname {
   /* Improved path handling for the background image */
   background-image: url('../images/Kimi no Na Wa.jpg');
   /* Fallback color in case image fails to load */
@@ -1026,7 +1026,7 @@ body.theme-nature {
 
 /* Mobile-specific fixes for the background image */
 @media (max-width: 768px) {
-  body.theme-nature {
+  body.theme-yourname {
     /* Some mobile browsers don't support fixed attachment well */
     background-attachment: scroll;
     /* Ensure the image always covers the screen */
@@ -1036,8 +1036,8 @@ body.theme-nature {
   }
 }
 
-/* Add overlay to improve readability on nature theme */
-body.theme-nature::before {
+/* Add overlay to improve readability on yourname theme */
+body.theme-yourname::before {
   content: '';
   position: fixed;
   top: 0;
@@ -1048,9 +1048,9 @@ body.theme-nature::before {
   z-index: -1;
 }
 
-/* Special styling for timer containers in nature theme */
+/* Special styling for timer containers in yourname theme */
 /* 
-body.theme-nature .timer-container {
+body.theme-yourname .timer-container {
   background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(5px);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -1059,164 +1059,164 @@ body.theme-nature .timer-container {
 */
 
 /* Make timer container fully opaque for better visibility */
-body.theme-nature .timer-container {
+body.theme-yourname .timer-container {
   background-color: rgba(0, 0, 0, 0.0);
   border: none;
   box-shadow: none;
   backdrop-filter: none;
 }
 
-/* Task and info sections for nature theme */
-body.theme-nature .tasks-section,
-body.theme-nature .info-section,
-body.theme-nature .settings-section {
+/* Task and info sections for yourname theme */
+body.theme-yourname .tasks-section,
+body.theme-yourname .info-section,
+body.theme-yourname .settings-section {
   background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(5px);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Improve text readability in nature theme */
-body.theme-nature .app-title,
-body.theme-nature .timer,
-body.theme-nature .tasks-title,
-body.theme-nature .info-box h3 {
+/* Improve text readability in yourname theme */
+body.theme-yourname .app-title,
+body.theme-yourname .timer,
+body.theme-yourname .tasks-title,
+body.theme-yourname .info-box h3 {
   color: #ffffff;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-/* Style task input for nature theme */
-body.theme-nature .task-input {
+/* Style task input for yourname theme */
+body.theme-yourname .task-input {
   background-color: rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: #ffffff;
 }
 
-body.theme-nature .task-input::placeholder {
+body.theme-yourname .task-input::placeholder {
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* Style task items for nature theme */
-body.theme-nature .task-item {
+/* Style task items for yourname theme */
+body.theme-yourname .task-item {
   border-bottom-color: rgba(255, 255, 255, 0.2);
 }
 
-body.theme-nature .task-text {
+body.theme-yourname .task-text {
   color: #ffffff;
 }
 
-body.theme-nature .task-completed .task-text {
+body.theme-yourname .task-completed .task-text {
   color: rgba(255, 255, 255, 0.6);
 }
 
-/* Style buttons for nature theme */
-body.theme-nature .primary-btn {
+/* Style buttons for yourname theme */
+body.theme-yourname .primary-btn {
   background-color: rgba(255, 255, 255, 0.25);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(5px);
 }
 
-body.theme-nature .primary-btn:hover {
+body.theme-yourname .primary-btn:hover {
   background-color: rgba(255, 255, 255, 0.35);
 }
 
-body.theme-nature .secondary-btn,
-body.theme-nature .switch-btn {
+body.theme-yourname .secondary-btn,
+body.theme-yourname .switch-btn {
   background-color: rgba(0, 0, 0, 0.4);
   color: rgba(255, 255, 255, 0.9);
 }
 
-body.theme-nature .secondary-btn:hover,
-body.theme-nature .switch-btn:hover {
+body.theme-yourname .secondary-btn:hover,
+body.theme-yourname .switch-btn:hover {
   background-color: rgba(0, 0, 0, 0.6);
 }
 
-/* Mode tabs for nature theme */
-body.theme-nature .mode-tabs {
+/* Mode tabs for yourname theme */
+body.theme-yourname .mode-tabs {
   background-color: rgba(0, 0, 0, 0.4);
 }
 
-body.theme-nature .tab {
+body.theme-yourname .tab {
   color: rgba(255, 255, 255, 0.8);
 }
 
-body.theme-nature .tab.active {
+body.theme-yourname .tab.active {
   background-color: rgba(255, 255, 255, 0.15);
   color: #ffffff;
 }
 
-/* Settings button for nature theme */
-body.theme-nature .settings-btn {
+/* Settings button for yourname theme */
+body.theme-yourname .settings-btn {
   background-color: rgba(0, 0, 0, 0.5);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-body.theme-nature .settings-btn svg {
+body.theme-yourname .settings-btn svg {
   color: #ffffff;
 }
 
-/* Progress bar for nature theme */
-body.theme-nature .progress-container {
+/* Progress bar for yourname theme */
+body.theme-yourname .progress-container {
   background-color: rgba(0, 0, 0, 0.3);
 }
 
-body.theme-nature .progress-bar {
+body.theme-yourname .progress-bar {
   background-color: rgba(255, 255, 255, 0.7);
 }
 
-/* Fix footer text color for nature theme */
-body.theme-nature .footer {
+/* Fix footer text color for yourname theme */
+body.theme-yourname .footer {
   color: rgba(255, 255, 255, 0.7);
 }
 
-/* Session dots for nature theme */
-body.theme-nature .session-dot {
+/* Session dots for yourname theme */
+body.theme-yourname .session-dot {
   background-color: rgba(255, 255, 255, 0.3);
 }
 
-body.theme-nature .session-dot.completed {
+body.theme-yourname .session-dot.completed {
   background-color: rgba(255, 255, 255, 0.9);
 }
 
-/* Fix info box text for nature theme */
-body.theme-nature .info-box p, 
-body.theme-nature .info-box li {
+/* Fix info box text for yourname theme */
+body.theme-yourname .info-box p, 
+body.theme-yourname .info-box li {
   color: rgba(255, 255, 255, 0.9);
 }
 
-body.theme-nature .settings-note {
+body.theme-yourname .settings-note {
   background-color: rgba(0, 0, 0, 0.4);
   border-left: 3px solid rgba(255, 255, 255, 0.5);
   color: rgba(255, 255, 255, 0.9);
 }
 
-/* Toast notification for nature theme */
-body.theme-nature .toast {
+/* Toast notification for yourname theme */
+body.theme-yourname .toast {
   background-color: rgba(0, 0, 0, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Add-task button for nature theme */
-body.theme-nature .add-task-btn {
+/* Add-task button for yourname theme */
+body.theme-yourname .add-task-btn {
   background-color: rgba(139, 95, 191, 0.8);
 }
 
-body.theme-nature .add-task-btn:hover {
+body.theme-yourname .add-task-btn:hover {
   background-color: rgba(139, 95, 191, 1);
 }
 
 /* Ensure the theme preserves across element interactions */
-.focus-mode.theme-nature,
-.short-break-mode.theme-nature,
-.long-break-mode.theme-nature,
-.reverse-mode.theme-nature {
+.focus-mode.theme-yourname,
+.short-break-mode.theme-yourname,
+.long-break-mode.theme-yourname,
+.reverse-mode.theme-yourname {
   background-image: url('../images/Kimi no Na Wa.jpg');
   background-color: #1a2a4a; /* Fallback */
 }
 
 /* Handle iOS Safari-specific issues */
 @supports (-webkit-touch-callout: none) {
-  body.theme-nature {
+  body.theme-yourname {
     /* iOS Safari has issues with background-attachment: fixed */
     background-attachment: scroll;
     /* Force hardware acceleration differently for iOS */
