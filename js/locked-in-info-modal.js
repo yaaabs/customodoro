@@ -8,12 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
             confirmButton: 'lockedin-info-close-btn'
         },
         {
-            infoIcon: 'focus-mode-info', // For backward compatibility
-            modalOverlay: 'focus-info-modal-overlay',
-            closeButton: 'focus-info-modal-close',
-            confirmButton: 'focus-info-close-btn'
-        },
-        {
             infoIcon: 'auto-break-info',
             modalOverlay: 'auto-break-modal-overlay',
             closeButton: 'auto-break-modal-close',

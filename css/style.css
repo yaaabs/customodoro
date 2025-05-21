@@ -26,7 +26,7 @@ body {
   transition: var(--transition);
 }
 
-body.focus-mode {
+body.pomodoro-mode {
   background-color: var(--focus-color);
 }
 
@@ -1540,3 +1540,71 @@ body.is-fullscreen .fullscreen-btn:hover {
     padding: 60px 15px 20px; /* Add more top padding to account for button */
   }
 }
+
+/* Replace any remaining focus-mode class references with pomodoro-mode */
+
+body.pomodoro-mode {
+  /* styles for pomodoro mode */
+}
+
+/* Replace any focus-mode-active with lockedin-mode-active */
+body.lockedin-mode-active {
+  overflow: hidden; /* Prevent scrolling when locked in mode is active */
+}
+
+/* Ensure all focus-info-modal is replaced with lockedin-info-modal */
+.lockedin-info-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s linear 0.25s, opacity 0.3s ease;
+  backdrop-filter: blur(3px);
+}
+
+.lockedin-info-modal-overlay.active {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0s;
+}
+
+/* For backward compatibility with any remaining focus-info-modal references */
+.focus-info-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s linear 0.25s, opacity 0.3s ease;
+  backdrop-filter: blur(3px);
+}
+
+.focus-info-modal-overlay.active {
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0s;
+}
+
+/* Map all focus-info-modal classes to lockedin-info-modal classes */
+.focus-info-modal { /* same styles as */ }
+.focus-info-modal-header { /* same styles as */ }
+.focus-info-modal-title { /* same styles as */ }
+.focus-info-modal-close { /* same styles as */ }
+.focus-info-modal-content { /* same styles as */ }
+.focus-info-modal-footer { /* same styles as */ }
+.focus-info-btn { /* same styles as */ }

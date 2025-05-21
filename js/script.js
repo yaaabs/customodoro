@@ -410,10 +410,6 @@ function toggleTimer() {
     if (window.lockedInMode && window.lockedInMode.isEnabled()) {
       window.lockedInMode.enter();
     }
-    // Fallback for older code that might still use focusMode
-    else if (window.focusMode && window.focusMode.isEnabled()) {
-      window.focusMode.enter();
-    }
 
     timerInterval = setInterval(() => {
       if (currentSeconds > 0) {
@@ -427,14 +423,6 @@ function toggleTimer() {
           const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
           const progress = ((initialSeconds - currentSeconds) / initialSeconds) * 100;
           window.lockedInMode.update(timeString, progress, startButton.textContent, sessionText.textContent);
-        }
-        // Fallback for older code that might still use focusMode
-        else if (window.focusMode && window.focusMode.isActive()) {
-          const minutes = Math.floor(currentSeconds / 60);
-          const seconds = currentSeconds % 60;
-          const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-          const progress = ((initialSeconds - currentSeconds) / initialSeconds) * 100;
-          window.focusMode.update(timeString, progress, startButton.textContent, sessionText.textContent);
         }
       } else {
         // Timer completed
@@ -478,12 +466,12 @@ function toggleTimer() {
     startButton.textContent = 'START';
     updateFavicon('paused');
     
-    // Also update focus mode if active
-    if (window.focusMode && window.focusMode.isActive()) {
+    // Also update locked in mode if active
+    if (window.lockedInMode && window.lockedInMode.isActive()) {
       const minutes = Math.floor(currentSeconds / 60);
       const seconds = currentSeconds % 60;
       const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-      window.focusMode.update(timeString, null, 'START');
+      window.lockedInMode.update(timeString, null, 'START');
     }
 
     // Auto-start next phase if timer is complete
@@ -537,12 +525,12 @@ function resetTimer() {
   updateTimerDisplay();
   progressBar.style.width = '0%';
 
-  // Also update focus mode if active
-  if (window.focusMode && window.focusMode.isActive()) {
+  // Also update locked in mode if active
+  if (window.lockedInMode && window.lockedInMode.isActive()) {
     const minutes = Math.floor(currentSeconds / 60);
     const seconds = currentSeconds % 60;
     const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    window.focusMode.update(timeString, 0, 'START');
+    window.lockedInMode.update(timeString, 0, 'START');
   }
 }
 

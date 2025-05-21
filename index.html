@@ -33,7 +33,7 @@
     })();
   </script>
 </head>
-<body class="focus-mode">
+<body class="pomodoro-mode">
   <div class="container">
     <header>
       <h1 class="app-title">FocusKaya Timer</h1>
@@ -379,7 +379,7 @@
     </div>
   </div>
 
-  <!-- Focus Mode Info Modal - Renamed to Locked In Mode -->
+  <!-- Locked In Mode Info Modal -->
   <div class="lockedin-info-modal-overlay" id="lockedin-info-modal-overlay">
     <div class="lockedin-info-modal">
       <div class="lockedin-info-modal-header">
@@ -401,36 +401,42 @@
       </div>
     </div>
   </div>
-
-  <!-- Legacy Focus Mode Info Modal (kept for compatibility) -->
-  <div class="focus-info-modal-overlay" id="focus-info-modal-overlay">
+  
+  <!-- Auto-start Pomodoros Info Modal -->
+  <div class="lockedin-info-modal-overlay" id="auto-pomodoro-modal-overlay">
     <div class="lockedin-info-modal">
       <div class="lockedin-info-modal-header">
-        <h3 class="lockedin-info-modal-title">Locked In Mode Information</h3>
-        <button class="lockedin-info-modal-close" id="focus-info-modal-close">&times;</button>
+        <h3 class="lockedin-info-modal-title">Auto-start Pomodoros</h3>
+        <button class="lockedin-info-modal-close" id="auto-pomodoro-modal-close">&times;</button>
       </div>
       <div class="lockedin-info-modal-content">
-        <p><strong>What is Locked In Mode?</strong></p>
-        <p>Locked In Mode (formerly Focus Mode) creates a distraction-free environment while your timer is running by:</p>
+        <p><strong>What are Auto-start Pomodoros?</strong></p>
+        <p>When enabled, this feature automatically starts your next work session (pomodoro) as soon as a break ends.</p>
+        <p>Benefits of Auto-start Pomodoros:</p>
         <ul>
-          <li>Simplifying the interface to show only essential timer elements</li>
-          <li>Hiding task management features</li>
-          <li>Removing other distracting elements</li>
+          <li>Maintains your productivity momentum</li>
+          <li>Reduces the chance of extending breaks too long</li>
+          <li>Helps you get back to work immediately after breaks</li>
         </ul>
-        <p>This helps you maintain concentration during your work sessions. When your timer finishes, the regular interface will return.</p>
+        
+        <p><strong>How settings work together:</strong></p>
+        <ul>
+          <li><strong>Auto-start Pomodoros ON:</strong> Timer will automatically transition from break to work</li>
+          <li><strong>Auto-start Pomodoros OFF:</strong> Timer stops after break, requiring manual start for next work session</li>
+        </ul>
       </div>
       <div class="lockedin-info-modal-footer">
-        <button class="lockedin-info-btn" id="focus-info-close-btn">Got it</button>
+        <button class="lockedin-info-btn" id="auto-pomodoro-close-btn">Got it</button>
       </div>
     </div>
   </div>
-
+  
   <script src="js/script.js"></script>
   <script src="js/settings.js"></script>
   <script src="js/bgm-player.js"></script>
   <script src="js/fullscreen.js"></script>
   <script src="js/lockedin-mode.js"></script>
   <script src="js/theme-manager.js"></script>
-  <script src="js/focus-info-modal.js"></script>
+  <script src="js/locked-in-info-modal.js"></script>
 </body>
 </html>

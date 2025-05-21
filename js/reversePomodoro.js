@@ -198,10 +198,6 @@ function toggleTimer() {
     if (window.lockedInMode && window.lockedInMode.isEnabled()) {
       window.lockedInMode.enter();
     }
-    // Fallback for older code that might still use focusMode
-    else if (window.focusMode && window.focusMode.isEnabled()) {
-      window.focusMode.enter();
-    }
     
     timerInterval = setInterval(() => {
       if (currentMode === 'break') {
@@ -216,14 +212,6 @@ function toggleTimer() {
             const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             const progress = ((initialSeconds - currentSeconds) / initialSeconds) * 100;
             window.lockedInMode.update(timeString, progress, startButton.textContent);
-          }
-          // Fallback for older code that might still use focusMode
-          else if (window.focusMode && window.focusMode.isActive()) {
-            const minutes = Math.floor(currentSeconds / 60);
-            const seconds = currentSeconds % 60;
-            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            const progress = ((initialSeconds - currentSeconds) / initialSeconds) * 100;
-            window.focusMode.update(timeString, progress, startButton.textContent);
           }
         } else {
           completeBreak();
@@ -241,14 +229,6 @@ function toggleTimer() {
             const progress = (currentSeconds / MAX_TIME) * 100;
             window.lockedInMode.update(timeString, progress, startButton.textContent);
           }
-          // Fallback for older code that might still use focusMode
-          else if (window.focusMode && window.focusMode.isActive()) {
-            const minutes = Math.floor(currentSeconds / 60);
-            const seconds = currentSeconds % 60;
-            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            const progress = (currentSeconds / MAX_TIME) * 100;
-            window.focusMode.update(timeString, progress, startButton.textContent);
-          }
         } else {
           completeSession();
         }
@@ -262,12 +242,12 @@ function toggleTimer() {
     startButton.textContent = 'START';
     updateFavicon('paused');
     
-    // Also update focus mode if active
-    if (window.focusMode && window.focusMode.isActive()) {
+    // Also update locked in mode if active
+    if (window.lockedInMode && window.lockedInMode.isActive()) {
       const minutes = Math.floor(currentSeconds / 60);
       const seconds = currentSeconds % 60;
       const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-      window.focusMode.update(timeString, null, 'START');
+      window.lockedInMode.update(timeString, null, 'START');
     }
     
     if (currentMode === 'reverse') {
