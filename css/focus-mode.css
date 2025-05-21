@@ -156,7 +156,7 @@ body.focus-mode-active {
 }
 
 .focus-info-modal {
-    background: linear-gradient(145deg, var(--bg-primary), var(--bg-secondary));
+    background: linear-gradient(145deg, rgb(45, 45, 55), rgb(25, 25, 35));
     border-radius: 16px;
     width: 90%;
     max-width: 480px;
@@ -188,14 +188,14 @@ body.focus-mode-active {
     left: 4%;
     right: 4%;
     height: 1px;
-    background: linear-gradient(to right, transparent, var(--border-color) 20%, var(--border-color) 80%, transparent);
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2) 20%, rgba(255, 255, 255, 0.2) 80%, transparent);
 }
 
 .focus-info-modal-title {
     margin: 0;
     font-size: 20px;
     font-weight: 600;
-    color: var(--text-primary);
+    color: white;
     letter-spacing: -0.01em;
 }
 
@@ -210,18 +210,18 @@ body.focus-mode-active {
     justify-content: center;
     font-size: 24px;
     cursor: pointer;
-    color: var(--text-secondary);
+    color: rgba(255, 255, 255, 0.7);
     transition: all 0.2s ease;
 }
 
 .focus-info-modal-close:hover {
-    background-color: rgba(0, 0, 0, 0.08);
-    color: var(--text-primary);
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
 }
 
 .focus-info-modal-content {
     padding: 24px;
-    color: var(--text-primary);
+    color: white;
     line-height: 1.6;
 }
 
@@ -229,11 +229,12 @@ body.focus-mode-active {
     margin-top: 0;
     margin-bottom: 16px;
     font-size: 15px;
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .focus-info-modal-content strong {
     font-weight: 600;
-    color: var(--primary);
+    color: white;
 }
 
 .focus-info-modal-content ul {
@@ -245,10 +246,11 @@ body.focus-mode-active {
     margin-bottom: 10px;
     position: relative;
     font-size: 14px;
+    color: rgba(255, 255, 255, 0.85);
 }
 
 .focus-info-modal-content li::marker {
-    color: var(--primary);
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .focus-info-modal-footer {
@@ -259,7 +261,7 @@ body.focus-mode-active {
 
 .focus-info-btn {
     padding: 10px 20px;
-    background: linear-gradient(to bottom right, var(--primary), var(--primary-dark));
+    background: linear-gradient(to bottom right, #4a7bff, #2e5cd8);
     color: white;
     border: none;
     border-radius: 40px;
