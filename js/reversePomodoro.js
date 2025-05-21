@@ -520,7 +520,7 @@ function showMuteAlert(message) {
   // Auto-dismiss after 30 seconds
   setTimeout(() => {
     hideMuteAlert();
-  }, 30000);
+  }, 15000);
 }
 
 // Hide mute alert modal
