@@ -88,7 +88,7 @@
         const focusModeRow = document.createElement('div');
         focusModeRow.className = 'settings-row';
         focusModeRow.innerHTML = `
-          <div class="settings-label">Focus Mode (hide distractions when timer runs)</div>
+          <div class="settings-label">Focus Mode when running</div>
           <label class="toggle-switch">
             <input type="checkbox" id="focus-mode-toggle" ${isFocusModeEnabled ? 'checked' : ''}>
             <span class="slider-toggle"></span>
