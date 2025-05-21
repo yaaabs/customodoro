@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/settings.css">
   <link rel="stylesheet" href="css/theme-uploader.css">
+  <link rel="stylesheet" href="css/focus-mode.css">
   
   <!-- Add this script block right before the closing </head> tag -->
   <script>
@@ -291,6 +292,13 @@
                 </select>
               </div>
             </div>
+            <div class="settings-row">
+              <div class="settings-label">Focus Mode (hide distractions when timer runs)</div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="focus-mode-toggle" checked>
+                <span class="slider-toggle"></span>
+              </label>
+            </div>
             <div class="theme-uploader">
               <div class="upload-container">
                 <div class="upload-icon">📷</div>
@@ -348,7 +356,7 @@
   <script src="js/settings.js"></script>
   <script src="js/bgm-player.js"></script>
   <script src="js/fullscreen.js"></script>
-  <!-- Just before the closing body tag, add the theme manager script -->
+  <script src="js/focus-mode.js"></script>
   <script src="js/theme-manager.js"></script>
 </body>
 </html>

@@ -1,322 +1,263 @@
 /**
- * Theme Manager - Handles custom theme uploads and management
+ * Theme Manager - Handles theme selection and custom themes
  * For FocusKaya Timer Application
  */
 
 (function() {
-  // DOM Elements
-  let fileInput;
-  let uploadContainer;
-  let imagePreviewContainer;
-  let imagePreview;
-  let imageDetails;
-  let previewBtn;
-  let removeBtn;
-  let themeSelector;
-  let themeUploader;
+  let customThemeImage = null;
   
-  // Constants
-  const MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2MB
-  const CUSTOM_THEME_STORAGE_KEY = 'customThemeBackground';
-  
-  // Initialize on document load
-  document.addEventListener('DOMContentLoaded', () => {
-    initThemeManager();
+  // Initialize on document ready
+  document.addEventListener('DOMContentLoaded', function() {
+    // Set up theme selector
+    const themeSelector = document.getElementById('theme-selector');
+    if (themeSelector) {
+      themeSelector.addEventListener('change', function() {
+        const selectedTheme = themeSelector.value;
+        applyTheme(selectedTheme);
+      });
+    }
+    
+    // Initialize focus mode toggle
+    initFocusModeToggle();
+    
+    // Set up custom theme upload
+    setupCustomThemeUpload();
   });
   
-  // Initialize theme manager elements and events
-  function initThemeManager() {
-    // Find DOM elements
-    fileInput = document.getElementById('custom-theme-upload');
-    uploadContainer = document.querySelector('.upload-container');
-    imagePreviewContainer = document.querySelector('.image-preview-container');
-    imagePreview = document.querySelector('.image-preview');
-    imageDetails = document.querySelector('.image-details');
-    previewBtn = document.querySelector('.preview-btn');
-    removeBtn = document.querySelector('.remove-btn');
-    themeSelector = document.getElementById('theme-selector');
-    themeUploader = document.querySelector('.theme-uploader');
+  // Initialize focus mode toggle functionality
+  function initFocusModeToggle() {
+    const focusModeToggle = document.getElementById('focus-mode-toggle');
     
-    // If elements don't exist, we're not on a page with the theme settings
-    if (!fileInput || !themeSelector) return;
-    
-    // Setup event listeners
-    setupEventListeners();
-    
-    // Check if we have a saved custom theme
-    checkForSavedCustomTheme();
-    
-    // Update UI based on currently selected theme
-    updateThemeUploaderVisibility();
-  }
-  
-  // Set up event listeners
-  function setupEventListeners() {
-    // File input change
-    fileInput.addEventListener('change', handleFileSelect);
-    
-    // Upload container click to trigger file input
-    uploadContainer.addEventListener('click', () => {
-      fileInput.click();
-    });
-    
-    // Drag and drop events
-    uploadContainer.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      uploadContainer.classList.add('drag-over');
-    });
-    
-    uploadContainer.addEventListener('dragleave', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      uploadContainer.classList.remove('drag-over');
-    });
-    
-    uploadContainer.addEventListener('drop', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      uploadContainer.classList.remove('drag-over');
+    if (focusModeToggle) {
+      // Set initial state from localStorage
+      const isFocusModeEnabled = localStorage.getItem('focusModeEnabled') !== 'false';
+      focusModeToggle.checked = isFocusModeEnabled;
       
-      if (e.dataTransfer.files.length) {
-        handleFile(e.dataTransfer.files[0]);
-      }
-    });
-    
-    // Preview button
-    if (previewBtn) {
-      previewBtn.addEventListener('click', previewCustomTheme);
-    }
-    
-    // Remove button
-    if (removeBtn) {
-      removeBtn.addEventListener('click', removeCustomTheme);
-    }
-    
-    // Theme selector change
-    if (themeSelector) {
-      themeSelector.addEventListener('change', updateThemeUploaderVisibility);
-    }
-  }
-  
-  // Update theme uploader visibility based on selected theme
-  function updateThemeUploaderVisibility() {
-    if (!themeSelector || !themeUploader) return;
-    
-    if (themeSelector.value === 'custom') {
-      themeUploader.classList.add('show');
-    } else {
-      themeUploader.classList.remove('show');
-    }
-  }
-  
-  // Handle file selection from input
-  function handleFileSelect(e) {
-    if (e.target.files.length) {
-      handleFile(e.target.files[0]);
-    }
-  }
-  
-  // Process the selected file
-  function handleFile(file) {
-    // Validate file is an image
-    if (!file.type.match('image.*')) {
-      showToast('Please select an image file (JPEG, PNG, etc.)');
-      return;
-    }
-    
-    // Check file size
-    if (file.size > MAX_IMAGE_SIZE) {
-      showToast(`Image is too large. Maximum size is ${MAX_IMAGE_SIZE / (1024 * 1024)}MB`);
-      return;
-    }
-    
-    // Create a FileReader to read the image
-    const reader = new FileReader();
-    
-    // Set up the FileReader onload event
-    reader.onload = function(e) {
-      // Display image preview
-      displayImagePreview(e.target.result, file);
-      
-      // Save image to localStorage
-      saveCustomTheme(e.target.result);
-    };
-    
-    // Read the image file as a data URL
-    reader.readAsDataURL(file);
-  }
-  
-  // Display image preview with file info
-  function displayImagePreview(dataUrl, file) {
-    if (!imagePreview || !imagePreviewContainer || !imageDetails) return;
-    
-    // Set the image source
-    imagePreview.src = dataUrl;
-    
-    // Show the image preview container
-    imagePreviewContainer.classList.add('show');
-    
-    // Format file size
-    const size = formatFileSize(file.size);
-    
-    // Update image details
-    imageDetails.textContent = `${file.name} (${size})`;
-    
-    // Show success message
-    showToast('Image uploaded successfully! Click "Preview" to see it as a theme.');
-  }
-  
-  // Format file size for display
-  function formatFileSize(bytes) {
-    if (bytes < 1024) return bytes + ' bytes';
-    else if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-    else return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
-  }
-  
-  // Save custom theme to localStorage
-  function saveCustomTheme(dataUrl) {
-    try {
-      localStorage.setItem(CUSTOM_THEME_STORAGE_KEY, dataUrl);
-      console.log('Custom theme saved successfully');
-    } catch (error) {
-      console.error('Error saving custom theme:', error);
-      
-      // If it's a quota exceeded error, notify the user
-      if (error.name === 'QuotaExceededError' || error.name === 'NS_ERROR_DOM_QUOTA_REACHED') {
-        showToast('Image is too large to save. Please try a smaller image or clear some browser storage.');
+      // Add change event listener
+      focusModeToggle.addEventListener('change', function() {
+        const isEnabled = focusModeToggle.checked;
+        localStorage.setItem('focusModeEnabled', isEnabled);
         
-        // Clear the preview
-        removeCustomTheme();
-      }
-    }
-  }
-  
-  // Check if we have a saved custom theme
-  function checkForSavedCustomTheme() {
-    const savedTheme = localStorage.getItem(CUSTOM_THEME_STORAGE_KEY);
-    
-    if (savedTheme) {
-      // We have a saved custom theme
-      if (imagePreview && imagePreviewContainer) {
-        // Display the saved image in the preview
-        imagePreview.src = savedTheme;
-        imagePreviewContainer.classList.add('show');
+        // Update focus mode if the global object exists
+        if (window.focusMode && typeof window.focusMode.setEnabled === 'function') {
+          window.focusMode.setEnabled(isEnabled);
+        }
         
-        // Update image details
-        if (imageDetails) {
-          const size = estimateBase64Size(savedTheme);
-          imageDetails.textContent = `Saved custom theme (${size})`;
+        console.log('Focus Mode setting changed:', isEnabled);
+      });
+    }
+    
+    // Add focus mode toggle to theme section if it doesn't exist
+    const themeSection = document.getElementById('theme-section');
+    if (themeSection && !document.getElementById('focus-mode-toggle')) {
+      const firstRow = themeSection.querySelector('.settings-row');
+      
+      if (firstRow) {
+        const focusModeRow = document.createElement('div');
+        focusModeRow.className = 'settings-row';
+        focusModeRow.innerHTML = `
+          <div class="settings-label">Focus Mode (hide distractions during timer)</div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="focus-mode-toggle" ${isFocusModeEnabled ? 'checked' : ''}>
+            <span class="slider-toggle"></span>
+          </label>
+        `;
+        
+        firstRow.parentNode.insertBefore(focusModeRow, firstRow.nextSibling);
+        
+        // Add event listener to the newly created toggle
+        const newToggle = document.getElementById('focus-mode-toggle');
+        if (newToggle) {
+          newToggle.addEventListener('change', function() {
+            const isEnabled = newToggle.checked;
+            localStorage.setItem('focusModeEnabled', isEnabled);
+            
+            if (window.focusMode && typeof window.focusMode.setEnabled === 'function') {
+              window.focusMode.setEnabled(isEnabled);
+            }
+          });
         }
       }
     }
   }
   
-  // Estimate the size of a base64 string
-  function estimateBase64Size(base64String) {
-    // Remove the data:image/[type];base64, part
-    const base64WithoutHeader = base64String.split(',')[1];
+  // Set up custom theme file upload
+  function setupCustomThemeUpload() {
+    const fileInput = document.getElementById('custom-theme-upload');
+    const imagePreview = document.querySelector('.image-preview');
+    const imageDetails = document.querySelector('.image-details');
+    const previewBtn = document.querySelector('.preview-btn');
+    const removeBtn = document.querySelector('.remove-btn');
+    const uploadContainer = document.querySelector('.upload-container');
     
-    // Each Base64 digit represents 6 bits, so 4 digits = 3 bytes
-    const sizeInBytes = (base64WithoutHeader.length * 3) / 4;
+    if (!fileInput || !imagePreview || !imageDetails) return;
     
-    return formatFileSize(sizeInBytes);
-  }
-  
-  // Preview the custom theme
-  function previewCustomTheme() {
-    const savedTheme = localStorage.getItem(CUSTOM_THEME_STORAGE_KEY);
-    
-    if (savedTheme) {
-      // Set the theme to custom
-      if (themeSelector) {
-        themeSelector.value = 'custom';
-        
-        // Trigger a change event to update any listeners
-        const event = new Event('change');
-        themeSelector.dispatchEvent(event);
+    // Check for saved custom theme
+    const savedCustomTheme = localStorage.getItem('customThemeBackground');
+    if (savedCustomTheme) {
+      imagePreview.src = savedCustomTheme;
+      imagePreview.style.display = 'block';
+      
+      if (imageDetails) {
+        imageDetails.textContent = 'Saved custom theme';
       }
       
-      // Apply the custom theme
-      applyCustomTheme();
-      
-      showToast('Custom theme applied. Click "Save changes" to keep it.');
-    } else {
-      showToast('No custom theme available. Please upload an image first.');
-    }
-  }
-  
-  // Remove the custom theme
-  function removeCustomTheme() {
-    // Remove from localStorage
-    localStorage.removeItem(CUSTOM_THEME_STORAGE_KEY);
-    
-    // Clear the preview
-    if (imagePreview) {
-      imagePreview.src = '';
+      // Show preview actions
+      document.querySelector('.image-actions').style.display = 'flex';
     }
     
-    // Hide the preview container
-    if (imagePreviewContainer) {
-      imagePreviewContainer.classList.remove('show');
-    }
-    
-    // If the current theme is custom, switch to light theme
-    if (document.body.classList.contains('theme-custom')) {
-      // Set the theme to light
-      if (themeSelector) {
-        themeSelector.value = 'light';
+    // Handle file selection
+    fileInput.addEventListener('change', function(e) {
+      if (fileInput.files && fileInput.files[0]) {
+        const file = fileInput.files[0];
         
-        // Trigger a change event to update any listeners
-        const event = new Event('change');
-        themeSelector.dispatchEvent(event);
+        // Validate file size (max 2MB)
+        if (file.size > 2 * 1024 * 1024) {
+          alert('File size exceeds 2MB limit. Please choose a smaller image.');
+          fileInput.value = '';
+          return;
+        }
+        
+        // Read and display the file
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          imagePreview.src = e.target.result;
+          imagePreview.style.display = 'block';
+          customThemeImage = e.target.result;
+          
+          if (imageDetails) {
+            imageDetails.textContent = `${file.name} (${Math.round(file.size / 1024)}KB)`;
+          }
+          
+          // Show preview actions
+          document.querySelector('.image-actions').style.display = 'flex';
+        };
+        reader.readAsDataURL(file);
       }
+    });
+    
+    // Handle drag and drop
+    if (uploadContainer) {
+      uploadContainer.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        uploadContainer.classList.add('drag-over');
+      });
       
-      // Apply the light theme
-      document.body.classList.remove('theme-custom');
-      document.body.classList.add('theme-light');
-      document.body.style.backgroundImage = '';
+      uploadContainer.addEventListener('dragleave', function() {
+        uploadContainer.classList.remove('drag-over');
+      });
+      
+      uploadContainer.addEventListener('drop', function(e) {
+        e.preventDefault();
+        uploadContainer.classList.remove('drag-over');
+        
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+          fileInput.files = e.dataTransfer.files;
+          const event = new Event('change');
+          fileInput.dispatchEvent(event);
+        }
+      });
+      
+      uploadContainer.addEventListener('click', function() {
+        fileInput.click();
+      });
     }
     
-    showToast('Custom theme removed.');
+    // Preview button functionality
+    if (previewBtn) {
+      previewBtn.addEventListener('click', function() {
+        if (customThemeImage || savedCustomTheme) {
+          document.body.classList.remove('theme-light', 'theme-dark', 'theme-yourname');
+          document.body.classList.add('theme-custom');
+          document.body.style.backgroundImage = `url(${customThemeImage || savedCustomTheme})`;
+          
+          // Select custom theme in dropdown
+          const themeSelector = document.getElementById('theme-selector');
+          if (themeSelector) {
+            themeSelector.value = 'custom';
+          }
+        }
+      });
+    }
+    
+    // Remove button functionality
+    if (removeBtn) {
+      removeBtn.addEventListener('click', function() {
+        // Clear preview
+        imagePreview.src = '';
+        imagePreview.style.display = 'none';
+        fileInput.value = '';
+        customThemeImage = null;
+        
+        if (imageDetails) {
+          imageDetails.textContent = 'No image selected';
+        }
+        
+        // Hide preview actions
+        document.querySelector('.image-actions').style.display = 'none';
+        
+        // Remove from localStorage
+        localStorage.removeItem('customThemeBackground');
+        
+        // Reset to light theme
+        document.body.classList.remove('theme-custom');
+        document.body.classList.add('theme-light');
+        document.body.style.backgroundImage = '';
+        
+        // Update theme selector
+        const themeSelector = document.getElementById('theme-selector');
+        if (themeSelector) {
+          themeSelector.value = 'light';
+        }
+        
+        // Update localStorage
+        localStorage.setItem('siteTheme', 'light');
+      });
+    }
   }
   
-  // Apply the custom theme
-  function applyCustomTheme() {
-    const savedTheme = localStorage.getItem(CUSTOM_THEME_STORAGE_KEY);
+  // Function to apply selected theme - should be available globally
+  window.applyTheme = function(themeName) {
+    // Remove any previous theme classes
+    document.body.classList.remove('theme-light', 'theme-dark', 'theme-yourname', 'theme-custom');
     
-    if (savedTheme) {
-      // Remove any existing theme classes
-      document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-yourname');
-      
-      // Add custom theme class
+    // Reset background image
+    document.body.style.backgroundImage = '';
+    
+    // Apply the selected theme
+    if (themeName === 'custom' && (customThemeImage || localStorage.getItem('customThemeBackground'))) {
+      // Apply custom theme
       document.body.classList.add('theme-custom');
+      document.body.style.backgroundImage = `url(${customThemeImage || localStorage.getItem('customThemeBackground')})`;
       
-      // Set the background image
-      document.body.style.backgroundImage = `url(${savedTheme})`;
-    }
-  }
-  
-  // Show toast notification
-  function showToast(message) {
-    const toast = document.getElementById('toast');
-    if (!toast) {
-      console.log(message);
-      return;
+      // Save custom theme to localStorage if it's new
+      if (customThemeImage) {
+        localStorage.setItem('customThemeBackground', customThemeImage);
+      }
+    } else if (themeName === 'yourname') {
+      // Apply Kimi no Na wa theme
+      document.body.classList.add('theme-yourname');
+    } else {
+      // Apply standard themes
+      document.body.classList.add(`theme-${themeName}`);
     }
     
-    toast.textContent = message;
-    toast.classList.add('show');
+    // Save theme preference
+    localStorage.setItem('siteTheme', themeName);
     
-    setTimeout(() => {
-      toast.classList.remove('show');
-    }, 3000);
-  }
-  
-  // Make functions available globally
-  window.themeManager = {
-    applyCustomTheme,
-    removeCustomTheme,
-    previewCustomTheme
+    // Also preserve the mode class (focus-mode, short-break-mode, etc.)
+    if (document.body.classList.contains('focus-mode')) {
+      // Nothing to do, focus-mode is already there
+    } else if (document.body.classList.contains('short-break-mode')) {
+      // Make sure short-break-mode stays
+    } else if (document.body.classList.contains('long-break-mode')) {
+      // Make sure long-break-mode stays
+    } else if (document.body.classList.contains('reverse-mode')) {
+      // Make sure reverse-mode stays
+    }
   };
+  
+  // Initial theme application
+  const savedTheme = localStorage.getItem('siteTheme') || 'light';
+  window.applyTheme(savedTheme);
 })();

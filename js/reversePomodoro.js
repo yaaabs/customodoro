@@ -176,60 +176,91 @@ function updateDisplay() {
 
 // Toggle timer
 function toggleTimer() {
-    if (!isRunning) {
-        if (currentMode === 'break') {
-            if (currentSeconds <= 0) {
-                showToast("Break time is over!");
-                return;
-            }
-        } else if (currentSeconds >= MAX_TIME) {
-            showToast("You've reached the maximum time!");
-            return;
-        }
-        
-        playSound('start');
-        showToast(currentMode === 'break' ? "Enjoy your break! 😌" : "Time to focus! 💪");
-        
-        isRunning = true;
-        startButton.textContent = 'STOP';
-        updateFavicon('running');
-        
-        timerInterval = setInterval(() => {
-            if (currentMode === 'break') {
-                if (currentSeconds > 0) {
-                    currentSeconds--;
-                    updateDisplay();
-                } else {
-                    completeBreak();
-                }
-            } else {
-                if (currentSeconds < MAX_TIME) {
-                    currentSeconds++;
-                    updateDisplay();
-                } else {
-                    completeSession();
-                }
-            }
-        }, 1000);
-    } else {
-        playSound('pause');
-        
-        clearInterval(timerInterval);
-        isRunning = false;
-        startButton.textContent = 'START';
-        updateFavicon('paused');
-        
-        if (currentMode === 'reverse') {
-            const minutes = Math.floor(currentSeconds / 60);
-            if (minutes < 5) {
-                if (confirm('You worked less than 5 minutes. No break earned. Do you want to reset the timer?')) {
-                    resetTimer();
-                }
-            } else {
-                completeSession(false); // Auto-start break without confirmation
-            }
-        }
+  if (!isRunning) {
+    if (currentMode === 'break') {
+      if (currentSeconds <= 0) {
+        showToast("Break time is over!");
+        return;
+      }
+    } else if (currentSeconds >= MAX_TIME) {
+      showToast("You've reached the maximum time!");
+      return;
     }
+    
+    playSound('start');
+    showToast(currentMode === 'break' ? "Enjoy your break! 😌" : "Time to focus! 💪");
+    
+    isRunning = true;
+    startButton.textContent = 'STOP';
+    updateFavicon('running');
+    
+    // Enter focus mode if enabled
+    if (window.focusMode && window.focusMode.isEnabled()) {
+      window.focusMode.enter();
+    }
+    
+    timerInterval = setInterval(() => {
+      if (currentMode === 'break') {
+        if (currentSeconds > 0) {
+          currentSeconds--;
+          updateDisplay();
+          
+          // Update focus mode if active
+          if (window.focusMode && window.focusMode.isActive()) {
+            const minutes = Math.floor(currentSeconds / 60);
+            const seconds = currentSeconds % 60;
+            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            const progress = ((initialSeconds - currentSeconds) / initialSeconds) * 100;
+            window.focusMode.update(timeString, progress, startButton.textContent);
+          }
+        } else {
+          completeBreak();
+        }
+      } else {
+        if (currentSeconds < MAX_TIME) {
+          currentSeconds++;
+          updateDisplay();
+          
+          // Update focus mode if active
+          if (window.focusMode && window.focusMode.isActive()) {
+            const minutes = Math.floor(currentSeconds / 60);
+            const seconds = currentSeconds % 60;
+            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            const progress = (currentSeconds / MAX_TIME) * 100;
+            window.focusMode.update(timeString, progress, startButton.textContent);
+          }
+        } else {
+          completeSession();
+        }
+      }
+    }, 1000);
+  } else {
+    playSound('pause');
+    
+    clearInterval(timerInterval);
+    isRunning = false;
+    startButton.textContent = 'START';
+    updateFavicon('paused');
+    
+    // Also update focus mode if active
+    if (window.focusMode && window.focusMode.isActive()) {
+      const minutes = Math.floor(currentSeconds / 60);
+      const seconds = currentSeconds % 60;
+      const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      window.focusMode.update(timeString, null, 'START');
+    }
+    
+    if (currentMode === 'reverse') {
+      const minutes = Math.floor(currentSeconds / 60);
+      if (minutes < 5) {
+        if (confirm('You worked less than 5 minutes. No break earned. Do you want to reset the timer?')) {
+          resetTimer();
+        }
+      } else {
+        completeSession(false); // Auto-start break without confirmation
+      }
+    }
+  }
 }
 
 // Complete session
@@ -287,6 +318,11 @@ function resetTimer() {
     updateFavicon('paused');
     updateDisplay();
     startButton.textContent = 'START';
+    
+    // Also update focus mode if active
+    if (window.focusMode && window.focusMode.isActive()) {
+      window.focusMode.update('00:00', 0, 'START');
+    }
 }
 
 // Switch between reverse and break modes with validation
@@ -335,6 +371,11 @@ function switchMode(mode) {
   }
   
   updateDisplay();
+  
+  // Exit focus mode when switching modes
+  if (window.focusMode && window.focusMode.isActive()) {
+    window.focusMode.exit();
+  }
 }
 
 // Show toast notification

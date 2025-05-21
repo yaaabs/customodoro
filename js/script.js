@@ -405,11 +405,25 @@ function toggleTimer() {
     isRunning = true;
     startButton.textContent = 'PAUSE';
     updateFavicon(currentMode);
+    
+    // Enter focus mode if enabled
+    if (window.focusMode && window.focusMode.isEnabled()) {
+      window.focusMode.enter();
+    }
 
     timerInterval = setInterval(() => {
       if (currentSeconds > 0) {
         currentSeconds--;
         updateTimerDisplay();
+        
+        // Update focus mode if active
+        if (window.focusMode && window.focusMode.isActive()) {
+          const minutes = Math.floor(currentSeconds / 60);
+          const seconds = currentSeconds % 60;
+          const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+          const progress = ((initialSeconds - currentSeconds) / initialSeconds) * 100;
+          window.focusMode.update(timeString, progress, startButton.textContent, sessionText.textContent);
+        }
       } else {
         // Timer completed
         clearInterval(timerInterval);
@@ -451,6 +465,14 @@ function toggleTimer() {
     isRunning = false;
     startButton.textContent = 'START';
     updateFavicon('paused');
+    
+    // Also update focus mode if active
+    if (window.focusMode && window.focusMode.isActive()) {
+      const minutes = Math.floor(currentSeconds / 60);
+      const seconds = currentSeconds % 60;
+      const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      window.focusMode.update(timeString, null, 'START');
+    }
 
     // Auto-start next phase if timer is complete
     if (currentSeconds === 0) {
@@ -502,6 +524,14 @@ function resetTimer() {
   updateFavicon('paused');
   updateTimerDisplay();
   progressBar.style.width = '0%';
+
+  // Also update focus mode if active
+  if (window.focusMode && window.focusMode.isActive()) {
+    const minutes = Math.floor(currentSeconds / 60);
+    const seconds = currentSeconds % 60;
+    const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    window.focusMode.update(timeString, 0, 'START');
+  }
 }
 
 // Switch between pomodoro, short break, and long break modes with validation

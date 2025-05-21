@@ -26,6 +26,13 @@
     if (navItems.length > 0) {
       activateTab(navItems[0]);
     }
+    
+    // Make sure focus mode toggle is visible and properly set
+    setTimeout(function() {
+      if (window.focusMode && typeof window.focusMode.setup === 'function') {
+        window.focusMode.setup();
+      }
+    }, 100);
   }
   
   // Function to stop any currently playing test sounds
@@ -118,6 +125,9 @@
       
       // Save theme settings
       saveThemeSettings();
+      
+      // Save focus mode setting
+      saveFocusModeSettings();
       
       // Apply settings immediately to update the timer
       applySettingsToTimer();
@@ -366,6 +376,29 @@
     });
   }
   
+  // Save focus mode settings
+  function saveFocusModeSettings() {
+    const focusModeToggle = document.getElementById('focus-mode-toggle');
+    if (focusModeToggle) {
+      localStorage.setItem('focusModeEnabled', focusModeToggle.checked);
+      
+      // Update focus mode if the global object exists
+      if (window.focusMode && typeof window.focusMode.setEnabled === 'function') {
+        window.focusMode.setEnabled(focusModeToggle.checked);
+      }
+    }
+  }
+  
+  // Load focus mode settings
+  function loadFocusModeSettings() {
+    const focusModeToggle = document.getElementById('focus-mode-toggle');
+    if (focusModeToggle) {
+      // Default to true unless explicitly set to 'false'
+      const enabled = localStorage.getItem('focusModeEnabled') !== 'false';
+      focusModeToggle.checked = enabled;
+    }
+  }
+  
   // Force timer reset to update with new settings
   function forceTimerReset() {
     if (isReversePage) {
@@ -581,20 +614,27 @@
   
   // Load settings based on the current page
   function loadSettings() {
-    if (isReversePage) {
-      loadReverseSettings();
-    } else {
+    // Determine which page we're on
+    const isReversePage = window.location.pathname.includes('reverse');
+    currentPage = isReversePage ? 'reverse' : 'classic';
+    isSettingsOpen = false;
+    
+    // Load appropriate settings
+    if (currentPage === 'classic') {
       loadPomodoroSettings();
+    } else {
+      loadReverseSettings();
     }
     
-    // Load sound settings
     loadSoundSettings();
-    
-    // Load auto start settings from shared keys
     loadAutoStartSettings();
-    
-    // Load theme settings
     loadThemeSettings();
+    loadFocusModeSettings();
+    
+    // Setup focus mode toggle if needed
+    if (window.focusMode && typeof window.focusMode.setup === 'function') {
+      window.focusMode.setup();
+    }
   }
   
   // Save Pomodoro settings
