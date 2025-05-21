@@ -1,31 +1,72 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Get modal elements
-    const focusInfoIcon = document.getElementById('focus-mode-info');
-    const focusInfoModal = document.getElementById('focus-info-modal-overlay');
-    const closeModalBtn = document.getElementById('focus-info-modal-close');
-    const closeBtn = document.getElementById('focus-info-close-btn');
-    
-    // Function to open modal
-    function openFocusInfoModal() {
-        focusInfoModal.classList.add('active');
-        document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
-    }
-    
-    // Function to close modal
-    function closeFocusInfoModal() {
-        focusInfoModal.classList.remove('active');
-        document.body.style.overflow = ''; // Restore scrolling
-    }
-    
-    // Event listeners
-    focusInfoIcon.addEventListener('click', openFocusInfoModal);
-    closeModalBtn.addEventListener('click', closeFocusInfoModal);
-    closeBtn.addEventListener('click', closeFocusInfoModal);
-    
-    // Close modal when clicking outside of modal content
-    focusInfoModal.addEventListener('click', function(event) {
-        if (event.target === focusInfoModal) {
-            closeFocusInfoModal();
+    // Define all modals and their corresponding elements
+    const infoModals = [
+        {
+            infoIcon: 'focus-mode-info',
+            modalOverlay: 'focus-info-modal-overlay',
+            closeButton: 'focus-info-modal-close',
+            confirmButton: 'focus-info-close-btn'
+        },
+        {
+            infoIcon: 'auto-break-info',
+            modalOverlay: 'auto-break-modal-overlay',
+            closeButton: 'auto-break-modal-close',
+            confirmButton: 'auto-break-close-btn'
+        },
+        {
+            infoIcon: 'auto-pomodoro-info',
+            modalOverlay: 'auto-pomodoro-modal-overlay',
+            closeButton: 'auto-pomodoro-modal-close',
+            confirmButton: 'auto-pomodoro-close-btn'
+        }
+    ];
+
+    // Set up event listeners for all modals
+    infoModals.forEach(modal => {
+        const infoIcon = document.getElementById(modal.infoIcon);
+        const modalOverlay = document.getElementById(modal.modalOverlay);
+        const closeBtn = document.getElementById(modal.closeButton);
+        const confirmBtn = document.getElementById(modal.confirmButton);
+        
+        if (infoIcon && modalOverlay) {
+            // Function to open this specific modal
+            function openModal() {
+                // Close any other open modals first
+                infoModals.forEach(m => {
+                    const overlay = document.getElementById(m.modalOverlay);
+                    if (overlay) {
+                        overlay.classList.remove('active');
+                    }
+                });
+                
+                // Open this modal
+                modalOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            }
+            
+            // Function to close this specific modal
+            function closeModal() {
+                modalOverlay.classList.remove('active');
+                document.body.style.overflow = ''; // Restore scrolling
+            }
+            
+            // Set up event listeners
+            infoIcon.addEventListener('click', openModal);
+            
+            if (closeBtn) {
+                closeBtn.addEventListener('click', closeModal);
+            }
+            
+            if (confirmBtn) {
+                confirmBtn.addEventListener('click', closeModal);
+            }
+            
+            // Close when clicking outside modal content
+            modalOverlay.addEventListener('click', function(event) {
+                if (event.target === modalOverlay) {
+                    closeModal();
+                }
+            });
         }
     });
 });
