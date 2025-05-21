@@ -315,7 +315,16 @@
               </div>
             </div>
             <div class="settings-row">
-              <div class="settings-label">Focus Mode when running</div>
+              <div class="settings-label">
+                Focus Mode when running
+                <span class="info-icon" id="focus-mode-info">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                  </svg>
+                </span>
+              </div>
               <label class="toggle-switch">
                 <input type="checkbox" id="focus-mode-toggle" checked>
                 <span class="slider-toggle"></span>
@@ -401,6 +410,29 @@
       </div>
       <div class="focus-info-modal-footer">
         <button class="focus-info-btn" id="auto-break-close-btn">Got it</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Focus Mode Info Modal -->
+  <div class="focus-info-modal-overlay" id="focus-info-modal-overlay">
+    <div class="focus-info-modal">
+      <div class="focus-info-modal-header">
+        <h3 class="focus-info-modal-title">Focus Mode Information</h3>
+        <button class="focus-info-modal-close" id="focus-info-modal-close">&times;</button>
+      </div>
+      <div class="focus-info-modal-content">
+        <p><strong>What is Focus Mode?</strong></p>
+        <p>Focus Mode creates a distraction-free environment while your timer is running by:</p>
+        <ul>
+          <li>Simplifying the interface to show only essential timer elements</li>
+          <li>Hiding task management features</li>
+          <li>Removing other distracting elements</li>
+        </ul>
+        <p>This helps you maintain concentration during your work sessions. When your timer finishes, the regular interface will return.</p>
+      </div>
+      <div class="focus-info-modal-footer">
+        <button class="focus-info-btn" id="focus-info-close-btn">Got it</button>
       </div>
     </div>
   </div>
