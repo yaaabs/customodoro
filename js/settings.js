@@ -376,27 +376,44 @@
     });
   }
   
-  // Save focus mode settings
-  function saveFocusModeSettings() {
-    const focusModeToggle = document.getElementById('focus-mode-toggle');
-    if (focusModeToggle) {
-      localStorage.setItem('focusModeEnabled', focusModeToggle.checked);
+  // Save focus mode settings - renamed to Locked In Mode
+  function saveLockedInModeSettings() {
+    const lockedInModeToggle = document.getElementById('lockedin-mode-toggle');
+    if (lockedInModeToggle) {
+      localStorage.setItem('lockedInModeEnabled', lockedInModeToggle.checked);
+      localStorage.setItem('focusModeEnabled', lockedInModeToggle.checked); // For backward compatibility
       
-      // Update focus mode if the global object exists
-      if (window.focusMode && typeof window.focusMode.setEnabled === 'function') {
-        window.focusMode.setEnabled(focusModeToggle.checked);
+      // Update Locked In Mode if the global object exists
+      if (window.lockedInMode && typeof window.lockedInMode.setEnabled === 'function') {
+        window.lockedInMode.setEnabled(lockedInModeToggle.checked);
       }
     }
   }
   
-  // Load focus mode settings
-  function loadFocusModeSettings() {
-    const focusModeToggle = document.getElementById('focus-mode-toggle');
-    if (focusModeToggle) {
+  // Load focus mode settings - renamed to Locked In Mode
+  function loadLockedInModeSettings() {
+    const lockedInModeToggle = document.getElementById('lockedin-mode-toggle');
+    if (lockedInModeToggle) {
+      // First check new key, then fall back to old key
+      const newKey = localStorage.getItem('lockedInModeEnabled');
+      const oldKey = localStorage.getItem('focusModeEnabled');
+      
       // Default to true unless explicitly set to 'false'
-      const enabled = localStorage.getItem('focusModeEnabled') !== 'false';
-      focusModeToggle.checked = enabled;
+      const enabled = (newKey !== null) ? newKey !== 'false' : 
+                     (oldKey !== null) ? oldKey !== 'false' : true;
+      
+      lockedInModeToggle.checked = enabled;
     }
+  }
+
+  // Replace saveFocusModeSettings with saveLockedInModeSettings
+  function saveFocusModeSettings() {
+    saveLockedInModeSettings();
+  }
+  
+  // Replace loadFocusModeSettings with loadLockedInModeSettings
+  function loadFocusModeSettings() {
+    loadLockedInModeSettings();
   }
   
   // Force timer reset to update with new settings

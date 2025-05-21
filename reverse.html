@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/settings.css">
   <link rel="stylesheet" href="css/theme-uploader.css">
-  <link rel="stylesheet" href="css/focus-mode.css">
+  <link rel="stylesheet" href="css/lockedin-mode.css">
   
   <!-- Add this script block right before the closing </head> tag -->
   <script>
@@ -330,6 +330,22 @@
                 <span class="slider-toggle"></span>
               </label>
             </div>
+            <div class="settings-row">
+              <div class="settings-label">
+                Locked In Mode when running
+                <span class="info-icon" id="lockedin-mode-info">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                  </svg>
+                </span>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="lockedin-mode-toggle" checked>
+                <span class="slider-toggle"></span>
+              </label>
+            </div>
             <div class="theme-uploader">
               <div class="upload-container">
                 <div class="upload-icon">📷</div>
@@ -437,11 +453,34 @@
     </div>
   </div>
   
+  <!-- Locked In Mode Info Modal -->
+  <div class="lockedin-info-modal-overlay" id="lockedin-info-modal-overlay">
+    <div class="lockedin-info-modal">
+      <div class="lockedin-info-modal-header">
+        <h3 class="lockedin-info-modal-title">Locked In Mode Information</h3>
+        <button class="lockedin-info-modal-close" id="lockedin-info-modal-close">&times;</button>
+      </div>
+      <div class="lockedin-info-modal-content">
+        <p><strong>What is Locked In Mode?</strong></p>
+        <p>Locked In Mode creates a distraction-free environment while your timer is running by:</p>
+        <ul>
+          <li>Simplifying the interface to show only essential timer elements</li>
+          <li>Hiding task management features</li>
+          <li>Removing other distracting elements</li>
+        </ul>
+        <p>This helps you maintain concentration during your work sessions. When your timer finishes, the regular interface will return.</p>
+      </div>
+      <div class="lockedin-info-modal-footer">
+        <button class="lockedin-info-btn" id="lockedin-info-close-btn">Got it</button>
+      </div>
+    </div>
+  </div>
+  
   <script src="js/reversePomodoro.js"></script>
   <script src="js/settings.js"></script>
   <script src="js/bgm-player.js"></script>
   <script src="js/fullscreen.js"></script>
-  <script src="js/focus-mode.js"></script>
+  <script src="js/lockedin-mode.js"></script>
   <script src="js/theme-manager.js"></script>
   <script src="js/focus-info-modal.js"></script>
 </body>

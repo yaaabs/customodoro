@@ -406,8 +406,12 @@ function toggleTimer() {
     startButton.textContent = 'PAUSE';
     updateFavicon(currentMode);
     
-    // Enter focus mode if enabled
-    if (window.focusMode && window.focusMode.isEnabled()) {
+    // Enter locked in mode if enabled
+    if (window.lockedInMode && window.lockedInMode.isEnabled()) {
+      window.lockedInMode.enter();
+    }
+    // Fallback for older code that might still use focusMode
+    else if (window.focusMode && window.focusMode.isEnabled()) {
       window.focusMode.enter();
     }
 
@@ -416,8 +420,16 @@ function toggleTimer() {
         currentSeconds--;
         updateTimerDisplay();
         
-        // Update focus mode if active
-        if (window.focusMode && window.focusMode.isActive()) {
+        // Update locked in mode if active
+        if (window.lockedInMode && window.lockedInMode.isActive()) {
+          const minutes = Math.floor(currentSeconds / 60);
+          const seconds = currentSeconds % 60;
+          const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+          const progress = ((initialSeconds - currentSeconds) / initialSeconds) * 100;
+          window.lockedInMode.update(timeString, progress, startButton.textContent, sessionText.textContent);
+        }
+        // Fallback for older code that might still use focusMode
+        else if (window.focusMode && window.focusMode.isActive()) {
           const minutes = Math.floor(currentSeconds / 60);
           const seconds = currentSeconds % 60;
           const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;

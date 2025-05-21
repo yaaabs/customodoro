@@ -2,7 +2,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Define all modals and their corresponding elements
     const infoModals = [
         {
-            infoIcon: 'focus-mode-info',
+            infoIcon: 'lockedin-mode-info',
+            modalOverlay: 'lockedin-info-modal-overlay',
+            closeButton: 'lockedin-info-modal-close',
+            confirmButton: 'lockedin-info-close-btn'
+        },
+        {
+            infoIcon: 'focus-mode-info', // For backward compatibility
             modalOverlay: 'focus-info-modal-overlay',
             closeButton: 'focus-info-modal-close',
             confirmButton: 'focus-info-close-btn'
