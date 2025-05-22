@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="css/settings.css">
   <link rel="stylesheet" href="css/theme-uploader.css">
   <link rel="stylesheet" href="css/lockedin-mode.css">
+  <link rel="stylesheet" href="css/focus-mode.css">
   
   <!-- Add this script block right before the closing </head> tag -->
   <script>
@@ -95,6 +96,15 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" class="enter-fullscreen-icon"></path>
       <path d="M8 15H5v3M19 15h3v3M19 9h3V6M8 9H5V6" class="exit-fullscreen-icon" style="display: none;"></path>
+    </svg>
+  </button>
+
+  <!-- Focus Mode Button -->
+  <button class="focus-mode-btn" id="focus-mode-btn" title="Focus Mode (Alt+F)">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"></circle>
+      <circle cx="12" cy="12" r="4"></circle>
+      <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
     </svg>
   </button>
   
@@ -444,5 +454,6 @@
   <script src="js/lockedin-mode.js"></script>
   <script src="js/theme-manager.js"></script>
   <script src="js/locked-in-info-modal.js"></script>
+  <script src="js/focus-mode.js"></script>
 </body>
 </html>
