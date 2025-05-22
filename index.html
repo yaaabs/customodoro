@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="css/theme-uploader.css">
   <link rel="stylesheet" href="css/lockedin-mode.css">
   <link rel="stylesheet" href="css/focus-mode.css">
+  <link rel="stylesheet" href="css/radial-menu.css">
   
   <!-- Add this script block right before the closing </head> tag -->
   <script>
@@ -88,7 +89,7 @@
   </div>
 
   <!-- Fullscreen Button -->
-  <button class="fullscreen-btn" id="fullscreen-btn">
+  <button class="fullscreen-btn" id="fullscreen-btn" style="display: none;">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" class="enter-fullscreen-icon"></path>
       <path d="M8 15H5v3M19 15h3v3M19 9h3V6M8 9H5V6" class="exit-fullscreen-icon" style="display: none;"></path>
@@ -96,16 +97,16 @@
   </button>
 
   <!-- Focus Mode Button -->
-  <button class="focus-mode-btn" id="focus-mode-btn" title="Focus Mode (Alt+F)">
+  <button class="focus-mode-btn" id="focus-mode-btn" title="Focus Mode (Alt+F)" style="display: none;">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="10"></circle>
       <circle cx="12" cy="12" r="4"></circle>
       <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
     </svg>
   </button>
-
+  
   <!-- Settings Button -->
-  <button class="settings-btn" id="settings-btn">
+  <button class="settings-btn" id="settings-btn" style="display: none;">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="3"></circle>
       <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
@@ -409,10 +410,6 @@
         <div class="settings-note">
           <p><strong>💡 Pro Tip:</strong> Use Locked In Mode with fullscreen (F11 or fullscreen button) for the ultimate distraction-free experience that covers your entire screen!</p>
         </div>
-        
-        <div class="settings-note" style="margin-top: 15px; background-color: rgba(255, 193, 7, 0.15); border-color: #ffc107;">
-          <p><strong>⚠️ Note:</strong> When Locked In Mode is enabled, it will automatically activate and override Focus Mode when you start the timer. To use Focus Mode while the timer is running, you need to turn off Locked In Mode.</p>
-        </div>
       </div>
       <div class="lockedin-info-modal-footer">
         <button class="lockedin-info-btn" id="lockedin-info-close-btn">Got it</button>
@@ -482,5 +479,6 @@
   <script src="js/theme-manager.js"></script>
   <script src="js/locked-in-info-modal.js"></script>
   <script src="js/focus-mode.js"></script>
+  <script src="js/radial-menu.js"></script>
 </body>
 </html>

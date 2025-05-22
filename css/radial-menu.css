@@ -1,0 +1,140 @@
+/* Radial Menu Styles */
+.radial-menu-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+/* Main toggle button */
+.radial-menu-toggle {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #8b5fbf;
+  border: none;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  color: white;
+  cursor: pointer;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.radial-menu-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(139, 95, 191, 0.5);
+}
+
+.radial-menu-toggle svg {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.3s ease;
+}
+
+.radial-menu-toggle.active svg {
+  transform: rotate(45deg);
+}
+
+/* Menu items container */
+.radial-menu {
+  position: absolute;
+  bottom: 28px;
+  right: 28px;
+  width: 200px;
+  height: 200px;
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.radial-menu.active {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Individual menu items */
+.radial-menu-item {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  opacity: 0;
+  transform: scale(0.5);
+  /* Default center positioning, will be overridden by JS */
+  bottom: 76px;
+  right: 76px;
+}
+
+.radial-menu.active .radial-menu-item {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.radial-menu-item:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  background-color: #f5f5f5;
+}
+
+.radial-menu-item svg {
+  width: 20px;
+  height: 20px;
+  color: #333;
+}
+
+/* Tooltip styles */
+.radial-tooltip {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.radial-menu-item:hover .radial-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* For mobile devices */
+@media (max-width: 768px) {
+  .radial-menu-toggle {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .radial-menu-toggle svg {
+    width: 26px;
+    height: 26px;
+  }
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+  .radial-menu-container {
+    bottom: 15px;
+    right: 15px;
+  }
+}
