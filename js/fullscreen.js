@@ -65,9 +65,6 @@
             document.body.classList.add('is-fullscreen');
             playSound('click');
             toggleFullscreenIcons(true);
-            
-            // Update radial menu icon if it exists
-            updateRadialMenuIcon(true);
           }).catch(err => {
             console.error('Error attempting to enable fullscreen:', err);
             showToast('Failed to enter fullscreen mode. Try tapping the button again.');
@@ -76,7 +73,6 @@
           document.body.classList.add('is-fullscreen');
           playSound('click');
           toggleFullscreenIcons(true);
-          updateRadialMenuIcon(true);
         }
       } else {
         // Exit fullscreen
@@ -87,7 +83,6 @@
             document.body.classList.remove('is-fullscreen');
             playSound('click');
             toggleFullscreenIcons(false);
-            updateRadialMenuIcon(false);
           }).catch(err => {
             console.error('Error attempting to exit fullscreen:', err);
             showToast('Failed to exit fullscreen. Try using your device\'s back button.');
@@ -96,7 +91,6 @@
           document.body.classList.remove('is-fullscreen');
           playSound('click');
           toggleFullscreenIcons(false);
-          updateRadialMenuIcon(false);
         }
       }
     } catch (error) {
@@ -118,25 +112,6 @@
     } else {
       if (enterIcon) enterIcon.style.display = 'block';
       if (exitIcon) exitIcon.style.display = 'none';
-    }
-  }
-  
-  // Update the radial menu icon
-  function updateRadialMenuIcon(isFullscreen) {
-    const radialFullscreenBtn = document.getElementById('radial-fullscreen-btn');
-    if (!radialFullscreenBtn) return;
-    
-    const enterIcon = radialFullscreenBtn.querySelector('.enter-fullscreen-icon');
-    const exitIcon = radialFullscreenBtn.querySelector('.exit-fullscreen-icon');
-    
-    if (isFullscreen) {
-      if (enterIcon) enterIcon.style.display = 'none';
-      if (exitIcon) exitIcon.style.display = 'block';
-      radialFullscreenBtn.querySelector('.radial-tooltip').textContent = 'Exit Fullscreen';
-    } else {
-      if (enterIcon) enterIcon.style.display = 'block';
-      if (exitIcon) exitIcon.style.display = 'none';
-      radialFullscreenBtn.querySelector('.radial-tooltip').textContent = 'Fullscreen';
     }
   }
   
@@ -188,12 +163,8 @@
     const isFullscreen = !!getFullscreenElement();
     document.body.classList.toggle('is-fullscreen', isFullscreen);
     toggleFullscreenIcons(isFullscreen);
-    updateRadialMenuIcon(isFullscreen);
   }
   
   // Initialize on DOM content loaded
   document.addEventListener('DOMContentLoaded', setupEventListeners);
-  
-  // Expose the function globally for the radial menu to use
-  window.toggleFullscreen = toggleFullscreen;
 })();
