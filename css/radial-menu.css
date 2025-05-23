@@ -100,7 +100,7 @@
   position: absolute;
   background-color: rgba(0, 0, 0, 0.8);
   color: white;
-  padding: 5px 10px;
+  padding: 5px 20px; 
   border-radius: 4px;
   font-size: 12px;
   white-space: nowrap;
@@ -111,6 +111,12 @@
   top: -30px;
   left: 50%;
   transform: translateX(-50%);
+  width: max-content; 
+  min-width: 100px;
+  text-align: center; 
+  box-sizing: border-box; 
+  display: inline-block;
+  margin: 0 auto;
 }
 
 .radial-menu-item:hover .radial-tooltip {
