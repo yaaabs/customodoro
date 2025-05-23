@@ -64,12 +64,13 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background-color: white;
+  background-color: white; /* Keep as solid white */
+  border: 1px solid #e0e0e0; /* Adding a consistent border */
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Lighter, more even shadow */
   transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
   opacity: 0;
   transform: scale(0.5);
