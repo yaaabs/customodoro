@@ -191,6 +191,8 @@ Elegant floating action menu with quick access to:
 
 Found a bug? Have a feature request? We'd love to hear from you!
 
+📧 **Contact:** [brianyabutech@gmail.com](mailto:brianyabutech@gmail.com)
+
 <div align="center">
 
 **⭐ Star this repo if Customodoro helped boost your productivity!**
@@ -199,10 +201,4 @@ Found a bug? Have a feature request? We'd love to hear from you!
 
 **© 2025 Customodoro Timer - All Rights Reserved**
 
-</div>
-
----
-
-<div align="center">
-<sub>🍅 <strong>Focus</strong> • ⚡ <strong>Customize</strong> • 🚀 <strong>Achieve</strong> 🍅</sub>
 </div>
