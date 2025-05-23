@@ -264,7 +264,7 @@
     } else if (themeName === 'yourname') {
       // For yourname theme, preload the image first
       const preloadImg = new Image();
-      preloadImg.src = 'images/Kimi no Na Wa.jpg';
+      preloadImg.src = 'images/Theme/Kimi no Na Wa.jpg';
       
       // Show loading indicator
       const toast = document.getElementById('toast');

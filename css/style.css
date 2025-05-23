@@ -1072,7 +1072,7 @@ button,
 /* Add 君の名は Theme - Kimi no Na Wa */
 body.theme-yourname {
   /* Improved path handling for the background image */
-  background-image: url('../images/Kimi no Na Wa.jpg');
+  background-image: url('../images/Theme/Kimi no Na Wa.jpg');
   /* Fallback color in case image fails to load */
   background-color: #1a2a4a;
   background-size: cover;
@@ -1276,7 +1276,7 @@ body.theme-yourname .add-task-btn:hover {
 .short-break-mode.theme-yourname,
 .long-break-mode.theme-yourname,
 .reverse-mode.theme-yourname {
-  background-image: url('../images/Kimi no Na Wa.jpg');
+  background-image: url('../images/Theme/Kimi no Na Wa.jpg');
   background-color: #1a2a4a; /* Fallback */
 }
 
