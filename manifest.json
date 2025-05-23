@@ -1,10 +1,10 @@
 {
-  "name": "FocusKaya Timer",
-  "short_name": "FocusKaya",
+  "name": "Customodoro Timer",
+  "short_name": "Customodoro",
   "start_url": "/index.html",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#8b5fbf",
+  "background_color": "#121212",
+  "theme_color": "#e53935",
   "icons": [
     {
       "src": "favicon/android-chrome-192x192.png",
