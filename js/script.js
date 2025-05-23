@@ -376,22 +376,29 @@ function updateTimerDisplay() {
   }
 }
 
-// Add this new function after the DOM Elements section
+// Add this function after the DOM Elements section
 function updateFavicon(status) {
   const favicon = document.getElementById('favicon');
+  if (!favicon) {
+    console.warn('Favicon element not found');
+    return;
+  }
+  
   switch(status) {
     case 'pomodoro':
-      favicon.href = 'images/Pomodoro.png';
+      favicon.href = 'favicon/favicon-32x32.png';
       break;
     case 'shortBreak':
-      favicon.href = 'images/Short Break.png';
+      favicon.href = 'favicon/favicon-32x32.png';
       break;
     case 'longBreak':
-      favicon.href = 'images/Long Break.png';
+      favicon.href = 'favicon/favicon-32x32.png';
       break;
     case 'paused':
-      favicon.href = 'images/Paused.png';
+      favicon.href = 'favicon/favicon-32x32.png';
       break;
+    default:
+      favicon.href = 'favicon/favicon-32x32.png';
   }
 }
 
@@ -578,19 +585,19 @@ function switchMode(mode, autoStart = false) {
   if (mode === 'pomodoro') {
     pomodoroTime = parseInt(localStorage.getItem('pomodoroTime')) || pomodoroTime;
     currentSeconds = pomodoroTime * 60;
-    // Preserve theme class when changing mode
-    body.className = 'focus-mode' + (themeClass ? ' ' + themeClass : '');
+    // Use 'pomodoro-mode' instead of 'focus-mode' to match CSS
+    body.className = 'pomodoro-mode' + (themeClass ? ' ' + themeClass : '');
     pomodoroTab.classList.add('active');
   } else if (mode === 'shortBreak') {
     shortBreakTime = parseInt(localStorage.getItem('shortBreakTime')) || shortBreakTime;
     currentSeconds = shortBreakTime * 60;
-    // Preserve theme class when changing mode
+    // Use 'short-break-mode' to be consistent
     body.className = 'short-break-mode' + (themeClass ? ' ' + themeClass : '');
     shortBreakTab.classList.add('active');
   } else {
     longBreakTime = parseInt(localStorage.getItem('longBreakTime')) || longBreakTime;
     currentSeconds = longBreakTime * 60;
-    // Preserve theme class when changing mode
+    // Use 'long-break-mode' to be consistent
     body.className = 'long-break-mode' + (themeClass ? ' ' + themeClass : '');
     longBreakTab.classList.add('active');
   }

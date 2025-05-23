@@ -113,12 +113,19 @@ const taskList = document.getElementById('task-list');
 
 // Add favicon update function
 function updateFavicon(status) {
-    const favicon = document.getElementById('favicon');
-    if (status === 'paused') {
-        favicon.href = 'images/Paused.png';
-    } else {
-        favicon.href = 'images/Reverse Pomodoro.png';
-    }
+  const favicon = document.getElementById('favicon');
+  if (!favicon) {
+    console.warn('Favicon element not found');
+    return;
+  }
+  
+  switch(status) {
+    case 'reverse':
+    case 'break':
+    case 'paused':
+    default:
+      favicon.href = 'favicon/favicon-32x32.png';
+  }
 }
 
 // Timer variables
