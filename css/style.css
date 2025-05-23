@@ -1,7 +1,9 @@
 :root {
-  --focus-color: #d95550;
-  --short-break-color: #4c9195;
-  --long-break-color: #457ca3;
+  --focus-color: #948979;
+  --short-break-color: #393e46;
+  --long-break-color: #222831;
+  --reverse-color: #393E46;
+  --break-color: #393e46;
   --bg-light: #f5f5f5;
   --text-dark: #333333;
   --text-light: #ffffff;
@@ -39,7 +41,11 @@ body.long-break-mode {
 }
 
 body.reverse-mode {
-  background-color: #8b5fbf;
+  background-color: var(--reverse-color);
+}
+
+body.break-mode {
+  background-color: var(--break-color);
 }
 
 .container {
@@ -485,7 +491,7 @@ header {
 
 .task-delete:hover {
   opacity: 1;
-  color: #d95550;
+  color: #948979;
 }
 
 /* Mute Alert Modal */
@@ -1200,7 +1206,6 @@ body.theme-yourname .mode-tabs {
 body.theme-yourname .tab {
   color: rgba(255, 255, 255, 0.8);
 }
-
 body.theme-yourname .tab.active {
   background-color: rgba(255, 255, 255, 0.15);
   color: #ffffff;

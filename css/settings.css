@@ -516,7 +516,7 @@ input:checked + .slider-toggle:before {
 /* Tag with "Beta" badge */
 .beta-tag {
   display: inline-block;
-  background-color: #D95550;
+  background-color: #948979;
   color: white;
   font-size: 12px;
   padding: 3px 8px;
