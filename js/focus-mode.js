@@ -79,7 +79,6 @@
       window.playSound('click');
     }
     
-    // Add focus-mode-active class instead of replacing all classes
     body.classList.add('focus-mode-active');
     html.classList.add('focus-mode-active'); // Also add to html to prevent scrolling
     if (focusModeBtn) focusModeBtn.classList.add('active');
@@ -114,7 +113,6 @@
       window.playSound('click');
     }
     
-    // Remove focus-mode-active class without affecting other classes
     body.classList.remove('focus-mode-active');
     html.classList.remove('focus-mode-active'); // Also remove from html
     if (focusModeBtn) focusModeBtn.classList.remove('active');

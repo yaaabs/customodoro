@@ -578,8 +578,8 @@ function switchMode(mode, autoStart = false) {
   if (mode === 'pomodoro') {
     pomodoroTime = parseInt(localStorage.getItem('pomodoroTime')) || pomodoroTime;
     currentSeconds = pomodoroTime * 60;
-    // FIX: Use 'pomodoro-mode' instead of 'focus-mode' which was causing the bug
-    body.className = 'pomodoro-mode' + (themeClass ? ' ' + themeClass : '');
+    // Preserve theme class when changing mode
+    body.className = 'focus-mode' + (themeClass ? ' ' + themeClass : '');
     pomodoroTab.classList.add('active');
   } else if (mode === 'shortBreak') {
     shortBreakTime = parseInt(localStorage.getItem('shortBreakTime')) || shortBreakTime;
