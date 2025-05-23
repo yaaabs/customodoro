@@ -278,7 +278,7 @@ let dailyStats = {
 
 // Load stats from localStorage
 function loadStats() {
-  const saved = localStorage.getItem('focusKayaStats');
+  const saved = localStorage.getItem('customodoroStats');
   if (saved) {
     const stats = JSON.parse(saved);
     if (stats.startDate === new Date().toDateString()) {
@@ -289,7 +289,7 @@ function loadStats() {
 
 // Save stats to localStorage
 function saveStats() {
-  localStorage.setItem('focusKayaStats', JSON.stringify(dailyStats));
+  localStorage.setItem('customodoroStats', JSON.stringify(dailyStats));
 }
 
 // Update stats when pomodoro completes
