@@ -177,13 +177,7 @@
           <!-- Sound Settings Section -->
           <div class="settings-section" id="sound-section">
             <h3 class="settings-section-title">Sound Settings</h3>
-            <div class="settings-row">
-              <div class="settings-label">Sound Volume</div>
-              <div class="volume-container">
-                <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="60">
-                <div class="volume-percentage" id="volume-percentage">60%</div>
-              </div>
-            </div>
+
             <div class="settings-row">
               <div class="settings-label">Select alert sound:</div>
               <div class="select-wrapper">
@@ -196,8 +190,15 @@
               </div>
             </div>
             <div class="settings-row">
-              <div class="settings-label">Select timer sound:</div>
-              <div class="select-wrapper">
+              <div class="settings-label">Sound Volume</div>
+              <div class="volume-container">
+                <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="60">
+                <div class="volume-percentage" id="volume-percentage">60%</div>
+              </div>
+            </div>
+            <div class="settings-row">
+            <div class="settings-label">Select timer sound:</div>
+            <div class="select-wrapper">
                 <select class="sound-selector" id="timer-sound-selector">
                   <option value="none">None</option>
                   <option value="WallClockTicking.mp3">Wall Clock Ticking</option>
