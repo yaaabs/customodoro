@@ -147,82 +147,64 @@
   }
   
   // Reset all settings to defaults
-  function resetSettings() {
-    if (confirm('Are you sure you want to reset all settings to default values?')) {
-      // Reset Pomodoro settings
-      if (!isReversePage) {
-        localStorage.setItem('pomodoroTime', '25');
-        localStorage.setItem('shortBreakTime', '5');
-        localStorage.setItem('longBreakTime', '15');
-        localStorage.setItem('sessionsCount', '4');
-      } else {
-        // Reset Reverse Timer settings
-        localStorage.setItem('reverseMaxTime', '60');
-        localStorage.setItem('reverseBreak1', '2');
-        localStorage.setItem('reverseBreak2', '5');
-        localStorage.setItem('reverseBreak3', '10');
-        localStorage.setItem('reverseBreak4', '15');
-        localStorage.setItem('reverseBreak5', '30');
+  function resetToDefaults() {
+    if (!confirm('Are you sure you want to reset all settings to their default values? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      // Timer Settings defaults
+      if (pomodoroTimeInput) pomodoroTimeInput.value = 25;
+      if (shortBreakTimeInput) shortBreakTimeInput.value = 5;
+      if (longBreakTimeInput) longBreakTimeInput.value = 15;
+      if (sessionsCountInput) sessionsCountInput.value = 4;
+      
+      // Reverse timer settings defaults (if they exist)
+      if (maxTimeInput) maxTimeInput.value = 60;
+      if (break1TimeInput) break1TimeInput.value = 2;
+      if (break2TimeInput) break2TimeInput.value = 5;
+      if (break3TimeInput) break3TimeInput.value = 10;
+      if (break4TimeInput) break4TimeInput.value = 15;
+      if (break5TimeInput) break5TimeInput.value = 30;
+
+      // Sound Settings defaults
+      if (volumeSlider) {
+        volumeSlider.value = 60;
+        if (volumePercentage) volumePercentage.textContent = '60%';
       }
-      
-      // Reset auto start settings - using shared keys
-      localStorage.setItem('autoBreak', 'true');
-      localStorage.setItem('autoPomodoro', 'true');
-      
-      // Reset sound settings - using shared keys now
-      localStorage.setItem('volume', '60');
-      localStorage.setItem('soundEffects', 'true');
-      localStorage.setItem('alarm', 'true');
-      // Set Bell as the default sound
-      localStorage.setItem('alarmSound', 'bell.mp3');
-      
-      // Reset theme to light mode
-      localStorage.setItem('siteTheme', 'light');
-      
-      // Reload settings into form
-      loadSettings();
-      
-      // Apply theme immediately
-      applyTheme('light');
-      
-      // Update theme selector to show Light Mode
-      const themeSelector = document.getElementById('theme-selector');
-      if (themeSelector) {
-        themeSelector.value = 'light';
-      }
-      
-      // Update sound settings visually
-      const volumeSlider = document.getElementById('volume-slider');
-      const volumePercentage = document.getElementById('volume-percentage');
-      const soundEffectsToggle = document.getElementById('sound-effects-toggle');
-      const alarmToggle = document.getElementById('alarm-toggle');
-      const alarmSoundSelector = document.getElementById('alarm-sound-selector');
-      
-      if (volumeSlider) volumeSlider.value = 60;
-      if (volumePercentage) volumePercentage.textContent = '60%';
+      if (alarmSoundSelector) alarmSoundSelector.value = 'bell.mp3';
       if (soundEffectsToggle) soundEffectsToggle.checked = true;
       if (alarmToggle) alarmToggle.checked = true;
-      // Set Bell as selected in the dropdown
-      if (alarmSoundSelector) alarmSoundSelector.value = 'bell.mp3';
-      
-      // Update auto-start settings visually
-      const autoBreakToggle = document.getElementById('auto-break-toggle');
-      const autoPomoToggle = document.getElementById('auto-pomodoro-toggle');
-      
+
+      // Auto Start Settings defaults
       if (autoBreakToggle) autoBreakToggle.checked = true;
-      if (autoPomoToggle) autoPomoToggle.checked = true;
+      if (autoPomodoroToggle) autoPomodoroToggle.checked = true;
+
+      // BGM Settings defaults
+      if (bgmToggle) bgmToggle.checked = false;
+      if (playlistSelector) playlistSelector.value = 'deep-focus';
+      if (bgmVolumeSlider) {
+        bgmVolumeSlider.value = 60;
+        if (bgmVolumePercentage) bgmVolumePercentage.textContent = '60%';
+      }
+
+      // Theme Settings defaults
+      if (themeSelector) themeSelector.value = 'light';
+      if (lockedinModeToggle) lockedinModeToggle.checked = false;
+
+      // Apply the changes immediately
+      saveSettings();
       
-      // Apply defaults to the timer
-      applySettingsToTimer();
-      forceTimerReset();
+      // Show confirmation
+      showToast('All settings have been reset to default values!');
       
-      // Update sound volumes and immediately apply the new Bell sound
-      updateSoundsDirectly();
-      
-      showToast('Settings reset to defaults!');
+      console.log('Settings reset to defaults successfully');
+    } catch (error) {
+      console.error('Error resetting settings:', error);
+      showToast('Error resetting settings. Please try again.');
     }
   }
-  
+
   // Update the applyTheme function to handle custom themes
   function applyTheme(themeName) {
     // Remove any previous theme classes from body
@@ -1000,7 +982,7 @@ function testSound(type) {
   }
   
   if (resetBtn) {
-    resetBtn.addEventListener('click', resetSettings);
+    resetBtn.addEventListener('click', resetToDefaults);
   }
   
   // Close when clicking outside the modal
@@ -1072,16 +1054,13 @@ function testSound(type) {
         }, 150); // Small delay to debounce
       });
       
-      // Initial setup of percentage display
-      volumeSlider.addEventListener('DOMContentLoaded', function() {
-        // Use shared key
-        const savedVolume = localStorage.getItem('volume') || 60;
-        volumePercentage.textContent = savedVolume + '%';
-      });
-      
-      // Set initial value on load
+      // Initial setup of volume slider and percentage display
       const savedVolume = localStorage.getItem('volume') || 60;
+      volumeSlider.value = savedVolume;
       volumePercentage.textContent = savedVolume + '%';
+      
+      // Also initialize sound settings directly
+      updateSoundsDirectly();
     }
   });
   
