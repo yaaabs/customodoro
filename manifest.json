@@ -3,7 +3,7 @@
   "short_name": "Customodoro",
   "start_url": "/index.html",
   "display": "standalone",
-  "background_color": "#121212",
+  "background_color": "#000000",
   "theme_color": "#e53935",
   "icons": [
     {
