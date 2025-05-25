@@ -647,6 +647,13 @@
     if (window.lockedInMode && typeof window.lockedInMode.setup === 'function') {
       window.lockedInMode.setup();
     }
+    
+    // Fix: Set timer sound selector value properly, default to 'none'
+    const timerSoundSelector = document.getElementById('timer-sound-selector');
+    if (timerSoundSelector) {
+      const timerSoundValue = localStorage.getItem('timerSound') || 'none';
+      timerSoundSelector.value = timerSoundValue;
+    }
   }
   
   // Save Pomodoro settings

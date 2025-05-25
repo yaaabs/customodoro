@@ -14,69 +14,105 @@ if ('Notification' in window) {
     timer: null
   };
   
-  // Initialize sound settings
+  // Initialize sound settings from localStorage
   function initializeSoundSettings() {
+    // Get settings from shared localStorage keys
     const volume = localStorage.getItem('volume') ? 
                   parseInt(localStorage.getItem('volume')) / 100 : 0.6;
     const timerVolume = localStorage.getItem('timerVolume') ?
                        parseInt(localStorage.getItem('timerVolume')) / 100 : 0.3;
     
+    // Explicitly check for 'false' string
     const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
     const alarmEnabled = localStorage.getItem('alarm') !== 'false';
     
-    // Get selected alarm sound
+    // Get selected alarm sound or use default
     const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
     sounds.complete.src = 'audio/Alert Sounds/' + selectedAlarmSound;
     
-    // Initialize timer sound
+    // Initialize timer sound - Fix: Default to 'none' if not set
     const selectedTimerSound = localStorage.getItem('timerSound') || 'none';
     if (selectedTimerSound !== 'none') {
-      sounds.timer = new Audio('audio/Timer Sounds/' + selectedTimerSound);
-      sounds.timer.loop = true;
-      sounds.timer.volume = soundEffectsEnabled ? timerVolume : 0;
-    }
-    
-    // Set volumes
-    sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
-    sounds.start.volume = soundEffectsEnabled ? volume * 0.6 : 0;
-    sounds.pause.volume = soundEffectsEnabled ? volume * 0.5 : 0;
-    sounds.complete.volume = alarmEnabled ? volume : 0;
-  }
-  
-  // Update sound volumes
-  function updateSoundVolumes() {
-    const volume = localStorage.getItem('volume') ? 
-                  parseInt(localStorage.getItem('volume')) / 100 : 0.6;
-    const timerVolume = localStorage.getItem('timerVolume') ?
-                       parseInt(localStorage.getItem('timerVolume')) / 100 : 0.3;
-    
-    const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
-    const alarmEnabled = localStorage.getItem('alarm') !== 'false';
-    
-    // Update alarm sound
-    const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
-    sounds.complete.src = 'audio/Alert Sounds/' + selectedAlarmSound;
-    
-    // Update timer sound
-    const selectedTimerSound = localStorage.getItem('timerSound') || 'none';
-    if (selectedTimerSound !== 'none') {
-      if (!sounds.timer || sounds.timer.src.indexOf(selectedTimerSound) === -1) {
         sounds.timer = new Audio('audio/Timer Sounds/' + selectedTimerSound);
         sounds.timer.loop = true;
-      }
-      sounds.timer.volume = soundEffectsEnabled ? timerVolume : 0;
+        sounds.timer.volume = soundEffectsEnabled ? timerVolume : 0;
     } else {
-      if (sounds.timer) {
-        sounds.timer.pause();
-        sounds.timer = null;
-      }
+        sounds.timer = null; // Ensure it's null when none is selected
     }
     
-    // Update other volumes
+    // Set initial volumes
     sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
     sounds.start.volume = soundEffectsEnabled ? volume * 0.6 : 0;
     sounds.pause.volume = soundEffectsEnabled ? volume * 0.5 : 0;
     sounds.complete.volume = alarmEnabled ? volume : 0;
+    
+    console.log(`Sound settings initialized for Reverse Timer:`, { 
+        volume: volume,
+        timerVolume: timerVolume,
+        soundEffectsEnabled: soundEffectsEnabled, 
+        alarmEnabled: alarmEnabled,
+        alarmSound: selectedAlarmSound,
+        timerSound: selectedTimerSound
+    });
+  }
+  
+  // Update sound volumes based on settings
+  function updateSoundVolumes() {
+    // Get settings from shared localStorage keys
+    const volume = localStorage.getItem('volume') ? 
+                  parseInt(localStorage.getItem('volume')) / 100 : 0.6;
+    const timerVolume = localStorage.getItem('timerVolume') ?
+                       parseInt(localStorage.getItem('timerVolume')) / 100 : 0.3;
+    
+    // Explicitly check for 'false' string to handle resets properly
+    const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
+    const alarmEnabled = localStorage.getItem('alarm') !== 'false';
+    
+    // Update the alarm sound file
+    const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
+    sounds.complete.src = 'audio/Alert Sounds/' + selectedAlarmSound;
+    
+    // FIX: Properly handle timer sound changes - stop old sound first
+    const selectedTimerSound = localStorage.getItem('timerSound') || 'none';
+    
+    // Stop and clear any existing timer sound
+    if (sounds.timer) {
+        sounds.timer.pause();
+        sounds.timer.currentTime = 0;
+        sounds.timer = null;
+    }
+    
+    // Set up new timer sound if not 'none'
+    if (selectedTimerSound !== 'none') {
+        sounds.timer = new Audio('audio/Timer Sounds/' + selectedTimerSound);
+        sounds.timer.loop = true;
+        sounds.timer.volume = soundEffectsEnabled ? timerVolume : 0;
+        
+        // If timer is currently running, start the new sound
+        if (isRunning) {
+            try {
+                sounds.timer.currentTime = 0;
+                sounds.timer.play().catch(err => console.log('Timer sound disabled'));
+            } catch (error) {
+                console.error('Error playing new timer sound:', error);
+            }
+        }
+    }
+    
+    // Set volumes based on settings
+    sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
+    sounds.start.volume = soundEffectsEnabled ? volume * 0.6 : 0;
+    sounds.pause.volume = soundEffectsEnabled ? volume * 0.5 : 0;
+    sounds.complete.volume = alarmEnabled ? volume : 0;
+    
+    console.log("Reverse Timer: Sound volumes updated:", { 
+        volume: volume,
+        timerVolume: timerVolume,
+        soundEffectsEnabled: soundEffectsEnabled,
+        alarmEnabled: alarmEnabled,
+        alarmSound: selectedAlarmSound,
+        timerSound: selectedTimerSound
+    });
   }
   
   // Initialize on load

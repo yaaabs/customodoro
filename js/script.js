@@ -63,12 +63,14 @@ function initializeSoundSettings() {
     const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
     sounds.complete.src = 'audio/Alert Sounds/' + selectedAlarmSound;
     
-    // Initialize timer sound
+    // Initialize timer sound - Fix: Default to 'none' if not set
     const selectedTimerSound = localStorage.getItem('timerSound') || 'none';
     if (selectedTimerSound !== 'none') {
         sounds.timer = new Audio('audio/Timer Sounds/' + selectedTimerSound);
         sounds.timer.loop = true;
         sounds.timer.volume = soundEffectsEnabled ? timerVolume : 0;
+    } else {
+        sounds.timer = null; // Ensure it's null when none is selected
     }
     
     // Set initial volumes
@@ -116,18 +118,30 @@ function updateSoundVolumes() {
     const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
     sounds.complete.src = 'audio/Alert Sounds/' + selectedAlarmSound;
     
-    // Update timer sound
+    // FIX: Properly handle timer sound changes - stop old sound first
     const selectedTimerSound = localStorage.getItem('timerSound') || 'none';
+    
+    // Stop and clear any existing timer sound
+    if (sounds.timer) {
+        sounds.timer.pause();
+        sounds.timer.currentTime = 0;
+        sounds.timer = null;
+    }
+    
+    // Set up new timer sound if not 'none'
     if (selectedTimerSound !== 'none') {
-        if (!sounds.timer || sounds.timer.src.indexOf(selectedTimerSound) === -1) {
-            sounds.timer = new Audio('audio/Timer Sounds/' + selectedTimerSound);
-            sounds.timer.loop = true;
-        }
+        sounds.timer = new Audio('audio/Timer Sounds/' + selectedTimerSound);
+        sounds.timer.loop = true;
         sounds.timer.volume = soundEffectsEnabled ? timerVolume : 0;
-    } else {
-        if (sounds.timer) {
-            sounds.timer.pause();
-            sounds.timer = null;
+        
+        // If timer is currently running, start the new sound
+        if (isRunning) {
+            try {
+                sounds.timer.currentTime = 0;
+                sounds.timer.play().catch(err => console.log('Timer sound disabled'));
+            } catch (error) {
+                console.error('Error playing new timer sound:', error);
+            }
         }
     }
     
@@ -969,12 +983,14 @@ function initializeSoundSettings() {
   const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
   sounds.complete.src = 'audio/Alert Sounds/' + selectedAlarmSound;
   
-  // Initialize timer sound
+  // Initialize timer sound - Fix: Default to 'none' if not set
   const selectedTimerSound = localStorage.getItem('timerSound') || 'none';
   if (selectedTimerSound !== 'none') {
       sounds.timer = new Audio('audio/Timer Sounds/' + selectedTimerSound);
       sounds.timer.loop = true;
       sounds.timer.volume = soundEffectsEnabled ? volume * 0.3 : 0;
+  } else {
+      sounds.timer = null; // Ensure it's null when none is selected
   }
   
   // Set initial volumes
