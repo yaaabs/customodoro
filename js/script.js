@@ -37,7 +37,8 @@ const sounds = {
   click: new Audio('audio/SFX/start.wav'),
   start: new Audio('audio/SFX/start.wav'),
   pause: new Audio('audio/SFX/pause.wav'),
-  complete: new Audio('audio/Alert Sounds/alarm.mp3')
+  complete: new Audio('audio/Alert Sounds/alarm.mp3'),
+  timer: null // Timer sound will be set dynamically
 };
 
 // Set custom volumes for each sound
@@ -51,6 +52,8 @@ function initializeSoundSettings() {
     // Get settings from shared localStorage keys
     const volume = localStorage.getItem('volume') ? 
                   parseInt(localStorage.getItem('volume')) / 100 : 0.6;
+    const timerVolume = localStorage.getItem('timerVolume') ?
+                       parseInt(localStorage.getItem('timerVolume')) / 100 : 0.3;
     
     // Explicitly check for 'false' string
     const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
@@ -60,6 +63,14 @@ function initializeSoundSettings() {
     const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
     sounds.complete.src = 'audio/Alert Sounds/' + selectedAlarmSound;
     
+    // Initialize timer sound
+    const selectedTimerSound = localStorage.getItem('timerSound') || 'none';
+    if (selectedTimerSound !== 'none') {
+        sounds.timer = new Audio('audio/Timer Sounds/' + selectedTimerSound);
+        sounds.timer.loop = true;
+        sounds.timer.volume = soundEffectsEnabled ? timerVolume : 0;
+    }
+    
     // Set initial volumes
     sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
     sounds.start.volume = soundEffectsEnabled ? volume * 0.6 : 0;
@@ -67,10 +78,12 @@ function initializeSoundSettings() {
     sounds.complete.volume = alarmEnabled ? volume : 0;
     
     console.log(`Sound settings initialized for Classic Timer:`, { 
-        volume: volume, 
+        volume: volume,
+        timerVolume: timerVolume,
         soundEffectsEnabled: soundEffectsEnabled, 
         alarmEnabled: alarmEnabled,
-        alarmSound: selectedAlarmSound
+        alarmSound: selectedAlarmSound,
+        timerSound: selectedTimerSound
     });
 }
 
@@ -92,6 +105,8 @@ function updateSoundVolumes() {
     // Get settings from shared localStorage keys
     const volume = localStorage.getItem('volume') ? 
                   parseInt(localStorage.getItem('volume')) / 100 : 0.6;
+    const timerVolume = localStorage.getItem('timerVolume') ?
+                       parseInt(localStorage.getItem('timerVolume')) / 100 : 0.3;
     
     // Explicitly check for 'false' string to handle resets properly
     const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
@@ -101,6 +116,21 @@ function updateSoundVolumes() {
     const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
     sounds.complete.src = 'audio/Alert Sounds/' + selectedAlarmSound;
     
+    // Update timer sound
+    const selectedTimerSound = localStorage.getItem('timerSound') || 'none';
+    if (selectedTimerSound !== 'none') {
+        if (!sounds.timer || sounds.timer.src.indexOf(selectedTimerSound) === -1) {
+            sounds.timer = new Audio('audio/Timer Sounds/' + selectedTimerSound);
+            sounds.timer.loop = true;
+        }
+        sounds.timer.volume = soundEffectsEnabled ? timerVolume : 0;
+    } else {
+        if (sounds.timer) {
+            sounds.timer.pause();
+            sounds.timer = null;
+        }
+    }
+    
     // Set volumes based on settings
     sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
     sounds.start.volume = soundEffectsEnabled ? volume * 0.6 : 0;
@@ -109,9 +139,11 @@ function updateSoundVolumes() {
     
     console.log("Classic Timer: Sound volumes updated:", { 
         volume: volume,
+        timerVolume: timerVolume,
         soundEffectsEnabled: soundEffectsEnabled,
         alarmEnabled: alarmEnabled,
-        alarmSound: selectedAlarmSound
+        alarmSound: selectedAlarmSound,
+        timerSound: selectedTimerSound
     });
 }
 
@@ -408,6 +440,16 @@ function toggleTimer() {
     playSound('start'); // Play start/click sound
     showToast(motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)]);
 
+    // Start timer sound
+    if (sounds.timer && localStorage.getItem('soundEffects') !== 'false') {
+        try {
+            sounds.timer.currentTime = 0;
+            sounds.timer.play().catch(err => console.log('Timer sound disabled'));
+        } catch (error) {
+            console.error('Error playing timer sound:', error);
+        }
+    }
+
     // Start timer
     isRunning = true;
     startButton.textContent = 'PAUSE';
@@ -435,6 +477,12 @@ function toggleTimer() {
         // Timer completed
         clearInterval(timerInterval);
         isRunning = false;
+        
+        // Stop timer sound
+        if (sounds.timer) {
+            sounds.timer.pause();
+            sounds.timer.currentTime = 0;
+        }
         
         // For pomodoro mode, increment counter BEFORE showing notification
         if (currentMode === 'pomodoro') {
@@ -466,6 +514,12 @@ function toggleTimer() {
     }, 1000);
   } else {
     playSound('pause'); // Use function instead of direct play
+
+    // Stop timer sound
+    if (sounds.timer) {
+        sounds.timer.pause();
+        sounds.timer.currentTime = 0;
+    }
 
     // Pause timer
     clearInterval(timerInterval);
@@ -511,6 +565,12 @@ function toggleTimer() {
 // Reset the current timer - modified to be more robust
 function resetTimer() {
   clearInterval(timerInterval);
+
+  // Stop timer sound
+  if (sounds.timer) {
+      sounds.timer.pause();
+      sounds.timer.currentTime = 0;
+  }
 
   // Reset to initial time based on current mode - use latest values
   if (currentMode === 'pomodoro') {
@@ -909,6 +969,14 @@ function initializeSoundSettings() {
   const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
   sounds.complete.src = 'audio/Alert Sounds/' + selectedAlarmSound;
   
+  // Initialize timer sound
+  const selectedTimerSound = localStorage.getItem('timerSound') || 'none';
+  if (selectedTimerSound !== 'none') {
+      sounds.timer = new Audio('audio/Timer Sounds/' + selectedTimerSound);
+      sounds.timer.loop = true;
+      sounds.timer.volume = soundEffectsEnabled ? volume * 0.3 : 0;
+  }
+  
   // Set initial volumes
   sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
   sounds.start.volume = soundEffectsEnabled ? volume * 0.6 : 0;
@@ -919,7 +987,8 @@ function initializeSoundSettings() {
       volume: volume, 
       soundEffectsEnabled: soundEffectsEnabled, 
       alarmEnabled: alarmEnabled,
-      alarmSound: selectedAlarmSound
+      alarmSound: selectedAlarmSound,
+      timerSound: selectedTimerSound
   });
 }
 
@@ -937,6 +1006,21 @@ function updateSoundVolumes() {
   const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
   sounds.complete.src = 'audio/Alert Sounds/' + selectedAlarmSound;
   
+  // Update timer sound
+  const selectedTimerSound = localStorage.getItem('timerSound') || 'none';
+  if (selectedTimerSound !== 'none') {
+      if (!sounds.timer || sounds.timer.src.indexOf(selectedTimerSound) === -1) {
+          sounds.timer = new Audio('audio/Timer Sounds/' + selectedTimerSound);
+          sounds.timer.loop = true;
+      }
+      sounds.timer.volume = soundEffectsEnabled ? volume * 0.3 : 0;
+  } else {
+      if (sounds.timer) {
+          sounds.timer.pause();
+          sounds.timer = null;
+      }
+  }
+  
   // Set volumes based on settings
   sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
   sounds.start.volume = soundEffectsEnabled ? volume * 0.6 : 0;
@@ -947,6 +1031,7 @@ function updateSoundVolumes() {
       volume: volume,
       soundEffectsEnabled: soundEffectsEnabled,
       alarmEnabled: alarmEnabled,
-      alarmSound: selectedAlarmSound
+      alarmSound: selectedAlarmSound,
+      timerSound: selectedTimerSound
   });
 }

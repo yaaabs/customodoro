@@ -216,6 +216,24 @@
               </div>
             </div>
             <div class="settings-row">
+              <div class="settings-label">Select timer sound:</div>
+              <div class="select-wrapper">
+                <select class="sound-selector" id="timer-sound-selector">
+                  <option value="none">None</option>
+                  <option value="WallClockTicking.mp3">Wall Clock Ticking</option>
+                  <option value="SoftBrownNoise.mp3">Soft Brown Noise</option>
+                  <option value="UnderWaterWhiteNoise.mp3">Under Water White Noise</option>
+                </select>
+              </div>
+            </div>
+            <div class="settings-row">
+              <div class="settings-label">Timer Sound Volume</div>
+              <div class="volume-container">
+                <input type="range" class="volume-slider" id="timer-volume-slider" min="0" max="100" value="30">
+                <div class="volume-percentage" id="timer-volume-percentage">30%</div>
+              </div>
+            </div>
+            <div class="settings-row">
               <div class="settings-label">Timer Sound Effects</div>
               <label class="toggle-switch">
                 <input type="checkbox" id="sound-effects-toggle" checked>
@@ -279,39 +297,39 @@
                 <input type="range" class="volume-slider" id="bgm-volume-slider" min="0" max="100" value="30">
                 <div class="volume-percentage" id="bgm-volume-percentage">30%</div>
               </div>
-            </div>
             
-            <div class="bgm-player">
-              <div class="bgm-track-info">
-                <div class="bgm-track-title" id="bgm-track-title">Select a playlist</div>
-                <div class="bgm-track-artist" id="bgm-track-artist">and press play</div>
-              </div>
-              
-              <div class="bgm-controls">
-                <button class="bgm-btn bgm-btn-prev" id="bgm-prev-btn">
-                  <svg viewBox="0 0 24 24" width="24" height="24">
-                    <path fill="currentColor" d="M6,18V6H8V18H6M9.5,12L18,6V18L9.5,12Z" />
-                  </svg>
-                </button>
+              <div class="bgm-player">
+                <div class="bgm-track-info">
+                  <div class="bgm-track-title" id="bgm-track-title">Select a playlist</div>
+                  <div class="bgm-track-artist" id="bgm-track-artist">and press play</div>
+                </div>
                 
-                <button class="bgm-btn bgm-btn-play" id="bgm-play-btn">
-                  <svg viewBox="0 0 24 24" width="32" height="32" id="bgm-play-icon">
-                    <path fill="currentColor" d="M8,5.14V19.14L19,12.14L8,5.14Z" />
-                  </svg>
-                  <svg viewBox="0 0 24 24" width="32" height="32" id="bgm-pause-icon" style="display: none;">
-                    <path fill="currentColor" d="M14,19H18V5H14M6,19H10V5H6V19Z" />
-                  </svg>
-                </button>
+                <div class="bgm-controls">
+                  <button class="bgm-btn bgm-btn-prev" id="bgm-prev-btn">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                      <path fill="currentColor" d="M6,18V6H8V18H6M9.5,12L18,6V18L9.5,12Z" />
+                    </svg>
+                  </button>
+                  
+                  <button class="bgm-btn bgm-btn-play" id="bgm-play-btn">
+                    <svg viewBox="0 0 24 24" width="32" height="32" id="bgm-play-icon">
+                      <path fill="currentColor" d="M8,5.14V19.14L19,12.14L8,5.14Z" />
+                    </svg>
+                    <svg viewBox="0 0 24 24" width="32" height="32" id="bgm-pause-icon" style="display: none;">
+                      <path fill="currentColor" d="M14,19H18V5H14M6,19H10V5H6V19Z" />
+                    </svg>
+                  </button>
+                  
+                  <button class="bgm-btn bgm-btn-next" id="bgm-next-btn">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                      <path fill="currentColor" d="M16,18H18V6H16M6,18L14.5,12L6,6V18Z" />
+                    </svg>
+                  </button>
+                </div>
                 
-                <button class="bgm-btn bgm-btn-next" id="bgm-next-btn">
-                  <svg viewBox="0 0 24 24" width="24" height="24">
-                    <path fill="currentColor" d="M16,18H18V6H16M6,18L14.5,12L6,6V18Z" />
-                  </svg>
-                </button>
-              </div>
-              
-              <div class="bgm-progress-container">
-                <div class="bgm-progress-bar" id="bgm-progress-bar"></div>
+                <div class="bgm-progress-container">
+                  <div class="bgm-progress-bar" id="bgm-progress-bar"></div>
+                </div>
               </div>
             </div>
           </div>

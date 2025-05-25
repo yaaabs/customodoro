@@ -10,12 +10,24 @@
   // Navigation Elements
   const navItems = document.querySelectorAll('.settings-nav-item');
   
+  // Sound settings elements
+  const volumeSlider = document.getElementById('volume-slider');
+  const volumePercentage = document.getElementById('volume-percentage');
+  const timerVolumeSlider = document.getElementById('timer-volume-slider');
+  const timerVolumePercentage = document.getElementById('timer-volume-percentage');
+  const alarmSoundSelector = document.getElementById('alarm-sound-selector');
+  const timerSoundSelector = document.getElementById('timer-sound-selector');
+  const soundEffectsToggle = document.getElementById('sound-effects-toggle');
+  const alarmToggle = document.getElementById('alarm-toggle');
+
   // Check if we're on the reverse timer page
   const isReversePage = document.body.classList.contains('reverse-mode');
   
   // Track the currently playing test sound
   let currentTestSound = null;
+  let currentTimerTestSound = null;
   let volumeChangeTimeout = null;
+  let timerVolumeChangeTimeout = null;
   
   // Open settings modal
   function openSettings() {
@@ -173,6 +185,7 @@
         if (volumePercentage) volumePercentage.textContent = '60%';
       }
       if (alarmSoundSelector) alarmSoundSelector.value = 'bell.mp3';
+      if (timerSoundSelector) timerSoundSelector.value = 'none';
       if (soundEffectsToggle) soundEffectsToggle.checked = true;
       if (alarmToggle) alarmToggle.checked = true;
 
@@ -708,6 +721,7 @@
   // Save sound settings - Now using shared keys for both pages
   function saveSoundSettings() {
     const volumeSlider = document.getElementById('volume-slider');
+    const timerVolumeSlider = document.getElementById('timer-volume-slider');
     const soundEffectsToggle = document.getElementById('sound-effects-toggle');
     const alarmToggle = document.getElementById('alarm-toggle');
     const alarmSoundSelector = document.getElementById('alarm-sound-selector');
@@ -722,16 +736,28 @@
     localStorage.setItem('soundEffects', soundEffectsToggle.checked);
     localStorage.setItem('alarm', alarmToggle.checked);
     
+    // Save timer volume if it exists
+    if (timerVolumeSlider) {
+        localStorage.setItem('timerVolume', timerVolumeSlider.value);
+    }
+    
     // Save the selected alarm sound
     if (alarmSoundSelector) {
         localStorage.setItem('alarmSound', alarmSoundSelector.value);
     }
     
+    // Save the selected timer sound
+    if (timerSoundSelector) {
+        localStorage.setItem('timerSound', timerSoundSelector.value);
+    }
+    
     console.log(`Sound settings saved (shared):`, {
         volume: volumeSlider.value,
+        timerVolume: timerVolumeSlider ? timerVolumeSlider.value : 'N/A',
         soundEffects: soundEffectsToggle.checked,
         alarm: alarmToggle.checked,
-        alarmSound: alarmSoundSelector ? alarmSoundSelector.value : 'N/A'
+        alarmSound: alarmSoundSelector ? alarmSoundSelector.value : 'N/A',
+        timerSound: timerSoundSelector ? timerSoundSelector.value : 'N/A'
     });
     
     // Update sound volumes immediately 
@@ -745,9 +771,11 @@
 // Load sound settings - Now using shared keys for both pages
 function loadSoundSettings() {
     const volumeSlider = document.getElementById('volume-slider');
+    const timerVolumeSlider = document.getElementById('timer-volume-slider');
     const soundEffectsToggle = document.getElementById('sound-effects-toggle');
     const alarmToggle = document.getElementById('alarm-toggle');
     const alarmSoundSelector = document.getElementById('alarm-sound-selector');
+    const timerSoundSelector = document.getElementById('timer-sound-selector');
     
     if (!volumeSlider || !soundEffectsToggle || !alarmToggle) {
         return;
@@ -755,6 +783,11 @@ function loadSoundSettings() {
     
     // Load from shared keys (no page-specific prefix)
     volumeSlider.value = localStorage.getItem('volume') || 60;
+    
+    // Load timer volume with default of 30
+    if (timerVolumeSlider) {
+        timerVolumeSlider.value = localStorage.getItem('timerVolume') || 30;
+    }
     
     // Explicitly convert to boolean to handle 'false' string correctly
     const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
@@ -769,11 +802,19 @@ function loadSoundSettings() {
         alarmSoundSelector.value = savedAlarmSound;
     }
     
+    // Set the selected timer sound
+    if (timerSoundSelector) {
+        const savedTimerSound = localStorage.getItem('timerSound') || 'none';
+        timerSoundSelector.value = savedTimerSound;
+    }
+    
     console.log(`Sound settings loaded (shared):`, {
         volume: volumeSlider.value,
+        timerVolume: timerVolumeSlider ? timerVolumeSlider.value : 'N/A',
         soundEffects: soundEffectsEnabled,
         alarm: alarmEnabled,
-        alarmSound: alarmSoundSelector ? alarmSoundSelector.value : 'N/A'
+        alarmSound: alarmSoundSelector ? alarmSoundSelector.value : 'N/A',
+        timerSound: timerSoundSelector ? timerSoundSelector.value : 'N/A'
     });
     
     // Apply settings immediately after loading
@@ -785,8 +826,12 @@ function loadSoundSettings() {
     
     // Also update percentage display if it exists
     const volumePercentage = document.getElementById('volume-percentage');
+    const timerVolumePercentage = document.getElementById('timer-volume-percentage');
     if (volumePercentage && volumeSlider) {
         volumePercentage.textContent = volumeSlider.value + '%';
+    }
+    if (timerVolumePercentage && timerVolumeSlider) {
+        timerVolumePercentage.textContent = timerVolumeSlider.value + '%';
     }
 }
 
@@ -795,6 +840,7 @@ function updateSoundsDirectly() {
     if (typeof window.sounds !== 'undefined') {
         // Use shared keys for sound settings
         const volume = parseInt(localStorage.getItem('volume') || 60) / 100;
+        const timerVolume = parseInt(localStorage.getItem('timerVolume') || 30) / 100;
         const soundsEnabled = localStorage.getItem('soundEffects') !== 'false';
         const alarmEnabled = localStorage.getItem('alarm') !== 'false';
         
@@ -812,12 +858,18 @@ function updateSoundsDirectly() {
         if (window.sounds.pause) window.sounds.pause.volume = soundsEnabled ? volume * 0.5 : 0;
         if (window.sounds.complete) window.sounds.complete.volume = alarmEnabled ? volume : 0;
         
+        // Update timer sound with separate volume control
+        if (window.sounds.timer) {
+            window.sounds.timer.volume = soundsEnabled ? timerVolume : 0;
+        }
+        
         console.log(`Sounds updated directly with shared settings:`, {
             alarmSound: selectedAlarmSound,
             clickVolume: window.sounds.click ? window.sounds.click.volume : "N/A",
             startVolume: window.sounds.start ? window.sounds.start.volume : "N/A",
             pauseVolume: window.sounds.pause ? window.sounds.pause.volume : "N/A",
-            completeVolume: window.sounds.complete ? window.sounds.complete.volume : "N/A"
+            completeVolume: window.sounds.complete ? window.sounds.complete.volume : "N/A",
+            timerVolume: window.sounds.timer ? window.sounds.timer.volume : "N/A"
         });
     }
 }
@@ -847,6 +899,41 @@ function testSound(type) {
   } else if (typeof window.playSound === 'function') {
     window.playSound(type);
   }
+}
+
+// Test timer sound function
+function testTimerSound() {
+    // Stop any currently playing timer test sound
+    if (currentTimerTestSound) {
+        currentTimerTestSound.pause();
+        currentTimerTestSound.currentTime = 0;
+        currentTimerTestSound = null;
+    }
+    
+    const timerSoundSelector = document.getElementById('timer-sound-selector');
+    const timerVolumeSlider = document.getElementById('timer-volume-slider');
+    
+    if (timerSoundSelector && timerSoundSelector.value !== 'none') {
+        const selectedSound = timerSoundSelector.value;
+        const volume = timerVolumeSlider ? parseInt(timerVolumeSlider.value) / 100 : 0.3;
+        
+        // Create and play the test sound
+        currentTimerTestSound = new Audio('audio/Timer Sounds/' + selectedSound);
+        currentTimerTestSound.volume = volume;
+        
+        if (volume > 0) {
+            currentTimerTestSound.play().catch(err => console.log('Audio playback disabled'));
+            
+            // Stop the sound after 3 seconds
+            setTimeout(() => {
+                if (currentTimerTestSound) {
+                    currentTimerTestSound.pause();
+                    currentTimerTestSound.currentTime = 0;
+                    currentTimerTestSound = null;
+                }
+            }, 3000);
+        }
+    }
 }
 
 // Add these to your settings modal in both HTML files (optional)
@@ -1013,6 +1100,8 @@ function testSound(type) {
   document.addEventListener('DOMContentLoaded', function() {
     const volumeSlider = document.getElementById('volume-slider');
     const volumePercentage = document.getElementById('volume-percentage');
+    const timerVolumeSlider = document.getElementById('timer-volume-slider');
+    const timerVolumePercentage = document.getElementById('timer-volume-percentage');
     
     if (volumeSlider && volumePercentage) {
       // Update percentage display when slider value changes
@@ -1061,6 +1150,54 @@ function testSound(type) {
       
       // Also initialize sound settings directly
       updateSoundsDirectly();
+    }
+    
+    // Timer volume slider handling
+    if (timerVolumeSlider && timerVolumePercentage) {
+      timerVolumeSlider.addEventListener('input', function() {
+        timerVolumePercentage.textContent = timerVolumeSlider.value + '%';
+        
+        // Immediately update the timer volume in localStorage
+        localStorage.setItem('timerVolume', timerVolumeSlider.value);
+        
+        // Clear any pending timeouts
+        if (timerVolumeChangeTimeout) {
+          clearTimeout(timerVolumeChangeTimeout);
+        }
+        
+        // Stop the current timer test sound if it exists
+        if (currentTimerTestSound) {
+          currentTimerTestSound.pause();
+          currentTimerTestSound.currentTime = 0;
+          currentTimerTestSound = null;
+        }
+        
+        // Set a small timeout to avoid firing too many sounds
+        timerVolumeChangeTimeout = setTimeout(function() {
+          // Apply the new volume to sound settings
+          updateSoundsDirectly();
+          
+          // Test the timer sound
+          testTimerSound();
+        }, 150);
+      });
+      
+      // Initial setup of timer volume slider and percentage display
+      const savedTimerVolume = localStorage.getItem('timerVolume') || 30;
+      timerVolumeSlider.value = savedTimerVolume;
+      timerVolumePercentage.textContent = savedTimerVolume + '%';
+    }
+    
+    // Add event listener for timer sound selector to test sound when changed
+    if (timerSoundSelector) {
+      timerSoundSelector.addEventListener('change', function() {
+        // Save the new selection immediately
+        localStorage.setItem('timerSound', timerSoundSelector.value);
+        updateSoundsDirectly();
+        
+        // Test the new sound
+        setTimeout(testTimerSound, 100);
+      });
     }
   });
   

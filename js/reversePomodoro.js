@@ -3,57 +3,85 @@ if ('Notification' in window) {
   Notification.requestPermission();
 }
 
-// Audio setup
-const sounds = {
+// Reverse Pomodoro Timer
+(function() {
+  // Audio objects
+  const sounds = {
     click: new Audio('audio/SFX/start.wav'),
     start: new Audio('audio/SFX/start.wav'),
     pause: new Audio('audio/SFX/pause.wav'),
-    complete: new Audio('audio/Alert Sounds/alarm.mp3')
-};
-
-// Initialize sound settings from shared localStorage keys
-function initializeSoundSettings() {
+    complete: new Audio('audio/Alert Sounds/alarm.mp3'),
+    timer: null
+  };
+  
+  // Initialize sound settings
+  function initializeSoundSettings() {
     const volume = localStorage.getItem('volume') ? 
                   parseInt(localStorage.getItem('volume')) / 100 : 0.6;
+    const timerVolume = localStorage.getItem('timerVolume') ?
+                       parseInt(localStorage.getItem('timerVolume')) / 100 : 0.3;
     
-    // Explicitly check for 'false' string
     const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
     const alarmEnabled = localStorage.getItem('alarm') !== 'false';
     
-    // Get selected alarm sound or use default - FIXED: Load the sound properly
+    // Get selected alarm sound
     const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
-    updateAlarmSound(selectedAlarmSound);
+    sounds.complete.src = 'audio/Alert Sounds/' + selectedAlarmSound;
     
-    // Set initial volumes
+    // Initialize timer sound
+    const selectedTimerSound = localStorage.getItem('timerSound') || 'none';
+    if (selectedTimerSound !== 'none') {
+      sounds.timer = new Audio('audio/Timer Sounds/' + selectedTimerSound);
+      sounds.timer.loop = true;
+      sounds.timer.volume = soundEffectsEnabled ? timerVolume : 0;
+    }
+    
+    // Set volumes
     sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
     sounds.start.volume = soundEffectsEnabled ? volume * 0.6 : 0;
     sounds.pause.volume = soundEffectsEnabled ? volume * 0.5 : 0;
     sounds.complete.volume = alarmEnabled ? volume : 0;
-    
-    console.log(`Sound settings initialized for Reverse Timer:`, { 
-        volume: volume, 
-        soundEffectsEnabled: soundEffectsEnabled, 
-        alarmEnabled: alarmEnabled,
-        alarmSound: selectedAlarmSound
-    });
-}
-
-// Function to specifically update the alarm sound
-function updateAlarmSound(soundFileName) {
-    // Create a new Audio object for the alarm instead of just changing the src
-    sounds.complete = new Audio('audio/Alert Sounds/' + soundFileName);
-    
-    // Re-apply volume settings using shared keys
+  }
+  
+  // Update sound volumes
+  function updateSoundVolumes() {
     const volume = localStorage.getItem('volume') ? 
                   parseInt(localStorage.getItem('volume')) / 100 : 0.6;
-    const alarmEnabled = localStorage.getItem('alarm') !== 'false';
-    sounds.complete.volume = alarmEnabled ? volume : 0;
+    const timerVolume = localStorage.getItem('timerVolume') ?
+                       parseInt(localStorage.getItem('timerVolume')) / 100 : 0.3;
     
-    console.log(`Updated alarm sound to: ${soundFileName}`);
-}
-
-// Call this function on startup
-initializeSoundSettings();
+    const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
+    const alarmEnabled = localStorage.getItem('alarm') !== 'false';
+    
+    // Update alarm sound
+    const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
+    sounds.complete.src = 'audio/Alert Sounds/' + selectedAlarmSound;
+    
+    // Update timer sound
+    const selectedTimerSound = localStorage.getItem('timerSound') || 'none';
+    if (selectedTimerSound !== 'none') {
+      if (!sounds.timer || sounds.timer.src.indexOf(selectedTimerSound) === -1) {
+        sounds.timer = new Audio('audio/Timer Sounds/' + selectedTimerSound);
+        sounds.timer.loop = true;
+      }
+      sounds.timer.volume = soundEffectsEnabled ? timerVolume : 0;
+    } else {
+      if (sounds.timer) {
+        sounds.timer.pause();
+        sounds.timer = null;
+      }
+    }
+    
+    // Update other volumes
+    sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
+    sounds.start.volume = soundEffectsEnabled ? volume * 0.6 : 0;
+    sounds.pause.volume = soundEffectsEnabled ? volume * 0.5 : 0;
+    sounds.complete.volume = alarmEnabled ? volume : 0;
+  }
+  
+  // Initialize on load
+  initializeSoundSettings();
+})();
 
 // Play a sound with error handling and respect settings from shared keys
 function playSound(soundName) {
@@ -197,53 +225,66 @@ function toggleTimer() {
     playSound('start');
     showToast(currentMode === 'break' ? "Enjoy your break! 😌" : "Time to focus! 💪");
     
+    // Start timer sound
+    if (sounds.timer && localStorage.getItem('soundEffects') !== 'false') {
+        try {
+            sounds.timer.currentTime = 0;
+            sounds.timer.play().catch(err => console.log('Timer sound disabled'));
+        } catch (error) {
+            console.error('Error playing timer sound:', error);
+        }
+    }
+
     isRunning = true;
-    startButton.textContent = 'STOP';
+    startButton.textContent = 'PAUSE';
     updateFavicon('running');
     
     // Enter locked in mode if enabled
     if (window.lockedInMode && window.lockedInMode.isEnabled()) {
       window.lockedInMode.enter();
     }
-    
+
     timerInterval = setInterval(() => {
-      if (currentMode === 'break') {
-        if (currentSeconds > 0) {
-          currentSeconds--;
-          updateDisplay();
-          
-          // Update locked in mode if active
-          if (window.lockedInMode && window.lockedInMode.isActive()) {
-            const minutes = Math.floor(currentSeconds / 60);
-            const seconds = currentSeconds % 60;
-            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            const progress = ((initialSeconds - currentSeconds) / initialSeconds) * 100;
-            window.lockedInMode.update(timeString, progress, startButton.textContent);
-          }
-        } else {
-          completeBreak();
+      currentSeconds++;
+      updateTimerDisplay();
+      
+      // Update locked in mode if active
+      if (window.lockedInMode && window.lockedInMode.isActive()) {
+        const timeString = formatTime(currentSeconds);
+        const progress = Math.min((currentSeconds / maxSeconds) * 100, 100);
+        window.lockedInMode.update(timeString, progress, startButton.textContent);
+      }
+
+      if (currentSeconds >= maxSeconds) {
+        // Max time reached
+        clearInterval(timerInterval);
+        isRunning = false;
+        
+        // Stop timer sound
+        if (sounds.timer) {
+            sounds.timer.pause();
+            sounds.timer.currentTime = 0;
         }
-      } else {
-        if (currentSeconds < MAX_TIME) {
-          currentSeconds++;
-          updateDisplay();
-          
-          // Update locked in mode if active
-          if (window.lockedInMode && window.lockedInMode.isActive()) {
-            const minutes = Math.floor(currentSeconds / 60);
-            const seconds = currentSeconds % 60;
-            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            const progress = (currentSeconds / MAX_TIME) * 100;
-            window.lockedInMode.update(timeString, progress, startButton.textContent);
-          }
+        
+        playNotification();
+        showToast(`Max time reached! You've earned a ${getBreakTime(currentSeconds)} minute break.`);
+        
+        if (currentMode === 'reverse') {
+          switchMode('break', true);
         } else {
-          completeSession();
+          switchMode('reverse', true);
         }
       }
     }, 1000);
   } else {
     playSound('pause');
-    
+
+    // Stop timer sound
+    if (sounds.timer) {
+        sounds.timer.pause();
+        sounds.timer.currentTime = 0;
+    }
+
     clearInterval(timerInterval);
     isRunning = false;
     startButton.textContent = 'START';
@@ -251,21 +292,8 @@ function toggleTimer() {
     
     // Also update locked in mode if active
     if (window.lockedInMode && window.lockedInMode.isActive()) {
-      const minutes = Math.floor(currentSeconds / 60);
-      const seconds = currentSeconds % 60;
-      const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      const timeString = formatTime(currentSeconds);
       window.lockedInMode.update(timeString, null, 'START');
-    }
-    
-    if (currentMode === 'reverse') {
-      const minutes = Math.floor(currentSeconds / 60);
-      if (minutes < 5) {
-        if (confirm('You worked less than 5 minutes. No break earned. Do you want to reset the timer?')) {
-          resetTimer();
-        }
-      } else {
-        completeSession(false); // Auto-start break without confirmation
-      }
     }
   }
 }
@@ -319,12 +347,19 @@ function completeBreak() {
 // Reset timer
 function resetTimer() {
     clearInterval(timerInterval);
-    isRunning = false;
+
+    // Stop timer sound
+    if (sounds.timer) {
+        sounds.timer.pause();
+        sounds.timer.currentTime = 0;
+    }
+
     currentSeconds = 0;
-    initialSeconds = MAX_TIME;
+    isRunning = false;
+    startButton.textContent = 'START';
     updateFavicon('paused');
     updateDisplay();
-    startButton.textContent = 'START';
+    progressBar.style.width = '0%';
     
     // Also update locked in mode if active
     if (window.lockedInMode && window.lockedInMode.isActive()) {
@@ -477,19 +512,38 @@ document.querySelectorAll('.time-btn, .secondary-btn, .tab').forEach(button => {
 // Make the playSound function available globally
 window.playSound = playSound;
 
+// Expose functions globally
+window.updateSoundVolumes = updateSoundVolumes;
+window.sounds = sounds;
+
 // Update sound volumes based on shared settings
 function updateSoundVolumes() {
-    // Use shared keys for sound settings
+    // Get settings from shared localStorage keys
     const volume = localStorage.getItem('volume') ? 
                   parseInt(localStorage.getItem('volume')) / 100 : 0.6;
     
-    // Explicitly check for 'false' string to handle resets properly
+    // Explicitly check for 'false' string
     const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
     const alarmEnabled = localStorage.getItem('alarm') !== 'false';
     
-    // FIXED: Update alarm sound when settings change
+    // Update the alarm sound file
     const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
-    updateAlarmSound(selectedAlarmSound);
+    sounds.complete.src = 'audio/Alert Sounds/' + selectedAlarmSound;
+    
+    // Update timer sound
+    const selectedTimerSound = localStorage.getItem('timerSound') || 'none';
+    if (selectedTimerSound !== 'none') {
+      if (!sounds.timer || sounds.timer.src.indexOf(selectedTimerSound) === -1) {
+        sounds.timer = new Audio('audio/Timer Sounds/' + selectedTimerSound);
+        sounds.timer.loop = true;
+      }
+      sounds.timer.volume = soundEffectsEnabled ? volume * 0.3 : 0;
+    } else {
+      if (sounds.timer) {
+        sounds.timer.pause();
+        sounds.timer = null;
+      }
+    }
     
     // Set volumes based on settings
     sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
@@ -502,10 +556,7 @@ function updateSoundVolumes() {
         soundEffectsEnabled: soundEffectsEnabled,
         alarmEnabled: alarmEnabled,
         alarmSound: selectedAlarmSound,
-        clickVolume: sounds.click.volume,
-        startVolume: sounds.start.volume,
-        pauseVolume: sounds.pause.volume,
-        completeVolume: sounds.complete.volume
+        timerSound: selectedTimerSound
     });
 }
 
