@@ -3,6 +3,7 @@
   // Variables
   let isLockedInModeEnabled = false;
   let isLockedInModeActive = false;
+  let lockedInModeTimer = null; // Timer variable for the delayed activation
   
   // Create locked in mode overlay
   function createLockedInModeElements() {
@@ -125,10 +126,32 @@
     }
   }
   
-  // Enter locked in mode
-  function enterLockedInMode() {
+  // Enter locked in mode with delay option
+  function enterLockedInMode(withDelay = false) {
     if (!isLockedInModeEnabled) return;
     
+    // Clear any existing timer
+    if (lockedInModeTimer) {
+      clearTimeout(lockedInModeTimer);
+      lockedInModeTimer = null;
+    }
+    
+    // If delay is requested, wait 1 second before activating
+    if (withDelay) {
+      lockedInModeTimer = setTimeout(() => {
+        activateLockedInMode();
+      }, 1000); // 1-second delay
+      
+      console.log("Locked In Mode will activate in 1 second");
+      return;
+    }
+    
+    // Otherwise activate immediately
+    activateLockedInMode();
+  }
+  
+  // Actual function to activate the locked in mode
+  function activateLockedInMode() {
     const overlay = document.querySelector('.lockedin-mode-overlay');
     if (!overlay) return;
     
@@ -178,10 +201,18 @@
     if (currentTheme) {
       overlay.setAttribute('data-theme', currentTheme[0]);
     }
+    
+    console.log("Locked In Mode activated");
   }
   
   // Exit locked in mode
   function exitLockedInMode() {
+    // Clear any pending activation timer
+    if (lockedInModeTimer) {
+      clearTimeout(lockedInModeTimer);
+      lockedInModeTimer = null;
+    }
+    
     const overlay = document.querySelector('.lockedin-mode-overlay');
     if (overlay) {
       overlay.classList.remove('active');

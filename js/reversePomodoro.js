@@ -705,3 +705,23 @@ if (muteAlertCloseBtn) {
 
 // Initialize display
 updateDisplay();
+
+// Find the startTimer function and modify it like this:
+
+function startTimer() {
+  // ...existing code...
+  
+  // Start the timer
+  isRunning = true;
+  interval = setInterval(updateTimer, 1000);
+  startBtn.textContent = 'PAUSE';
+  startBtn.classList.add('active');
+  
+  // Enter locked in mode with a 1-second delay if it's enabled
+  if (window.lockedInMode && typeof window.lockedInMode.isEnabled === 'function' && 
+      window.lockedInMode.isEnabled() && !window.lockedInMode.isActive()) {
+    window.lockedInMode.enter(true); // true = with delay
+  }
+  
+  // ...rest of the existing code...
+}
