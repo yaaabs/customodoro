@@ -1,0 +1,42 @@
+/* Timer Sound styles */
+
+.sound-test-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.sound-test-btn {
+  padding: 5px 12px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 14px;
+}
+
+.sound-test-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.theme-dark .sound-test-btn {
+  background-color: #444;
+  border: 1px solid #555;
+  color: #fff;
+}
+
+.theme-dark .sound-test-btn:hover {
+  background-color: #555;
+}
+
+/* Timer sound section spacing */
+.timer-sound-divider {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  border-top: 1px solid #ddd;
+}
+
+.theme-dark .timer-sound-divider {
+  border-top: 1px solid #444;
+}

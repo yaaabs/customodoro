@@ -17,6 +17,10 @@
   let currentTestSound = null;
   let volumeChangeTimeout = null;
   
+  // Track the currently playing timer sound
+  let currentTimerSound = null;
+  let timerSoundChangeTimeout = null;
+  
   // Open settings modal
   function openSettings() {
     settingsModal.classList.add('show');
@@ -48,6 +52,19 @@
       currentTestSound.pause();
       currentTestSound.currentTime = 0;
       currentTestSound = null;
+    }
+    
+    // Clear any pending timer sound change timeouts
+    if (timerSoundChangeTimeout) {
+      clearTimeout(timerSoundChangeTimeout);
+      timerSoundChangeTimeout = null;
+    }
+    
+    // Stop any currently playing timer test sound
+    if (currentTimerSound) {
+      currentTimerSound.pause();
+      currentTimerSound.currentTime = 0;
+      currentTimerSound = null;
     }
   }
   
@@ -176,6 +193,10 @@
       // Set Bell as the default sound
       localStorage.setItem('alarmSound', 'bell.mp3');
       
+      // Reset timer sound settings
+      localStorage.setItem('timerSound', 'none');
+      localStorage.setItem('timerSoundVolume', '60');
+      
       // Reset theme to light mode
       localStorage.setItem('siteTheme', 'light');
       
@@ -205,6 +226,15 @@
       // Set Bell as selected in the dropdown
       if (alarmSoundSelector) alarmSoundSelector.value = 'bell.mp3';
       
+      // Update timer sound settings visually
+      const timerSoundSelector = document.getElementById('timer-sound-selector');
+      const timerSoundVolumeSlider = document.getElementById('timer-sound-volume-slider');
+      const timerSoundVolumePercentage = document.getElementById('timer-sound-volume-percentage');
+      
+      if (timerSoundSelector) timerSoundSelector.value = 'none';
+      if (timerSoundVolumeSlider) timerSoundVolumeSlider.value = 60;
+      if (timerSoundVolumePercentage) timerSoundVolumePercentage.textContent = '60%';
+      
       // Update auto-start settings visually
       const autoBreakToggle = document.getElementById('auto-break-toggle');
       const autoPomoToggle = document.getElementById('auto-pomodoro-toggle');
@@ -218,6 +248,11 @@
       
       // Update sound volumes and immediately apply the new Bell sound
       updateSoundsDirectly();
+      
+      // Stop any currently playing timer sounds and reset
+      if (window.stopTimerSound && typeof window.stopTimerSound === 'function') {
+        window.stopTimerSound();
+      }
       
       showToast('Settings reset to defaults!');
     }
@@ -729,6 +764,8 @@
     const soundEffectsToggle = document.getElementById('sound-effects-toggle');
     const alarmToggle = document.getElementById('alarm-toggle');
     const alarmSoundSelector = document.getElementById('alarm-sound-selector');
+    const timerSoundSelector = document.getElementById('timer-sound-selector');
+    const timerSoundVolumeSlider = document.getElementById('timer-sound-volume-slider');
     
     if (!volumeSlider || !soundEffectsToggle || !alarmToggle) {
         console.error("Sound setting elements not found");
@@ -745,11 +782,22 @@
         localStorage.setItem('alarmSound', alarmSoundSelector.value);
     }
     
+    // Save timer sound settings
+    if (timerSoundSelector) {
+        localStorage.setItem('timerSound', timerSoundSelector.value);
+    }
+    
+    if (timerSoundVolumeSlider) {
+        localStorage.setItem('timerSoundVolume', timerSoundVolumeSlider.value);
+    }
+    
     console.log(`Sound settings saved (shared):`, {
         volume: volumeSlider.value,
         soundEffects: soundEffectsToggle.checked,
         alarm: alarmToggle.checked,
-        alarmSound: alarmSoundSelector ? alarmSoundSelector.value : 'N/A'
+        alarmSound: alarmSoundSelector ? alarmSoundSelector.value : 'N/A',
+        timerSound: timerSoundSelector ? timerSoundSelector.value : 'N/A',
+        timerSoundVolume: timerSoundVolumeSlider ? timerSoundVolumeSlider.value : 'N/A'
     });
     
     // Update sound volumes immediately 
@@ -757,6 +805,11 @@
         window.updateSoundVolumes();
     } else {
         updateSoundsDirectly();
+    }
+    
+    // Update timer sounds
+    if (typeof window.updateTimerSound === 'function') {
+        window.updateTimerSound();
     }
 }
 
@@ -766,6 +819,9 @@ function loadSoundSettings() {
     const soundEffectsToggle = document.getElementById('sound-effects-toggle');
     const alarmToggle = document.getElementById('alarm-toggle');
     const alarmSoundSelector = document.getElementById('alarm-sound-selector');
+    const timerSoundSelector = document.getElementById('timer-sound-selector');
+    const timerSoundVolumeSlider = document.getElementById('timer-sound-volume-slider');
+    const timerSoundVolumePercentage = document.getElementById('timer-sound-volume-percentage');
     
     if (!volumeSlider || !soundEffectsToggle || !alarmToggle) {
         return;
@@ -783,15 +839,31 @@ function loadSoundSettings() {
     
     // Set the selected alarm sound
     if (alarmSoundSelector) {
-        const savedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
+        const savedAlarmSound = localStorage.getItem('alarmSound') || 'bell.mp3';
         alarmSoundSelector.value = savedAlarmSound;
+    }
+    
+    // Load timer sound settings
+    if (timerSoundSelector) {
+        const savedTimerSound = localStorage.getItem('timerSound') || 'none';
+        timerSoundSelector.value = savedTimerSound;
+    }
+    
+    if (timerSoundVolumeSlider) {
+        timerSoundVolumeSlider.value = localStorage.getItem('timerSoundVolume') || 60;
+    }
+    
+    if (timerSoundVolumePercentage) {
+        timerSoundVolumePercentage.textContent = (localStorage.getItem('timerSoundVolume') || 60) + '%';
     }
     
     console.log(`Sound settings loaded (shared):`, {
         volume: volumeSlider.value,
         soundEffects: soundEffectsEnabled,
         alarm: alarmEnabled,
-        alarmSound: alarmSoundSelector ? alarmSoundSelector.value : 'N/A'
+        alarmSound: alarmSoundSelector ? alarmSoundSelector.value : 'N/A',
+        timerSound: timerSoundSelector ? timerSoundSelector.value : 'N/A',
+        timerSoundVolume: timerSoundVolumeSlider ? timerSoundVolumeSlider.value : 'N/A'
     });
     
     // Apply settings immediately after loading
@@ -830,6 +902,11 @@ function updateSoundsDirectly() {
         if (window.sounds.pause) window.sounds.pause.volume = soundsEnabled ? volume * 0.5 : 0;
         if (window.sounds.complete) window.sounds.complete.volume = alarmEnabled ? volume : 0;
         
+        // Update timer sound if the function exists
+        if (typeof window.updateTimerSound === 'function') {
+            window.updateTimerSound();
+        }
+        
         console.log(`Sounds updated directly with shared settings:`, {
             alarmSound: selectedAlarmSound,
             clickVolume: window.sounds.click ? window.sounds.click.volume : "N/A",
@@ -862,6 +939,55 @@ function testSound(type) {
     if (volume > 0) {
       currentTestSound.play().catch(err => console.log('Audio playback disabled'));
     }
+  } else if (type === 'timer') {
+    // For testing timer sounds
+    const timerSoundSelector = document.getElementById('timer-sound-selector');
+    const selectedSound = timerSoundSelector ? timerSoundSelector.value : 'none';
+    
+    if (selectedSound === 'none') {
+      showToast('No timer sound selected');
+      return;
+    }
+    
+    // Apply the current timer sound volume settings
+    const timerSoundVolumeSlider = document.getElementById('timer-sound-volume-slider');
+    const volume = timerSoundVolumeSlider ? parseInt(timerSoundVolumeSlider.value) / 100 : 0.6;
+    
+    // Create and play the test sound based on selected timer sound
+    let soundPath;
+    switch (selectedSound) {
+      case 'ticking':
+        soundPath = 'audio/Timer Sounds/WallClockTicking.mp3';
+        break;
+      case 'whitenoise':
+        soundPath = 'audio/Timer Sounds/UnderWaterWhiteNoise.mp3';
+        break;
+      case 'brownnoise':
+        soundPath = 'audio/Timer Sounds/SoftBrownNoise.mp3';
+        break;
+      default:
+        return;
+    }
+    
+    currentTimerSound = new Audio(soundPath);
+    currentTimerSound.volume = volume;
+    currentTimerSound.loop = true;
+    
+    if (volume > 0) {
+      currentTimerSound.play().catch(err => {
+        console.log('Audio playback disabled:', err);
+        showToast('Failed to play audio. Check browser permissions.');
+      });
+      
+      // Stop the timer sound after a few seconds
+      timerSoundChangeTimeout = setTimeout(() => {
+        if (currentTimerSound) {
+          currentTimerSound.pause();
+          currentTimerSound.currentTime = 0;
+          currentTimerSound = null;
+        }
+      }, 5000);
+    }
   } else if (typeof window.playSound === 'function') {
     window.playSound(type);
   }
@@ -879,10 +1005,11 @@ function testSound(type) {
 </div>
 */
 
-  // Event listeners for sound test buttons (if added)
+  // Event listeners for sound test buttons
   document.addEventListener('DOMContentLoaded', function() {
     const clickTestBtn = document.getElementById('test-click-sound');
     const alarmTestBtn = document.getElementById('test-alarm-sound');
+    const timerSoundTestBtn = document.getElementById('test-timer-sound');
     
     if (clickTestBtn) {
         clickTestBtn.addEventListener('click', function() {
@@ -893,6 +1020,71 @@ function testSound(type) {
     if (alarmTestBtn) {
         alarmTestBtn.addEventListener('click', function() {
             testSound('complete');
+        });
+    }
+    
+    if (timerSoundTestBtn) {
+        timerSoundTestBtn.addEventListener('click', function() {
+            testSound('timer');
+        });
+    }
+    
+    // Add event listener for timer sound volume slider
+    const timerSoundVolumeSlider = document.getElementById('timer-sound-volume-slider');
+    const timerSoundVolumePercentage = document.getElementById('timer-sound-volume-percentage');
+    
+    if (timerSoundVolumeSlider && timerSoundVolumePercentage) {
+        timerSoundVolumeSlider.addEventListener('input', function() {
+            timerSoundVolumePercentage.textContent = timerSoundVolumeSlider.value + '%';
+            
+            // Update the volume in localStorage
+            localStorage.setItem('timerSoundVolume', timerSoundVolumeSlider.value);
+            
+            // Update active timer sound volume if running
+            if (typeof window.updateTimerSoundVolume === 'function') {
+                window.updateTimerSoundVolume();
+            }
+            
+            // Preview the timer sound change
+            if (timerSoundChangeTimeout) {
+                clearTimeout(timerSoundChangeTimeout);
+            }
+            
+            timerSoundChangeTimeout = setTimeout(() => {
+                // Play a sample of the timer sound
+                testSound('timer');
+            }, 300);
+        });
+    }
+    
+    // Add change listener for timer sound selector
+    const timerSoundSelector = document.getElementById('timer-sound-selector');
+    if (timerSoundSelector) {
+        timerSoundSelector.addEventListener('change', function() {
+            const selectedSound = timerSoundSelector.value;
+            
+            // Save to localStorage
+            localStorage.setItem('timerSound', selectedSound);
+            
+            // Update active timer sound if running
+            if (typeof window.updateTimerSound === 'function') {
+                window.updateTimerSound();
+            }
+            
+            // Play a sample of the selected timer sound if not none
+            if (selectedSound !== 'none') {
+                testSound('timer');
+            } else {
+                // Stop any currently playing timer sound
+                if (currentTimerSound) {
+                    currentTimerSound.pause();
+                    currentTimerSound.currentTime = 0;
+                    currentTimerSound = null;
+                }
+                if (typeof window.stopTimerSound === 'function') {
+                    window.stopTimerSound();
+                }
+            }
         });
     }
 });

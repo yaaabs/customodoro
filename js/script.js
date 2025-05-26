@@ -46,6 +46,15 @@ sounds.start.volume = 0.6;  // Medium volume start
 sounds.pause.volume = 0.5;  // Quieter pause
 sounds.complete.volume = 1.0;  // Full volume for alarm
 
+// Add timer sound variables and functionality
+const timerSounds = {
+  ticking: new Audio('audio/Timer Sounds/WallClockTicking.mp3'),
+  whitenoise: new Audio('audio/Timer Sounds/UnderWaterWhiteNoise.mp3'),
+  brownnoise: new Audio('audio/Timer Sounds/SoftBrownNoise.mp3')
+};
+
+let currentTimerSound = null;
+
 // Initialize sound settings from localStorage
 function initializeSoundSettings() {
     // Get settings from shared localStorage keys
@@ -247,8 +256,133 @@ function updateSoundVolumes() {
   });
 }
 
-// Expose the function for settings.js
-window.updateSoundVolumes = updateSoundVolumes;
+// Initialize timer sound settings
+function initializeTimerSoundSettings() {
+  const timerSoundType = localStorage.getItem('timerSound') || 'none';
+  const volume = localStorage.getItem('timerSoundVolume') ? 
+                parseInt(localStorage.getItem('timerSoundVolume')) / 100 : 0.6;
+  
+  // Set up initial volume for all timer sounds
+  Object.values(timerSounds).forEach(sound => {
+    sound.volume = volume;
+    sound.loop = true;
+  });
+  
+  console.log(`Timer sound settings initialized:`, {
+    timerSoundType: timerSoundType,
+    volume: volume
+  });
+}
+
+// Function to update timer sound type and volume
+function updateTimerSound() {
+  // Stop any currently playing timer sound
+  stopTimerSound();
+  
+  // Get current settings
+  const timerSoundType = localStorage.getItem('timerSound') || 'none';
+  const volume = localStorage.getItem('timerSoundVolume') ? 
+                parseInt(localStorage.getItem('timerSoundVolume')) / 100 : 0.6;
+  
+  // Set volume for all timer sounds
+  Object.values(timerSounds).forEach(sound => {
+    sound.volume = volume;
+  });
+  
+  // If timer is running, start the appropriate timer sound
+  if (isRunning) {
+    playTimerSound();
+  }
+  
+  console.log(`Timer sound updated:`, {
+    timerSoundType: timerSoundType,
+    volume: volume
+  });
+}
+
+// Function to just update timer sound volume
+function updateTimerSoundVolume() {
+  const volume = localStorage.getItem('timerSoundVolume') ? 
+                parseInt(localStorage.getItem('timerSoundVolume')) / 100 : 0.6;
+  
+  // Update volume for any currently playing timer sound
+  if (currentTimerSound) {
+    currentTimerSound.volume = volume;
+  }
+  
+  // Update volume for all timer sounds
+  Object.values(timerSounds).forEach(sound => {
+    sound.volume = volume;
+  });
+  
+  console.log(`Timer sound volume updated: ${volume}`);
+}
+
+// Play the selected timer sound
+function playTimerSound() {
+  // Get the current timer sound setting
+  const timerSoundType = localStorage.getItem('timerSound') || 'none';
+  
+  // Stop any currently playing sound
+  stopTimerSound();
+  
+  // If none is selected, don't play anything
+  if (timerSoundType === 'none') {
+    return;
+  }
+  
+  // Get the appropriate sound
+  let sound;
+  switch(timerSoundType) {
+    case 'ticking':
+      sound = timerSounds.ticking;
+      break;
+    case 'whitenoise':
+      sound = timerSounds.whitenoise;
+      break;
+    case 'brownnoise':
+      sound = timerSounds.brownnoise;
+      break;
+    default:
+      return;
+  }
+  
+  // Set as current timer sound
+  currentTimerSound = sound;
+  
+  // Make sure volume is set correctly
+  const volume = localStorage.getItem('timerSoundVolume') ? 
+                parseInt(localStorage.getItem('timerSoundVolume')) / 100 : 0.6;
+  currentTimerSound.volume = volume;
+  
+  // Start playing sound with error handling
+  currentTimerSound.currentTime = 0;
+  currentTimerSound.play().catch(err => {
+    console.log('Timer sound playback error:', err);
+    currentTimerSound = null;
+  });
+  
+  console.log(`Timer sound started: ${timerSoundType} at volume ${volume}`);
+}
+
+// Stop the currently playing timer sound
+function stopTimerSound() {
+  if (currentTimerSound) {
+    currentTimerSound.pause();
+    currentTimerSound.currentTime = 0;
+    currentTimerSound = null;
+  }
+}
+
+// Expose functions to be called from settings.js
+window.updateTimerSound = updateTimerSound;
+window.updateTimerSoundVolume = updateTimerSoundVolume;
+window.stopTimerSound = stopTimerSound;
+
+// Initialize timer sounds
+document.addEventListener('DOMContentLoaded', function() {
+  initializeTimerSoundSettings();
+});
 
 // Add motivational messages
 const motivationalMessages = [
@@ -413,6 +547,9 @@ function toggleTimer() {
     startButton.textContent = 'PAUSE';
     updateFavicon(currentMode);
     
+    // Play the appropriate timer sound
+    playTimerSound();
+    
     // Enter locked in mode if enabled
     if (window.lockedInMode && window.lockedInMode.isEnabled()) {
       window.lockedInMode.enter();
@@ -466,6 +603,9 @@ function toggleTimer() {
     }, 1000);
   } else {
     playSound('pause'); // Use function instead of direct play
+    
+    // Stop timer sound when pausing
+    stopTimerSound();
 
     // Pause timer
     clearInterval(timerInterval);
@@ -608,6 +748,9 @@ function switchMode(mode, autoStart = false) {
   clearInterval(timerInterval);
   isRunning = false;
   startButton.textContent = 'START';
+  
+  // Stop any playing timer sound
+  stopTimerSound();
 
   updateFavicon(mode);
   updateTimerDisplay();
