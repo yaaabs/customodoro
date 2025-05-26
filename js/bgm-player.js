@@ -53,30 +53,33 @@
   // Initialize audio settings
   function initBgmSettings() {
     // Load settings from localStorage
-    bgm.volume = parseFloat(localStorage.getItem('bgm_volume') || 0.6); // Changed default to 0.6 (60%)
+    bgm.volume = parseFloat(localStorage.getItem('bgm_volume') || 0.3);
     bgm.enabled = localStorage.getItem('bgm_enabled') !== 'false';
     bgm.selectedPlaylist = localStorage.getItem('bgm_playlist') || 'deep-focus';
     
     // Update UI elements
     if (volumeSlider) {
-      volumeSlider.value = Math.round(bgm.volume * 100);
-    }
-    if (volumePercentage) {
-      volumePercentage.textContent = Math.round(bgm.volume * 100) + '%';
-    }
-    if (playlistSelector) {
-      playlistSelector.value = bgm.selectedPlaylist;
-    }
-    if (bgmToggle) {
-      bgmToggle.checked = bgm.enabled;
+      volumeSlider.value = bgm.volume * 100;
+      if (volumePercentage) volumePercentage.textContent = Math.round(bgm.volume * 100) + '%';
     }
     
-    // Apply volume to audio
+    if (bgmToggle) bgmToggle.checked = bgm.enabled;
+    if (playlistSelector) playlistSelector.value = bgm.selectedPlaylist;
+    
+    // Set audio volume
     bgm.audio.volume = bgm.volume;
     
-    // Load selected playlist
-    loadCurrentTrack();
-    updateTrackDisplay();
+    // Set up audio event listeners
+    bgm.audio.addEventListener('ended', handleTrackEnd);
+    
+    // Add error handling for audio
+    bgm.audio.addEventListener('error', (e) => {
+      console.error('Audio error:', e);
+      showToast('Audio file not found or cannot be played.');
+    });
+    
+    // Update the track info display
+    updateTrackInfo();
   }
   
   // Check if audio files exist
@@ -416,22 +419,76 @@
     // Update track info display
     updateTrackInfo();
     
-        // Set up the audio position
-        if (!isNaN(savedTime) && savedTime > 0) {
-          const track = bgm.playlists[bgm.selectedPlaylist][bgm.currentTrack];
-          if (track) {
-            bgm.audio.src = track.src;
-            bgm.audio.currentTime = savedTime;
-          }
-        }
+    // Set up the audio position
+    if (!isNaN(savedTime) && savedTime > 0) {
+      const track = bgm.playlists[bgm.selectedPlaylist][bgm.currentTrack];
+      if (track) {
+        // Preload the audio without playing
+        bgm.audio.src = track.src;
+        bgm.audio.load();
         
-        // Set up audio event listeners
-        bgm.audio.addEventListener('ended', handleTrackEnd);
+        // Set the time position after loading
+        bgm.audio.addEventListener('loadedmetadata', () => {
+          bgm.audio.currentTime = savedTime;
+        }, { once: true });
       }
+    }
+    
+    // Add event listener for page unload
+    window.addEventListener('beforeunload', handlePageUnload);
+  }
+  
+  // Auto-play on page load if enabled
+  function setupAutoPlay() {
+    // Auto play only if:
+    // 1. BGM is enabled
+    // 2. User has interacted with the page before
+    // 3. There was previously playing music
+    
+    const shouldAutoPlay = 
+      bgm.enabled && 
+      localStorage.getItem('bgm_was_playing') === 'true' && 
+      localStorage.getItem('user_has_interacted') === 'true';
+    
+    if (shouldAutoPlay) {
+      playAudio();
+    }
+  }
+  
+  // Track user interaction to enable auto-play
+  function trackUserInteraction() {
+    const handleInteraction = () => {
+      localStorage.setItem('user_has_interacted', 'true');
       
-      // Initialize when DOM is ready
-      document.addEventListener('DOMContentLoaded', initBgmPlayer);
-      
-      // Save state when page is unloaded
-      window.addEventListener('beforeunload', handlePageUnload);
-    })();
+      // Remove the event listeners after first interaction
+      ['click', 'touchstart', 'keydown'].forEach(event => {
+        document.removeEventListener(event, handleInteraction);
+      });
+    };
+    
+    // Add event listeners for user interaction
+    ['click', 'touchstart', 'keydown'].forEach(event => {
+      document.addEventListener(event, handleInteraction);
+    });
+  }
+  
+  // Initialize on DOM content loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    initBgmPlayer();
+    trackUserInteraction();
+    setupAutoPlay();
+  });
+  
+  // Expose functions to the window object for external use
+  window.bgmPlayer = {
+    play: playAudio,
+    pause: pauseAudio,
+    togglePlay: togglePlay,
+    next: playNextTrack,
+    previous: playPrevTrack,
+    setVolume: updateBgmVolume,
+    setEnabled: toggleBgmEnabled,
+    setPlaylist: changePlaylist,
+    saveState: saveState
+  };
+})();
