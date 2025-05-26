@@ -1,494 +1,433 @@
 (function() {
-  // BGM Player configuration and state
-  const bgm = {
-    isPlaying: false,
-    currentTrack: 0,
-    playlists: {
-      'deep-focus': [
-        {
-          title: 'Focus Study 1',
-          artist: 'Deep Focus',
-          src: 'audio/BGM/Deep focus study playlist/track1.mp3'
-        },
-        {
-          title: 'Focus Study 2',
-          artist: 'Deep Focus',
-          src: 'audio/BGM/Deep focus study playlist/track2.mp3'
-        },
-        {
-          title: 'Focus Study 3',
-          artist: 'Deep Focus',
-          src: 'audio/BGM/Deep focus study playlist/track3.mp3'
-        }
-      ],
-      'ambient-long': [
-        {
-          title: 'Ambient Long Session',
-          artist: 'Focus Ambient',
-          src: 'audio/BGM/ambient_playlist.mp3'
-        }
-      ]
-    },
-    selectedPlaylist: 'deep-focus',
-    audio: new Audio(),
-    volume: 0.3,
-    enabled: true,
-    progressInterval: null
+  // BGM Player Variables
+  let isEnabled = true;
+  let isPlaying = false;
+  let currentTrack = 0;
+  let currentPlaylist = null;
+  let audio = new Audio();
+  let progressInterval = null;
+  let volume = 0.3; // Default volume 30%
+  
+  // Define playlists with their tracks
+  const playlists = {
+    'deep-focus': [
+      {
+        title: 'Clear Skies',
+        artist: 'Aqua Scholar',
+        src: 'audio/BGM/Deep focus study playlist/Clear Skies - Aqua Scholar.mp3'
+      },
+      {
+        title: 'Gentle Ocean',
+        artist: 'Sonic Strokes',
+        src: 'audio/BGM/Deep focus study playlist/Gentle Ocean - Sonic Strokes.mp3'
+      },
+      {
+        title: 'Venusian Vespers',
+        artist: 'CS',
+        src: 'audio/BGM/Deep focus study playlist/CSVenusian Vespers.mp3'
+      }
+    ],
+    'ambient-long': [
+      {
+        title: 'Lofi Hip-hop Chill Beats',
+        artist: 'Various Artists',
+        src: 'audio/BGM/Lofi Hip-hop Chill Beats.mp3'
+      }
+    ]
   };
   
   // DOM Elements
-  const playBtn = document.getElementById('bgm-play-btn');
-  const playIcon = document.getElementById('bgm-play-icon');
-  const pauseIcon = document.getElementById('bgm-pause-icon');
-  const prevBtn = document.getElementById('bgm-prev-btn');
-  const nextBtn = document.getElementById('bgm-next-btn');
-  const trackTitle = document.getElementById('bgm-track-title');
-  const trackArtist = document.getElementById('bgm-track-artist');
-  const progressBar = document.getElementById('bgm-progress-bar');
-  const volumeSlider = document.getElementById('bgm-volume-slider');
-  const volumePercentage = document.getElementById('bgm-volume-percentage');
-  const playlistSelector = document.getElementById('playlist-selector');
-  const bgmToggle = document.getElementById('bgm-toggle');
+  let bgmToggle, playlistSelector, volumeSlider, volumePercentage;
+  let trackTitle, trackArtist, playBtn, pauseIcon, playIcon;
+  let prevBtn, nextBtn, progressBar;
   
-  // Initialize audio settings
-  function initBgmSettings() {
-    // Load settings from localStorage
-    bgm.volume = parseFloat(localStorage.getItem('bgm_volume') || 0.3);
-    bgm.enabled = localStorage.getItem('bgm_enabled') !== 'false';
-    bgm.selectedPlaylist = localStorage.getItem('bgm_playlist') || 'deep-focus';
+  // Initialize the BGM player
+  function initPlayer() {
+    // Get DOM elements
+    bgmToggle = document.getElementById('bgm-toggle');
+    playlistSelector = document.getElementById('playlist-selector');
+    volumeSlider = document.getElementById('bgm-volume-slider');
+    volumePercentage = document.getElementById('bgm-volume-percentage');
+    trackTitle = document.getElementById('bgm-track-title');
+    trackArtist = document.getElementById('bgm-track-artist');
+    playBtn = document.getElementById('bgm-play-btn');
+    playIcon = document.getElementById('bgm-play-icon');
+    pauseIcon = document.getElementById('bgm-pause-icon');
+    prevBtn = document.getElementById('bgm-prev-btn');
+    nextBtn = document.getElementById('bgm-next-btn');
+    progressBar = document.getElementById('bgm-progress-bar');
     
-    // Update UI elements
-    if (volumeSlider) {
-      volumeSlider.value = bgm.volume * 100;
-      if (volumePercentage) volumePercentage.textContent = Math.round(bgm.volume * 100) + '%';
-    }
-    
-    if (bgmToggle) bgmToggle.checked = bgm.enabled;
-    if (playlistSelector) playlistSelector.value = bgm.selectedPlaylist;
-    
-    // Set audio volume
-    bgm.audio.volume = bgm.volume;
-    
-    // Set up audio event listeners
-    bgm.audio.addEventListener('ended', handleTrackEnd);
-    
-    // Add error handling for audio
-    bgm.audio.addEventListener('error', (e) => {
-      console.error('Audio error:', e);
-      showToast('Audio file not found or cannot be played.');
-    });
-    
-    // Update the track info display
-    updateTrackInfo();
-  }
-  
-  // Check if audio files exist
-  function checkAudioExists(src, callback) {
-    fetch(src, { method: 'HEAD' })
-      .then(response => {
-        if (response.ok) {
-          callback(true);
-        } else {
-          callback(false);
-        }
-      })
-      .catch(() => callback(false));
-  }
-  
-  // Update track information display
-  function updateTrackInfo() {
-    const playlist = bgm.playlists[bgm.selectedPlaylist];
-    
-    if (!playlist || !playlist[bgm.currentTrack]) {
-      if (trackTitle) trackTitle.textContent = 'Select a playlist';
-      if (trackArtist) trackArtist.textContent = 'and press play';
+    if (!bgmToggle || !playlistSelector || !playBtn) {
+      console.error('BGM Player: Required elements not found');
       return;
     }
     
-    const track = playlist[bgm.currentTrack];
-    if (trackTitle) trackTitle.textContent = track.title;
-    if (trackArtist) trackArtist.textContent = track.artist;
-  }
-  
-  // Handle play button click
-  function togglePlay() {
-    if (!bgm.enabled) return;
+    // Setup audio event listeners
+    setupAudioEvents();
     
-    if (bgm.isPlaying) {
-      pauseAudio();
-    } else {
-      playAudio();
-    }
-  }
-  
-  // Play the current track
-  function playAudio() {
-    const playlist = bgm.playlists[bgm.selectedPlaylist];
-    if (!playlist || !playlist[bgm.currentTrack]) return;
+    // Load saved settings
+    loadSettings();
     
-    const track = playlist[bgm.currentTrack];
-    
-    // Check if the audio source needs to be changed
-    const currentSrc = bgm.audio.src ? new URL(bgm.audio.src).pathname : '';
-    const newSrc = new URL(track.src, window.location.href).pathname;
-    
-    if (currentSrc !== newSrc) {
-      bgm.audio.src = track.src;
-      bgm.audio.load(); // Explicitly load the audio
+    // Load initial playlist
+    if (playlistSelector.value) {
+      loadPlaylist(playlistSelector.value);
     }
     
-    // Play the audio with error handling
-    const playPromise = bgm.audio.play();
-    if (playPromise !== undefined) {
-      playPromise.then(() => {
-        bgm.isPlaying = true;
-        updatePlayPauseButton();
-        updateTrackInfo();
-        startProgressUpdate();
-      }).catch(error => {
-        console.error('Error playing audio:', error);
-        showToast('Error playing audio. Click play again or try a different track.');
-      });
-    }
-  }
-  
-  // Pause the current track
-  function pauseAudio() {
-    bgm.audio.pause();
-    bgm.isPlaying = false;
-    updatePlayPauseButton();
-    stopProgressUpdate();
-  }
-  
-  // Stop audio completely
-  function stopAudio() {
-    bgm.audio.pause();
-    bgm.audio.currentTime = 0;
-    bgm.isPlaying = false;
-    updatePlayPauseButton();
-    stopProgressUpdate();
+    // Setup event listeners for controls
+    setupEventListeners();
     
-    if (progressBar) progressBar.style.width = '0%';
+    console.log('BGM Player initialized');
   }
   
-  // Update play/pause button appearance
-  function updatePlayPauseButton() {
-    if (playIcon && pauseIcon) {
-      playIcon.style.display = bgm.isPlaying ? 'none' : 'block';
-      pauseIcon.style.display = bgm.isPlaying ? 'block' : 'none';
-    }
-  }
-  
-  // Start updating progress bar
-  function startProgressUpdate() {
-    // Clear any existing interval first
-    stopProgressUpdate();
+  // Setup audio event listeners
+  function setupAudioEvents() {
+    audio.addEventListener('ended', () => {
+      nextTrack();
+    });
     
-    bgm.progressInterval = setInterval(() => {
-      if (bgm.audio.duration && progressBar) {
-        const progress = (bgm.audio.currentTime / bgm.audio.duration) * 100;
-        progressBar.style.width = `${progress}%`;
+    audio.addEventListener('error', (e) => {
+      console.error('BGM Player: Audio error', e);
+      displayMessage('Error playing track');
+    });
+    
+    audio.addEventListener('playing', () => {
+      if (playIcon && pauseIcon) {
+        playIcon.style.display = 'none';
+        pauseIcon.style.display = 'block';
       }
-    }, 100);
-  }
-  
-  // Stop updating progress bar
-  function stopProgressUpdate() {
-    if (bgm.progressInterval) {
-      clearInterval(bgm.progressInterval);
-      bgm.progressInterval = null;
-    }
-  }
-  
-  // Handle track end event
-  function handleTrackEnd() {
-    const playlist = bgm.playlists[bgm.selectedPlaylist];
+    });
     
-    // Check if there are more tracks in the playlist
-    if (bgm.currentTrack < playlist.length - 1) {
-      // Move to the next track
-      bgm.currentTrack++;
-      playAudio();
-    } else {
-      // Restart from the first track
-      bgm.currentTrack = 0;
-      playAudio();
-    }
-  }
-  
-  // Play next track
-  function playNextTrack() {
-    if (!bgm.enabled) return;
-    
-    const playlist = bgm.playlists[bgm.selectedPlaylist];
-    if (!playlist) return;
-    
-    // Move to the next track or loop back to first
-    bgm.currentTrack = (bgm.currentTrack + 1) % playlist.length;
-    
-    // If currently playing, start the new track
-    if (bgm.isPlaying) {
-      stopAudio();
-      playAudio();
-    } else {
-      updateTrackInfo();
-    }
-  }
-  
-  // Play previous track
-  function playPrevTrack() {
-    if (!bgm.enabled) return;
-    
-    const playlist = bgm.playlists[bgm.selectedPlaylist];
-    if (!playlist) return;
-    
-    // Move to previous track or loop to last
-    bgm.currentTrack = (bgm.currentTrack - 1 + playlist.length) % playlist.length;
-    
-    // If currently playing, start the new track
-    if (bgm.isPlaying) {
-      stopAudio();
-      playAudio();
-    } else {
-      updateTrackInfo();
-    }
-  }
-  
-  // Change the selected playlist
-  function changePlaylist(playlistId) {
-    // Check if playlist exists
-    if (!bgm.playlists[playlistId]) return;
-    
-    // Save the selection
-    bgm.selectedPlaylist = playlistId;
-    localStorage.setItem('bgm_playlist', playlistId);
-    
-    // Reset to first track
-    bgm.currentTrack = 0;
-    
-    // If currently playing, restart with new playlist
-    if (bgm.isPlaying) {
-      stopAudio();
-      playAudio();
-    } else {
-      updateTrackInfo();
-    }
-  }
-  
-  // Update BGM volume
-  function updateBgmVolume(value) {
-    // Convert to a decimal between 0 and 1
-    const volumeValue = value / 100;
-    
-    // Update state and localStorage
-    bgm.volume = volumeValue;
-    localStorage.setItem('bgm_volume', volumeValue);
-    
-    // Apply to audio element
-    bgm.audio.volume = volumeValue;
-    
-    // Update percentage display
-    if (volumePercentage) {
-      volumePercentage.textContent = value + '%';
-    }
-  }
-  
-  // Toggle BGM enabled/disabled
-  function toggleBgmEnabled(enabled) {
-    bgm.enabled = enabled;
-    localStorage.setItem('bgm_enabled', enabled);
-    
-    if (!enabled && bgm.isPlaying) {
-      pauseAudio();
-    }
-  }
-  
-  // Show toast notification
-  function showToast(message) {
-    const toast = document.getElementById('toast');
-    if (!toast) return;
-    
-    toast.textContent = message;
-    toast.classList.add('show');
-    
-    setTimeout(() => {
-      toast.classList.remove('show');
-    }, 3000);
-  }
-  
-  // Seek within the track when clicking on progress bar
-  function setupProgressBarEvents() {
-    if (!progressBar) return;
-    
-    // Get the parent element
-    const progressContainer = progressBar.parentElement;
-    if (!progressContainer) return;
-    
-    progressContainer.addEventListener('click', (e) => {
-      // Only seek if there's a valid duration
-      if (!bgm.audio.duration) return;
+    audio.addEventListener('pause', () => {
+      if (playIcon && pauseIcon) {
+        playIcon.style.display = 'block';
+        pauseIcon.style.display = 'none';
+      }
       
-      // Calculate click position as a percentage
-      const rect = progressContainer.getBoundingClientRect();
-      const pos = (e.clientX - rect.left) / rect.width;
-      
-      // Set audio position
-      bgm.audio.currentTime = pos * bgm.audio.duration;
-      
-      // Update progress bar
-      progressBar.style.width = `${pos * 100}%`;
+      clearInterval(progressInterval);
     });
   }
   
-  // Save the current BGM player state
-  function saveState() {
-    localStorage.setItem('bgm_was_playing', bgm.isPlaying);
-    localStorage.setItem('bgm_current_track', bgm.currentTrack);
-    localStorage.setItem('bgm_current_time', bgm.audio.currentTime);
-    localStorage.setItem('bgm_volume', bgm.volume);
-    localStorage.setItem('bgm_playlist', bgm.selectedPlaylist);
-    localStorage.setItem('bgm_enabled', bgm.enabled);
+  // Load saved settings
+  function loadSettings() {
+    // Get BGM enabled setting
+    const savedEnabled = localStorage.getItem('bgmEnabled');
+    if (savedEnabled !== null) {
+      isEnabled = savedEnabled !== 'false';
+      if (bgmToggle) {
+        bgmToggle.checked = isEnabled;
+      }
+    }
+    
+    // Get volume setting
+    const savedVolume = localStorage.getItem('bgmVolume');
+    if (savedVolume !== null) {
+      volume = parseInt(savedVolume) / 100;
+      if (volumeSlider) {
+        volumeSlider.value = parseInt(savedVolume);
+      }
+      if (volumePercentage) {
+        volumePercentage.textContent = `${savedVolume}%`;
+      }
+    } else if (volumeSlider) {
+      volumeSlider.value = volume * 100;
+      if (volumePercentage) {
+        volumePercentage.textContent = `${Math.round(volume * 100)}%`;
+      }
+    }
+    
+    audio.volume = volume;
+    
+    // Get saved playlist
+    const savedPlaylist = localStorage.getItem('bgmPlaylist');
+    if (savedPlaylist && playlistSelector) {
+      playlistSelector.value = savedPlaylist;
+    }
+    
+    // Get saved track index
+    const savedTrackIndex = localStorage.getItem('bgmTrackIndex');
+    if (savedTrackIndex !== null) {
+      currentTrack = parseInt(savedTrackIndex);
+    }
   }
   
-  // Set up event listeners
+  // Save current state
+  function saveState() {
+    localStorage.setItem('bgmEnabled', isEnabled);
+    localStorage.setItem('bgmVolume', Math.round(volume * 100));
+    localStorage.setItem('bgmPlaylist', currentPlaylist || '');
+    localStorage.setItem('bgmTrackIndex', currentTrack);
+    
+    console.log('BGM Player: State saved');
+  }
+  
+  // Setup event listeners
   function setupEventListeners() {
-    if (playBtn) {
-      playBtn.addEventListener('click', togglePlay);
-    }
-    
-    if (prevBtn) {
-      prevBtn.addEventListener('click', playPrevTrack);
-    }
-    
-    if (nextBtn) {
-      nextBtn.addEventListener('click', playNextTrack);
-    }
-    
-    if (volumeSlider) {
-      volumeSlider.addEventListener('input', function() {
-        updateBgmVolume(this.value);
+    if (bgmToggle) {
+      bgmToggle.addEventListener('change', () => {
+        isEnabled = bgmToggle.checked;
+        if (!isEnabled && isPlaying) {
+          pauseTrack();
+        }
+        saveState();
       });
     }
     
     if (playlistSelector) {
-      playlistSelector.addEventListener('change', function() {
-        changePlaylist(this.value);
+      playlistSelector.addEventListener('change', () => {
+        loadPlaylist(playlistSelector.value);
+        saveState();
       });
     }
     
-    if (bgmToggle) {
-      bgmToggle.addEventListener('change', function() {
-        toggleBgmEnabled(this.checked);
+    if (volumeSlider) {
+      volumeSlider.addEventListener('input', () => {
+        volume = volumeSlider.value / 100;
+        audio.volume = volume;
+        if (volumePercentage) {
+          volumePercentage.textContent = `${volumeSlider.value}%`;
+        }
+        saveState();
       });
     }
     
-    // Set up progress bar interaction
-    setupProgressBarEvents();
+    if (playBtn) {
+      playBtn.addEventListener('click', togglePlayback);
+    }
+    
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        prevTrack();
+      });
+    }
+    
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        nextTrack();
+      });
+    }
   }
   
-  // Function to handle page unload or settings closure
-  function handlePageUnload() {
-    // Pause the audio and clean up
-    if (bgm.isPlaying) {
-      pauseAudio();
+  // Load a playlist
+  function loadPlaylist(playlistId) {
+    if (!playlists[playlistId]) {
+      console.error(`BGM Player: Playlist "${playlistId}" not found`);
+      return;
     }
     
-    // Clear intervals
-    stopProgressUpdate();
+    // If already playing, pause the current track
+    if (isPlaying) {
+      pauseTrack();
+    }
     
-    // Save current state to localStorage
+    currentPlaylist = playlistId;
+    currentTrack = 0; // Reset to first track when changing playlists
+    
+    loadTrack();
+  }
+  
+  // Load the current track
+  function loadTrack() {
+    if (!currentPlaylist || !playlists[currentPlaylist]) return;
+    
+    const playlist = playlists[currentPlaylist];
+    if (currentTrack >= playlist.length) {
+      currentTrack = 0; // Loop back to beginning
+    }
+    
+    if (currentTrack < 0) {
+      currentTrack = playlist.length - 1; // Go to end
+    }
+    
+    const track = playlist[currentTrack];
+    
+    // Update UI
+    if (trackTitle) {
+      trackTitle.textContent = track.title;
+    }
+    
+    if (trackArtist) {
+      trackArtist.textContent = track.artist;
+    }
+    
+    // Set up the audio
+    audio.src = track.src;
+    audio.load();
+    
+    // Auto-play if was previously playing
+    if (isPlaying) {
+      playTrack();
+    }
+    
     saveState();
   }
   
-  // Initialize the BGM player
-  function initBgmPlayer() {
-    // Load settings
-    initBgmSettings();
-    
-    // Set up event listeners
-    setupEventListeners();
-    
-    // Load previous track position if any
-    const savedTrack = parseInt(localStorage.getItem('bgm_current_track') || '0');
-    const savedTime = parseFloat(localStorage.getItem('bgm_current_time') || '0');
-    
-    if (!isNaN(savedTrack) && savedTrack < bgm.playlists[bgm.selectedPlaylist].length) {
-      bgm.currentTrack = savedTrack;
+  // Toggle between play and pause
+  function togglePlayback() {
+    if (!isEnabled) {
+      alert('Please enable background music first');
+      return;
     }
     
-    // Update track info display
-    updateTrackInfo();
-    
-    // Set up the audio position
-    if (!isNaN(savedTime) && savedTime > 0) {
-      const track = bgm.playlists[bgm.selectedPlaylist][bgm.currentTrack];
-      if (track) {
-        // Preload the audio without playing
-        bgm.audio.src = track.src;
-        bgm.audio.load();
-        
-        // Set the time position after loading
-        bgm.audio.addEventListener('loadedmetadata', () => {
-          bgm.audio.currentTime = savedTime;
-        }, { once: true });
+    if (!currentPlaylist) {
+      // If no playlist is selected yet, use the current selection
+      if (playlistSelector) {
+        loadPlaylist(playlistSelector.value);
+      } else {
+        console.error('BGM Player: No playlist selected');
+        return;
       }
     }
     
-    // Add event listener for page unload
-    window.addEventListener('beforeunload', handlePageUnload);
-  }
-  
-  // Auto-play on page load if enabled
-  function setupAutoPlay() {
-    // Auto play only if:
-    // 1. BGM is enabled
-    // 2. User has interacted with the page before
-    // 3. There was previously playing music
-    
-    const shouldAutoPlay = 
-      bgm.enabled && 
-      localStorage.getItem('bgm_was_playing') === 'true' && 
-      localStorage.getItem('user_has_interacted') === 'true';
-    
-    if (shouldAutoPlay) {
-      playAudio();
+    if (isPlaying) {
+      pauseTrack();
+    } else {
+      playTrack();
     }
   }
   
-  // Track user interaction to enable auto-play
-  function trackUserInteraction() {
-    const handleInteraction = () => {
-      localStorage.setItem('user_has_interacted', 'true');
-      
-      // Remove the event listeners after first interaction
-      ['click', 'touchstart', 'keydown'].forEach(event => {
-        document.removeEventListener(event, handleInteraction);
-      });
-    };
+  // Play the current track
+  function playTrack() {
+    if (!isEnabled) return;
     
-    // Add event listeners for user interaction
-    ['click', 'touchstart', 'keydown'].forEach(event => {
-      document.addEventListener(event, handleInteraction);
-    });
+    try {
+      const playPromise = audio.play();
+      
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            isPlaying = true;
+            startProgressTracking();
+            updatePlayButtonState();
+          })
+          .catch(error => {
+            console.error('BGM Player: Playback error', error);
+            isPlaying = false;
+            updatePlayButtonState();
+          });
+      }
+    } catch (error) {
+      console.error('BGM Player: Playback error', error);
+      isPlaying = false;
+      updatePlayButtonState();
+    }
+  }
+  
+  // Pause the current track
+  function pauseTrack() {
+    audio.pause();
+    isPlaying = false;
+    stopProgressTracking();
+    updatePlayButtonState();
+  }
+  
+  // Go to next track
+  function nextTrack() {
+    currentTrack++;
+    loadTrack();
+  }
+  
+  // Go to previous track
+  function prevTrack() {
+    currentTrack--;
+    loadTrack();
+  }
+  
+  // Update the play button state
+  function updatePlayButtonState() {
+    if (!playBtn || !playIcon || !pauseIcon) return;
+    
+    if (isPlaying) {
+      playIcon.style.display = 'none';
+      pauseIcon.style.display = 'block';
+    } else {
+      playIcon.style.display = 'block';
+      pauseIcon.style.display = 'none';
+    }
+  }
+  
+  // Start tracking progress for progress bar
+  function startProgressTracking() {
+    stopProgressTracking();
+    
+    progressInterval = setInterval(() => {
+      if (!progressBar || !audio.duration) return;
+      
+      const progress = (audio.currentTime / audio.duration) * 100;
+      progressBar.style.width = `${progress}%`;
+    }, 1000);
+  }
+  
+  // Stop tracking progress
+  function stopProgressTracking() {
+    if (progressInterval) {
+      clearInterval(progressInterval);
+      progressInterval = null;
+    }
+  }
+  
+  // Display a message in the track info
+  function displayMessage(message) {
+    const originalTitle = trackTitle ? trackTitle.textContent : '';
+    const originalArtist = trackArtist ? trackArtist.textContent : '';
+    
+    if (trackTitle) {
+      trackTitle.textContent = message;
+    }
+    
+    if (trackArtist) {
+      trackArtist.textContent = '';
+    }
+    
+    // Restore original text after 3 seconds
+    setTimeout(() => {
+      if (trackTitle) {
+        trackTitle.textContent = originalTitle;
+      }
+      
+      if (trackArtist) {
+        trackArtist.textContent = originalArtist;
+      }
+    }, 3000);
   }
   
   // Initialize on DOM content loaded
-  document.addEventListener('DOMContentLoaded', () => {
-    initBgmPlayer();
-    trackUserInteraction();
-    setupAutoPlay();
-  });
+  document.addEventListener('DOMContentLoaded', initPlayer);
   
-  // Expose functions to the window object for external use
+  // Public API
   window.bgmPlayer = {
-    play: playAudio,
-    pause: pauseAudio,
-    togglePlay: togglePlay,
-    next: playNextTrack,
-    previous: playPrevTrack,
-    setVolume: updateBgmVolume,
-    setEnabled: toggleBgmEnabled,
-    setPlaylist: changePlaylist,
+    play: playTrack,
+    pause: pauseTrack,
+    next: nextTrack,
+    prev: prevTrack,
+    toggle: togglePlayback,
+    setVolume: (newVolume) => {
+      volume = newVolume / 100;
+      audio.volume = volume;
+      
+      if (volumeSlider) {
+        volumeSlider.value = newVolume;
+      }
+      
+      if (volumePercentage) {
+        volumePercentage.textContent = `${newVolume}%`;
+      }
+      
+      saveState();
+    },
+    setEnabled: (enabled) => {
+      isEnabled = enabled;
+      if (bgmToggle) {
+        bgmToggle.checked = enabled;
+      }
+      
+      if (!enabled && isPlaying) {
+        pauseTrack();
+      }
+      
+      saveState();
+    },
+    isPlaying: () => isPlaying,
+    isEnabled: () => isEnabled,
     saveState: saveState
   };
 })();
