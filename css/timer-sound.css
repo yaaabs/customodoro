@@ -2,32 +2,64 @@
 
 .sound-test-buttons {
   display: flex;
-  flex-wrap: wrap;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .sound-test-btn {
-  padding: 5px 12px;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  padding: 8px 15px;
+  border-radius: 5px;
+  border: none;
+  background-color: #7e57c2;
+  color: white;
   font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .sound-test-btn:hover {
-  background-color: #e0e0e0;
+  background-color: #9575cd;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
+.sound-test-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* For light mode theme */
+.theme-light .sound-test-btn {
+  background-color: #7e57c2;
+  color: white;
+}
+
+.theme-light .sound-test-btn:hover {
+  background-color: #9575cd;
+}
+
+/* For dark mode theme */
 .theme-dark .sound-test-btn {
-  background-color: #444;
-  border: 1px solid #555;
-  color: #fff;
+  background-color: #7e57c2;
+  color: white;
 }
 
 .theme-dark .sound-test-btn:hover {
-  background-color: #555;
+  background-color: #9575cd;
+}
+
+/* For other themes */
+.theme-yourname .sound-test-btn,
+.theme-custom .sound-test-btn {
+  background-color: rgba(126, 87, 194, 0.8);
+  color: white;
+  backdrop-filter: blur(3px);
+}
+
+.theme-yourname .sound-test-btn:hover,
+.theme-custom .sound-test-btn:hover {
+  background-color: rgba(149, 117, 205, 0.8);
 }
 
 /* Timer sound section spacing */
@@ -39,4 +71,12 @@
 
 .theme-dark .timer-sound-divider {
   border-top: 1px solid #444;
+}
+
+/* Add this to ensure buttons appear in a consistent row */
+.settings-row .sound-test-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 5px;
 }
