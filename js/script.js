@@ -672,6 +672,9 @@ function resetTimer() {
   updateFavicon('paused');
   updateTimerDisplay();
   progressBar.style.width = '0%';
+  
+  // Stop timer sound when resetting - added to fix sound continuing after reset
+  stopTimerSound();
 
   // Also update locked in mode if active
   if (window.lockedInMode && window.lockedInMode.isActive()) {
