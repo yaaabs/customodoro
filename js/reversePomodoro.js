@@ -332,9 +332,17 @@ function toggleTimer() {
     // Play the appropriate timer sound
     playTimerSound();
     
-    // Enter locked in mode if enabled
-    if (window.lockedInMode && window.lockedInMode.isEnabled()) {
-      window.lockedInMode.enter();
+    // Store reference to lockedInMode for delay implementation
+    const lockedInModeRef = window.lockedInMode;
+    
+    // Enter locked in mode if enabled, but with a 1-second delay
+    if (lockedInModeRef && lockedInModeRef.isEnabled()) {
+      // Start a timeout to enter locked in mode after 1 second
+      setTimeout(() => {
+        if (isRunning && lockedInModeRef) {  // Check if still running after delay
+          lockedInModeRef.enter();
+        }
+      }, 1000);
     }
     
     timerInterval = setInterval(() => {
