@@ -36,6 +36,11 @@
       if (window.lockedInMode && typeof window.lockedInMode.setup === 'function') {
         window.lockedInMode.setup();
       }
+      
+      // Initialize BGM player for reverse page if it doesn't exist
+      if (isReversePage && window.bgmPlayer && !window.bgmPlayer.isInitialized) {
+        window.bgmPlayer.init();
+      }
     }, 100);
   }
   
@@ -96,29 +101,28 @@
   }
   
   // Activate tab and show corresponding section
-  function activateTab(tabItem) {
-    // Stop any playing test sounds when switching tabs
-    stopTestSound();
-    
-    // Remove active class from all navigation items
-    navItems.forEach(item => {
-      item.classList.remove('active');
-    });
-    
-    // Add active class to clicked item
-    tabItem.classList.add('active');
-    
-    // Hide all sections
-    const sections = document.querySelectorAll('.settings-section');
-    sections.forEach(section => {
+  function activateTab(item) {
+    // Remove active class from all nav items and sections
+    navItems.forEach(nav => nav.classList.remove('active'));
+    document.querySelectorAll('.settings-section').forEach(section => {
       section.classList.remove('active');
     });
     
-    // Show the corresponding section
-    const sectionId = tabItem.getAttribute('data-section');
-    const activeSection = document.getElementById(sectionId + '-section');
-    if (activeSection) {
-      activeSection.classList.add('active');
+    // Add active class to clicked item
+    item.classList.add('active');
+    
+    // Show corresponding section
+    const sectionId = item.dataset.section;
+    const section = document.getElementById(sectionId + '-section');
+    if (section) {
+      section.classList.add('active');
+      
+      // If opening BGM section, ensure player is properly initialized
+      if (sectionId === 'bgm' && window.bgmPlayer && typeof window.bgmPlayer.refreshUI === 'function') {
+        setTimeout(() => {
+          window.bgmPlayer.refreshUI();
+        }, 100);
+      }
     }
   }
   

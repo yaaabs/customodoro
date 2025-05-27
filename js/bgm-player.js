@@ -57,9 +57,9 @@
     nextBtn = document.getElementById('bgm-next-btn');
     progressBar = document.getElementById('bgm-progress-bar');
     
-    if (!bgmToggle || !playlistSelector || !playBtn) {
-      console.error('BGM Player: Required elements not found');
-      return;
+    if (!bgmToggle || !playlistSelector) {
+      console.log('BGM Player: Some elements not found, will try again later');
+      return false;
     }
     
     // Setup audio event listeners
@@ -76,7 +76,11 @@
     // Setup event listeners for controls
     setupEventListeners();
     
+    // Mark as initialized
+    window.bgmPlayer.isInitialized = true;
+    
     console.log('BGM Player initialized');
+    return true;
   }
   
   // Setup audio event listeners
@@ -91,19 +95,20 @@
     });
     
     audio.addEventListener('playing', () => {
-      if (playIcon && pauseIcon) {
-        playIcon.style.display = 'none';
-        pauseIcon.style.display = 'block';
-      }
+      isPlaying = true;
+      updatePlayButtonState();
+      notifyMiniPlayer();
     });
     
     audio.addEventListener('pause', () => {
-      if (playIcon && pauseIcon) {
-        playIcon.style.display = 'block';
-        pauseIcon.style.display = 'none';
-      }
-      
-      clearInterval(progressInterval);
+      isPlaying = false;
+      stopProgressTracking();
+      updatePlayButtonState();
+      notifyMiniPlayer();
+    });
+
+    audio.addEventListener('timeupdate', () => {
+      notifyMiniPlayer();
     });
   }
   
@@ -258,6 +263,9 @@
       playTrack();
     }
     
+    // Notify mini player of track change
+    notifyMiniPlayer();
+    
     saveState();
   }
   
@@ -331,37 +339,51 @@
     currentTrack--;
     loadTrack();
   }
-  
-  // Update the play button state
-  function updatePlayButtonState() {
-    if (!playBtn || !playIcon || !pauseIcon) return;
+
+  // Get current track info
+  function getCurrentTrack() {
+    if (!currentPlaylist || !playlists[currentPlaylist]) return null;
     
-    if (isPlaying) {
-      playIcon.style.display = 'none';
-      pauseIcon.style.display = 'block';
-    } else {
-      playIcon.style.display = 'block';
-      pauseIcon.style.display = 'none';
+    const playlist = playlists[currentPlaylist];
+    if (currentTrack < 0 || currentTrack >= playlist.length) return null;
+    
+    return playlist[currentTrack];
+  }
+
+  // Get current volume as percentage
+  function getVolume() {
+    return Math.round(volume * 100);
+  }
+
+  // Get playback progress as percentage
+  function getProgress() {
+    if (!audio.duration) return 0;
+    return (audio.currentTime / audio.duration) * 100;
+  }
+
+  // Notify mini player of state changes
+  function notifyMiniPlayer() {
+    if (window.miniMusicPlayer && typeof window.miniMusicPlayer.sync === 'function') {
+      window.miniMusicPlayer.sync();
     }
   }
-  
-  // Start tracking progress for progress bar
-  function startProgressTracking() {
-    stopProgressTracking();
+
+  // Refresh UI elements (useful when switching between pages)
+  function refreshUI() {
+    updatePlayButtonState();
     
-    progressInterval = setInterval(() => {
-      if (!progressBar || !audio.duration) return;
-      
-      const progress = (audio.currentTime / audio.duration) * 100;
-      progressBar.style.width = `${progress}%`;
-    }, 1000);
-  }
-  
-  // Stop tracking progress
-  function stopProgressTracking() {
-    if (progressInterval) {
-      clearInterval(progressInterval);
-      progressInterval = null;
+    if (volumeSlider) {
+      volumeSlider.value = Math.round(volume * 100);
+    }
+    
+    if (volumePercentage) {
+      volumePercentage.textContent = `${Math.round(volume * 100)}%`;
+    }
+    
+    const track = getCurrentTrack();
+    if (track) {
+      if (trackTitle) trackTitle.textContent = track.title;
+      if (trackArtist) trackArtist.textContent = track.artist;
     }
   }
   
@@ -405,11 +427,17 @@
   
   // Public API
   window.bgmPlayer = {
+    init: initPlayer,
     play: playTrack,
     pause: pauseTrack,
     next: nextTrack,
     prev: prevTrack,
+    previous: prevTrack,
     toggle: togglePlayback,
+    getCurrentTrack: getCurrentTrack,
+    getVolume: getVolume,
+    getProgress: getProgress,
+    refreshUI: refreshUI,
     setVolume: (newVolume) => {
       volume = newVolume / 100;
       audio.volume = volume;
@@ -423,6 +451,7 @@
       }
       
       saveState();
+      notifyMiniPlayer();
     },
     setEnabled: (enabled) => {
       isEnabled = enabled;
@@ -438,6 +467,7 @@
     },
     isPlaying: () => isPlaying,
     isEnabled: () => isEnabled,
+    isInitialized: false,
     saveState: saveState
   };
 })();

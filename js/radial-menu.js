@@ -159,9 +159,16 @@
     });
     
     document.getElementById('radial-music-btn').addEventListener('click', function() {
+      // Ensure BGM player is initialized before opening mini player
+      if (window.bgmPlayer && !window.bgmPlayer.isInitialized) {
+        window.bgmPlayer.init();
+      }
+      
       // Open mini music player modal
       if (window.miniMusicPlayer && typeof window.miniMusicPlayer.open === 'function') {
         window.miniMusicPlayer.open();
+      } else {
+        console.warn('Mini music player not available');
       }
       
       // Close the menu after action

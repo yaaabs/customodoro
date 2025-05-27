@@ -1,6 +1,7 @@
 (function() {
   let miniPlayerModal;
   let isOpen = false;
+  let syncInterval = null;
 
   // Create mini music player modal
   function createMiniPlayerModal() {
@@ -81,7 +82,7 @@
       closeBtn.addEventListener('click', closeMiniPlayer);
     }
 
-    // Full settings button - properly navigate to BGM section
+    // Full settings button - navigate to BGM section
     if (fullSettingsBtn) {
       fullSettingsBtn.addEventListener('click', function() {
         closeMiniPlayer();
@@ -93,20 +94,17 @@
           
           // Navigate to BGM section
           setTimeout(() => {
-            // Remove active class from all nav items
-            document.querySelectorAll('.settings-nav-item').forEach(item => {
-              item.classList.remove('active');
-            });
+            const navItems = document.querySelectorAll('.settings-nav-item');
+            const bgmNavItem = document.querySelector('.settings-nav-item[data-section="bgm"]');
+            const bgmSection = document.getElementById('bgm-section');
             
-            // Hide all sections
+            // Remove active from all nav items and sections
+            navItems.forEach(item => item.classList.remove('active'));
             document.querySelectorAll('.settings-section').forEach(section => {
               section.classList.remove('active');
             });
             
-            // Activate BGM nav item and section
-            const bgmNavItem = document.querySelector('.settings-nav-item[data-section="bgm"]');
-            const bgmSection = document.getElementById('bgm-section');
-            
+            // Activate BGM section
             if (bgmNavItem) bgmNavItem.classList.add('active');
             if (bgmSection) bgmSection.classList.add('active');
           }, 100);
@@ -114,28 +112,32 @@
       });
     }
 
-    // Volume control
+    // Volume control with real-time sync
     if (volumeSlider && volumeDisplay) {
       volumeSlider.addEventListener('input', function() {
-        const volume = this.value;
+        const volume = parseInt(this.value);
         volumeDisplay.textContent = volume + '%';
         
-        // Update BGM volume if bgm player exists
+        // Update BGM player volume and save to localStorage
         if (window.bgmPlayer && typeof window.bgmPlayer.setVolume === 'function') {
-          window.bgmPlayer.setVolume(volume / 100);
+          window.bgmPlayer.setVolume(volume);
         }
         
-        // Save to localStorage
-        localStorage.setItem('bgmVolume', volume);
+        // Sync with main settings volume slider
+        const mainVolumeSlider = document.getElementById('bgm-volume-slider');
+        const mainVolumeDisplay = document.getElementById('bgm-volume-percentage');
+        if (mainVolumeSlider) mainVolumeSlider.value = volume;
+        if (mainVolumeDisplay) mainVolumeDisplay.textContent = volume + '%';
       });
     }
 
-    // Control buttons - connect to BGM player if available
+    // Control buttons with BGM player integration
     if (playBtn) {
       playBtn.addEventListener('click', function() {
         if (window.bgmPlayer && typeof window.bgmPlayer.toggle === 'function') {
           window.bgmPlayer.toggle();
         }
+        // UI will be updated by the sync function
       });
     }
 
@@ -163,6 +165,62 @@
     });
   }
 
+  // Start real-time sync with BGM player
+  function startSync() {
+    if (syncInterval) clearInterval(syncInterval);
+    
+    syncInterval = setInterval(() => {
+      if (isOpen && window.bgmPlayer) {
+        syncWithBGMPlayer();
+      }
+    }, 1000);
+  }
+
+  // Stop sync
+  function stopSync() {
+    if (syncInterval) {
+      clearInterval(syncInterval);
+      syncInterval = null;
+    }
+  }
+
+  // Sync mini player state with main BGM player
+  function syncWithBGMPlayer() {
+    if (!window.bgmPlayer) return;
+
+    // Update play button state
+    const isPlaying = window.bgmPlayer.isPlaying();
+    updatePlayButton(isPlaying);
+
+    // Update track info if available
+    const currentTrack = window.bgmPlayer.getCurrentTrack();
+    if (currentTrack) {
+      updateTrackInfo(currentTrack.title, currentTrack.artist);
+    }
+
+    // Update volume
+    const currentVolume = window.bgmPlayer.getVolume();
+    if (currentVolume !== undefined) {
+      const volumeSlider = document.getElementById('mini-volume-slider');
+      const volumeDisplay = document.getElementById('mini-volume-display');
+      if (volumeSlider && volumeSlider.value != currentVolume) {
+        volumeSlider.value = currentVolume;
+      }
+      if (volumeDisplay) {
+        volumeDisplay.textContent = Math.round(currentVolume) + '%';
+      }
+    }
+
+    // Update progress bar if available
+    const progress = window.bgmPlayer.getProgress();
+    if (progress !== undefined) {
+      const progressBar = document.getElementById('mini-progress-bar');
+      if (progressBar) {
+        progressBar.style.width = progress + '%';
+      }
+    }
+  }
+
   // Open mini player
   function openMiniPlayer() {
     if (!miniPlayerModal) {
@@ -173,10 +231,9 @@
     miniPlayerModal.classList.add('show');
     document.body.style.overflow = 'hidden';
     
-    // Update initial state
-    updateTrackInfo();
-    updatePlayButton();
-    updateVolume();
+    // Update initial state and start sync
+    updateInitialState();
+    startSync();
   }
 
   // Close mini player
@@ -185,6 +242,31 @@
       isOpen = false;
       miniPlayerModal.classList.remove('show');
       document.body.style.overflow = '';
+      stopSync();
+    }
+  }
+
+  // Update initial state when opening
+  function updateInitialState() {
+    if (window.bgmPlayer) {
+      // Get current state from BGM player
+      const isPlaying = window.bgmPlayer.isPlaying();
+      const currentTrack = window.bgmPlayer.getCurrentTrack();
+      const volume = window.bgmPlayer.getVolume() || 30;
+
+      // Update UI
+      updatePlayButton(isPlaying);
+      if (currentTrack) {
+        updateTrackInfo(currentTrack.title, currentTrack.artist);
+      } else {
+        updateTrackInfo('No music playing', 'Select a playlist to start');
+      }
+      updateVolumeDisplay(volume);
+    } else {
+      // BGM player not available
+      updateTrackInfo('BGM Player not available', 'Please check settings');
+      updatePlayButton(false);
+      updateVolumeDisplay(30);
     }
   }
 
@@ -213,14 +295,13 @@
     }
   }
 
-  // Update volume from settings
-  function updateVolume() {
+  // Update volume display
+  function updateVolumeDisplay(volume) {
     const volumeSlider = document.getElementById('mini-volume-slider');
     const volumeDisplay = document.getElementById('mini-volume-display');
-    const savedVolume = localStorage.getItem('bgmVolume') || '30';
     
-    if (volumeSlider) volumeSlider.value = savedVolume;
-    if (volumeDisplay) volumeDisplay.textContent = savedVolume + '%';
+    if (volumeSlider) volumeSlider.value = volume;
+    if (volumeDisplay) volumeDisplay.textContent = Math.round(volume) + '%';
   }
 
   // Public API
@@ -229,6 +310,7 @@
     close: closeMiniPlayer,
     updateTrackInfo: updateTrackInfo,
     updatePlayButton: updatePlayButton,
-    isOpen: () => isOpen
+    isOpen: () => isOpen,
+    sync: syncWithBGMPlayer
   };
 })();
