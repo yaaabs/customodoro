@@ -1,242 +1,234 @@
 (function() {
-  let miniPlayerModal, miniPlayerOverlay;
-  
-  // Initialize mini music player
-  function initMiniPlayer() {
-    createMiniPlayerModal();
-    setupEventListeners();
-  }
-  
-  // Create the mini player modal HTML
+  let miniPlayerModal;
+  let isOpen = false;
+
+  // Create mini music player modal
   function createMiniPlayerModal() {
+    if (document.querySelector('.mini-music-player-modal')) return;
+
     const modalHTML = `
-      <div class="mini-music-modal" id="mini-music-modal">
-        <div class="mini-music-content">
-          <div class="mini-music-header">
-            <h3 class="mini-music-title">Music Player</h3>
-            <button class="mini-music-close" id="mini-music-close">&times;</button>
+      <div class="mini-music-player-modal" id="mini-music-player-modal">
+        <div class="mini-music-player-content">
+          <div class="mini-player-header">
+            <h3>🎵 Music Player</h3>
+            <button class="mini-player-close" id="mini-player-close">&times;</button>
           </div>
           
-          <div class="mini-music-body">
-            <div class="mini-track-info">
-              <div class="mini-track-title" id="mini-track-title">Select a playlist</div>
-              <div class="mini-track-artist" id="mini-track-artist">and press play</div>
+          <div class="mini-player-body">
+            <div class="mini-player-info">
+              <div class="mini-track-title" id="mini-track-title">No music playing</div>
+              <div class="mini-track-artist" id="mini-track-artist">Select a playlist to start</div>
             </div>
             
-            <div class="mini-controls">
+            <div class="mini-player-controls">
               <button class="mini-btn mini-btn-prev" id="mini-prev-btn">
-                <svg viewBox="0 0 24 24" width="24" height="24">
+                <svg viewBox="0 0 24 24" width="20" height="20">
                   <path fill="currentColor" d="M6,18V6H8V18H6M9.5,12L18,6V18L9.5,12Z" />
                 </svg>
               </button>
               
               <button class="mini-btn mini-btn-play" id="mini-play-btn">
-                <svg viewBox="0 0 24 24" width="32" height="32" id="mini-play-icon">
+                <svg viewBox="0 0 24 24" width="24" height="24" id="mini-play-icon">
                   <path fill="currentColor" d="M8,5.14V19.14L19,12.14L8,5.14Z" />
                 </svg>
-                <svg viewBox="0 0 24 24" width="32" height="32" id="mini-pause-icon" style="display: none;">
+                <svg viewBox="0 0 24 24" width="24" height="24" id="mini-pause-icon" style="display: none;">
                   <path fill="currentColor" d="M14,19H18V5H14M6,19H10V5H6V19Z" />
                 </svg>
               </button>
               
               <button class="mini-btn mini-btn-next" id="mini-next-btn">
-                <svg viewBox="0 0 24 24" width="24" height="24">
+                <svg viewBox="0 0 24 24" width="20" height="20">
                   <path fill="currentColor" d="M16,18H18V6H16M6,18L14.5,12L6,6V18Z" />
                 </svg>
               </button>
             </div>
             
-            <div class="mini-settings-row">
-              <div class="mini-settings-label">Enable Music</div>
-              <label class="mini-toggle-switch">
-                <input type="checkbox" id="mini-bgm-toggle" checked>
-                <span class="mini-slider-toggle"></span>
-              </label>
-            </div>
-            
-            <div class="mini-settings-row">
-              <div class="mini-settings-label">Playlist</div>
-              <select class="mini-select" id="mini-playlist-selector">
-                <option value="deep-focus">Deep Focus Study</option>
-                <option value="ambient-long">Ambient Playlist (Long)</option>
-              </select>
-            </div>
-            
-            <div class="mini-settings-row">
-              <div class="mini-settings-label">Volume</div>
-              <div class="mini-volume-container">
-                <input type="range" class="mini-volume-slider" id="mini-volume-slider" min="0" max="100" value="30">
-                <div class="mini-volume-percentage" id="mini-volume-percentage">30%</div>
-              </div>
-            </div>
-            
-            <div class="mini-progress-container">
+            <div class="mini-player-progress">
               <div class="mini-progress-bar" id="mini-progress-bar"></div>
+            </div>
+            
+            <div class="mini-player-volume">
+              <span>🔊</span>
+              <input type="range" class="mini-volume-slider" id="mini-volume-slider" min="0" max="100" value="30">
+              <span id="mini-volume-display">30%</span>
             </div>
           </div>
           
-          <div class="mini-music-footer">
-            <button class="mini-settings-btn" id="mini-open-settings">Full Settings</button>
-            <button class="mini-close-btn" id="mini-close-btn">Close</button>
+          <div class="mini-player-footer">
+            <button class="mini-settings-btn" id="mini-full-settings-btn">Full Settings</button>
           </div>
         </div>
       </div>
     `;
-    
+
     document.body.insertAdjacentHTML('beforeend', modalHTML);
-    miniPlayerModal = document.getElementById('mini-music-modal');
+    miniPlayerModal = document.getElementById('mini-music-player-modal');
+    setupMiniPlayerEvents();
   }
-  
-  // Setup event listeners
-  function setupEventListeners() {
-    const closeBtn = document.getElementById('mini-music-close');
-    const closeBtnFooter = document.getElementById('mini-close-btn');
-    const settingsBtn = document.getElementById('mini-open-settings');
-    
-    // Close buttons
-    closeBtn.addEventListener('click', closeMiniPlayer);
-    closeBtnFooter.addEventListener('click', closeMiniPlayer);
-    
-    // Settings button - opens main settings to music section
-    settingsBtn.addEventListener('click', function() {
-      closeMiniPlayer();
-      // Open main settings modal to music section
-      const settingsModal = document.getElementById('settings-modal');
-      const musicSection = document.querySelector('[data-section="bgm"]');
-      if (settingsModal && musicSection) {
-        settingsModal.classList.add('show');
-        // Switch to music section
-        document.querySelectorAll('.settings-nav-item').forEach(item => item.classList.remove('active'));
-        document.querySelectorAll('.settings-section').forEach(section => section.classList.remove('active'));
-        musicSection.classList.add('active');
-        document.querySelector('[data-section="bgm"]').classList.add('active');
-      }
-    });
-    
-    // Connect controls to BGM player
-    document.getElementById('mini-play-btn').addEventListener('click', function() {
-      if (window.bgmPlayer) {
-        window.bgmPlayer.toggle();
-        updatePlayButton();
-      }
-    });
-    
-    document.getElementById('mini-prev-btn').addEventListener('click', function() {
-      if (window.bgmPlayer) {
-        window.bgmPlayer.prev();
-      }
-    });
-    
-    document.getElementById('mini-next-btn').addEventListener('click', function() {
-      if (window.bgmPlayer) {
-        window.bgmPlayer.next();
-      }
-    });
-    
-    // Sync with main BGM controls
-    document.getElementById('mini-bgm-toggle').addEventListener('change', function() {
-      const mainToggle = document.getElementById('bgm-toggle');
-      if (mainToggle) {
-        mainToggle.checked = this.checked;
-        mainToggle.dispatchEvent(new Event('change'));
-      }
-    });
-    
-    document.getElementById('mini-playlist-selector').addEventListener('change', function() {
-      const mainSelector = document.getElementById('playlist-selector');
-      if (mainSelector) {
-        mainSelector.value = this.value;
-        mainSelector.dispatchEvent(new Event('change'));
-      }
-    });
-    
-    document.getElementById('mini-volume-slider').addEventListener('input', function() {
-      const mainSlider = document.getElementById('bgm-volume-slider');
-      if (mainSlider) {
-        mainSlider.value = this.value;
-        mainSlider.dispatchEvent(new Event('input'));
-      }
-      document.getElementById('mini-volume-percentage').textContent = this.value + '%';
-    });
-    
+
+  // Setup event listeners for mini player
+  function setupMiniPlayerEvents() {
+    const closeBtn = document.getElementById('mini-player-close');
+    const fullSettingsBtn = document.getElementById('mini-full-settings-btn');
+    const playBtn = document.getElementById('mini-play-btn');
+    const prevBtn = document.getElementById('mini-prev-btn');
+    const nextBtn = document.getElementById('mini-next-btn');
+    const volumeSlider = document.getElementById('mini-volume-slider');
+    const volumeDisplay = document.getElementById('mini-volume-display');
+
+    // Close button
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeMiniPlayer);
+    }
+
+    // Full settings button - properly navigate to BGM section
+    if (fullSettingsBtn) {
+      fullSettingsBtn.addEventListener('click', function() {
+        closeMiniPlayer();
+        
+        // Open main settings modal
+        const settingsModal = document.getElementById('settings-modal');
+        if (settingsModal) {
+          settingsModal.classList.add('show');
+          
+          // Navigate to BGM section
+          setTimeout(() => {
+            // Remove active class from all nav items
+            document.querySelectorAll('.settings-nav-item').forEach(item => {
+              item.classList.remove('active');
+            });
+            
+            // Hide all sections
+            document.querySelectorAll('.settings-section').forEach(section => {
+              section.classList.remove('active');
+            });
+            
+            // Activate BGM nav item and section
+            const bgmNavItem = document.querySelector('.settings-nav-item[data-section="bgm"]');
+            const bgmSection = document.getElementById('bgm-section');
+            
+            if (bgmNavItem) bgmNavItem.classList.add('active');
+            if (bgmSection) bgmSection.classList.add('active');
+          }, 100);
+        }
+      });
+    }
+
+    // Volume control
+    if (volumeSlider && volumeDisplay) {
+      volumeSlider.addEventListener('input', function() {
+        const volume = this.value;
+        volumeDisplay.textContent = volume + '%';
+        
+        // Update BGM volume if bgm player exists
+        if (window.bgmPlayer && typeof window.bgmPlayer.setVolume === 'function') {
+          window.bgmPlayer.setVolume(volume / 100);
+        }
+        
+        // Save to localStorage
+        localStorage.setItem('bgmVolume', volume);
+      });
+    }
+
+    // Control buttons - connect to BGM player if available
+    if (playBtn) {
+      playBtn.addEventListener('click', function() {
+        if (window.bgmPlayer && typeof window.bgmPlayer.toggle === 'function') {
+          window.bgmPlayer.toggle();
+        }
+      });
+    }
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', function() {
+        if (window.bgmPlayer && typeof window.bgmPlayer.previous === 'function') {
+          window.bgmPlayer.previous();
+        }
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function() {
+        if (window.bgmPlayer && typeof window.bgmPlayer.next === 'function') {
+          window.bgmPlayer.next();
+        }
+      });
+    }
+
     // Close when clicking outside
     miniPlayerModal.addEventListener('click', function(e) {
       if (e.target === miniPlayerModal) {
         closeMiniPlayer();
       }
     });
-    
-    // Sync initial values
-    syncWithMainControls();
   }
-  
+
   // Open mini player
   function openMiniPlayer() {
-    if (miniPlayerModal) {
-      miniPlayerModal.classList.add('show');
-      syncWithMainControls();
-      updatePlayButton();
+    if (!miniPlayerModal) {
+      createMiniPlayerModal();
     }
+    
+    isOpen = true;
+    miniPlayerModal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    
+    // Update initial state
+    updateTrackInfo();
+    updatePlayButton();
+    updateVolume();
   }
-  
+
   // Close mini player
   function closeMiniPlayer() {
     if (miniPlayerModal) {
+      isOpen = false;
       miniPlayerModal.classList.remove('show');
+      document.body.style.overflow = '';
     }
   }
-  
-  // Sync with main BGM controls
-  function syncWithMainControls() {
-    const mainToggle = document.getElementById('bgm-toggle');
-    const mainPlaylist = document.getElementById('playlist-selector');
-    const mainVolume = document.getElementById('bgm-volume-slider');
+
+  // Update track information
+  function updateTrackInfo(title = 'No music playing', artist = 'Select a playlist to start') {
+    const titleElement = document.getElementById('mini-track-title');
+    const artistElement = document.getElementById('mini-track-artist');
     
-    if (mainToggle) {
-      document.getElementById('mini-bgm-toggle').checked = mainToggle.checked;
-    }
-    
-    if (mainPlaylist) {
-      document.getElementById('mini-playlist-selector').value = mainPlaylist.value;
-    }
-    
-    if (mainVolume) {
-      document.getElementById('mini-volume-slider').value = mainVolume.value;
-      document.getElementById('mini-volume-percentage').textContent = mainVolume.value + '%';
-    }
+    if (titleElement) titleElement.textContent = title;
+    if (artistElement) artistElement.textContent = artist;
   }
-  
+
   // Update play button state
-  function updatePlayButton() {
+  function updatePlayButton(isPlaying = false) {
     const playIcon = document.getElementById('mini-play-icon');
     const pauseIcon = document.getElementById('mini-pause-icon');
     
-    if (window.bgmPlayer && window.bgmPlayer.isPlaying()) {
-      playIcon.style.display = 'none';
-      pauseIcon.style.display = 'block';
-    } else {
-      playIcon.style.display = 'block';
-      pauseIcon.style.display = 'none';
+    if (playIcon && pauseIcon) {
+      if (isPlaying) {
+        playIcon.style.display = 'none';
+        pauseIcon.style.display = 'block';
+      } else {
+        playIcon.style.display = 'block';
+        pauseIcon.style.display = 'none';
+      }
     }
   }
-  
-  // Update track info
-  function updateTrackInfo(title, artist) {
-    const titleEl = document.getElementById('mini-track-title');
-    const artistEl = document.getElementById('mini-track-artist');
+
+  // Update volume from settings
+  function updateVolume() {
+    const volumeSlider = document.getElementById('mini-volume-slider');
+    const volumeDisplay = document.getElementById('mini-volume-display');
+    const savedVolume = localStorage.getItem('bgmVolume') || '30';
     
-    if (titleEl) titleEl.textContent = title;
-    if (artistEl) artistEl.textContent = artist;
+    if (volumeSlider) volumeSlider.value = savedVolume;
+    if (volumeDisplay) volumeDisplay.textContent = savedVolume + '%';
   }
-  
-  // Initialize when DOM is loaded
-  document.addEventListener('DOMContentLoaded', initMiniPlayer);
-  
+
   // Public API
   window.miniMusicPlayer = {
     open: openMiniPlayer,
     close: closeMiniPlayer,
     updateTrackInfo: updateTrackInfo,
-    updatePlayButton: updatePlayButton
+    updatePlayButton: updatePlayButton,
+    isOpen: () => isOpen
   };
 })();
