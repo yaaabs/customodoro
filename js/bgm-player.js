@@ -378,6 +378,11 @@
       trackArtist.textContent = '';
     }
     
+    // Also update mini player if it exists
+    if (window.miniMusicPlayer) {
+      window.miniMusicPlayer.updateTrackInfo(message, '');
+    }
+    
     // Restore original text after 3 seconds
     setTimeout(() => {
       if (trackTitle) {
@@ -386,6 +391,11 @@
       
       if (trackArtist) {
         trackArtist.textContent = originalArtist;
+      }
+      
+      // Restore mini player info too
+      if (window.miniMusicPlayer) {
+        window.miniMusicPlayer.updateTrackInfo(originalTitle, originalArtist);
       }
     }, 3000);
   }

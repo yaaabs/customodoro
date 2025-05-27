@@ -59,6 +59,15 @@
           </svg>
           <span class="radial-tooltip">Focus Mode</span>
         </button>
+        <button class="radial-menu-item" id="radial-music-btn" aria-label="Music Player">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="2"></circle>
+            <path d="M12 1v6m0 6v6"></path>
+            <path d="m15.09 9a3 3 0 1 1-6.18 0"></path>
+            <path d="M9 9a3 3 0 1 0 6 0"></path>
+          </svg>
+          <span class="radial-tooltip">Music Player</span>
+        </button>
         <button class="radial-menu-item" id="radial-settings-btn" aria-label="Settings">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="3"></circle>
@@ -144,6 +153,16 @@
       const originalSettingsBtn = document.getElementById('settings-btn');
       if (originalSettingsBtn) {
         originalSettingsBtn.click();
+      }
+      
+      // Close the menu after action
+      closeMenu();
+    });
+    
+    document.getElementById('radial-music-btn').addEventListener('click', function() {
+      // Open mini music player modal
+      if (window.miniMusicPlayer && typeof window.miniMusicPlayer.open === 'function') {
+        window.miniMusicPlayer.open();
       }
       
       // Close the menu after action
