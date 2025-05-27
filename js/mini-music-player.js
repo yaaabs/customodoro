@@ -44,8 +44,13 @@
               </button>
             </div>
             
-            <div class="mini-player-progress">
-              <div class="mini-progress-bar" id="mini-progress-bar"></div>
+            <div class="mini-player-progress-container">
+              <div class="mini-player-progress">
+                <div class="mini-progress-bar" id="mini-progress-bar"></div>
+              </div>
+              <div class="mini-player-time">
+                <span id="mini-current-time">0:00</span> / <span id="mini-total-time">0:00</span>
+              </div>
             </div>
             
             <div class="mini-player-volume">
@@ -76,6 +81,7 @@
     const nextBtn = document.getElementById('mini-next-btn');
     const volumeSlider = document.getElementById('mini-volume-slider');
     const volumeDisplay = document.getElementById('mini-volume-display');
+    const miniProgressBar = document.querySelector('.mini-player-progress');
 
     // Close button
     if (closeBtn) {
@@ -122,12 +128,6 @@
         if (window.bgmPlayer && typeof window.bgmPlayer.setVolume === 'function') {
           window.bgmPlayer.setVolume(volume);
         }
-        
-        // Sync with main settings volume slider
-        const mainVolumeSlider = document.getElementById('bgm-volume-slider');
-        const mainVolumeDisplay = document.getElementById('bgm-volume-percentage');
-        if (mainVolumeSlider) mainVolumeSlider.value = volume;
-        if (mainVolumeDisplay) mainVolumeDisplay.textContent = volume + '%';
       });
     }
 
@@ -137,7 +137,6 @@
         if (window.bgmPlayer && typeof window.bgmPlayer.toggle === 'function') {
           window.bgmPlayer.toggle();
         }
-        // UI will be updated by the sync function
       });
     }
 
@@ -147,12 +146,44 @@
           window.bgmPlayer.previous();
         }
       });
+
+      // Add double click to skip back 10 seconds
+      prevBtn.addEventListener('dblclick', function() {
+        if (window.bgmPlayer && typeof window.bgmPlayer.seek === 'function') {
+          const currentTime = window.bgmPlayer.getCurrentTime() || 0;
+          window.bgmPlayer.seek(Math.max(0, currentTime - 10));
+        }
+      });
     }
 
     if (nextBtn) {
       nextBtn.addEventListener('click', function() {
         if (window.bgmPlayer && typeof window.bgmPlayer.next === 'function') {
           window.bgmPlayer.next();
+        }
+      });
+
+      // Add double click to skip forward 10 seconds
+      nextBtn.addEventListener('dblclick', function() {
+        if (window.bgmPlayer && typeof window.bgmPlayer.seek === 'function') {
+          const currentTime = window.bgmPlayer.getCurrentTime() || 0;
+          const duration = window.bgmPlayer.getDuration() || 0;
+          window.bgmPlayer.seek(Math.min(duration, currentTime + 10));
+        }
+      });
+    }
+
+    // Click on progress bar to seek
+    if (miniProgressBar) {
+      miniProgressBar.addEventListener('click', function(e) {
+        if (window.bgmPlayer && typeof window.bgmPlayer.getDuration === 'function') {
+          const rect = miniProgressBar.getBoundingClientRect();
+          const clickPosition = (e.clientX - rect.left) / rect.width;
+          const seekTime = clickPosition * window.bgmPlayer.getDuration();
+          
+          if (window.bgmPlayer && typeof window.bgmPlayer.seek === 'function') {
+            window.bgmPlayer.seek(seekTime);
+          }
         }
       });
     }
@@ -173,7 +204,7 @@
       if (isOpen && window.bgmPlayer) {
         syncWithBGMPlayer();
       }
-    }, 1000);
+    }, 500); // More frequent updates for smoother UI
   }
 
   // Stop sync
@@ -182,6 +213,15 @@
       clearInterval(syncInterval);
       syncInterval = null;
     }
+  }
+
+  // Format time in MM:SS
+  function formatTime(seconds) {
+    if (!seconds || isNaN(seconds)) return '0:00';
+    
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   }
 
   // Sync mini player state with main BGM player
@@ -196,6 +236,8 @@
     const currentTrack = window.bgmPlayer.getCurrentTrack();
     if (currentTrack) {
       updateTrackInfo(currentTrack.title, currentTrack.artist);
+    } else {
+      updateTrackInfo('No music playing', 'Select a playlist to start');
     }
 
     // Update volume
@@ -219,6 +261,34 @@
         progressBar.style.width = progress + '%';
       }
     }
+    
+    // Update time displays
+    const currentTime = window.bgmPlayer.getCurrentTime();
+    const totalTime = window.bgmPlayer.getDuration();
+    
+    const currentTimeEl = document.getElementById('mini-current-time');
+    const totalTimeEl = document.getElementById('mini-total-time');
+    
+    if (currentTimeEl) {
+      currentTimeEl.textContent = formatTime(currentTime);
+    }
+    
+    if (totalTimeEl) {
+      totalTimeEl.textContent = formatTime(totalTime);
+    }
+    
+    // Update enabled/disabled state
+    const isBGMEnabled = window.bgmPlayer.isBGMEnabled();
+    const miniPlayerBody = document.querySelector('.mini-player-body');
+    const controls = document.querySelectorAll('.mini-btn, .mini-volume-slider');
+    
+    if (miniPlayerBody) {
+      miniPlayerBody.style.opacity = isBGMEnabled ? '1' : '0.6';
+    }
+    
+    controls.forEach(control => {
+      control.disabled = !isBGMEnabled;
+    });
   }
 
   // Open mini player
@@ -253,15 +323,39 @@
       const isPlaying = window.bgmPlayer.isPlaying();
       const currentTrack = window.bgmPlayer.getCurrentTrack();
       const volume = window.bgmPlayer.getVolume() || 30;
+      const currentTime = window.bgmPlayer.getCurrentTime() || 0;
+      const totalTime = window.bgmPlayer.getDuration() || 0;
+      const isBGMEnabled = window.bgmPlayer.isBGMEnabled();
 
       // Update UI
       updatePlayButton(isPlaying);
+      
       if (currentTrack) {
         updateTrackInfo(currentTrack.title, currentTrack.artist);
       } else {
         updateTrackInfo('No music playing', 'Select a playlist to start');
       }
+      
       updateVolumeDisplay(volume);
+      
+      const currentTimeEl = document.getElementById('mini-current-time');
+      const totalTimeEl = document.getElementById('mini-total-time');
+      
+      if (currentTimeEl) currentTimeEl.textContent = formatTime(currentTime);
+      if (totalTimeEl) totalTimeEl.textContent = formatTime(totalTime);
+      
+      // Set enabled/disabled state
+      const miniPlayerBody = document.querySelector('.mini-player-body');
+      const controls = document.querySelectorAll('.mini-btn, .mini-volume-slider');
+      
+      if (miniPlayerBody) {
+        miniPlayerBody.style.opacity = isBGMEnabled ? '1' : '0.6';
+      }
+      
+      controls.forEach(control => {
+        control.disabled = !isBGMEnabled;
+      });
+      
     } else {
       // BGM player not available
       updateTrackInfo('BGM Player not available', 'Please check settings');
