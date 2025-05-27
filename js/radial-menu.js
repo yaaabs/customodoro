@@ -61,10 +61,9 @@
         </button>
         <button class="radial-menu-item" id="radial-music-btn" aria-label="Music Player">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="2"></circle>
-            <path d="M12 1v6m0 6v6"></path>
-            <path d="m15.09 9a3 3 0 1 1-6.18 0"></path>
-            <path d="M9 9a3 3 0 1 0 6 0"></path>
+            <path d="M9 18V5l12-2v13"></path>
+            <circle cx="6" cy="18" r="3"></circle>
+            <circle cx="18" cy="16" r="3"></circle>
           </svg>
           <span class="radial-tooltip">Music Player</span>
         </button>
