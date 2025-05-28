@@ -40,10 +40,10 @@
       'deep-focus': [
         { title: 'Clear Skies', artist: 'Aqua Scholar', src: 'audio/BGM/Deep focus study playlist/Clear Skies - Aqua Scholar.mp3' },
         { title: 'Gentle Ocean', artist: 'Sonic Strokes', src: 'audio/BGM/Deep focus study playlist/Gentle Ocean - Sonic Strokes.mp3' },
-        { title: 'SVenusian Vespers', artist: 'Unknown Artist', src: 'audio/BGM/Deep focus study playlist/SVenusian Vespers.mp3' }
+        { title: 'SVenusian Vespers', artist: 'Nahh Chill', src: 'audio/BGM/Deep focus study playlist/SVenusian Vespers.mp3' }
       ],
       'ambient-long': [
-        { title: 'Lofi Hip-hop Chill Beats', artist: 'Unknown Artist', src: 'audio/BGM/Lofi Hip-hop Chill Beats.mp3' }
+        { title: 'Lofi Hip-hop Chill Beats', artist: 'Various Artists', src: 'audio/BGM/Lofi Hip-hop Chill Beats.mp3' }
       ]
     };
 
