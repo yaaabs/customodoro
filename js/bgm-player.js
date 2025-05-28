@@ -157,6 +157,32 @@
         audio.currentTime = clickPosition * audio.duration;
       });
     }
+
+    // Add autoplay functionality - when track ends, play next track
+    if (audio) {
+      audio.addEventListener('ended', function() {
+        console.log('Track ended, auto-advancing to next track');
+        nextTrack();
+        // Auto-play the next track
+        if (currentPlaylist && currentTrackIndex < currentPlaylist.length) {
+          setTimeout(() => {
+            playAudio();
+          }, 500); // Small delay for smooth transition
+        }
+      });
+
+      // Add error handling for failed track loads
+      audio.addEventListener('error', function(e) {
+        console.error('Error loading track:', e);
+        // Try to skip to next track if current one fails
+        nextTrack();
+        if (currentPlaylist && currentTrackIndex < currentPlaylist.length) {
+          setTimeout(() => {
+            playAudio();
+          }, 1000);
+        }
+      });
+    }
   }
 
   // Enable/disable BGM
