@@ -201,6 +201,11 @@
       localStorage.setItem('timerSound', 'none');
       localStorage.setItem('timerSoundVolume', '60');
       
+      // Reset BGM settings to defaults
+      localStorage.setItem('bgmEnabled', 'false');
+      localStorage.setItem('selectedPlaylist', 'deep-focus');
+      localStorage.setItem('bgmVolume', '60');
+      
       // Reset theme to light mode
       localStorage.setItem('siteTheme', 'light');
       
@@ -239,6 +244,17 @@
       if (timerSoundVolumeSlider) timerSoundVolumeSlider.value = 60;
       if (timerSoundVolumePercentage) timerSoundVolumePercentage.textContent = '60%';
       
+      // Update BGM settings visually
+      const bgmToggle = document.getElementById('bgm-toggle');
+      const playlistSelector = document.getElementById('playlist-selector');
+      const bgmVolumeSlider = document.getElementById('bgm-volume-slider');
+      const bgmVolumePercentage = document.getElementById('bgm-volume-percentage');
+      
+      if (bgmToggle) bgmToggle.checked = false;
+      if (playlistSelector) playlistSelector.value = 'deep-focus';
+      if (bgmVolumeSlider) bgmVolumeSlider.value = 60;
+      if (bgmVolumePercentage) bgmVolumePercentage.textContent = '60%';
+      
       // Update auto-start settings visually
       const autoBreakToggle = document.getElementById('auto-break-toggle');
       const autoPomoToggle = document.getElementById('auto-pomodoro-toggle');
@@ -252,6 +268,13 @@
       
       // Update sound volumes and immediately apply the new Bell sound
       updateSoundsDirectly();
+      
+      // Apply BGM settings reset
+      if (window.bgmPlayer) {
+        window.bgmPlayer.setEnabled(false);
+        window.bgmPlayer.setVolume(60);
+        window.bgmPlayer.stop();
+      }
       
       // Stop any currently playing timer sounds and reset
       if (window.stopTimerSound && typeof window.stopTimerSound === 'function') {
