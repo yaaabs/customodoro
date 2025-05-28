@@ -250,37 +250,44 @@ input:checked + .mini-slider-toggle:before {
   border-top: 1px solid #333;
   display: flex;
   justify-content: space-between;
-  gap: 10px;
-}
-
-.mini-settings-btn {
-  background-color: rgba(139, 95, 191, 0.1);
-  border: 1px solid #8b5fbf;
-  color: #8b5fbf;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.mini-settings-btn:hover {
-  background-color: rgba(139, 95, 191, 0.2);
+  align-items: center;
+  gap: 15px;
 }
 
 .mini-close-btn {
   background-color: #333;
   color: #ddd;
   border: none;
-  padding: 8px 16px;
+  padding: 10px 20px;
   border-radius: 6px;
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
+  order: 1;
 }
 
 .mini-close-btn:hover {
   background-color: #444;
+  color: #fff;
+}
+
+.mini-settings-btn {
+  background: #8b5fbf;
+  color: #fff;
+  border: 1px solid #8b5fbf;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  order: 2;
+}
+
+.mini-settings-btn:hover {
+  background: #9d71d0;
+  border-color: #9d71d0;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(139, 95, 191, 0.3);
 }
 
 /* Mini Music Player Modal */
@@ -484,23 +491,46 @@ input:checked + .mini-slider-toggle:before {
 .mini-player-footer {
   padding: 15px 25px 20px;
   border-top: 1px solid #333;
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
 }
 
-.mini-settings-btn {
-  background: #252525;
+.mini-close-btn {
+  background-color: #333;
   color: #ddd;
-  border: 1px solid #444;
+  border: none;
   padding: 10px 20px;
   border-radius: 6px;
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
+  order: 1;
+}
+
+.mini-close-btn:hover {
+  background-color: #444;
+  color: #fff;
+}
+
+.mini-settings-btn {
+  background: #8b5fbf;
+  color: #fff;
+  border: 1px solid #8b5fbf;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  order: 2;
 }
 
 .mini-settings-btn:hover {
-  background: #333;
-  color: #fff;
+  background: #9d71d0;
+  border-color: #9d71d0;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(139, 95, 191, 0.3);
 }
 
 /* Mobile responsiveness */

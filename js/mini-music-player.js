@@ -45,7 +45,7 @@
             </div>
             
             <div class="mini-player-progress-container">
-              <div class="mini-player-progress">
+              <div class="mini-player-progress" id="mini-progress">
                 <div class="mini-progress-bar" id="mini-progress-bar"></div>
               </div>
               <div class="mini-player-time">
@@ -62,6 +62,7 @@
           
           <div class="mini-player-footer">
             <button class="mini-settings-btn" id="mini-full-settings-btn">Full Settings</button>
+            <button class="mini-close-btn" id="mini-footer-close-btn">Close</button>
           </div>
         </div>
       </div>
@@ -75,6 +76,7 @@
   // Setup event listeners for mini player
   function setupMiniPlayerEvents() {
     const closeBtn = document.getElementById('mini-player-close');
+    const footerCloseBtn = document.getElementById('mini-footer-close-btn');
     const fullSettingsBtn = document.getElementById('mini-full-settings-btn');
     const playBtn = document.getElementById('mini-play-btn');
     const prevBtn = document.getElementById('mini-prev-btn');
@@ -86,6 +88,10 @@
     // Close button
     if (closeBtn) {
       closeBtn.addEventListener('click', closeMiniPlayer);
+    }
+    
+    if (footerCloseBtn) {
+      footerCloseBtn.addEventListener('click', closeMiniPlayer);
     }
 
     // Full settings button - navigate to BGM section
