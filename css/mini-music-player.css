@@ -550,7 +550,7 @@ input:checked + .mini-slider-toggle:before {
 
 .mini-btn-shuffle {
   position: relative;
-  margin-left: 5px;
+  margin-right: 5px; /* Add margin to create space between shuffle and prev button */
 }
 
 .mini-btn-shuffle.active {
