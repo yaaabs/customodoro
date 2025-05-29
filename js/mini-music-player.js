@@ -54,9 +54,11 @@
             </div>
             
             <div class="mini-player-volume">
-              <span>🔊</span>
-              <input type="range" class="mini-volume-slider" id="mini-volume-slider" min="0" max="100" value="30">
-              <span id="mini-volume-display">30%</span>
+              <div class="mini-volume-label">Music Volume</div>
+              <div class="mini-volume-container">
+                <input type="range" class="mini-volume-slider" id="mini-volume-slider" min="0" max="100" value="30">
+                <span id="mini-volume-display">30%</span>
+              </div>
             </div>
           </div>
           
