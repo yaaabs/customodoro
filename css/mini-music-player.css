@@ -548,6 +548,20 @@ input:checked + .mini-slider-toggle:before {
   box-shadow: 0 2px 8px rgba(139, 95, 191, 0.3);
 }
 
+.mini-btn-shuffle {
+  position: relative;
+  margin-left: 5px;
+}
+
+.mini-btn-shuffle.active {
+  background-color: rgba(139, 95, 191, 0.3);
+  color: #8b5fbf;
+}
+
+.mini-btn-shuffle.active:hover {
+  background-color: rgba(139, 95, 191, 0.5);
+}
+
 /* Mobile responsiveness */
 @media (max-width: 480px) {
   .mini-music-content {

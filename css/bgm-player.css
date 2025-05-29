@@ -5,8 +5,6 @@
   padding: 18px;
   margin-top: 15px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  position: relative;
-  overflow: hidden;
 }
 
 .bgm-track-info {
@@ -28,9 +26,6 @@
   font-size: 14px;
   color: #8b5fbf;
   opacity: 0.8;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .bgm-controls {
@@ -38,6 +33,8 @@
   justify-content: center;
   align-items: center;
   margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .bgm-btn {
@@ -74,25 +71,20 @@
   background-color: rgba(139, 95, 191, 0.3);
 }
 
-.bgm-btn-prev, .bgm-btn-next {
-  opacity: 0.8;
+.bgm-btn-shuffle {
+  border-radius: 50%;
+  position: relative;
+  width: 40px;
+  height: 40px;
 }
 
-.bgm-btn-prev:hover, .bgm-btn-next:hover {
-  opacity: 1;
-}
-
-.bgm-time-display {
-  text-align: center;
-  font-size: 12px;
-  color: #aaa;
-  margin-bottom: 10px;
-}
-
-#bgm-current-time, #bgm-total-time {
-  font-family: monospace;
+.bgm-btn-shuffle.active {
+  background-color: rgba(139, 95, 191, 0.3);
   color: #8b5fbf;
-  font-weight: 500;
+}
+
+.bgm-btn-shuffle.active:hover {
+  background-color: rgba(139, 95, 191, 0.5);
 }
 
 .bgm-progress-container {
@@ -100,7 +92,7 @@
   background-color: #333;
   border-radius: 2px;
   overflow: hidden;
-  margin-bottom: 15px;
+  margin-top: 10px;
   cursor: pointer;
   position: relative;
 }
@@ -112,60 +104,54 @@
   transition: width 0.2s linear;
 }
 
-/* Equalizer visualization */
-.bgm-equalizer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 30px;
+.bgm-time {
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 3px;
-  padding-bottom: 2px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #999;
+  margin-top: 5px;
 }
 
-.bgm-equalizer.active {
-  opacity: 0.4;
+.bgm-time-display {
+  text-align: center;
+  font-size: 13px;
+  color: #bbb;
+  margin-bottom: 8px;
+}
+
+#bgm-current-time, #bgm-total-time {
+  font-family: monospace;
+  color: #8b5fbf;
+}
+
+.bgm-equalizer {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 20px;
+  gap: 2px;
+  margin-top: 10px;
 }
 
 .bgm-equalizer-bar {
-  width: 3px;
+  width: 4px;
   height: 5px;
   background-color: #8b5fbf;
   border-radius: 1px;
+  animation: equalize 1s infinite;
 }
 
-/* Animations for the equalizer bars */
-.bgm-equalizer.active .bgm-equalizer-bar:nth-child(1) {
-  animation: equalizerBar 0.9s ease-in-out infinite;
-}
-.bgm-equalizer.active .bgm-equalizer-bar:nth-child(2) {
-  animation: equalizerBar 1.1s ease-in-out infinite;
-}
-.bgm-equalizer.active .bgm-equalizer-bar:nth-child(3) {
-  animation: equalizerBar 0.7s ease-in-out infinite;
-}
-.bgm-equalizer.active .bgm-equalizer-bar:nth-child(4) {
-  animation: equalizerBar 1.3s ease-in-out infinite;
-}
-.bgm-equalizer.active .bgm-equalizer-bar:nth-child(5) {
-  animation: equalizerBar 0.85s ease-in-out infinite;
-}
-.bgm-equalizer.active .bgm-equalizer-bar:nth-child(6) {
-  animation: equalizerBar 1.2s ease-in-out infinite;
-}
+.bgm-equalizer-bar:nth-child(1) { animation-delay: 0.0s; }
+.bgm-equalizer-bar:nth-child(2) { animation-delay: 0.2s; }
+.bgm-equalizer-bar:nth-child(3) { animation-delay: 0.4s; }
+.bgm-equalizer-bar:nth-child(4) { animation-delay: 0.6s; }
+.bgm-equalizer-bar:nth-child(5) { animation-delay: 0.8s; }
+.bgm-equalizer-bar:nth-child(6) { animation-delay: 1.0s; }
 
-@keyframes equalizerBar {
-  0%, 100% {
-    height: 5px;
-  }
-  50% {
-    height: 15px;
-  }
+@keyframes equalize {
+  0% { height: 5px; }
+  50% { height: 15px; }
+  100% { height: 5px; }
 }
 
 /* For disabled state */

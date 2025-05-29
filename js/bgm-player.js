@@ -5,6 +5,7 @@
   let trackTitleElement, trackArtistElement;
   let playBtn, prevBtn, nextBtn, playIcon, pauseIcon;
   let progressBar, progressContainer, currentTimeElement, totalTimeElement;
+  let shuffleBtn; // Shuffle button element
 
   // State
   let currentPlaylist = null;
@@ -12,6 +13,8 @@
   let playlists = {}; // To be populated
   let isPlaying = false;
   let isBGMEnabled = true; // Default to true, synced with localStorage
+  let isShuffleMode = false; // Shuffle state
+  let originalPlaylist = []; // Store original playlist order
 
   // Initialize BGM Player
   function init() {
@@ -34,6 +37,7 @@
     progressContainer = document.getElementById('bgm-progress-container');
     currentTimeElement = document.getElementById('bgm-current-time');
     totalTimeElement = document.getElementById('bgm-total-time');
+    shuffleBtn = document.getElementById('bgm-shuffle-btn'); // New shuffle button
 
     // Load playlists with the actual audio files
     playlists = {
@@ -192,14 +196,20 @@
     const savedPlaylist = localStorage.getItem('bgmPlaylist') || 'deep-focus';
     const savedVolume = parseInt(localStorage.getItem('bgmVolume')) || 30;
     const savedBGMEnabled = localStorage.getItem('bgmEnabled') !== 'false'; // Defaults to true if not set
+    const savedShuffleMode = localStorage.getItem('bgmShuffle') === 'true'; // Load shuffle setting
 
     if (playlistSelector) playlistSelector.value = savedPlaylist;
     if (volumeSlider) volumeSlider.value = savedVolume;
     if (bgmToggle) bgmToggle.checked = savedBGMEnabled;
+    if (shuffleBtn) {
+      shuffleBtn.classList.toggle('active', savedShuffleMode);
+      shuffleBtn.setAttribute('aria-pressed', savedShuffleMode);
+    }
     
     currentPlaylist = playlists[savedPlaylist];
     audio.volume = savedVolume / 100;
     isBGMEnabled = savedBGMEnabled;
+    isShuffleMode = savedShuffleMode;
   }
 
   // Set up event listeners
@@ -237,6 +247,11 @@
     if (playBtn) playBtn.addEventListener('click', togglePlayPause);
     if (prevBtn) prevBtn.addEventListener('click', previousTrack);
     if (nextBtn) nextBtn.addEventListener('click', nextTrack);
+
+    // Shuffle button
+    if (shuffleBtn) {
+      shuffleBtn.addEventListener('click', toggleShuffle);
+    }
 
     // Audio events
     audio.addEventListener('loadedmetadata', function() {
@@ -505,6 +520,167 @@
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   }
 
+  // Toggle shuffle mode
+  function toggleShuffle() {
+    isShuffleMode = !isShuffleMode;
+    
+    // Update UI if button exists
+    const shuffleBtn = document.getElementById('bgm-shuffle-btn');
+    if (shuffleBtn) {
+      shuffleBtn.classList.toggle('active', isShuffleMode);
+      shuffleBtn.setAttribute('aria-pressed', isShuffleMode);
+    }
+    
+    // If we're currently in a playlist
+    if (currentPlaylist.length > 0) {
+      // Remember the current track
+      const currentTrack = currentPlaylist[currentTrackIndex];
+      const wasPlaying = isPlaying;
+      
+      if (isShuffleMode) {
+        // Turn shuffle on - store original order if not already stored
+        if (originalPlaylist.length === 0) {
+          originalPlaylist = [...currentPlaylist];
+        }
+        
+        // Create a new shuffled playlist
+        const newShuffledPlaylist = [...originalPlaylist];
+        shuffleArray(newShuffledPlaylist);
+        
+        // If we have a current track playing, make sure it stays as the current track
+        if (currentTrack) {
+          // Find its position in the new shuffled array
+          const newIndex = newShuffledPlaylist.findIndex(track => 
+            track.src === currentTrack.src);
+          
+          if (newIndex !== -1) {
+            currentTrackIndex = newIndex;
+          } else {
+            // If for some reason we can't find the track, reset to first track
+            currentTrackIndex = 0;
+            console.warn("Could not find current track in shuffled playlist");
+          }
+        }
+        
+        currentPlaylist = newShuffledPlaylist;
+        
+      } else {
+        // Turn shuffle off - restore original order
+        if (originalPlaylist.length > 0) {
+          // Find the current track's position in the original playlist
+          if (currentTrack) {
+            const originalIndex = originalPlaylist.findIndex(track => 
+              track.src === currentTrack.src);
+            
+            currentPlaylist = [...originalPlaylist];
+            
+            if (originalIndex !== -1) {
+              currentTrackIndex = originalIndex;
+            } else {
+              // Safety check - this shouldn't happen but just in case
+              currentTrackIndex = 0;
+              console.warn("Could not find current track in original playlist");
+            }
+          } else {
+            currentPlaylist = [...originalPlaylist];
+            currentTrackIndex = 0;
+          }
+        }
+      }
+      
+      // Update the display
+      updateTrackDisplay();
+      
+      // Resume playback if it was playing
+      if (wasPlaying && !isPlaying) {
+        play();
+      }
+    }
+    
+    // Save the setting
+    saveSettings();
+    
+    console.log(`Shuffle mode ${isShuffleMode ? 'enabled' : 'disabled'}`);
+  }
+  
+  // Use Fisher-Yates shuffle algorithm for better randomization
+  function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
+
+  // Replace the shufflePlaylist function with a call to our shuffleArray function
+  function shufflePlaylist() {
+    shuffleArray(currentPlaylist);
+  }
+
+  // Load a playlist
+  function loadPlaylist(playlistName) {
+    if (!playlists[playlistName]) {
+      console.error(`Playlist '${playlistName}' not found`);
+      return;
+    }
+    
+    currentPlaylistName = playlistName;
+    originalPlaylist = [...playlists[playlistName]]; // Store original order
+    currentPlaylist = [...originalPlaylist]; // Create a copy to manipulate
+    
+    if (isShuffleMode) {
+      shuffleArray(currentPlaylist);
+    }
+    
+    currentTrackIndex = 0;
+    updateTrackDisplay();
+    
+    // Preload first track
+    audio.src = currentPlaylist[0].src;
+    audio.load();
+    
+    // Save to settings
+    saveSettings();
+  }
+
+  // Play track with better error handling
+  function play() {
+    if (!isBGMEnabled || currentPlaylist.length === 0) return;
+    
+    try {
+      if (!currentPlaylist[currentTrackIndex]) {
+        console.warn("Invalid track index, resetting to 0");
+        currentTrackIndex = 0;
+        if (!currentPlaylist[currentTrackIndex]) {
+          console.error("No tracks available to play");
+          return;
+        }
+      }
+      
+      audio.src = currentPlaylist[currentTrackIndex].src;
+      audio.load();
+      
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          isPlaying = true;
+          updatePlayButton();
+          updateTrackDisplay();
+          startProgressUpdates();
+          console.log(`Playing: ${currentPlaylist[currentTrackIndex].title}`);
+        }).catch(error => {
+          console.error('Audio playback failed:', error);
+          isPlaying = false;
+          updatePlayButton();
+        });
+      }
+      
+    } catch (error) {
+      console.error('Failed to play audio:', error);
+      isPlaying = false;
+      updatePlayButton();
+    }
+  }
+
   // Public API
   window.bgmPlayer = {
     init: init,
@@ -544,7 +720,9 @@
       }
     },
     setBGMEnabled: setBGMEnabled,
-    isInitialized: false
+    isInitialized: false,
+    toggleShuffle: toggleShuffle,
+    isShuffleMode: function() { return isShuffleMode; }
   };
 
   // Initialize when DOM is ready

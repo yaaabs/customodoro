@@ -42,6 +42,12 @@
                   <path fill="currentColor" d="M16,18H18V6H16M6,18L14.5,12L6,6V18Z" />
                 </svg>
               </button>
+              
+              <button class="mini-btn mini-btn-shuffle" id="mini-shuffle-btn" aria-pressed="false" title="Shuffle">
+                <svg viewBox="0 0 24 24" width="20" height="20">
+                  <path fill="currentColor" d="M17,3L22,8L17,13V10H14.82C14.4,9.84 14.03,9.61 13.71,9.29L10.29,5.87C9.39,4.97 8.23,4.5 7,4.5C4.79,4.5 3,6.29 3,8.5C3,10.71 4.79,12.5 7,12.5C8.23,12.5 9.39,12.03 10.29,11.13L13.71,7.71C14.03,7.39 14.4,7.16 14.82,7H17V3M7,6.5C8.38,6.5 9.5,7.62 9.5,9C9.5,10.38 8.38,11.5 7,11.5C5.62,11.5 4.5,10.38 4.5,9C4.5,7.62 5.62,6.5 7,6.5M17,21V17H14.82C14.4,17.16 14.03,17.39 13.71,17.71L10.29,21.13C9.39,22.03 8.23,22.5 7,22.5C4.79,22.5 3,20.71 3,18.5C3,16.29 4.79,14.5 7,14.5C8.23,14.5 9.39,14.97 10.29,15.87L13.71,19.29C14.03,19.61 14.4,19.84 14.82,20H17V17L22,21L17,25V21Z" />
+                </svg>
+              </button>
             </div>
             
             <div class="mini-player-progress-container">
@@ -83,6 +89,7 @@
     const playBtn = document.getElementById('mini-play-btn');
     const prevBtn = document.getElementById('mini-prev-btn');
     const nextBtn = document.getElementById('mini-next-btn');
+    const shuffleBtn = document.getElementById('mini-shuffle-btn');
     const volumeSlider = document.getElementById('mini-volume-slider');
     const volumeDisplay = document.getElementById('mini-volume-display');
     const miniProgressBar = document.querySelector('.mini-player-progress');
@@ -177,6 +184,27 @@
           const currentTime = window.bgmPlayer.getCurrentTime() || 0;
           const duration = window.bgmPlayer.getDuration() || 0;
           window.bgmPlayer.seek(Math.min(duration, currentTime + 10));
+        }
+      });
+    }
+    
+    // Add shuffle button functionality
+    if (shuffleBtn) {
+      // Set initial state based on BGM player
+      if (window.bgmPlayer && typeof window.bgmPlayer.isShuffleMode === 'function') {
+        const isShuffleOn = window.bgmPlayer.isShuffleMode();
+        shuffleBtn.classList.toggle('active', isShuffleOn);
+        shuffleBtn.setAttribute('aria-pressed', isShuffleOn);
+      }
+      
+      shuffleBtn.addEventListener('click', function() {
+        if (window.bgmPlayer && typeof window.bgmPlayer.toggleShuffle === 'function') {
+          window.bgmPlayer.toggleShuffle();
+          
+          // Update button state
+          const isShuffleOn = window.bgmPlayer.isShuffleMode();
+          shuffleBtn.classList.toggle('active', isShuffleOn);
+          shuffleBtn.setAttribute('aria-pressed', isShuffleOn);
         }
       });
     }
@@ -285,6 +313,16 @@
       totalTimeEl.textContent = formatTime(totalTime);
     }
     
+    // Update shuffle button state
+    if (typeof window.bgmPlayer.isShuffleMode === 'function') {
+      const isShuffleOn = window.bgmPlayer.isShuffleMode();
+      const shuffleBtn = document.getElementById('mini-shuffle-btn');
+      if (shuffleBtn) {
+        shuffleBtn.classList.toggle('active', isShuffleOn);
+        shuffleBtn.setAttribute('aria-pressed', isShuffleOn);
+      }
+    }
+    
     // Update enabled/disabled state
     const isBGMEnabled = window.bgmPlayer.isBGMEnabled();
     const miniPlayerBody = document.querySelector('.mini-player-body');
@@ -334,6 +372,8 @@
       const currentTime = window.bgmPlayer.getCurrentTime() || 0;
       const totalTime = window.bgmPlayer.getDuration() || 0;
       const isBGMEnabled = window.bgmPlayer.isBGMEnabled();
+      const isShuffleOn = typeof window.bgmPlayer.isShuffleMode === 'function' ? 
+                        window.bgmPlayer.isShuffleMode() : false;
 
       // Update UI
       updatePlayButton(isPlaying);
@@ -364,6 +404,12 @@
         control.disabled = !isBGMEnabled;
       });
       
+      // Update shuffle button state
+      const shuffleBtn = document.getElementById('mini-shuffle-btn');
+      if (shuffleBtn) {
+        shuffleBtn.classList.toggle('active', isShuffleOn);
+        shuffleBtn.setAttribute('aria-pressed', isShuffleOn);
+      }
     } else {
       // BGM player not available
       updateTrackInfo('BGM Player not available', 'Please check settings');
