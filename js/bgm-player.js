@@ -91,7 +91,7 @@
           src: 'audio/BGM/Si all my demons have your smile pala to eh/Hallway Weather.mp3'
         },
         {
-          title: 'High School in Jakarta',
+          title: 'High School in Jakarta (Official Music Video)',
           artist: 'NIKI',
           src: 'audio/BGM/Si all my demons have your smile pala to eh/High School in Jakarta.mp3'
         },

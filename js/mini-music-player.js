@@ -44,7 +44,7 @@
               </button>
               
               <button class="mini-btn mini-btn-next" id="mini-next-btn">
-                <svg viewBox="0 0 24 24" width="20" height="20">
+                <svg viewBox="0 0 24  24" width="20" height="20">
                   <path fill="currentColor" d="M16,18H18V6H16M6,18L14.5,12L6,6V18Z" />
                 </svg>
               </button>
