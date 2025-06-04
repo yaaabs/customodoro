@@ -17,8 +17,13 @@
           
           <div class="mini-player-body">
             <div class="mini-player-info">
-              <div class="mini-track-title" id="mini-track-title">No music playing</div>
-              <div class="mini-track-artist" id="mini-track-artist">Select a playlist to start</div>
+              <div class="mini-album-art" id="mini-album-art">
+                <img id="mini-album-image" style="display: none;" alt="Album Art">
+              </div>
+              <div class="mini-track-details">
+                <div class="mini-track-title" id="mini-track-title">No music playing</div>
+                <div class="mini-track-artist" id="mini-track-artist">Select a playlist to start</div>
+              </div>
             </div>
             
             <div class="mini-player-controls">
@@ -260,6 +265,36 @@
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   }
 
+  // Update track information with album art support
+  function updateTrackInfo(title = 'No music playing', artist = 'Select a playlist to start', albumArt = null) {
+    const titleElement = document.getElementById('mini-track-title');
+    const artistElement = document.getElementById('mini-track-artist');
+    const albumArtContainer = document.getElementById('mini-album-art');
+    const albumImage = document.getElementById('mini-album-image');
+    
+    if (titleElement) titleElement.textContent = title;
+    if (artistElement) artistElement.textContent = artist;
+    
+    // Handle album art
+    if (albumArt && albumImage && albumArtContainer) {
+      albumImage.src = albumArt;
+      albumImage.style.display = 'block';
+      albumImage.onload = function() {
+        // Hide the default music note emoji when image loads
+        albumArtContainer.style.fontSize = '0';
+      };
+      albumImage.onerror = function() {
+        // Show default emoji if image fails to load
+        albumImage.style.display = 'none';
+        albumArtContainer.style.fontSize = '32px';
+      };
+    } else if (albumImage && albumArtContainer) {
+      // No album art provided, show default
+      albumImage.style.display = 'none';
+      albumArtContainer.style.fontSize = '32px';
+    }
+  }
+
   // Sync mini player state with main BGM player
   function syncWithBGMPlayer() {
     if (!window.bgmPlayer) return;
@@ -271,7 +306,9 @@
     // Update track info if available
     const currentTrack = window.bgmPlayer.getCurrentTrack();
     if (currentTrack) {
-      updateTrackInfo(currentTrack.title, currentTrack.artist);
+      // Try to get album art from the track data
+      const albumArt = currentTrack.albumArt || currentTrack.image || getDefaultAlbumArt(currentTrack.title);
+      updateTrackInfo(currentTrack.title, currentTrack.artist, albumArt);
     } else {
       updateTrackInfo('No music playing', 'Select a playlist to start');
     }
@@ -362,6 +399,22 @@
     }
   }
 
+  // Get default album art based on track title or playlist
+  function getDefaultAlbumArt(trackTitle) {
+    // You can expand this to map specific tracks to album art
+    // For now, return null to show the default music emoji
+    if (trackTitle && trackTitle.toLowerCase().includes('niki')) {
+      return 'images/album-art/niki.jpg'; // Add album art files to your project
+    }
+    if (trackTitle && trackTitle.toLowerCase().includes('ambient')) {
+      return 'images/album-art/ambient.jpg';
+    }
+    if (trackTitle && trackTitle.toLowerCase().includes('focus')) {
+      return 'images/album-art/focus.jpg';
+    }
+    return null; // Will show default emoji
+  }
+
   // Update initial state when opening
   function updateInitialState() {
     if (window.bgmPlayer) {
@@ -379,7 +432,8 @@
       updatePlayButton(isPlaying);
       
       if (currentTrack) {
-        updateTrackInfo(currentTrack.title, currentTrack.artist);
+        const albumArt = currentTrack.albumArt || currentTrack.image || getDefaultAlbumArt(currentTrack.title);
+        updateTrackInfo(currentTrack.title, currentTrack.artist, albumArt);
       } else {
         updateTrackInfo('No music playing', 'Select a playlist to start');
       }
@@ -418,15 +472,6 @@
     }
   }
 
-  // Update track information
-  function updateTrackInfo(title = 'No music playing', artist = 'Select a playlist to start') {
-    const titleElement = document.getElementById('mini-track-title');
-    const artistElement = document.getElementById('mini-track-artist');
-    
-    if (titleElement) titleElement.textContent = title;
-    if (artistElement) artistElement.textContent = artist;
-  }
-
   // Update play button state
   function updatePlayButton(isPlaying = false) {
     const playIcon = document.getElementById('mini-play-icon');
@@ -452,7 +497,7 @@
     if (volumeDisplay) volumeDisplay.textContent = Math.round(volume) + '%';
   }
 
-  // Public API
+  // Public API - Updated to support album art
   window.miniMusicPlayer = {
     open: openMiniPlayer,
     close: closeMiniPlayer,
