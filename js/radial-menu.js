@@ -159,16 +159,42 @@
     });
     
     document.getElementById('radial-music-btn').addEventListener('click', function() {
-      // Ensure BGM player is initialized before opening mini player
-      if (window.bgmPlayer && !window.bgmPlayer.isInitialized) {
-        window.bgmPlayer.init();
-      }
-      
-      // Open mini music player modal
-      if (window.miniMusicPlayer && typeof window.miniMusicPlayer.open === 'function') {
-        window.miniMusicPlayer.open();
-      } else {
-        console.warn('Mini music player not available');
+      // Safely check if BGM player exists and initialize if needed
+      try {
+        if (window.bgmPlayer && !window.bgmPlayer.isInitialized) {
+          window.bgmPlayer.init();
+        }
+        
+        // Check if mini music player is available
+        if (window.miniMusicPlayer && typeof window.miniMusicPlayer.open === 'function') {
+          window.miniMusicPlayer.open();
+        } else {
+          // Fallback: try to open settings BGM section if mini player isn't available
+          console.log('Mini music player not available, opening settings...');
+          
+          const settingsModal = document.getElementById('settings-modal');
+          if (settingsModal) {
+            settingsModal.classList.add('show');
+            
+            setTimeout(() => {
+              const navItems = document.querySelectorAll('.settings-nav-item');
+              const bgmNavItem = document.querySelector('.settings-nav-item[data-section="bgm"]');
+              const bgmSection = document.getElementById('bgm-section');
+              
+              navItems.forEach(item => item.classList.remove('active'));
+              document.querySelectorAll('.settings-section').forEach(section => {
+                section.classList.remove('active');
+              });
+              
+              if (bgmNavItem) bgmNavItem.classList.add('active');
+              if (bgmSection) bgmSection.classList.add('active');
+            }, 100);
+          }
+        }
+      } catch (error) {
+        console.log('Error opening music player:', error);
+        // Fallback to show a simple message
+        alert('Music player is loading. Please try again in a moment or use the settings menu.');
       }
       
       // Close the menu after action

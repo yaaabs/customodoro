@@ -49,7 +49,7 @@
               </button>
               
               <button class="mini-btn mini-btn-next" id="mini-next-btn">
-                <svg viewBox="0 0 24  24" width="20" height="20">
+                <svg viewBox="0 0 24 24" width="20" height="20">
                   <path fill="currentColor" d="M16,18H18V6H16M6,18L14.5,12L6,6V18Z" />
                 </svg>
               </button>
@@ -145,8 +145,12 @@
         volumeDisplay.textContent = volume + '%';
         
         // Update BGM player volume and save to localStorage
-        if (window.bgmPlayer && typeof window.bgmPlayer.setVolume === 'function') {
-          window.bgmPlayer.setVolume(volume);
+        try {
+          if (window.bgmPlayer && typeof window.bgmPlayer.setVolume === 'function') {
+            window.bgmPlayer.setVolume(volume);
+          }
+        } catch (error) {
+          console.log('BGM player not available for volume control');
         }
       });
     }
@@ -154,41 +158,64 @@
     // Control buttons with BGM player integration
     if (playBtn) {
       playBtn.addEventListener('click', function() {
-        if (window.bgmPlayer && typeof window.bgmPlayer.toggle === 'function') {
-          window.bgmPlayer.toggle();
+        try {
+          if (window.bgmPlayer && typeof window.bgmPlayer.toggle === 'function') {
+            window.bgmPlayer.toggle();
+          } else {
+            console.log('BGM player not available');
+            updateTrackInfo('BGM Player not available', 'Please check settings');
+          }
+        } catch (error) {
+          console.log('Error toggling BGM player:', error);
         }
       });
     }
 
     if (prevBtn) {
       prevBtn.addEventListener('click', function() {
-        if (window.bgmPlayer && typeof window.bgmPlayer.previous === 'function') {
-          window.bgmPlayer.previous();
+        try {
+          if (window.bgmPlayer && typeof window.bgmPlayer.previous === 'function') {
+            window.bgmPlayer.previous();
+          }
+        } catch (error) {
+          console.log('Error with previous track:', error);
         }
       });
 
       // Add double click to skip back 10 seconds
       prevBtn.addEventListener('dblclick', function() {
-        if (window.bgmPlayer && typeof window.bgmPlayer.seek === 'function') {
-          const currentTime = window.bgmPlayer.getCurrentTime() || 0;
-          window.bgmPlayer.seek(Math.max(0, currentTime - 10));
+        try {
+          if (window.bgmPlayer && typeof window.bgmPlayer.seek === 'function') {
+            const currentTime = window.bgmPlayer.getCurrentTime() || 0;
+            window.bgmPlayer.seek(Math.max(0, currentTime - 10));
+          }
+        } catch (error) {
+          console.log('Error seeking backwards:', error);
         }
       });
     }
 
     if (nextBtn) {
       nextBtn.addEventListener('click', function() {
-        if (window.bgmPlayer && typeof window.bgmPlayer.next === 'function') {
-          window.bgmPlayer.next();
+        try {
+          if (window.bgmPlayer && typeof window.bgmPlayer.next === 'function') {
+            window.bgmPlayer.next();
+          }
+        } catch (error) {
+          console.log('Error with next track:', error);
         }
       });
 
       // Add double click to skip forward 10 seconds
       nextBtn.addEventListener('dblclick', function() {
-        if (window.bgmPlayer && typeof window.bgmPlayer.seek === 'function') {
-          const currentTime = window.bgmPlayer.getCurrentTime() || 0;
-          const duration = window.bgmPlayer.getDuration() || 0;
-          window.bgmPlayer.seek(Math.min(duration, currentTime + 10));
+        try {
+          if (window.bgmPlayer && typeof window.bgmPlayer.seek === 'function') {
+            const currentTime = window.bgmPlayer.getCurrentTime() || 0;
+            const duration = window.bgmPlayer.getDuration() || 0;
+            window.bgmPlayer.seek(Math.min(duration, currentTime + 10));
+          }
+        } catch (error) {
+          console.log('Error seeking forward:', error);
         }
       });
     }
@@ -196,20 +223,28 @@
     // Add shuffle button functionality
     if (shuffleBtn) {
       // Set initial state based on BGM player
-      if (window.bgmPlayer && typeof window.bgmPlayer.isShuffleMode === 'function') {
-        const isShuffleOn = window.bgmPlayer.isShuffleMode();
-        shuffleBtn.classList.toggle('active', isShuffleOn);
-        shuffleBtn.setAttribute('aria-pressed', isShuffleOn);
-      }
-      
-      shuffleBtn.addEventListener('click', function() {
-        if (window.bgmPlayer && typeof window.bgmPlayer.toggleShuffle === 'function') {
-          window.bgmPlayer.toggleShuffle();
-          
-          // Update button state
+      try {
+        if (window.bgmPlayer && typeof window.bgmPlayer.isShuffleMode === 'function') {
           const isShuffleOn = window.bgmPlayer.isShuffleMode();
           shuffleBtn.classList.toggle('active', isShuffleOn);
           shuffleBtn.setAttribute('aria-pressed', isShuffleOn);
+        }
+      } catch (error) {
+        console.log('Error getting shuffle state:', error);
+      }
+      
+      shuffleBtn.addEventListener('click', function() {
+        try {
+          if (window.bgmPlayer && typeof window.bgmPlayer.toggleShuffle === 'function') {
+            window.bgmPlayer.toggleShuffle();
+            
+            // Update button state
+            const isShuffleOn = window.bgmPlayer.isShuffleMode();
+            shuffleBtn.classList.toggle('active', isShuffleOn);
+            shuffleBtn.setAttribute('aria-pressed', isShuffleOn);
+          }
+        } catch (error) {
+          console.log('Error toggling shuffle:', error);
         }
       });
     }
@@ -217,14 +252,18 @@
     // Click on progress bar to seek
     if (miniProgressBar) {
       miniProgressBar.addEventListener('click', function(e) {
-        if (window.bgmPlayer && typeof window.bgmPlayer.getDuration === 'function') {
-          const rect = miniProgressBar.getBoundingClientRect();
-          const clickPosition = (e.clientX - rect.left) / rect.width;
-          const seekTime = clickPosition * window.bgmPlayer.getDuration();
-          
-          if (window.bgmPlayer && typeof window.bgmPlayer.seek === 'function') {
-            window.bgmPlayer.seek(seekTime);
+        try {
+          if (window.bgmPlayer && typeof window.bgmPlayer.getDuration === 'function') {
+            const rect = miniProgressBar.getBoundingClientRect();
+            const clickPosition = (e.clientX - rect.left) / rect.width;
+            const seekTime = clickPosition * window.bgmPlayer.getDuration();
+            
+            if (window.bgmPlayer && typeof window.bgmPlayer.seek === 'function') {
+              window.bgmPlayer.seek(seekTime);
+            }
           }
+        } catch (error) {
+          console.log('Error seeking track:', error);
         }
       });
     }
@@ -242,10 +281,10 @@
     if (syncInterval) clearInterval(syncInterval);
     
     syncInterval = setInterval(() => {
-      if (isOpen && window.bgmPlayer) {
+      if (isOpen) {
         syncWithBGMPlayer();
       }
-    }, 500); // More frequent updates for smoother UI
+    }, 500);
   }
 
   // Stop sync
@@ -265,188 +304,88 @@
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   }
 
-  // Update track information with album art support
-  function updateTrackInfo(title = 'No music playing', artist = 'Select a playlist to start', albumArt = null) {
-    const titleElement = document.getElementById('mini-track-title');
-    const artistElement = document.getElementById('mini-track-artist');
-    const albumArtContainer = document.getElementById('mini-album-art');
-    const albumImage = document.getElementById('mini-album-image');
-    
-    if (titleElement) titleElement.textContent = title;
-    if (artistElement) artistElement.textContent = artist;
-    
-    // Handle album art
-    if (albumArt && albumImage && albumArtContainer) {
-      albumImage.src = albumArt;
-      albumImage.style.display = 'block';
-      albumImage.onload = function() {
-        // Hide the default music note emoji when image loads
-        albumArtContainer.style.fontSize = '0';
-      };
-      albumImage.onerror = function() {
-        // Show default emoji if image fails to load
-        albumImage.style.display = 'none';
-        albumArtContainer.style.fontSize = '32px';
-      };
-    } else if (albumImage && albumArtContainer) {
-      // No album art provided, show default
-      albumImage.style.display = 'none';
-      albumArtContainer.style.fontSize = '32px';
-    }
-  }
-
   // Sync mini player state with main BGM player
   function syncWithBGMPlayer() {
-    if (!window.bgmPlayer) return;
-
-    // Update play button state
-    const isPlaying = window.bgmPlayer.isPlaying();
-    updatePlayButton(isPlaying);
-
-    // Update track info if available
-    const currentTrack = window.bgmPlayer.getCurrentTrack();
-    if (currentTrack) {
-      // Try to get album art from the track data
-      const albumArt = currentTrack.albumArt || currentTrack.image || getDefaultAlbumArt(currentTrack.title);
-      updateTrackInfo(currentTrack.title, currentTrack.artist, albumArt);
-    } else {
-      updateTrackInfo('No music playing', 'Select a playlist to start');
-    }
-
-    // Update volume
-    const currentVolume = window.bgmPlayer.getVolume();
-    if (currentVolume !== undefined) {
-      const volumeSlider = document.getElementById('mini-volume-slider');
-      const volumeDisplay = document.getElementById('mini-volume-display');
-      if (volumeSlider && volumeSlider.value != currentVolume) {
-        volumeSlider.value = currentVolume;
+    try {
+      if (!window.bgmPlayer) {
+        updateTrackInfo('BGM Player not available', 'Please check settings');
+        updatePlayButton(false);
+        return;
       }
-      if (volumeDisplay) {
-        volumeDisplay.textContent = Math.round(currentVolume) + '%';
-      }
-    }
 
-    // Update progress bar if available
-    const progress = window.bgmPlayer.getProgress();
-    if (progress !== undefined) {
-      const progressBar = document.getElementById('mini-progress-bar');
-      if (progressBar) {
-        progressBar.style.width = progress + '%';
-      }
-    }
-    
-    // Update time displays
-    const currentTime = window.bgmPlayer.getCurrentTime();
-    const totalTime = window.bgmPlayer.getDuration();
-    
-    const currentTimeEl = document.getElementById('mini-current-time');
-    const totalTimeEl = document.getElementById('mini-total-time');
-    
-    if (currentTimeEl) {
-      currentTimeEl.textContent = formatTime(currentTime);
-    }
-    
-    if (totalTimeEl) {
-      totalTimeEl.textContent = formatTime(totalTime);
-    }
-    
-    // Update shuffle button state
-    if (typeof window.bgmPlayer.isShuffleMode === 'function') {
-      const isShuffleOn = window.bgmPlayer.isShuffleMode();
-      const shuffleBtn = document.getElementById('mini-shuffle-btn');
-      if (shuffleBtn) {
-        shuffleBtn.classList.toggle('active', isShuffleOn);
-        shuffleBtn.setAttribute('aria-pressed', isShuffleOn);
-      }
-    }
-    
-    // Update enabled/disabled state
-    const isBGMEnabled = window.bgmPlayer.isBGMEnabled();
-    const miniPlayerBody = document.querySelector('.mini-player-body');
-    const controls = document.querySelectorAll('.mini-btn, .mini-volume-slider');
-    
-    if (miniPlayerBody) {
-      miniPlayerBody.style.opacity = isBGMEnabled ? '1' : '0.6';
-    }
-    
-    controls.forEach(control => {
-      control.disabled = !isBGMEnabled;
-    });
-  }
-
-  // Open mini player
-  function openMiniPlayer() {
-    if (!miniPlayerModal) {
-      createMiniPlayerModal();
-    }
-    
-    isOpen = true;
-    miniPlayerModal.classList.add('show');
-    document.body.style.overflow = 'hidden';
-    
-    // Update initial state and start sync
-    updateInitialState();
-    startSync();
-  }
-
-  // Close mini player
-  function closeMiniPlayer() {
-    if (miniPlayerModal) {
-      isOpen = false;
-      miniPlayerModal.classList.remove('show');
-      document.body.style.overflow = '';
-      stopSync();
-    }
-  }
-
-  // Get default album art based on track title or playlist
-  function getDefaultAlbumArt(trackTitle) {
-    // You can expand this to map specific tracks to album art
-    // For now, return null to show the default music emoji
-    if (trackTitle && trackTitle.toLowerCase().includes('niki')) {
-      return 'images/album-art/niki.jpg'; // Add album art files to your project
-    }
-    if (trackTitle && trackTitle.toLowerCase().includes('ambient')) {
-      return 'images/album-art/ambient.jpg';
-    }
-    if (trackTitle && trackTitle.toLowerCase().includes('focus')) {
-      return 'images/album-art/focus.jpg';
-    }
-    return null; // Will show default emoji
-  }
-
-  // Update initial state when opening
-  function updateInitialState() {
-    if (window.bgmPlayer) {
-      // Get current state from BGM player
-      const isPlaying = window.bgmPlayer.isPlaying();
-      const currentTrack = window.bgmPlayer.getCurrentTrack();
-      const volume = window.bgmPlayer.getVolume() || 30;
-      const currentTime = window.bgmPlayer.getCurrentTime() || 0;
-      const totalTime = window.bgmPlayer.getDuration() || 0;
-      const isBGMEnabled = window.bgmPlayer.isBGMEnabled();
-      const isShuffleOn = typeof window.bgmPlayer.isShuffleMode === 'function' ? 
-                        window.bgmPlayer.isShuffleMode() : false;
-
-      // Update UI
+      // Update play button state
+      const isPlaying = window.bgmPlayer.isPlaying ? window.bgmPlayer.isPlaying() : false;
       updatePlayButton(isPlaying);
+
+      // Update track info if available
+      const currentTrack = window.bgmPlayer.getCurrentTrack ? window.bgmPlayer.getCurrentTrack() : null;
+      const currentPlaylist = window.bgmPlayer.getCurrentPlaylist ? window.bgmPlayer.getCurrentPlaylist() : '';
       
       if (currentTrack) {
-        const albumArt = currentTrack.albumArt || currentTrack.image || getDefaultAlbumArt(currentTrack.title);
+        let albumArt = null;
+        
+        if (currentTrack.albumArt) {
+          albumArt = currentTrack.albumArt;
+        } else if (currentTrack.image) {
+          albumArt = currentTrack.image;
+        } else {
+          albumArt = getDefaultAlbumArt(currentTrack.title, currentPlaylist);
+        }
+        
         updateTrackInfo(currentTrack.title, currentTrack.artist, albumArt);
       } else {
         updateTrackInfo('No music playing', 'Select a playlist to start');
       }
+
+      // Update volume
+      const currentVolume = window.bgmPlayer.getVolume ? window.bgmPlayer.getVolume() : 30;
+      if (currentVolume !== undefined) {
+        const volumeSlider = document.getElementById('mini-volume-slider');
+        const volumeDisplay = document.getElementById('mini-volume-display');
+        if (volumeSlider && volumeSlider.value != currentVolume) {
+          volumeSlider.value = currentVolume;
+        }
+        if (volumeDisplay) {
+          volumeDisplay.textContent = Math.round(currentVolume) + '%';
+        }
+      }
+
+      // Update progress bar if available
+      const progress = window.bgmPlayer.getProgress ? window.bgmPlayer.getProgress() : 0;
+      if (progress !== undefined) {
+        const progressBar = document.getElementById('mini-progress-bar');
+        if (progressBar) {
+          progressBar.style.width = progress + '%';
+        }
+      }
       
-      updateVolumeDisplay(volume);
+      // Update time displays
+      const currentTime = window.bgmPlayer.getCurrentTime ? window.bgmPlayer.getCurrentTime() : 0;
+      const totalTime = window.bgmPlayer.getDuration ? window.bgmPlayer.getDuration() : 0;
       
       const currentTimeEl = document.getElementById('mini-current-time');
       const totalTimeEl = document.getElementById('mini-total-time');
       
-      if (currentTimeEl) currentTimeEl.textContent = formatTime(currentTime);
-      if (totalTimeEl) totalTimeEl.textContent = formatTime(totalTime);
+      if (currentTimeEl) {
+        currentTimeEl.textContent = formatTime(currentTime);
+      }
       
-      // Set enabled/disabled state
+      if (totalTimeEl) {
+        totalTimeEl.textContent = formatTime(totalTime);
+      }
+      
+      // Update shuffle button state
+      if (window.bgmPlayer.isShuffleMode && typeof window.bgmPlayer.isShuffleMode === 'function') {
+        const isShuffleOn = window.bgmPlayer.isShuffleMode();
+        const shuffleBtn = document.getElementById('mini-shuffle-btn');
+        if (shuffleBtn) {
+          shuffleBtn.classList.toggle('active', isShuffleOn);
+          shuffleBtn.setAttribute('aria-pressed', isShuffleOn);
+        }
+      }
+      
+      // Update enabled/disabled state
+      const isBGMEnabled = window.bgmPlayer.isBGMEnabled ? window.bgmPlayer.isBGMEnabled() : true;
       const miniPlayerBody = document.querySelector('.mini-player-body');
       const controls = document.querySelectorAll('.mini-btn, .mini-volume-slider');
       
@@ -457,47 +396,224 @@
       controls.forEach(control => {
         control.disabled = !isBGMEnabled;
       });
-      
-      // Update shuffle button state
-      const shuffleBtn = document.getElementById('mini-shuffle-btn');
-      if (shuffleBtn) {
-        shuffleBtn.classList.toggle('active', isShuffleOn);
-        shuffleBtn.setAttribute('aria-pressed', isShuffleOn);
+    } catch (error) {
+      console.log('Error syncing with BGM player:', error);
+      updateTrackInfo('Error loading music player', 'Please try again');
+    }
+  }
+
+  // Get album art path based on track title or playlist
+  function getDefaultAlbumArt(trackTitle, playlist = '') {
+    // Create the path based on your file structure
+    const basePath = './';
+    
+    // Check for NIKI playlist or tracks
+    if (playlist && playlist.toLowerCase().includes('niki')) {
+      return basePath + 'niki.jpg';
+    }
+    if (trackTitle && trackTitle.toLowerCase().includes('niki')) {
+      return basePath + 'niki.jpg';
+    }
+    
+    // Check for other playlists
+    if (playlist && playlist.toLowerCase().includes('ambient')) {
+      return basePath + 'ambient.jpg';
+    }
+    if (playlist && playlist.toLowerCase().includes('focus')) {
+      return basePath + 'focus.jpg';
+    }
+    
+    // Check track title for keywords
+    if (trackTitle) {
+      const title = trackTitle.toLowerCase();
+      if (title.includes('ambient') || title.includes('rain') || title.includes('nature')) {
+        return basePath + 'ambient.jpg';
       }
-    } else {
-      // BGM player not available
-      updateTrackInfo('BGM Player not available', 'Please check settings');
-      updatePlayButton(false);
-      updateVolumeDisplay(30);
+      if (title.includes('focus') || title.includes('study') || title.includes('concentration')) {
+        return basePath + 'focus.jpg';
+      }
+    }
+    
+    return null; // Will show default emoji
+  }
+
+  // Open mini player
+  function openMiniPlayer() {
+    try {
+      if (!miniPlayerModal) {
+        createMiniPlayerModal();
+      }
+      
+      isOpen = true;
+      miniPlayerModal.classList.add('show');
+      document.body.style.overflow = 'hidden';
+      
+      // Update initial state and start sync
+      updateInitialState();
+      startSync();
+    } catch (error) {
+      console.log('Error opening mini player:', error);
+    }
+  }
+
+  // Close mini player
+  function closeMiniPlayer() {
+    try {
+      if (miniPlayerModal) {
+        isOpen = false;
+        miniPlayerModal.classList.remove('show');
+        document.body.style.overflow = '';
+        stopSync();
+      }
+    } catch (error) {
+      console.log('Error closing mini player:', error);
+    }
+  }
+
+  // Update initial state when opening
+  function updateInitialState() {
+    try {
+      if (window.bgmPlayer) {
+        // Get current state from BGM player
+        const isPlaying = window.bgmPlayer.isPlaying ? window.bgmPlayer.isPlaying() : false;
+        const currentTrack = window.bgmPlayer.getCurrentTrack ? window.bgmPlayer.getCurrentTrack() : null;
+        const currentPlaylist = window.bgmPlayer.getCurrentPlaylist ? window.bgmPlayer.getCurrentPlaylist() : '';
+        const volume = window.bgmPlayer.getVolume ? window.bgmPlayer.getVolume() : 30;
+        const currentTime = window.bgmPlayer.getCurrentTime ? window.bgmPlayer.getCurrentTime() : 0;
+        const totalTime = window.bgmPlayer.getDuration ? window.bgmPlayer.getDuration() : 0;
+        const isBGMEnabled = window.bgmPlayer.isBGMEnabled ? window.bgmPlayer.isBGMEnabled() : true;
+        const isShuffleOn = (window.bgmPlayer.isShuffleMode && typeof window.bgmPlayer.isShuffleMode === 'function') ? 
+                          window.bgmPlayer.isShuffleMode() : false;
+
+        // Update UI
+        updatePlayButton(isPlaying);
+        
+        if (currentTrack) {
+          let albumArt = currentTrack.albumArt || currentTrack.image || getDefaultAlbumArt(currentTrack.title, currentPlaylist);
+          updateTrackInfo(currentTrack.title, currentTrack.artist, albumArt);
+        } else {
+          updateTrackInfo('No music playing', 'Select a playlist to start');
+        }
+        
+        updateVolumeDisplay(volume);
+        
+        const currentTimeEl = document.getElementById('mini-current-time');
+        const totalTimeEl = document.getElementById('mini-total-time');
+        
+        if (currentTimeEl) currentTimeEl.textContent = formatTime(currentTime);
+        if (totalTimeEl) totalTimeEl.textContent = formatTime(totalTime);
+        
+        // Set enabled/disabled state
+        const miniPlayerBody = document.querySelector('.mini-player-body');
+        const controls = document.querySelectorAll('.mini-btn, .mini-volume-slider');
+        
+        if (miniPlayerBody) {
+          miniPlayerBody.style.opacity = isBGMEnabled ? '1' : '0.6';
+        }
+        
+        controls.forEach(control => {
+          control.disabled = !isBGMEnabled;
+        });
+        
+        // Update shuffle button state
+        const shuffleBtn = document.getElementById('mini-shuffle-btn');
+        if (shuffleBtn) {
+          shuffleBtn.classList.toggle('active', isShuffleOn);
+          shuffleBtn.setAttribute('aria-pressed', isShuffleOn);
+        }
+      } else {
+        // BGM player not available
+        updateTrackInfo('BGM Player not available', 'Please check settings');
+        updatePlayButton(false);
+        updateVolumeDisplay(30);
+      }
+    } catch (error) {
+      console.log('Error updating initial state:', error);
+      updateTrackInfo('Error loading player', 'Please try again');
+    }
+  }
+
+  // Update track information with album art support
+  function updateTrackInfo(title = 'No music playing', artist = 'Select a playlist to start', albumArt = null) {
+    try {
+      const titleElement = document.getElementById('mini-track-title');
+      const artistElement = document.getElementById('mini-track-artist');
+      const albumArtContainer = document.getElementById('mini-album-art');
+      const albumImage = document.getElementById('mini-album-image');
+      
+      if (titleElement) titleElement.textContent = title;
+      if (artistElement) artistElement.textContent = artist;
+      
+      // Handle album art
+      if (albumArt && albumImage && albumArtContainer) {
+        // Try to load the image
+        const testImage = new Image();
+        testImage.onload = function() {
+          // Image loaded successfully
+          albumImage.src = albumArt;
+          albumImage.style.display = 'block';
+          albumArtContainer.style.fontSize = '0';
+        };
+        testImage.onerror = function() {
+          // Image failed to load, show default
+          showDefaultAlbumArt(albumImage, albumArtContainer);
+        };
+        testImage.src = albumArt;
+      } else {
+        // No album art provided, show default
+        showDefaultAlbumArt(albumImage, albumArtContainer);
+      }
+    } catch (error) {
+      console.log('Error updating track info:', error);
+    }
+  }
+
+  // Helper function to show default album art
+  function showDefaultAlbumArt(albumImage, albumArtContainer) {
+    try {
+      if (albumImage && albumArtContainer) {
+        albumImage.style.display = 'none';
+        albumArtContainer.style.fontSize = '32px';
+      }
+    } catch (error) {
+      console.log('Error showing default album art:', error);
     }
   }
 
   // Update play button state
   function updatePlayButton(isPlaying = false) {
-    const playIcon = document.getElementById('mini-play-icon');
-    const pauseIcon = document.getElementById('mini-pause-icon');
-    
-    if (playIcon && pauseIcon) {
-      if (isPlaying) {
-        playIcon.style.display = 'none';
-        pauseIcon.style.display = 'block';
-      } else {
-        playIcon.style.display = 'block';
-        pauseIcon.style.display = 'none';
+    try {
+      const playIcon = document.getElementById('mini-play-icon');
+      const pauseIcon = document.getElementById('mini-pause-icon');
+      
+      if (playIcon && pauseIcon) {
+        if (isPlaying) {
+          playIcon.style.display = 'none';
+          pauseIcon.style.display = 'block';
+        } else {
+          playIcon.style.display = 'block';
+          pauseIcon.style.display = 'none';
+        }
       }
+    } catch (error) {
+      console.log('Error updating play button:', error);
     }
   }
 
   // Update volume display
   function updateVolumeDisplay(volume) {
-    const volumeSlider = document.getElementById('mini-volume-slider');
-    const volumeDisplay = document.getElementById('mini-volume-display');
-    
-    if (volumeSlider) volumeSlider.value = volume;
-    if (volumeDisplay) volumeDisplay.textContent = Math.round(volume) + '%';
+    try {
+      const volumeSlider = document.getElementById('mini-volume-slider');
+      const volumeDisplay = document.getElementById('mini-volume-display');
+      
+      if (volumeSlider) volumeSlider.value = volume;
+      if (volumeDisplay) volumeDisplay.textContent = Math.round(volume) + '%';
+    } catch (error) {
+      console.log('Error updating volume display:', error);
+    }
   }
 
-  // Public API - Updated to support album art
+  // Public API
   window.miniMusicPlayer = {
     open: openMiniPlayer,
     close: closeMiniPlayer,
@@ -506,4 +622,16 @@
     isOpen: () => isOpen,
     sync: syncWithBGMPlayer
   };
+
+  // Initialize when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+    // Wait a bit for other scripts to load
+    setTimeout(() => {
+      try {
+        createMiniPlayerModal();
+      } catch (error) {
+        console.log('Error initializing mini music player:', error);
+      }
+    }, 1000);
+  });
 })();
