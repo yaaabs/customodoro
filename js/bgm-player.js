@@ -6,9 +6,9 @@
   let playBtn, prevBtn, nextBtn, playIcon, pauseIcon;
   let progressBar, progressContainer, currentTimeElement, totalTimeElement;
   let shuffleBtn; // Shuffle button element
-
   // State
   let currentPlaylist = null;
+  let currentPlaylistName = 'deep-focus'; // Track current playlist name
   let currentTrackIndex = 0;
   let playlists = {}; // To be populated
   let isPlaying = false;
@@ -190,7 +190,6 @@
     console.log('BGM Player Initialized');
     window.bgmPlayer.isInitialized = true;
   }
-
   // Load settings from localStorage
   function loadSettings() {
     const savedPlaylist = localStorage.getItem('bgmPlaylist') || 'deep-focus';
@@ -206,6 +205,7 @@
       shuffleBtn.setAttribute('aria-pressed', savedShuffleMode);
     }
     
+    currentPlaylistName = savedPlaylist;
     currentPlaylist = playlists[savedPlaylist];
     audio.volume = savedVolume / 100;
     isBGMEnabled = savedBGMEnabled;
@@ -213,10 +213,10 @@
   }
 
   // Set up event listeners
-  function setupEventListeners() {
-    // Playlist selector
+  function setupEventListeners() {    // Playlist selector
     if (playlistSelector) {
       playlistSelector.addEventListener('change', function() {
+        currentPlaylistName = this.value;
         currentPlaylist = playlists[this.value];
         currentTrackIndex = 0;
         localStorage.setItem('bgmPlaylist', this.value);
@@ -718,11 +718,11 @@
       if (audio.duration && time >= 0 && time <= audio.duration) {
         audio.currentTime = time;
       }
-    },
-    setBGMEnabled: setBGMEnabled,
+    },    setBGMEnabled: setBGMEnabled,
     isInitialized: false,
     toggleShuffle: toggleShuffle,
-    isShuffleMode: function() { return isShuffleMode; }
+    isShuffleMode: function() { return isShuffleMode; },
+    getCurrentPlaylist: function() { return currentPlaylistName; }
   };
 
   // Initialize when DOM is ready
