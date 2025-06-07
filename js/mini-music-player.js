@@ -4,8 +4,8 @@
   let syncInterval = null;
   // Album art mapping based on playlist names (fallback)
   const ALBUM_ART_MAP = {
-    'deep-focus': 'images/album-art/focus.jpg',
-    'ambient-long': 'images/album-art/ambient.jpg',
+    'deep-focus': 'images/album-art/focus.png',
+    'ambient-long': 'images/album-art/ambient.png',
     'smile-demons': 'images/album-art/niki.png'
   };
 
