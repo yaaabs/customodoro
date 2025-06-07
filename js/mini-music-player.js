@@ -2,22 +2,67 @@
   let miniPlayerModal;
   let isOpen = false;
   let syncInterval = null;
-
-  // Album art mapping based on playlist names
+  // Album art mapping based on playlist names (fallback)
   const ALBUM_ART_MAP = {
     'deep-focus': 'images/album-art/focus.jpg',
     'ambient-long': 'images/album-art/ambient.jpg',
     'smile-demons': 'images/album-art/niki.png'
   };
 
-  // Get album art path based on current playlist
+  // Track-specific album art mapping
+  const TRACK_ALBUM_ART_MAP = {
+    // Nicole album tracks
+    'Anaheim': 'images/album-art/nicole.png',
+    'Autumn': 'images/album-art/nicole.png',
+    'Backburner': 'images/album-art/nicole.png',
+    'Before': 'images/album-art/nicole.png',
+    'Facebook Friends': 'images/album-art/nicole.png',
+    'High School in Jakarta': 'images/album-art/nicole.png',
+    'I Like U': 'images/album-art/nicole.png',
+    'Lose': 'images/album-art/nicole.png',
+    'lowkey': 'images/album-art/nicole.png',
+    'Newsflash!': 'images/album-art/nicole.png',
+    'Oceans & Engines': 'images/album-art/nicole.png',
+    'Plot Twist': 'images/album-art/nicole.png',
+    'See U Never': 'images/album-art/nicole.png',
+    'Selene': 'images/album-art/nicole.png',
+    'Take A Chance With Me': 'images/album-art/nicole.png',
+    'urs': 'images/album-art/nicole.png',
+    'Vintage': 'images/album-art/nicole.png',
+    
+    // Individual album tracks
+    'Chilly': 'images/album-art/chilly.png',
+    'Every Summertime': 'images/album-art/every summertime.png',
+    'Hallway Weather': 'images/album-art/hallway weather.png',
+    
+    // Other albums (using niki.png as default for the rest)
+    'Indigo': 'images/album-art/niki.png',
+    'La La Lost You - Acoustic': 'images/album-art/niki.png',
+    'La La Lost You': 'images/album-art/niki.png',
+    'Split': 'images/album-art/niki.png'
+  };
+  // Get album art path based on current track or playlist
   function getAlbumArtPath() {
-    if (!window.bgmPlayer || typeof window.bgmPlayer.getCurrentPlaylist !== 'function') {
+    if (!window.bgmPlayer || typeof window.bgmPlayer.getCurrentTrack !== 'function') {
       return null;
     }
     
-    const currentPlaylist = window.bgmPlayer.getCurrentPlaylist();
-    return currentPlaylist ? ALBUM_ART_MAP[currentPlaylist] : null;
+    // First, try to get track-specific album art
+    const currentTrack = window.bgmPlayer.getCurrentTrack();
+    if (currentTrack && currentTrack.title) {
+      const trackAlbumArt = TRACK_ALBUM_ART_MAP[currentTrack.title];
+      if (trackAlbumArt) {
+        return trackAlbumArt;
+      }
+    }
+    
+    // Fallback to playlist-based album art
+    if (typeof window.bgmPlayer.getCurrentPlaylist === 'function') {
+      const currentPlaylist = window.bgmPlayer.getCurrentPlaylist();
+      return currentPlaylist ? ALBUM_ART_MAP[currentPlaylist] : null;
+    }
+    
+    return null;
   }
 
   // Update album art display
