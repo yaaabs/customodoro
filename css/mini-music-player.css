@@ -235,7 +235,13 @@ input:checked + .mini-slider-toggle:before {
   background: #333;
   border-radius: 2px;
   margin-top: 20px;
-  overflow: hidden;
+  overflow: visible;
+  position: relative;
+  cursor: pointer;
+}
+
+.mini-progress-container:hover {
+  height: 6px;
 }
 
 .mini-progress-bar {
@@ -243,6 +249,31 @@ input:checked + .mini-slider-toggle:before {
   background: linear-gradient(90deg, #8b5fbf, #9d71d0);
   width: 0%;
   transition: width 0.3s ease;
+  border-radius: 2px;
+}
+
+/* Spotify-like hover circle */
+.mini-progress-circle {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  background: #ffffff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.mini-progress-container:hover .mini-progress-circle {
+  opacity: 1;
+}
+
+.mini-progress-container:hover .mini-progress-bar {
+  background: linear-gradient(90deg, #1db954, #1ed760);
 }
 
 .mini-music-footer {
@@ -485,10 +516,24 @@ input:checked + .mini-slider-toggle:before {
   height: 6px;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 3px;
-  overflow: hidden;
+  overflow: visible;
   cursor: pointer;
   margin-bottom: 8px;
   backdrop-filter: blur(10px);
+  position: relative;
+}
+
+.mini-player-progress:hover {
+  height: 8px;
+}
+
+.mini-progress-container {
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  position: relative;
+  overflow: visible;
 }
 
 .mini-progress-bar {
@@ -497,6 +542,28 @@ input:checked + .mini-slider-toggle:before {
   width: 0%;
   transition: width 0.3s ease;
   box-shadow: 0 0 10px rgba(139, 95, 191, 0.5);
+  border-radius: 3px;
+}
+
+/* Spotify-like hover circle for mini player */
+.mini-progress-circle {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  background: #ffffff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  z-index: 10;
+  right: 0;
+}
+
+.mini-player-progress:hover .mini-progress-circle {
+  opacity: 1;
 }
 
 .mini-player-time {

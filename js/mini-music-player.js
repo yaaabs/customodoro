@@ -38,9 +38,18 @@
     'Newsflash!': 'images/album-art/niki.png',
     'Plot Twist': 'images/album-art/niki.png',
     'See U Never': 'images/album-art/niki.png',
-    'Selene': 'images/album-art/niki.png',
-    'urs': 'images/album-art/niki.png'
+    'Selene': 'images/album-art/niki.png',    'urs': 'images/album-art/niki.png'
   };
+
+  // Function to update progress circle position
+  function updateProgressCirclePosition() {
+    const miniProgressCircle = document.getElementById('mini-progress-circle');
+    if (miniProgressCircle && window.bgmPlayer) {
+      const progress = window.bgmPlayer.getProgress() || 0;
+      miniProgressCircle.style.left = progress + '%';
+    }
+  }
+
   // Get album art path based on current track or playlist
   function getAlbumArtPath() {
     if (!window.bgmPlayer || typeof window.bgmPlayer.getCurrentTrack !== 'function') {
@@ -137,10 +146,12 @@
                 </svg>
               </button>
             </div>
-            
-            <div class="mini-player-progress-container">
+              <div class="mini-player-progress-container">
               <div class="mini-player-progress" id="mini-progress">
-                <div class="mini-progress-bar" id="mini-progress-bar"></div>
+                <div class="mini-progress-container" id="mini-progress-container">
+                  <div class="mini-progress-bar" id="mini-progress-bar"></div>
+                  <div class="mini-progress-circle" id="mini-progress-circle"></div>
+                </div>
               </div>
               <div class="mini-player-time">
                 <span id="mini-current-time">0:00</span> / <span id="mini-total-time">0:00</span>
@@ -170,8 +181,7 @@
   }
 
   // Setup event listeners for mini player
-  function setupMiniPlayerEvents() {
-    const closeBtn = document.getElementById('mini-player-close');
+  function setupMiniPlayerEvents() {    const closeBtn = document.getElementById('mini-player-close');
     const footerCloseBtn = document.getElementById('mini-footer-close-btn');
     const fullSettingsBtn = document.getElementById('mini-full-settings-btn');
     const playBtn = document.getElementById('mini-play-btn');
@@ -181,6 +191,8 @@
     const volumeSlider = document.getElementById('mini-volume-slider');
     const volumeDisplay = document.getElementById('mini-volume-display');
     const miniProgressBar = document.querySelector('.mini-player-progress');
+    const miniProgressContainer = document.getElementById('mini-progress-container');
+    const miniProgressCircle = document.getElementById('mini-progress-circle');
 
     // Close button
     if (closeBtn) {
@@ -295,13 +307,11 @@
           shuffleBtn.setAttribute('aria-pressed', isShuffleOn);
         }
       });
-    }
-
-    // Click on progress bar to seek
-    if (miniProgressBar) {
-      miniProgressBar.addEventListener('click', function(e) {
+    }    // Click on progress bar to seek
+    if (miniProgressContainer) {
+      miniProgressContainer.addEventListener('click', function(e) {
         if (window.bgmPlayer && typeof window.bgmPlayer.getDuration === 'function') {
-          const rect = miniProgressBar.getBoundingClientRect();
+          const rect = miniProgressContainer.getBoundingClientRect();
           const clickPosition = (e.clientX - rect.left) / rect.width;
           const seekTime = clickPosition * window.bgmPlayer.getDuration();
           
@@ -377,15 +387,16 @@
       if (volumeDisplay) {
         volumeDisplay.textContent = Math.round(currentVolume) + '%';
       }
-    }
-
-    // Update progress bar if available
+    }    // Update progress bar if available
     const progress = window.bgmPlayer.getProgress();
     if (progress !== undefined) {
       const progressBar = document.getElementById('mini-progress-bar');
       if (progressBar) {
         progressBar.style.width = progress + '%';
       }
+      
+      // Update progress circle position
+      updateProgressCirclePosition();
     }
     
     // Update time displays
@@ -475,14 +486,16 @@
       } else {
         updateTrackInfo('No music playing', 'Select a playlist to start');
       }
-      
-      updateVolumeDisplay(volume);
+        updateVolumeDisplay(volume);
       
       const currentTimeEl = document.getElementById('mini-current-time');
       const totalTimeEl = document.getElementById('mini-total-time');
       
       if (currentTimeEl) currentTimeEl.textContent = formatTime(currentTime);
       if (totalTimeEl) totalTimeEl.textContent = formatTime(totalTime);
+      
+      // Update progress circle position
+      updateProgressCirclePosition();
       
       // Set enabled/disabled state
       const miniPlayerBody = document.querySelector('.mini-player-body');
