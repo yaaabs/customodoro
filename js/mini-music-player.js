@@ -27,18 +27,18 @@
     'Hallway Weather': 'images/album-art/hallway weather.png',
     
     // Other albums (using niki.png as default for the rest)
-    'Indigo': 'images/album-art/niki.png',
+    'Indigo': 'images/album-art/hitc2.png',
     'La La Lost You - Acoustic': 'images/album-art/niki.png',
-    'La La Lost You': 'images/album-art/niki.png',
+    'La La Lost You': 'images/album-art/hitc2.png',
     'Split': 'images/album-art/niki.png',
-    'Vintage': 'images/album-art/niki.png',
-    'I Like U': 'images/album-art/niki.png',
-    'Lose': 'images/album-art/niki.png',
+    'Vintage': 'images/album-art/zephyr.png',
+    'I Like U': 'images/album-art/i like u.png',
+    'Lose': 'images/album-art/moonchild.png',
     'lowkey': 'images/album-art/niki.png',
-    'Newsflash!': 'images/album-art/niki.png',
-    'Plot Twist': 'images/album-art/niki.png',
+    'Newsflash!': 'images/album-art/zephyr.png',
+    'Plot Twist': 'images/album-art/moonchild.png',
     'See U Never': 'images/album-art/niki.png',
-    'Selene': 'images/album-art/niki.png',    'urs': 'images/album-art/niki.png'
+    'Selene': 'images/album-art/moonchild.png',    'urs': 'images/album-art/niki.png'
   };
 
   // Function to update progress circle position
