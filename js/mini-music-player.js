@@ -7,7 +7,7 @@
   const ALBUM_ART_MAP = {
     'deep-focus': 'images/album-art/focus.jpg',
     'ambient-long': 'images/album-art/ambient.jpg',
-    'smile-demons': 'images/album-art/niki.jpg'
+    'smile-demons': 'images/album-art/niki.png'
   };
 
   // Get album art path based on current playlist
