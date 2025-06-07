@@ -18,18 +18,9 @@
     'Before': 'images/album-art/nicole.png',
     'Facebook Friends': 'images/album-art/nicole.png',
     'High School in Jakarta': 'images/album-art/nicole.png',
-    'I Like U': 'images/album-art/nicole.png',
-    'Lose': 'images/album-art/nicole.png',
-    'lowkey': 'images/album-art/nicole.png',
-    'Newsflash!': 'images/album-art/nicole.png',
     'Oceans & Engines': 'images/album-art/nicole.png',
-    'Plot Twist': 'images/album-art/nicole.png',
-    'See U Never': 'images/album-art/nicole.png',
-    'Selene': 'images/album-art/nicole.png',
     'Take A Chance With Me': 'images/album-art/nicole.png',
-    'urs': 'images/album-art/nicole.png',
-    'Vintage': 'images/album-art/nicole.png',
-    
+
     // Individual album tracks
     'Chilly': 'images/album-art/chilly.png',
     'Every Summertime': 'images/album-art/every summertime.png',
@@ -39,7 +30,16 @@
     'Indigo': 'images/album-art/niki.png',
     'La La Lost You - Acoustic': 'images/album-art/niki.png',
     'La La Lost You': 'images/album-art/niki.png',
-    'Split': 'images/album-art/niki.png'
+    'Split': 'images/album-art/niki.png',
+    'Vintage': 'images/album-art/niki.png',
+    'I Like U': 'images/album-art/niki.png',
+    'Lose': 'images/album-art/niki.png',
+    'lowkey': 'images/album-art/niki.png',
+    'Newsflash!': 'images/album-art/niki.png',
+    'Plot Twist': 'images/album-art/niki.png',
+    'See U Never': 'images/album-art/niki.png',
+    'Selene': 'images/album-art/niki.png',
+    'urs': 'images/album-art/niki.png'
   };
   // Get album art path based on current track or playlist
   function getAlbumArtPath() {
