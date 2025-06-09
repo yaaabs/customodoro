@@ -698,6 +698,149 @@
     }
   }
 
+  // BGM Player functionality
+  (function() {
+    // Album art mapping (copied from mini music player)
+    const ALBUM_ART_MAP = {
+      'deep-focus': 'images/album-art/focus.png',
+      'ambient-long': 'images/album-art/ambient.png',
+      'smile-demons': 'images/album-art/niki.png'
+    };
+
+    // Track-specific album art mapping (copied from mini music player)
+    const TRACK_ALBUM_ART_MAP = {
+      // Nicole album tracks
+      'Anaheim': 'images/album-art/nicole.png',
+      'Autumn': 'images/album-art/nicole.png',
+      'Backburner': 'images/album-art/nicole.png',
+      'Before': 'images/album-art/nicole.png',
+      'Facebook Friends': 'images/album-art/nicole.png',
+      'High School in Jakarta': 'images/album-art/nicole.png',
+      'Oceans & Engines': 'images/album-art/nicole.png',
+      'Take A Chance With Me': 'images/album-art/nicole.png',
+
+      // Individual album tracks
+      'Chilly': 'images/album-art/chilly.png',
+      'Every Summertime': 'images/album-art/every summertime.png',
+      'Hallway Weather': 'images/album-art/hallway weather.png',
+      
+      // Other albums
+      'Indigo': 'images/album-art/hitc2.png',
+      'La La Lost You - Acoustic': 'images/album-art/nas_hitc2.png',
+      'La La Lost You': 'images/album-art/hitc2.png',
+      'Split': 'images/album-art/split.png',
+      'Vintage': 'images/album-art/zephyr.png',
+      'I Like U': 'images/album-art/i like u.png',
+      'Lose': 'images/album-art/moonchild.png',
+      'lowkey': 'images/album-art/lowkey.png',
+      'Newsflash!': 'images/album-art/zephyr.png',
+      'Plot Twist': 'images/album-art/moonchild.png',
+      'See U Never': 'images/album-art/see u never.png',
+      'Selene': 'images/album-art/moonchild.png',    
+      'urs': 'images/album-art/wttd.png'
+    };
+
+    // Get album art path based on current track or playlist
+    function getBgmAlbumArtPath() {
+      if (!window.bgmPlayer || typeof window.bgmPlayer.getCurrentTrack !== 'function') {
+        return null;
+      }
+      
+      // First, try to get track-specific album art
+      const currentTrack = window.bgmPlayer.getCurrentTrack();
+      if (currentTrack && currentTrack.title) {
+        const trackAlbumArt = TRACK_ALBUM_ART_MAP[currentTrack.title];
+        if (trackAlbumArt) {
+          return trackAlbumArt;
+        }
+      }
+      
+      // Fallback to playlist-based album art
+      if (typeof window.bgmPlayer.getCurrentPlaylist === 'function') {
+        const currentPlaylist = window.bgmPlayer.getCurrentPlaylist();
+        return currentPlaylist ? ALBUM_ART_MAP[currentPlaylist] : null;
+      }
+      
+      return null;
+    }
+
+    // Update BGM album art display
+    function updateBgmAlbumArt() {
+      const albumArt = document.getElementById('bgm-album-art');
+      const placeholder = document.getElementById('bgm-album-art-placeholder');
+      const currentTrackEl = document.getElementById('bgm-current-track');
+      const currentArtistEl = document.getElementById('bgm-current-artist');
+      const artPath = getBgmAlbumArtPath();
+      
+      if (artPath && albumArt && placeholder) {
+        albumArt.src = artPath;
+        albumArt.style.display = 'block';
+        placeholder.style.display = 'none';
+        
+        // Add spinning animation when playing
+        const isPlaying = window.bgmPlayer && window.bgmPlayer.isPlaying();
+        albumArt.classList.toggle('spinning', isPlaying);
+      } else if (albumArt && placeholder) {
+        albumArt.style.display = 'none';
+        placeholder.style.display = 'flex';
+      }
+      
+      // Update track information display
+      if (window.bgmPlayer && typeof window.bgmPlayer.getCurrentTrack === 'function') {
+        const currentTrack = window.bgmPlayer.getCurrentTrack();
+        if (currentTrack && currentTrackEl && currentArtistEl) {
+          currentTrackEl.textContent = currentTrack.title || 'Unknown Track';
+          currentArtistEl.textContent = currentTrack.artist || 'Unknown Artist';
+        } else if (currentTrackEl && currentArtistEl) {
+          currentTrackEl.textContent = 'No track selected';
+          currentArtistEl.textContent = 'Select a playlist and press play';
+        }
+      }
+    }
+
+    // Update BGM play button state and album art
+    function updateBgmPlayButton(isPlaying = false) {
+      const playIcon = document.getElementById('bgm-play-icon');
+      const pauseIcon = document.getElementById('bgm-pause-icon');
+      const albumArt = document.getElementById('bgm-album-art');
+      
+      if (playIcon && pauseIcon) {
+        if (isPlaying) {
+          playIcon.style.display = 'none';
+          pauseIcon.style.display = 'block';
+        } else {
+          playIcon.style.display = 'block';
+          pauseIcon.style.display = 'none';
+        }
+      }
+      
+      // Update album art spinning animation
+      if (albumArt) {
+        albumArt.classList.toggle('spinning', isPlaying);
+      }
+      
+      // Also update album art in case track changed
+      updateBgmAlbumArt();
+    }
+
+    // Initialize BGM player when DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize album art
+      updateBgmAlbumArt();
+      
+      // Set up periodic updates for album art
+      setInterval(function() {
+        if (document.getElementById('bgm-album-art')) {
+          updateBgmAlbumArt();
+        }
+      }, 1000);
+    });
+
+    // Expose functions for external use
+    window.updateBgmAlbumArt = updateBgmAlbumArt;
+    window.updateBgmPlayButton = updateBgmPlayButton;
+  })();
+
   // Public API
   window.bgmPlayer = {
     init: init,

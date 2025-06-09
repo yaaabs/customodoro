@@ -221,17 +221,109 @@
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .bgm-controls {
-    gap: 5px;
+/* BGM Album Art Section */
+.bgm-album-art-section {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin: 20px 0;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.bgm-album-art-container {
+  flex-shrink: 0;
+}
+
+.bgm-album-art {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  border: 2px solid rgba(139, 95, 191, 0.3);
+}
+
+.bgm-album-art:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  border-color: rgba(139, 95, 191, 0.5);
+}
+
+.bgm-album-art.spinning {
+  animation: bgmAlbumSpin 10s linear infinite;
+}
+
+@keyframes bgmAlbumSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.bgm-album-art-placeholder {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: rgba(139, 95, 191, 0.6);
+  border: 2px solid rgba(139, 95, 191, 0.3);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.bgm-track-display {
+  flex: 1;
+  min-width: 0;
+}
+
+.bgm-current-track {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 4px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bgm-current-artist {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 480px) {
+  .bgm-album-art-section {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
   }
   
-  .bgm-btn-play {
-    margin: 0 10px;
+  .bgm-album-art,
+  .bgm-album-art-placeholder {
+    width: 100px;
+    height: 100px;
   }
   
-  .bgm-equalizer {
-    padding: 0 20px;
+  .bgm-album-art-placeholder {
+    font-size: 28px;
+  }
+  
+  .bgm-current-track {
+    font-size: 15px;
+  }
+  
+  .bgm-current-artist {
+    font-size: 13px;
   }
 }
