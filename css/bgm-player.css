@@ -1,10 +1,10 @@
 /* BGM Player Styles */
 .bgm-player {
-  background: #252525;
+  background-color: rgba(0, 0, 0, 0.15);
   border-radius: 12px;
   padding: 20px;
   margin-top: 15px;
-  border: 1px solid #333;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .bgm-track-info {
@@ -15,55 +15,110 @@
 .bgm-track-title {
   font-size: 16px;
   font-weight: 600;
-  color: #fff;
   margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .bgm-track-artist {
   font-size: 14px;
-  color: #bbb;
+  color: #666;
 }
 
 .bgm-controls {
   display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 12px;
+  align-items: center;
   margin-bottom: 15px;
 }
 
 .bgm-btn {
-  background: #333;
-  border: 1px solid #444;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+  padding: 10px;
   border-radius: 50%;
-  width: 44px;
-  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  color: #fff;
 }
 
 .bgm-btn:hover {
-  background: #444;
-  transform: scale(1.05);
+  color: #8b5fbf;
+  transform: scale(1.1);
 }
 
 .bgm-btn:active {
-  transform: scale(0.98);
+  transform: scale(0.95);
 }
 
 .bgm-btn-play {
-  width: 52px;
-  height: 52px;
-  background: #8b5fbf;
-  border-color: #8b5fbf;
+  background-color: rgba(139, 95, 191, 0.2);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  margin: 0 15px;
 }
 
 .bgm-btn-play:hover {
-  background: #9d71d0;
+  background-color: rgba(139, 95, 191, 0.3);
+}
+
+.bgm-time-display {
+  display: flex;
+  justify-content: center;
+  color: #666;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+/* Updated progress container to support hover circle */
+.bgm-progress-container {
+  height: 4px;
+  background-color: #333;
+  border-radius: 2px;
+  overflow: visible;
+  margin-bottom: 15px;
+  cursor: pointer;
+  position: relative;
+}
+
+.bgm-progress-container:hover {
+  height: 6px;
+}
+
+.bgm-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #8b5fbf, #9d71d0);
+  width: 0%;
+  transition: width 0.3s ease;
+  border-radius: 2px;
+}
+
+/* Add progress circle that appears on hover */
+.bgm-progress-circle {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  background: #ffffff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.bgm-progress-container:hover .bgm-progress-circle {
+  opacity: 1;
+}
+
+.bgm-progress-container:hover .bgm-progress-bar {
+  background: linear-gradient(90deg, #fff, #fff);
 }
 
 .bgm-btn-shuffle {
@@ -71,108 +126,112 @@
 }
 
 .bgm-btn-shuffle.active {
-  background-color: rgba(139, 95, 191, 0.3);
   color: #8b5fbf;
 }
 
-.bgm-btn-shuffle.active:hover {
-  background-color: rgba(139, 95, 191, 0.5);
-}
-
-.bgm-progress-container {
-  margin-bottom: 10px;
-  cursor: pointer;
-}
-
-.bgm-progress-bar {
-  height: 4px;
-  background: #333;
-  border-radius: 2px;
-  overflow: hidden;
-  position: relative;
-}
-
-.bgm-progress-bar::after {
+.bgm-btn-shuffle.active::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  background: #8b5fbf;
-  width: var(--progress, 0%);
-  transition: width 0.3s ease;
-}
-
-.bgm-time-display {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  color: #aaa;
-  font-family: monospace;
-}
-
-#bgm-current-time,
-#bgm-total-time {
-  color: #8b5fbf;
-  font-weight: 600;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  background-color: #8b5fbf;
+  border-radius: 50%;
 }
 
 .bgm-equalizer {
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  gap: 2px;
   height: 20px;
-  margin-top: 10px;
+  padding: 0 50px;
+  margin-top: 15px;
+  gap: 3px;
 }
 
 .bgm-equalizer-bar {
-  width: 3px;
-  background: #8b5fbf;
-  border-radius: 1px;
-  animation: equalizer 0.8s ease-in-out infinite alternate;
+  width: 4px;
+  background-color: #8b5fbf;
+  border-radius: 2px;
+  opacity: 0.6;
+  transform-origin: bottom;
+  animation-duration: 1.5s;
+  animation-iteration-count: infinite;
+  animation-name: none;
 }
 
-.bgm-equalizer-bar:nth-child(1) { animation-delay: 0s; height: 40%; }
-.bgm-equalizer-bar:nth-child(2) { animation-delay: 0.1s; height: 70%; }
-.bgm-equalizer-bar:nth-child(3) { animation-delay: 0.2s; height: 100%; }
-.bgm-equalizer-bar:nth-child(4) { animation-delay: 0.3s; height: 60%; }
-.bgm-equalizer-bar:nth-child(5) { animation-delay: 0.4s; height: 80%; }
-.bgm-equalizer-bar:nth-child(6) { animation-delay: 0.5s; height: 50%; }
+.bgm-equalizer.playing .bgm-equalizer-bar:nth-child(1) {
+  height: 40%;
+  animation-name: equalize;
+  animation-delay: 0s;
+}
 
-@keyframes equalizer {
-  0% { transform: scaleY(0.3); }
+.bgm-equalizer.playing .bgm-equalizer-bar:nth-child(2) {
+  height: 60%;
+  animation-name: equalize;
+  animation-delay: 0.1s;
+}
+
+.bgm-equalizer.playing .bgm-equalizer-bar:nth-child(3) {
+  height: 80%;
+  animation-name: equalize;
+  animation-delay: 0.2s;
+}
+
+.bgm-equalizer.playing .bgm-equalizer-bar:nth-child(4) {
+  height: 70%;
+  animation-name: equalize;
+  animation-delay: 0.15s;
+}
+
+.bgm-equalizer.playing .bgm-equalizer-bar:nth-child(5) {
+  height: 30%;
+  animation-name: equalize;
+  animation-delay: 0.05s;
+}
+
+.bgm-equalizer.playing .bgm-equalizer-bar:nth-child(6) {
+  height: 50%;
+  animation-name: equalize;
+  animation-delay: 0.25s;
+}
+
+@keyframes equalize {
+  0% { transform: scaleY(1); }
+  50% { transform: scaleY(0.5); }
   100% { transform: scaleY(1); }
 }
 
-/* Hide equalizer when not playing */
-.bgm-player:not(.playing) .bgm-equalizer {
-  display: none;
+/* Dark theme adjustments */
+.theme-dark .bgm-player {
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
-/* Show equalizer when playing */
-.bgm-player.playing .bgm-equalizer {
-  display: flex;
+.theme-dark .bgm-track-artist {
+  color: #aaa;
 }
 
+.theme-dark .bgm-time-display {
+  color: #aaa;
+}
+
+.theme-dark .bgm-progress-container {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive adjustments */
 @media (max-width: 768px) {
-  .bgm-player {
-    padding: 15px;
-  }
-  
   .bgm-controls {
-    gap: 8px;
-  }
-  
-  .bgm-btn {
-    width: 40px;
-    height: 40px;
+    gap: 5px;
   }
   
   .bgm-btn-play {
-    width: 48px;
-    height: 48px;
+    margin: 0 10px;
+  }
+  
+  .bgm-equalizer {
+    padding: 0 20px;
   }
 }

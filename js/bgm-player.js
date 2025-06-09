@@ -292,6 +292,16 @@
         const rect = progressContainer.getBoundingClientRect();
         const clickPosition = (e.clientX - rect.left) / rect.width;
         audio.currentTime = clickPosition * audio.duration;
+        
+        // Update progress bar
+        const progress = (clickPosition * 100) + '%';
+        progressBar.style.width = progress;
+        
+        // Update progress circle
+        const progressCircle = document.getElementById('bgm-progress-circle');
+        if (progressCircle) {
+          progressCircle.style.left = progress;
+        }
       });
     }
 
@@ -508,6 +518,13 @@
     // Update total time if needed (in case it wasn't available initially)
     if (totalTimeElement && audio.duration && totalTimeElement.textContent === '0:00') {
       totalTimeElement.textContent = formatTime(audio.duration);
+    }
+    
+    // Update progress circle position
+    const progressCircle = document.getElementById('bgm-progress-circle');
+    if (progressCircle) {
+      const progress = (audio.currentTime / audio.duration) * 100;
+      progressCircle.style.left = progress + '%';
     }
   }
 
