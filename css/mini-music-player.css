@@ -273,7 +273,7 @@ input:checked + .mini-slider-toggle:before {
 }
 
 .mini-progress-container:hover .mini-progress-bar {
-  background: linear-gradient(90deg, #1db954, #1ed760);
+  background: linear-gradient(90deg, #fff, #fff);
 }
 
 .mini-music-footer {
