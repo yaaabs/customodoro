@@ -28,17 +28,18 @@
     
     // Other albums (using niki.png as default for the rest)
     'Indigo': 'images/album-art/hitc2.png',
-    'La La Lost You - Acoustic': 'images/album-art/niki.png',
+    'La La Lost You - Acoustic': 'images/album-art/nas_hitc2.png',
     'La La Lost You': 'images/album-art/hitc2.png',
-    'Split': 'images/album-art/niki.png',
+    'Split': 'images/album-art/split.png',
     'Vintage': 'images/album-art/zephyr.png',
     'I Like U': 'images/album-art/i like u.png',
     'Lose': 'images/album-art/moonchild.png',
-    'lowkey': 'images/album-art/niki.png',
+    'lowkey': 'images/album-art/lowkey.png',
     'Newsflash!': 'images/album-art/zephyr.png',
     'Plot Twist': 'images/album-art/moonchild.png',
-    'See U Never': 'images/album-art/niki.png',
-    'Selene': 'images/album-art/moonchild.png',    'urs': 'images/album-art/niki.png'
+    'See U Never': 'images/album-art/see u never.png',
+    'Selene': 'images/album-art/moonchild.png',    
+    'urs': 'images/album-art/wttd.png'
   };
 
   // Function to update progress circle position
