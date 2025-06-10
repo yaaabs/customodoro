@@ -56,8 +56,8 @@
     playlists = {
       'deep-focus': [
         { title: 'Clear Skies', artist: 'Aqua Scholar', src: 'audio/BGM/Deep focus study playlist/Clear Skies - Aqua Scholar.mp3' },
-        { title: 'Gentle Ocean', artist: 'Sonic Strokes', src: 'audio/BGM/Deep focus study playlist/Gentle Ocean - Sonic Strokes.mp3' },
-        { title: 'SVenusian Vespers', artist: 'Nahh Chill', src: 'audio/BGM/Deep focus study playlist/SVenusian Vespers.mp3' }
+        { title: 'Gentle Ocean', artist: 'Sonic Strokes, Nahh Chill, Aqua Scholar', src: 'audio/BGM/Deep focus study playlist/Gentle Ocean - Sonic Strokes.mp3' },
+        { title: 'Venusian Vespers', artist: 'Nahh Chill, Aqua Scholar', src: 'audio/BGM/Deep focus study playlist/Venusian Vespers.mp3' }
       ],
       'ambient-long': [
         { title: 'Lofi Hip-hop Chill Beats', artist: 'Various Artists', src: 'audio/BGM/Lofi Hip-hop Chill Beats.mp3' }
@@ -952,7 +952,12 @@
   function getTrackAlbumArt(track) {
     // Track-specific album art mapping
     const TRACK_ALBUM_ART_MAP = {
-      // Nicole album tracks
+
+      'Clear Skies': 'images/album-art/clear skies.jpg',
+      'Gentle Ocean': 'images/album-art/gentle ocean.jpg',
+      'Venusian Vespers': 'images/album-art/venusian vespers.jpg',
+
+      // Nicole Playlist tracks
       'Anaheim': 'images/album-art/nicole.jpg',
       'Autumn': 'images/album-art/nicole.jpg',
       'Backburner': 'images/album-art/nicole.jpg',
@@ -962,12 +967,9 @@
       'Oceans & Engines': 'images/album-art/nicole.jpg',
       'Take A Chance With Me': 'images/album-art/nicole.jpg',
 
-      // Individual album tracks
       'Chilly': 'images/album-art/chilly.jpg',
       'Every Summertime': 'images/album-art/every summertime.jpg',
       'Hallway Weather': 'images/album-art/hallway weather.jpg',
-      
-      // Other albums
       'Indigo': 'images/album-art/hitc2.jpg',
       'La La Lost You - Acoustic': 'images/album-art/nas_hitc2.jpg',
       'La La Lost You': 'images/album-art/hitc2.jpg',
@@ -981,12 +983,13 @@
       'See U Never': 'images/album-art/see u never.jpg',
       'Selene': 'images/album-art/moonchild.jpg',    
       'urs': 'images/album-art/wttd.jpg'
+
     };
     
     // Playlist-based album art mapping (fallback)
     const PLAYLIST_ALBUM_ART_MAP = {
       'deep-focus': 'images/album-art/focus.png',
-      'ambient-long': 'images/album-art/ambient.png',
+      'ambient-long': 'images/album-art/ambient.jpg',
       'smile-demons': 'images/album-art/niki.png'
     };
     
@@ -1011,41 +1014,45 @@
     // Album art mapping (copied from mini music player)
     const ALBUM_ART_MAP = {
       'deep-focus': 'images/album-art/focus.png',
-      'ambient-long': 'images/album-art/ambient.png',
+      'ambient-long': 'images/album-art/ambient.jpg',
       'smile-demons': 'images/album-art/niki.png'
     };
 
     // Track-specific album art mapping (copied from mini music player)
     const TRACK_ALBUM_ART_MAP = {
-      // Nicole album tracks
-      'Anaheim': 'images/album-art/nicole.png',
-      'Autumn': 'images/album-art/nicole.png',
-      'Backburner': 'images/album-art/nicole.png',
-      'Before': 'images/album-art/nicole.png',
-      'Facebook Friends': 'images/album-art/nicole.png',
-      'High School in Jakarta': 'images/album-art/nicole.png',
-      'Oceans & Engines': 'images/album-art/nicole.png',
-      'Take A Chance With Me': 'images/album-art/nicole.png',
 
-      // Individual album tracks
-      'Chilly': 'images/album-art/chilly.png',
-      'Every Summertime': 'images/album-art/every summertime.png',
-      'Hallway Weather': 'images/album-art/hallway weather.png',
-      
-      // Other albums
-      'Indigo': 'images/album-art/hitc2.png',
-      'La La Lost You - Acoustic': 'images/album-art/nas_hitc2.png',
-      'La La Lost You': 'images/album-art/hitc2.png',
-      'Split': 'images/album-art/split.png',
-      'Vintage': 'images/album-art/zephyr.png',
-      'I Like U': 'images/album-art/i like u.png',
-      'Lose': 'images/album-art/moonchild.png',
-      'lowkey': 'images/album-art/lowkey.png',
-      'Newsflash!': 'images/album-art/zephyr.png',
-      'Plot Twist': 'images/album-art/moonchild.png',
-      'See U Never': 'images/album-art/see u never.png',
-      'Selene': 'images/album-art/moonchild.png',    
-      'urs': 'images/album-art/wttd.png'
+      // Deep Focus tracks
+      'Clear Skies': 'images/album-art/clear skies.jpg',
+      'Gentle Ocean': 'images/album-art/gentle ocean.jpg',
+      'Venusian Vespers': 'images/album-art/venusian vespers.jpg',
+
+      // Nicole Playlist tracks
+      'Anaheim': 'images/album-art/nicole.jpg',
+      'Autumn': 'images/album-art/nicole.jpg',
+      'Backburner': 'images/album-art/nicole.jpg',
+      'Before': 'images/album-art/nicole.jpg',
+      'Facebook Friends': 'images/album-art/nicole.jpg',
+      'High School in Jakarta': 'images/album-art/nicole.jpg',
+      'Oceans & Engines': 'images/album-art/nicole.jpg',
+      'Take A Chance With Me': 'images/album-art/nicole.jpg',
+
+      'Chilly': 'images/album-art/chilly.jpg',
+      'Every Summertime': 'images/album-art/every summertime.jpg',
+      'Hallway Weather': 'images/album-art/hallway weather.jpg',
+      'Indigo': 'images/album-art/hitc2.jpg',
+      'La La Lost You - Acoustic': 'images/album-art/nas_hitc2.jpg',
+      'La La Lost You': 'images/album-art/hitc2.jpg',
+      'Split': 'images/album-art/split.jpg',
+      'Vintage': 'images/album-art/zephyr.jpg',
+      'I Like U': 'images/album-art/i like u.jpg',
+      'Lose': 'images/album-art/moonchild.jpg',
+      'lowkey': 'images/album-art/lowkey.jpg',
+      'Newsflash!': 'images/album-art/zephyr.jpg',
+      'Plot Twist': 'images/album-art/moonchild.jpg',
+      'See U Never': 'images/album-art/see u never.jpg',
+      'Selene': 'images/album-art/moonchild.jpg',    
+      'urs': 'images/album-art/wttd.jpg'
+
     };
 
     // Get album art path based on current track or playlist
