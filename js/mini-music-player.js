@@ -13,33 +13,33 @@
   const TRACK_ALBUM_ART_MAP = {
     // Nicole album tracks
     'Anaheim': 'images/album-art/nicole.jpg',
-    'Autumn': 'images/album-art/nicole.png',
-    'Backburner': 'images/album-art/nicole.png',
-    'Before': 'images/album-art/nicole.png',
-    'Facebook Friends': 'images/album-art/nicole.png',
-    'High School in Jakarta': 'images/album-art/nicole.png',
-    'Oceans & Engines': 'images/album-art/nicole.png',
-    'Take A Chance With Me': 'images/album-art/nicole.png',
+    'Autumn': 'images/album-art/nicole.jpg',
+    'Backburner': 'images/album-art/nicole.jpg',
+    'Before': 'images/album-art/nicole.jpg',
+    'Facebook Friends': 'images/album-art/nicole.jpg',
+    'High School in Jakarta': 'images/album-art/nicole.jpg',
+    'Oceans & Engines': 'images/album-art/nicole.jpg',
+    'Take A Chance With Me': 'images/album-art/nicole.jpg',
 
     // Individual album tracks
-    'Chilly': 'images/album-art/chilly.png',
-    'Every Summertime': 'images/album-art/every summertime.png',
-    'Hallway Weather': 'images/album-art/hallway weather.png',
+    'Chilly': 'images/album-art/chilly.jpg',
+    'Every Summertime': 'images/album-art/every summertime.jpg',
+    'Hallway Weather': 'images/album-art/hallway weather.jpg',
     
     // Other albums (using niki.png as default for the rest)
-    'Indigo': 'images/album-art/hitc2.png',
-    'La La Lost You - Acoustic': 'images/album-art/nas_hitc2.png',
-    'La La Lost You': 'images/album-art/hitc2.png',
-    'Split': 'images/album-art/split.png',
-    'Vintage': 'images/album-art/zephyr.png',
-    'I Like U': 'images/album-art/i like u.png',
-    'Lose': 'images/album-art/moonchild.png',
-    'lowkey': 'images/album-art/lowkey.png',
-    'Newsflash!': 'images/album-art/zephyr.png',
-    'Plot Twist': 'images/album-art/moonchild.png',
-    'See U Never': 'images/album-art/see u never.png',
-    'Selene': 'images/album-art/moonchild.png',    
-    'urs': 'images/album-art/wttd.png'
+    'Indigo': 'images/album-art/hitc2.jpg',
+    'La La Lost You - Acoustic': 'images/album-art/nas_hitc2.jpg',
+    'La La Lost You': 'images/album-art/hitc2.jpg',
+    'Split': 'images/album-art/split.jpg',
+    'Vintage': 'images/album-art/zephyr.jpg',
+    'I Like U': 'images/album-art/i like u.jpg',
+    'Lose': 'images/album-art/moonchild.jpg',
+    'lowkey': 'images/album-art/lowkey.jpg',
+    'Newsflash!': 'images/album-art/zephyr.jpg',
+    'Plot Twist': 'images/album-art/moonchild.jpg',
+    'See U Never': 'images/album-art/see u never.jpg',
+    'Selene': 'images/album-art/moonchild.jpg',    
+    'urs': 'images/album-art/wttd.jpg'
   };
 
   // Function to update progress circle position
