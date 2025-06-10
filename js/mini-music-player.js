@@ -12,7 +12,7 @@
   // Track-specific album art mapping
   const TRACK_ALBUM_ART_MAP = {
     // Nicole album tracks
-    'Anaheim': 'images/album-art/nicole.png',
+    'Anaheim': 'images/album-art/nicole.jpg',
     'Autumn': 'images/album-art/nicole.png',
     'Backburner': 'images/album-art/nicole.png',
     'Before': 'images/album-art/nicole.png',

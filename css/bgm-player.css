@@ -504,10 +504,61 @@
   color: #8b5fbf;
 }
 
+/* Track Album Art Styles */
+.track-album-art {
+  width: 40px;
+  height: 40px;
+  margin-left: 12px;
+  margin-right: 8px;
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+}
+
+.track-art-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+  transition: transform 0.2s ease;
+}
+
+.track-item:hover .track-art-image {
+  transform: scale(1.05);
+}
+
+.track-art-placeholder {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.track-item.active .track-album-art {
+  box-shadow: 0 0 0 2px #8b5fbf;
+}
+
+.track-item.playing .track-art-image {
+  animation: albumPulse 2s infinite ease-in-out;
+}
+
+@keyframes albumPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
 .track-item-info {
   flex: 1;
   min-width: 0;
-  margin-left: 12px;
+  margin-left: 0; /* Removed margin since album art provides spacing */
 }
 
 .track-item-title {
@@ -682,9 +733,15 @@
   .track-list-container {
     max-height: 250px;
   }
-  
-  .track-item {
+    .track-item {
     padding: 10px 12px;
+  }
+  
+  .track-album-art {
+    width: 36px;
+    height: 36px;
+    margin-left: 8px;
+    margin-right: 6px;
   }
   
   .track-item-title {

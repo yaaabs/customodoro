@@ -792,7 +792,7 @@
     
     updateActiveTrack();
   }
-    function createTrackItem(track, displayIndex) {
+  function createTrackItem(track, displayIndex) {
     const trackItem = document.createElement('div');
     trackItem.className = 'track-item';
     trackItem.dataset.trackIndex = track.index;
@@ -801,6 +801,9 @@
     const searchQuery = trackSearchInput ? trackSearchInput.value : '';
     const highlightedTitle = highlightSearchText(track.title, searchQuery);
     const highlightedArtist = highlightSearchText(track.artist, searchQuery);
+    
+    // Get album art for this track
+    const albumArtPath = getTrackAlbumArt(track);
     
     trackItem.innerHTML = `
       <div class="track-playing-indicator">
@@ -812,6 +815,12 @@
         </div>
       </div>
       <div class="track-number">${displayIndex + 1}</div>
+      <div class="track-album-art">
+        ${albumArtPath ? 
+          `<img src="${albumArtPath}" alt="${track.title} album art" class="track-art-image">` : 
+          `<div class="track-art-placeholder">🎵</div>`
+        }
+      </div>
       <div class="track-item-info">
         <div class="track-item-title">${highlightedTitle}</div>
         <div class="track-item-artist">${highlightedArtist}</div>
@@ -932,12 +941,69 @@
     // Update header to show no results
     updateTrackListHeader(0, allTracks.length);
   }
-  
-  function highlightSearchText(text, query) {
+    function highlightSearchText(text, query) {
     if (!query.trim()) return text;
     
     const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
     return text.replace(regex, '<span class="highlight">$1</span>');
+  }
+  
+  // Get album art for a specific track
+  function getTrackAlbumArt(track) {
+    // Track-specific album art mapping
+    const TRACK_ALBUM_ART_MAP = {
+      // Nicole album tracks
+      'Anaheim': 'images/album-art/nicole.jpg',
+      'Autumn': 'images/album-art/nicole.png',
+      'Backburner': 'images/album-art/nicole.png',
+      'Before': 'images/album-art/nicole.png',
+      'Facebook Friends': 'images/album-art/nicole.png',
+      'High School in Jakarta': 'images/album-art/nicole.png',
+      'Oceans & Engines': 'images/album-art/nicole.png',
+      'Take A Chance With Me': 'images/album-art/nicole.png',
+
+      // Individual album tracks
+      'Chilly': 'images/album-art/chilly.png',
+      'Every Summertime': 'images/album-art/every summertime.png',
+      'Hallway Weather': 'images/album-art/hallway weather.png',
+      
+      // Other albums
+      'Indigo': 'images/album-art/hitc2.png',
+      'La La Lost You - Acoustic': 'images/album-art/nas_hitc2.png',
+      'La La Lost You': 'images/album-art/hitc2.png',
+      'Split': 'images/album-art/split.png',
+      'Vintage': 'images/album-art/zephyr.png',
+      'I Like U': 'images/album-art/i like u.png',
+      'Lose': 'images/album-art/moonchild.png',
+      'lowkey': 'images/album-art/lowkey.png',
+      'Newsflash!': 'images/album-art/zephyr.png',
+      'Plot Twist': 'images/album-art/moonchild.png',
+      'See U Never': 'images/album-art/see u never.png',
+      'Selene': 'images/album-art/moonchild.png',    
+      'urs': 'images/album-art/wttd.png'
+    };
+    
+    // Playlist-based album art mapping (fallback)
+    const PLAYLIST_ALBUM_ART_MAP = {
+      'deep-focus': 'images/album-art/focus.png',
+      'ambient-long': 'images/album-art/ambient.png',
+      'smile-demons': 'images/album-art/niki.png'
+    };
+    
+    // First try track-specific album art
+    if (track && track.title) {
+      const trackAlbumArt = TRACK_ALBUM_ART_MAP[track.title];
+      if (trackAlbumArt) {
+        return trackAlbumArt;
+      }
+    }
+    
+    // Fallback to playlist-based album art
+    if (track && track.playlistName) {
+      return PLAYLIST_ALBUM_ART_MAP[track.playlistName];
+    }
+    
+    return null;
   }
 
   // BGM Player functionality
