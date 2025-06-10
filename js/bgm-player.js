@@ -6,6 +6,8 @@
   let playBtn, prevBtn, nextBtn, playIcon, pauseIcon;
   let progressBar, progressContainer, currentTimeElement, totalTimeElement;
   let shuffleBtn; // Shuffle button element
+  // Track list elements
+  let trackListContainer, trackList, trackListEmpty, trackSearchInput;
   // State
   let currentPlaylist = null;
   let currentPlaylistName = 'deep-focus'; // Track current playlist name
@@ -15,6 +17,8 @@
   let isBGMEnabled = true; // Default to true, synced with localStorage
   let isShuffleMode = false; // Shuffle state
   let originalPlaylist = []; // Store original playlist order
+  let allTracks = []; // Store all tracks for search functionality
+  let filteredTracks = []; // Store filtered tracks based on search
 
   // Initialize BGM Player
   function init() {
@@ -32,12 +36,21 @@
     nextBtn = document.getElementById('bgm-next-btn');
     playIcon = document.getElementById('bgm-play-icon');
     pauseIcon = document.getElementById('bgm-pause-icon');
-    
-    progressBar = document.getElementById('bgm-progress-bar');
+      progressBar = document.getElementById('bgm-progress-bar');
     progressContainer = document.getElementById('bgm-progress-container');
     currentTimeElement = document.getElementById('bgm-current-time');
     totalTimeElement = document.getElementById('bgm-total-time');
     shuffleBtn = document.getElementById('bgm-shuffle-btn'); // New shuffle button
+    
+    // Track list elements
+    trackListContainer = document.getElementById('track-list-container');
+    trackList = document.getElementById('track-list');
+    trackListEmpty = document.getElementById('track-list-empty');
+    trackSearchInput = document.getElementById('track-search-input');
+    trackListContainer = document.getElementById('track-list-container');
+    trackList = document.getElementById('track-list');
+    trackListEmpty = document.getElementById('track-list-empty');
+    trackSearchInput = document.getElementById('track-search-input');
 
     // Load playlists with the actual audio files
     playlists = {
@@ -178,11 +191,11 @@
     
     // Setup event listeners
     setupEventListeners();
-    
-    // Initial UI update
+      // Initial UI update
     updateTrackDisplay();
     updatePlayButtonIcon(); // Ensure correct icon on load
     updateVolumeDisplay();
+    populateTrackList(currentPlaylistName); // Initialize track list
 
     // Set initial BGM enabled state
     setBGMEnabled(bgmToggle.checked);
@@ -221,7 +234,49 @@
         currentTrackIndex = 0;
         localStorage.setItem('bgmPlaylist', this.value);
         loadTrack(currentTrackIndex);
+        populateTrackList(this.value); // Update track list
         if (isPlaying) playAudio(); // If it was playing, continue with new playlist
+      });
+    }    // Track search functionality
+    if (trackSearchInput) {
+      const trackSearchClear = document.getElementById('track-search-clear');
+      
+      trackSearchInput.addEventListener('input', function() {
+        const query = this.value;
+        searchTracks(query);
+        
+        // Show/hide clear button
+        if (trackSearchClear) {
+          trackSearchClear.style.display = query.length > 0 ? 'flex' : 'none';
+        }
+      });
+      
+      // Clear button functionality
+      if (trackSearchClear) {
+        trackSearchClear.addEventListener('click', function() {
+          trackSearchInput.value = '';
+          searchTracks('');
+          this.style.display = 'none';
+          trackSearchInput.focus();
+        });
+      }
+      
+      // Add keyboard navigation for search
+      trackSearchInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+          // Play first track in filtered results
+          if (filteredTracks.length > 0) {
+            playTrackFromList(filteredTracks[0].index);
+          }
+        } else if (e.key === 'Escape') {
+          // Clear search
+          this.value = '';
+          searchTracks('');
+          if (trackSearchClear) {
+            trackSearchClear.style.display = 'none';
+          }
+          this.blur();
+        }
       });
     }
 
@@ -264,11 +319,11 @@
     
     audio.addEventListener('timeupdate', updateProgress);
     audio.addEventListener('ended', nextTrackAuto);
-    
-    // Play/pause state change events
+      // Play/pause state change events
     audio.addEventListener('play', function() {
       isPlaying = true;
       updatePlayButtonIcon();
+      updateActiveTrack(); // Update track list UI
       // Sync with mini player if open
       if (window.miniMusicPlayer && typeof window.miniMusicPlayer.sync === 'function') {
         window.miniMusicPlayer.sync();
@@ -278,6 +333,7 @@
     audio.addEventListener('pause', function() {
       isPlaying = false;
       updatePlayButtonIcon();
+      updateActiveTrack(); // Update track list UI
       // Sync with mini player if open
       if (window.miniMusicPlayer && typeof window.miniMusicPlayer.sync === 'function') {
         window.miniMusicPlayer.sync();
@@ -362,7 +418,6 @@
       window.miniMusicPlayer.sync();
     }
   }
-
   // Load a track
   function loadTrack(index) {
     if (!currentPlaylist || index < 0 || index >= currentPlaylist.length) {
@@ -384,6 +439,9 @@
     if (currentTimeElement) currentTimeElement.textContent = '0:00';
     if (totalTimeElement) totalTimeElement.textContent = '0:00';
     if (progressBar) progressBar.style.width = '0%';
+    
+    // Update track list UI
+    updateActiveTrack();
     
     // Once metadata is loaded, the loadedmetadata event will update the duration
   }
@@ -696,6 +754,190 @@
       isPlaying = false;
       updatePlayButton();
     }
+  }
+  // Track list management functions
+  function populateTrackList(playlistName) {
+    if (!trackList || !trackListContainer) return;
+    
+    const playlist = playlists[playlistName];
+    if (!playlist || playlist.length === 0) {
+      showEmptyTrackList();
+      return;
+    }
+    
+    // Store all tracks for search functionality
+    allTracks = playlist.map((track, index) => ({
+      ...track,
+      index: index,
+      playlistName: playlistName
+    }));
+    
+    filteredTracks = [...allTracks];
+    renderTrackList();
+    showTrackList();
+    
+    // Update track count in header
+    updateTrackListHeader(playlist.length, playlist.length);
+  }
+  
+  function renderTrackList() {
+    if (!trackList) return;
+    
+    trackList.innerHTML = '';
+    
+    filteredTracks.forEach((track, displayIndex) => {
+      const trackItem = createTrackItem(track, displayIndex);
+      trackList.appendChild(trackItem);
+    });
+    
+    updateActiveTrack();
+  }
+    function createTrackItem(track, displayIndex) {
+    const trackItem = document.createElement('div');
+    trackItem.className = 'track-item';
+    trackItem.dataset.trackIndex = track.index;
+    
+    // Get search query for highlighting
+    const searchQuery = trackSearchInput ? trackSearchInput.value : '';
+    const highlightedTitle = highlightSearchText(track.title, searchQuery);
+    const highlightedArtist = highlightSearchText(track.artist, searchQuery);
+    
+    trackItem.innerHTML = `
+      <div class="track-playing-indicator">
+        <div class="track-playing-bars">
+          <div class="track-playing-bar"></div>
+          <div class="track-playing-bar"></div>
+          <div class="track-playing-bar"></div>
+          <div class="track-playing-bar"></div>
+        </div>
+      </div>
+      <div class="track-number">${displayIndex + 1}</div>
+      <div class="track-item-info">
+        <div class="track-item-title">${highlightedTitle}</div>
+        <div class="track-item-artist">${highlightedArtist}</div>
+      </div>
+      <div class="track-item-actions">
+        <button class="track-action-btn track-play-btn" title="Play track">
+          <svg viewBox="0 0 24 24" width="16" height="16">
+            <path fill="currentColor" d="M8,5.14V19.14L19,12.14L8,5.14Z" />
+          </svg>
+        </button>
+      </div>
+    `;
+      // Add click handlers
+    trackItem.addEventListener('click', function(e) {
+      if (e.target.closest('.track-action-btn')) return;
+      playTrackFromList(track.index);
+    });
+    
+    // Add double-click for instant play
+    trackItem.addEventListener('dblclick', function(e) {
+      e.preventDefault();
+      playTrackFromList(track.index);
+    });
+    
+    const playBtn = trackItem.querySelector('.track-play-btn');
+    if (playBtn) {
+      playBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        playTrackFromList(track.index);
+      });
+    }
+    
+    return trackItem;
+  }
+  
+  function playTrackFromList(trackIndex) {
+    if (!isBGMEnabled || !currentPlaylist || trackIndex < 0 || trackIndex >= currentPlaylist.length) {
+      return;
+    }
+    
+    currentTrackIndex = trackIndex;
+    loadTrack(trackIndex);
+    playAudio();
+    updateActiveTrack();
+  }
+  
+  function updateActiveTrack() {
+    if (!trackList) return;
+    
+    const trackItems = trackList.querySelectorAll('.track-item');
+    
+    trackItems.forEach(item => {
+      const itemIndex = parseInt(item.dataset.trackIndex);
+      const isActive = itemIndex === currentTrackIndex;
+      const isPlaying = isActive && window.bgmPlayer && window.bgmPlayer.isPlaying();
+      
+      item.classList.toggle('active', isActive);
+      item.classList.toggle('playing', isPlaying);
+    });
+  }
+  
+  function showTrackList() {
+    if (trackListEmpty) trackListEmpty.style.display = 'none';
+    if (trackList) trackList.classList.add('show');
+  }
+  
+  function showEmptyTrackList() {
+    if (trackList) trackList.classList.remove('show');
+    if (trackListEmpty) trackListEmpty.style.display = 'flex';
+  }
+    function searchTracks(query) {
+    if (!query.trim()) {
+      filteredTracks = [...allTracks];
+    } else {
+      const searchTerm = query.toLowerCase();
+      filteredTracks = allTracks.filter(track => 
+        track.title.toLowerCase().includes(searchTerm) ||
+        track.artist.toLowerCase().includes(searchTerm)
+      );
+    }
+    
+    if (filteredTracks.length === 0) {
+      showNoResults();
+    } else {
+      renderTrackList();
+      showTrackList();
+    }
+    
+    // Update header with search results count
+    updateTrackListHeader(filteredTracks.length, allTracks.length);
+  }
+  
+  function updateTrackListHeader(showing, total) {
+    const trackListTitle = document.querySelector('.track-list-title');
+    if (trackListTitle) {
+      if (showing === total) {
+        trackListTitle.textContent = `Track List (${total})`;
+      } else {
+        trackListTitle.textContent = `Track List (${showing} of ${total})`;
+      }
+    }
+  }
+    function showNoResults() {
+    if (!trackList) return;
+    
+    trackList.innerHTML = `
+      <div class="track-list-no-results">
+        <svg viewBox="0 0 24 24" width="32" height="32">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <div>No tracks found</div>
+      </div>
+    `;
+    trackList.classList.add('show');
+    if (trackListEmpty) trackListEmpty.style.display = 'none';
+    
+    // Update header to show no results
+    updateTrackListHeader(0, allTracks.length);
+  }
+  
+  function highlightSearchText(text, query) {
+    if (!query.trim()) return text;
+    
+    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    return text.replace(regex, '<span class="highlight">$1</span>');
   }
 
   // BGM Player functionality

@@ -301,29 +301,422 @@
   text-overflow: ellipsis;
 }
 
-/* Mobile responsiveness */
-@media (max-width: 480px) {
-  .bgm-album-art-section {
+/* Track List Section */
+.bgm-track-list-section {
+  margin: 20px 0;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.track-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.track-list-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.track-search-container {
+  position: relative;
+  max-width: 250px;
+  flex: 1;
+  margin-left: 20px;
+}
+
+.track-search-input {
+  width: 100%;
+  padding: 8px 12px 8px 35px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  color: #ffffff;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+.track-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.track-search-input:focus {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(139, 95, 191, 0.6);
+  box-shadow: 0 0 0 2px rgba(139, 95, 191, 0.2);
+}
+
+.track-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.track-search-clear {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.track-search-clear:hover {
+  color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.track-search-clear svg {
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.track-list-container {
+  position: relative;
+  min-height: 200px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* Custom scrollbar for track list */
+.track-list-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.track-list-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.track-list-container::-webkit-scrollbar-thumb {
+  background: rgba(139, 95, 191, 0.4);
+  border-radius: 3px;
+}
+
+.track-list-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 95, 191, 0.6);
+}
+
+.track-list-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 120px;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+  text-align: center;
+}
+
+.track-list {
+  display: none;
+}
+
+.track-list.show {
+  display: block;
+}
+
+.track-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  margin-bottom: 2px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  background: transparent;
+}
+
+.track-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateX(2px);
+}
+
+.track-item.active {
+  background: rgba(139, 95, 191, 0.15);
+  border-left: 3px solid #8b5fbf;
+}
+
+.track-item.active::before {
+  content: '';
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  background: #8b5fbf;
+  border-radius: 50%;
+  animation: nowPlayingPulse 2s infinite;
+}
+
+@keyframes nowPlayingPulse {
+  0%, 100% { opacity: 1; transform: translateY(-50%) scale(1); }
+  50% { opacity: 0.5; transform: translateY(-50%) scale(1.2); }
+}
+
+.track-item.playing {
+  background: rgba(139, 95, 191, 0.2);
+}
+
+.track-item.playing .track-item-title {
+  color: #8b5fbf;
+}
+
+.track-number {
+  min-width: 25px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+  font-weight: 500;
+}
+
+.track-item.active .track-number {
+  color: #8b5fbf;
+}
+
+.track-item-info {
+  flex: 1;
+  min-width: 0;
+  margin-left: 12px;
+}
+
+.track-item-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.2s ease;
+}
+
+.track-item-artist {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.track-item:hover .track-item-actions {
+  opacity: 1;
+}
+
+.track-item.active .track-item-actions {
+  opacity: 1;
+}
+
+.track-action-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.track-action-btn:hover {
+  color: #8b5fbf;
+  background: rgba(139, 95, 191, 0.1);
+}
+
+.track-action-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Playing indicator */
+.track-playing-indicator {
+  display: none;
+  width: 14px;
+  height: 14px;
+  margin-right: 8px;
+}
+
+.track-item.playing .track-playing-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.track-item.playing .track-number {
+  display: none;
+}
+
+.track-playing-bars {
+  display: flex;
+  align-items: end;
+  height: 12px;
+  gap: 1px;
+}
+
+.track-playing-bar {
+  width: 2px;
+  background: #8b5fbf;
+  border-radius: 1px;
+  animation: playingBars 1.5s infinite ease-in-out;
+}
+
+.track-playing-bar:nth-child(1) {
+  height: 60%;
+  animation-delay: 0s;
+}
+
+.track-playing-bar:nth-child(2) {
+  height: 100%;
+  animation-delay: 0.3s;
+}
+
+.track-playing-bar:nth-child(3) {
+  height: 40%;
+  animation-delay: 0.6s;
+}
+
+.track-playing-bar:nth-child(4) {
+  height: 80%;
+  animation-delay: 0.9s;
+}
+
+@keyframes playingBars {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.3); }
+}
+
+/* Search highlighting */
+.track-item-title .highlight,
+.track-item-artist .highlight {
+  background: rgba(255, 255, 0, 0.3);
+  color: #ffff00;
+  padding: 1px 2px;
+  border-radius: 2px;
+}
+
+/* No results state */
+.track-list-no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 120px;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+}
+
+.track-list-no-results svg {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 8px;
+  opacity: 0.5;
+}
+
+/* Dark theme adjustments */
+.theme-dark .bgm-track-list-section {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.theme-dark .track-search-input {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.theme-dark .track-search-input:focus {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .track-list-header {
     flex-direction: column;
-    text-align: center;
     gap: 15px;
+    align-items: stretch;
   }
   
-  .bgm-album-art,
-  .bgm-album-art-placeholder {
-    width: 100px;
-    height: 100px;
+  .track-search-container {
+    max-width: none;
+    margin-left: 0;
   }
   
-  .bgm-album-art-placeholder {
-    font-size: 28px;
+  .track-list-container {
+    max-height: 250px;
   }
   
-  .bgm-current-track {
-    font-size: 15px;
+  .track-item {
+    padding: 10px 12px;
   }
   
-  .bgm-current-artist {
+  .track-item-title {
     font-size: 13px;
+  }
+  
+  .track-item-artist {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .bgm-track-list-section {
+    padding: 15px;
+  }
+  
+  .track-list-title {
+    font-size: 16px;
+  }
+  
+  .track-search-input {
+    font-size: 13px;
+    padding: 7px 10px 7px 30px;
+  }
+  
+  .track-search-icon {
+    left: 10px;
+    width: 14px;
+    height: 14px;
+  }
+  
+  .track-list-container {
+    max-height: 200px;
   }
 }

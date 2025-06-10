@@ -321,7 +321,33 @@
                 <div class="bgm-current-artist" id="bgm-current-artist">Select a playlist and press play</div>
               </div>
             </div>
-            
+              <!-- Track List Section -->
+            <div class="bgm-track-list-section">
+              <div class="track-list-header">
+                <h4 class="track-list-title">Track List</h4>                <div class="track-search-container">
+                  <input type="text" class="track-search-input" id="track-search-input" placeholder="Search tracks...">
+                  <svg class="track-search-icon" viewBox="0 0 24 24" width="16" height="16">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                  </svg>
+                  <button class="track-search-clear" id="track-search-clear" style="display: none;" title="Clear search">
+                    <svg viewBox="0 0 24 24" width="16" height="16">
+                      <path d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="track-list-container" id="track-list-container">
+                <div class="track-list-empty" id="track-list-empty">
+                  Select a playlist to view tracks
+                </div>
+                <div class="track-list" id="track-list">
+                  <!-- Tracks will be populated dynamically -->
+                </div>
+              </div>
+            </div>
+
             <div class="bgm-player">
               <div class="bgm-track-info">
                 <div class="bgm-track-title" id="bgm-track-title">Select a playlist</div>
