@@ -1,220 +1,743 @@
-/* Burn-Up Time Tracker Styles */
+/* Enhanced base styling with better defaults */
 .burnup-tracker {
   margin: 20px 0;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(3px);
-  border-radius: 12px;
-  padding: 15px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px) saturate(140%);
+  border-radius: 16px;
+  padding: 18px;
+  border: 1px solid rgba(139, 95, 191, 0.25);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 
+    0 6px 24px rgba(0, 0, 0, 0.12),
+    0 2px 8px rgba(139, 95, 191, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* Subtle gradient overlay for depth */
+.burnup-tracker::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(139, 95, 191, 0.1) 50%, 
+    transparent 100%);
+  transition: left 0.6s ease;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .burnup-tracker.active {
-  background: rgba(139, 95, 191, 0.1);
-  border-color: rgba(139, 95, 191, 0.3);
-  box-shadow: 0 4px 15px rgba(139, 95, 191, 0.1);
+  background: rgba(139, 95, 191, 0.12);
+  border-color: rgba(139, 95, 191, 0.45);
+  box-shadow: 
+    0 8px 32px rgba(139, 95, 191, 0.25),
+    0 2px 12px rgba(168, 85, 247, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.burnup-tracker.active::before {
+  left: 100%;
 }
 
 .burnup-header {
   display: flex;
-  justify-content: center;
-  margin-bottom: 12px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 2;
 }
 
 .burnup-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.8);
-  letter-spacing: 0.5px;
+  font-size: 13px;
+  font-weight: 700;
+  color: rgba(139, 95, 191, 0.95);
+  letter-spacing: 1px;
   text-transform: uppercase;
+  position: relative;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.burnup-title::before {
+  content: '●';
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #8b5fbf;
+  font-size: 8px;
+  animation: pulse-dot 2s infinite ease-in-out;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.7; transform: translateY(-50%) scale(1); }
+  50% { opacity: 1; transform: translateY(-50%) scale(1.15); }
+}
+
+.burnup-status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+  animation: status-glow 2.5s infinite ease-in-out;
+}
+
+@keyframes status-glow {
+  0%, 100% { 
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.7);
+    transform: scale(1.1);
+  }
 }
 
 .burnup-progress-container {
   width: 100%;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  margin-bottom: 12px;
+  height: 10px;
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 6px;
+  margin-bottom: 14px;
   overflow: hidden;
   position: relative;
+  border: 1px solid rgba(139, 95, 191, 0.2);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.12);
 }
 
-.burnup-progress-bar {
-  height: 100%;
-  background: linear-gradient(90deg, #8b5fbf 0%, #a855f7 50%, #c084fc 100%);
-  width: 0%;
-  border-radius: 4px;
-  transition: width 0.5s ease-out;
-  position: relative;
-}
-
-.burnup-progress-bar::after {
+.burnup-progress-container::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
-  animation: shimmer 2s infinite;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.2) 50%, 
+    transparent 100%);
+  transform: translateX(-100%);
+  animation: progress-shimmer 3s infinite ease-in-out;
 }
 
-@keyframes shimmer {
+@keyframes progress-shimmer {
   0% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
   100% { transform: translateX(100%); }
 }
 
+.burnup-progress-bar {
+  height: 100%;
+  background: linear-gradient(135deg, 
+    #8b5fbf 0%, 
+    #a855f7 50%, 
+    #c084fc 100%);
+  width: 0%;
+  border-radius: 6px;
+  transition: width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+  box-shadow: 
+    0 0 8px rgba(139, 95, 191, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.burnup-progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -1px;
+  width: 2px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 1px;
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+  animation: tip-pulse 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes tip-pulse {
+  0% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
 .burnup-stats {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto;
+  gap: 10px;
   align-items: center;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  position: relative;
+  z-index: 2;
 }
 
 .burnup-spent,
 .burnup-planned {
-  font-weight: 500;
+  font-weight: 600;
+  color: rgba(139, 95, 191, 0.85);
+  padding: 6px 10px;
+  background: rgba(139, 95, 191, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(139, 95, 191, 0.2);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 4px rgba(139, 95, 191, 0.1);
+}
+
+.burnup-spent:hover,
+.burnup-planned:hover {
+  background: rgba(139, 95, 191, 0.15);
+  border-color: rgba(139, 95, 191, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(139, 95, 191, 0.15);
 }
 
 .burnup-divider {
-  color: rgba(255, 255, 255, 0.4);
-  margin: 0 8px;
+  color: rgba(139, 95, 191, 0.6);
+  font-size: 14px;
+  text-align: center;
+  font-weight: 400;
 }
 
 .burnup-percentage {
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 15px;
   color: #8b5fbf;
-  font-size: 14px;
+  text-align: center;
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: rgba(139, 95, 191, 0.12);
+  border: 1px solid rgba(139, 95, 191, 0.25);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(139, 95, 191, 0.2);
+  animation: percentage-glow 3s ease-in-out infinite;
 }
 
-/* Time values styling */
+@keyframes percentage-glow {
+  0%, 100% { 
+    box-shadow: 0 2px 8px rgba(139, 95, 191, 0.2);
+  }
+  50% { 
+    box-shadow: 0 2px 16px rgba(139, 95, 191, 0.3);
+  }
+}
+
+/* Time values with enhanced readability */
 #burnup-spent-time,
 #burnup-planned-time {
+  font-weight: 700;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  letter-spacing: 0.5px;
+  color: inherit;
+}
+
+/* Particle effect background */
+.burnup-tracker::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 20%, rgba(139, 95, 191, 0.1) 1px, transparent 1px),
+    radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.1) 1px, transparent 1px),
+    radial-gradient(circle at 40% 60%, rgba(192, 132, 252, 0.05) 1px, transparent 1px);
+  background-size: 30px 30px, 40px 40px, 50px 50px;
+  animation: particles-float 20s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes particles-float {
+  0% { transform: translate(0, 0); }
+  33% { transform: translate(10px, -10px); }
+  66% { transform: translate(-5px, 5px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Light theme - Minimalistic solid color containers per mode */
+
+/* Light theme - Pomodoro mode solid color (#9E9586) */
+body.theme-light.pomodoro-mode .burnup-tracker {
+  background: #9E9586;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  backdrop-filter: none;
+}
+
+/* Light theme - Short Break mode solid color (#4D5158) */
+body.theme-light.short-break-mode .burnup-tracker {
+  background: #4D5158;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  backdrop-filter: none;
+}
+
+/* Light theme - Long Break mode solid color (#383D46) */
+body.theme-light.long-break-mode .burnup-tracker {
+  background: #383D46;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  backdrop-filter: none;
+}
+
+/* Light theme - Reverse mode solid color (#4D5158) */
+body.theme-light.reverse-mode .burnup-tracker {
+  background: #4D5158;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  backdrop-filter: none;
+}
+
+/* Light theme - Break mode solid color (#4D5158) */
+body.theme-light.break-mode .burnup-tracker {
+  background: #4D5158;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  backdrop-filter: none;
+}
+
+/* Light theme active state with subtle enhancement */
+.theme-light .burnup-tracker.active {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.15),
+    0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.theme-light .burnup-title {
+  color: #ffffff;
+  font-weight: 800;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.theme-light .burnup-title::before {
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.theme-light .burnup-progress-container {
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.theme-light .burnup-stats {
   color: #ffffff;
   font-weight: 600;
 }
 
-/* Light theme overrides */
-.theme-light .burnup-tracker {
-  background: rgba(0, 0, 0, 0.03);
-  border-color: rgba(0, 0, 0, 0.1);
+.theme-light .burnup-spent,
+.theme-light .burnup-planned {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.theme-light .burnup-tracker.active {
-  background: rgba(139, 95, 191, 0.08);
-  border-color: rgba(139, 95, 191, 0.2);
-}
-
-.theme-light .burnup-title {
-  color: rgba(0, 0, 0, 0.7);
-}
-
-.theme-light .burnup-progress-container {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.theme-light .burnup-stats {
-  color: rgba(0, 0, 0, 0.6);
+.theme-light .burnup-spent:hover,
+.theme-light .burnup-planned:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .theme-light #burnup-spent-time,
 .theme-light #burnup-planned-time {
-  color: #333;
+  color: #ffffff;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-/* Dark theme enhancements */
+.theme-light .burnup-percentage {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.theme-light .burnup-divider {
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+}
+
+/* Dark theme with consistent dark styling across all modes */
 .theme-dark .burnup-tracker {
-  background: rgba(255, 255, 255, 0.02);
-  border-color: rgba(255, 255, 255, 0.08);
+  background: linear-gradient(135deg, 
+    rgba(17, 24, 39, 0.95) 0%, 
+    rgba(31, 41, 55, 0.9) 50%, 
+    rgba(17, 24, 39, 0.95) 100%);
+  border: 1px solid rgba(139, 95, 191, 0.5);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    0 2px 16px rgba(139, 95, 191, 0.15),
+    inset 0 1px 0 rgba(139, 95, 191, 0.1);
+}
+
+/* Dark theme uses same styling for ALL modes for consistency */
+body.theme-dark.pomodoro-mode .burnup-tracker,
+body.theme-dark.short-break-mode .burnup-tracker,
+body.theme-dark.long-break-mode .burnup-tracker,
+body.theme-dark.reverse-mode .burnup-tracker,
+body.theme-dark.break-mode .burnup-tracker {
+  background: linear-gradient(135deg, 
+    rgba(17, 24, 39, 0.95) 0%, 
+    rgba(31, 41, 55, 0.9) 50%, 
+    rgba(17, 24, 39, 0.95) 100%);
+  border: 1px solid rgba(139, 95, 191, 0.5);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    0 2px 16px rgba(139, 95, 191, 0.15),
+    inset 0 1px 0 rgba(139, 95, 191, 0.1);
 }
 
 .theme-dark .burnup-tracker.active {
-  background: rgba(139, 95, 191, 0.15);
-  border-color: rgba(139, 95, 191, 0.4);
+  background: linear-gradient(135deg, 
+    rgba(139, 95, 191, 0.25) 0%, 
+    rgba(168, 85, 247, 0.2) 30%, 
+    rgba(192, 132, 252, 0.15) 70%, 
+    rgba(139, 95, 191, 0.25) 100%);
+  border-color: rgba(139, 95, 191, 0.7);
+  box-shadow: 
+    0 12px 40px rgba(139, 95, 191, 0.35),
+    0 4px 24px rgba(168, 85, 247, 0.25),
+    inset 0 1px 0 rgba(139, 95, 191, 0.2);
 }
 
-/* Custom theme compatibility */
+.theme-dark .burnup-title {
+  color: rgba(192, 132, 252, 0.95);
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(139, 95, 191, 0.4);
+}
+
+.theme-dark .burnup-title::before {
+  color: #c084fc;
+  text-shadow: 0 1px 3px rgba(192, 132, 252, 0.5);
+}
+
+.theme-dark .burnup-progress-container {
+  background: linear-gradient(90deg, 
+    rgba(17, 24, 39, 0.9) 0%, 
+    rgba(31, 41, 55, 0.8) 100%);
+  border: 1px solid rgba(139, 95, 191, 0.4);
+  box-shadow: 
+    inset 0 2px 8px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(139, 95, 191, 0.15);
+}
+
+.theme-dark .burnup-stats {
+  color: rgba(243, 244, 246, 0.9);
+  font-weight: 500;
+}
+
+.theme-dark .burnup-spent,
+.theme-dark .burnup-planned {
+  background: linear-gradient(135deg, 
+    rgba(139, 95, 191, 0.15) 0%, 
+    rgba(168, 85, 247, 0.1) 100%);
+  border: 1px solid rgba(139, 95, 191, 0.3);
+  color: rgba(243, 244, 246, 0.95);
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.theme-dark .burnup-spent:hover,
+.theme-dark .burnup-planned:hover {
+  background: linear-gradient(135deg, 
+    rgba(139, 95, 191, 0.25) 0%, 
+    rgba(168, 85, 247, 0.18) 100%);
+  border-color: rgba(139, 95, 191, 0.5);
+  box-shadow: 0 4px 12px rgba(139, 95, 191, 0.25);
+}
+
+.theme-dark #burnup-spent-time,
+.theme-dark #burnup-planned-time {
+  color: #f9fafb;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.theme-dark .burnup-percentage {
+  color: #c084fc;
+  background: linear-gradient(135deg, 
+    rgba(139, 95, 191, 0.2) 0%, 
+    rgba(168, 85, 247, 0.15) 100%);
+  border: 1px solid rgba(139, 95, 191, 0.4);
+  font-weight: 700;
+  box-shadow: 0 2px 12px rgba(139, 95, 191, 0.3);
+}
+
+.theme-dark .burnup-divider {
+  color: rgba(139, 95, 191, 0.8);
+  font-weight: 400;
+}
+
+/* Custom themes with transparent styling like task containers */
 .theme-yourname .burnup-tracker,
 .theme-custom .burnup-tracker {
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(5px);
-  border-color: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* All modes use same transparent styling for custom themes */
+body.theme-yourname.pomodoro-mode .burnup-tracker,
+body.theme-yourname.short-break-mode .burnup-tracker,
+body.theme-yourname.long-break-mode .burnup-tracker,
+body.theme-yourname.reverse-mode .burnup-tracker,
+body.theme-yourname.break-mode .burnup-tracker,
+body.theme-custom.pomodoro-mode .burnup-tracker,
+body.theme-custom.short-break-mode .burnup-tracker,
+body.theme-custom.long-break-mode .burnup-tracker,
+body.theme-custom.reverse-mode .burnup-tracker,
+body.theme-custom.break-mode .burnup-tracker {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .theme-yourname .burnup-tracker.active,
 .theme-custom .burnup-tracker.active {
-  background: rgba(139, 95, 191, 0.3);
-  border-color: rgba(139, 95, 191, 0.5);
+  background: rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 4px 24px rgba(139, 95, 191, 0.2);
 }
 
-/* Responsive design */
+.theme-yourname .burnup-title,
+.theme-custom .burnup-title {
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 700;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+}
+
+.theme-yourname .burnup-title::before,
+.theme-custom .burnup-title::before {
+  color: rgba(192, 132, 252, 0.9);
+  text-shadow: 0 1px 4px rgba(192, 132, 252, 0.6);
+}
+
+.theme-yourname .burnup-progress-container,
+.theme-custom .burnup-progress-container {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.theme-yourname .burnup-stats,
+.theme-custom .burnup-stats {
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 600;
+}
+
+.theme-yourname .burnup-spent,
+.theme-yourname .burnup-planned,
+.theme-custom .burnup-spent,
+.theme-custom .burnup-planned {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 600;
+  backdrop-filter: blur(3px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.theme-yourname .burnup-spent:hover,
+.theme-yourname .burnup-planned:hover,
+.theme-custom .burnup-spent:hover,
+.theme-custom .burnup-planned:hover {
+  background: rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.theme-yourname #burnup-spent-time,
+.theme-yourname #burnup-planned-time,
+.theme-custom #burnup-spent-time,
+.theme-custom #burnup-planned-time {
+  color: #ffffff;
+  font-weight: 700;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.theme-yourname .burnup-percentage,
+.theme-custom .burnup-percentage {
+  color: rgba(255, 255, 255, 0.95);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-weight: 700;
+  backdrop-filter: blur(3px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.theme-yourname .burnup-divider,
+.theme-custom .burnup-divider {
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 400;
+}
+
+/* Neural network pattern overlay for cyberpunk effect */
+.theme-dark .burnup-tracker::after,
+.theme-yourname .burnup-tracker::after,
+.theme-custom .burnup-tracker::after {
+  background-image: 
+    linear-gradient(45deg, transparent 40%, rgba(139, 95, 191, 0.03) 50%, transparent 60%),
+    linear-gradient(-45deg, transparent 40%, rgba(168, 85, 247, 0.03) 50%, transparent 60%),
+    radial-gradient(circle at 25% 25%, rgba(139, 95, 191, 0.1) 1px, transparent 1px),
+    radial-gradient(circle at 75% 75%, rgba(168, 85, 247, 0.1) 1px, transparent 1px);
+  background-size: 60px 60px, 60px 60px, 40px 40px, 50px 50px;
+}
+
+/* Responsive design with enhanced mobile experience */
 @media (max-width: 768px) {
   .burnup-tracker {
-    margin: 15px 0;
-    padding: 12px;
+    margin: 18px 0;
+    padding: 16px;
+    border-radius: 16px;
   }
   
   .burnup-title {
-    font-size: 13px;
+    font-size: 12px;
+    letter-spacing: 1px;
   }
   
   .burnup-stats {
-    font-size: 12px;
+    font-size: 11px;
+    gap: 8px;
   }
   
   .burnup-percentage {
-    font-size: 13px;
+    font-size: 14px;
+    padding: 6px 12px;
+  }
+  
+  .burnup-progress-container {
+    height: 10px;
+    margin-bottom: 14px;
+  }
+  
+  .burnup-spent,
+  .burnup-planned {
+    padding: 6px 10px;
+    border-radius: 10px;
   }
 }
 
 @media (max-width: 480px) {
   .burnup-tracker {
-    margin: 12px 0;
-    padding: 10px;
+    margin: 15px 0;
+    padding: 14px;
+    border-radius: 14px;
   }
   
   .burnup-title {
-    font-size: 12px;
+    font-size: 11px;
+    letter-spacing: 0.8px;
   }
   
   .burnup-stats {
-    font-size: 11px;
+    font-size: 10px;
+    gap: 6px;
+    grid-template-columns: 1fr auto 1fr auto;
   }
   
   .burnup-progress-container {
-    height: 6px;
+    height: 8px;
+    margin-bottom: 12px;
+  }
+  
+  .burnup-percentage {
+    font-size: 13px;
+    padding: 5px 10px;
+  }
+  
+  .burnup-spent,
+  .burnup-planned {
+    padding: 5px 8px;
+    border-radius: 8px;
+    font-size: 10px;
   }
 }
 
-/* Animation when tracker becomes visible */
+/* Animation when tracker becomes visible with enhanced entrance */
 .burnup-tracker[style*="display: block"] {
-  animation: burnupFadeIn 0.3s ease-out;
+  animation: burnupFadeIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @keyframes burnupFadeIn {
-  from {
+  0% {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-20px) scale(0.9);
+    filter: blur(10px);
   }
-  to {
+  50% {
+    opacity: 0.8;
+    transform: translateY(-5px) scale(1.02);
+    filter: blur(2px);
+  }
+  100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+    filter: blur(0);
   }
 }
 
-/* Hide by default */
+/* Enhanced exit animation */
 .burnup-tracker[style*="display: none"] {
-  animation: burnupFadeOut 0.3s ease-out;
+  animation: burnupFadeOut 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 @keyframes burnupFadeOut {
-  from {
+  0% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+    filter: blur(0);
   }
-  to {
+  100% {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-10px) scale(0.95);
+    filter: blur(5px);
+  }
+}
+
+/* Micro-interactions for enhanced UX */
+.burnup-tracker:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 4px 20px rgba(139, 95, 191, 0.2);
+}
+
+.burnup-tracker.active:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 16px 50px rgba(139, 95, 191, 0.3),
+    0 8px 30px rgba(168, 85, 247, 0.2);
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .burnup-tracker,
+  .burnup-tracker::before,
+  .burnup-tracker::after,
+  .burnup-progress-bar,
+  .burnup-progress-bar::after,
+  .burnup-percentage,
+  .burnup-title::before,
+  .burnup-status-indicator {
+    animation: none !important;
+    transition: none !important;
   }
 }
