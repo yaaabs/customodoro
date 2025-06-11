@@ -1,0 +1,220 @@
+/* Burn-Up Time Tracker Styles */
+.burnup-tracker {
+  margin: 20px 0;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(3px);
+  border-radius: 12px;
+  padding: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.burnup-tracker.active {
+  background: rgba(139, 95, 191, 0.1);
+  border-color: rgba(139, 95, 191, 0.3);
+  box-shadow: 0 4px 15px rgba(139, 95, 191, 0.1);
+}
+
+.burnup-header {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.burnup-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.burnup-progress-container {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.burnup-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #8b5fbf 0%, #a855f7 50%, #c084fc 100%);
+  width: 0%;
+  border-radius: 4px;
+  transition: width 0.5s ease-out;
+  position: relative;
+}
+
+.burnup-progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.burnup-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.burnup-spent,
+.burnup-planned {
+  font-weight: 500;
+}
+
+.burnup-divider {
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0 8px;
+}
+
+.burnup-percentage {
+  font-weight: 600;
+  color: #8b5fbf;
+  font-size: 14px;
+}
+
+/* Time values styling */
+#burnup-spent-time,
+#burnup-planned-time {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* Light theme overrides */
+.theme-light .burnup-tracker {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.theme-light .burnup-tracker.active {
+  background: rgba(139, 95, 191, 0.08);
+  border-color: rgba(139, 95, 191, 0.2);
+}
+
+.theme-light .burnup-title {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.theme-light .burnup-progress-container {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.theme-light .burnup-stats {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.theme-light #burnup-spent-time,
+.theme-light #burnup-planned-time {
+  color: #333;
+}
+
+/* Dark theme enhancements */
+.theme-dark .burnup-tracker {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.theme-dark .burnup-tracker.active {
+  background: rgba(139, 95, 191, 0.15);
+  border-color: rgba(139, 95, 191, 0.4);
+}
+
+/* Custom theme compatibility */
+.theme-yourname .burnup-tracker,
+.theme-custom .burnup-tracker {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(5px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.theme-yourname .burnup-tracker.active,
+.theme-custom .burnup-tracker.active {
+  background: rgba(139, 95, 191, 0.3);
+  border-color: rgba(139, 95, 191, 0.5);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .burnup-tracker {
+    margin: 15px 0;
+    padding: 12px;
+  }
+  
+  .burnup-title {
+    font-size: 13px;
+  }
+  
+  .burnup-stats {
+    font-size: 12px;
+  }
+  
+  .burnup-percentage {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .burnup-tracker {
+    margin: 12px 0;
+    padding: 10px;
+  }
+  
+  .burnup-title {
+    font-size: 12px;
+  }
+  
+  .burnup-stats {
+    font-size: 11px;
+  }
+  
+  .burnup-progress-container {
+    height: 6px;
+  }
+}
+
+/* Animation when tracker becomes visible */
+.burnup-tracker[style*="display: block"] {
+  animation: burnupFadeIn 0.3s ease-out;
+}
+
+@keyframes burnupFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hide by default */
+.burnup-tracker[style*="display: none"] {
+  animation: burnupFadeOut 0.3s ease-out;
+}
+
+@keyframes burnupFadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}

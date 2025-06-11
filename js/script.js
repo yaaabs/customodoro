@@ -7,6 +7,13 @@ const sessionDots = document.getElementById('session-dots');
 const sessionText = document.getElementById('session-text');
 const body = document.body;
 
+// Burn-Up Tracker elements
+const burnupTracker = document.getElementById('burnup-tracker');
+const burnupProgressBar = document.getElementById('burnup-progress-bar');
+const burnupSpentTime = document.getElementById('burnup-spent-time');
+const burnupPlannedTime = document.getElementById('burnup-planned-time');
+const burnupPercentage = document.getElementById('burnup-percentage');
+
 // Tab elements
 const pomodoroTab = document.getElementById('pomodoro-tab');
 const shortBreakTab = document.getElementById('short-break-tab');
@@ -31,6 +38,11 @@ let currentSession = 1;
 let completedPomodoros = 0;
 let hasUnsavedTasks = false;
 let hasUnfinishedTasks = false;
+
+// Burn-Up Tracker variables
+let isBurnupTrackerEnabled = localStorage.getItem('burnupTrackerEnabled') !== 'false'; // Default to true
+let burnupStartTime = 0;
+let burnupElapsedTime = 0;
 
 // Update audio variables
 const sounds = {
@@ -502,13 +514,90 @@ function updateTimerDisplay() {
       : `${timeString} - Paused`;
   }
   document.title = titleText;
-
   // Update progress bar
   if (initialSeconds > 0) {
     const progress = ((initialSeconds - currentSeconds) / initialSeconds) * 100;
     progressBar.style.width = `${progress}%`;
   }
+  
+  // Update burn-up tracker
+  updateBurnupTracker();
 }
+
+// Burn-Up Tracker Functions
+function updateBurnupTracker() {
+  if (!isBurnupTrackerEnabled || !burnupTracker) return;
+  
+  if (isRunning) {
+    const elapsedSeconds = initialSeconds - currentSeconds;
+    const progressPercent = initialSeconds > 0 ? (elapsedSeconds / initialSeconds) * 100 : 0;
+    
+    // Update progress bar
+    if (burnupProgressBar) {
+      burnupProgressBar.style.width = `${progressPercent}%`;
+    }
+    
+    // Update spent time
+    if (burnupSpentTime) {
+      const minutes = Math.floor(elapsedSeconds / 60);
+      const seconds = elapsedSeconds % 60;
+      burnupSpentTime.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+    
+    // Update planned time
+    if (burnupPlannedTime) {
+      const totalMinutes = Math.floor(initialSeconds / 60);
+      const totalSeconds = initialSeconds % 60;
+      burnupPlannedTime.textContent = `${totalMinutes.toString().padStart(2, '0')}:${totalSeconds.toString().padStart(2, '0')}`;
+    }
+    
+    // Update percentage
+    if (burnupPercentage) {
+      burnupPercentage.textContent = `${Math.round(progressPercent)}%`;
+    }
+    
+    // Add active class for visual enhancement
+    burnupTracker.classList.add('active');
+  }
+}
+
+function showBurnupTracker() {
+  if (isBurnupTrackerEnabled && burnupTracker) {
+    burnupTracker.style.display = 'block';
+    updateBurnupTracker();
+  }
+}
+
+function hideBurnupTracker() {
+  if (burnupTracker) {
+    burnupTracker.style.display = 'none';
+    burnupTracker.classList.remove('active');
+  }
+}
+
+function resetBurnupTracker() {
+  if (burnupTracker) {
+    if (burnupProgressBar) burnupProgressBar.style.width = '0%';
+    if (burnupSpentTime) burnupSpentTime.textContent = '00:00';
+    if (burnupPercentage) burnupPercentage.textContent = '0%';
+    burnupTracker.classList.remove('active');
+  }
+}
+
+// Toggle burn-up tracker on/off
+function setBurnupTrackerEnabled(enabled) {
+  isBurnupTrackerEnabled = enabled;
+  localStorage.setItem('burnupTrackerEnabled', enabled.toString());
+  
+  if (enabled && isRunning) {
+    showBurnupTracker();
+  } else {
+    hideBurnupTracker();
+  }
+}
+
+// Expose the function globally for settings
+window.setBurnupTrackerEnabled = setBurnupTrackerEnabled;
 
 // Add this function after the DOM Elements section
 function updateFavicon(status) {
@@ -540,12 +629,13 @@ function updateFavicon(status) {
 function toggleTimer() {
   if (!isRunning) {
     playSound('start'); // Play start/click sound
-    showToast(motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)]);
-
-    // Start timer
+    showToast(motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)]);    // Start timer
     isRunning = true;
     startButton.textContent = 'PAUSE';
     updateFavicon(currentMode);
+    
+    // Show burn-up tracker when timer starts
+    showBurnupTracker();
     
     // Play the appropriate timer sound
     playTimerSound();
@@ -568,11 +658,13 @@ function toggleTimer() {
           const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
           const progress = ((initialSeconds - currentSeconds) / initialSeconds) * 100;
           window.lockedInMode.update(timeString, progress, startButton.textContent, sessionText.textContent);
-        }
-      } else {
+        }      } else {
         // Timer completed
         clearInterval(timerInterval);
         isRunning = false;
+        
+        // Hide burn-up tracker when timer completes
+        hideBurnupTracker();
         
         // For pomodoro mode, increment counter BEFORE showing notification
         if (currentMode === 'pomodoro') {
@@ -606,13 +698,14 @@ function toggleTimer() {
     playSound('pause'); // Use function instead of direct play
     
     // Stop timer sound when pausing
-    stopTimerSound();
-
-    // Pause timer
+    stopTimerSound();    // Pause timer
     clearInterval(timerInterval);
     isRunning = false;
     startButton.textContent = 'START';
     updateFavicon('paused');
+    
+    // Hide burn-up tracker when paused
+    hideBurnupTracker();
     
     // Also update locked in mode if active
     if (window.lockedInMode && window.lockedInMode.isActive()) {
@@ -665,13 +758,16 @@ function resetTimer() {
     longBreakTime = parseInt(localStorage.getItem('longBreakTime')) || longBreakTime;
     currentSeconds = longBreakTime * 60;
   }
-
   initialSeconds = currentSeconds;
   isRunning = false;
   startButton.textContent = 'START';
   updateFavicon('paused');
   updateTimerDisplay();
   progressBar.style.width = '0%';
+  
+  // Reset and hide burn-up tracker
+  resetBurnupTracker();
+  hideBurnupTracker();
   
   // Stop timer sound when resetting - added to fix sound continuing after reset
   stopTimerSound();
@@ -747,11 +843,14 @@ function switchMode(mode, autoStart = false) {
   }
 
   initialSeconds = currentSeconds;
-
   // Reset timer state
   clearInterval(timerInterval);
   isRunning = false;
   startButton.textContent = 'START';
+  
+  // Reset and hide burn-up tracker when switching modes
+  resetBurnupTracker();
+  hideBurnupTracker();
   
   // Stop any playing timer sound
   stopTimerSound();

@@ -234,6 +234,13 @@ const reverseTab = document.getElementById('reverse-tab');
 const breakTab = document.getElementById('break-tab');
 const toast = document.getElementById('toast');
 
+// Burn-Up Tracker elements
+const burnupTracker = document.getElementById('burnup-tracker');
+const burnupProgressBar = document.getElementById('burnup-progress-bar');
+const burnupSpentTime = document.getElementById('burnup-spent-time');
+const burnupPlannedTime = document.getElementById('burnup-planned-time');
+const burnupPercentage = document.getElementById('burnup-percentage');
+
 // Add task elements
 const taskInput = document.getElementById('task-input');
 const addTaskBtn = document.getElementById('add-task-btn');
@@ -268,6 +275,11 @@ let hasUnsavedTasks = false;
 let hasUnfinishedTasks = false;
 let tasks = [];
 
+// Burn-Up Tracker variables
+let isBurnupTrackerEnabled = localStorage.getItem('burnupTrackerEnabled') !== 'false'; // Default to true
+let burnupStartTime = 0;
+let burnupElapsedTime = 0;
+
 // Calculate break time based on work duration
 function calculateBreakTime(workedSeconds) {
     const minutes = Math.floor(workedSeconds / 60);
@@ -293,6 +305,9 @@ function updateDisplay() {
         : (currentSeconds / MAX_TIME) * 100;
     progressBar.style.width = `${progress}%`;
     
+    // Update burn-up tracker
+    updateBurnupTracker();
+    
     // Update document title - Reverted logic
     let titleText = `${timeString} - `;
     
@@ -305,9 +320,96 @@ function updateDisplay() {
             ? (currentMode === 'break' ? 'Break Accumulated' : 'Reverse Pomodoro')
             : 'Paused';
     }
-    
-    document.title = titleText;
+      document.title = titleText;
 }
+
+// Burn-Up Tracker Functions
+function updateBurnupTracker() {
+    if (!isBurnupTrackerEnabled || !burnupTracker) return;
+    
+    if (isRunning) {
+        let progressPercent = 0;
+        let elapsedTime = 0;
+        let totalTime = 0;
+        
+        if (currentMode === 'reverse') {
+            // For reverse mode, show progress of work time
+            elapsedTime = currentSeconds;
+            totalTime = MAX_TIME;
+            progressPercent = totalTime > 0 ? (elapsedTime / totalTime) * 100 : 0;
+        } else if (currentMode === 'break') {
+            // For break mode, show progress of break consumption
+            elapsedTime = initialSeconds - currentSeconds;
+            totalTime = initialSeconds;
+            progressPercent = totalTime > 0 ? (elapsedTime / totalTime) * 100 : 0;
+        }
+        
+        // Update progress bar
+        if (burnupProgressBar) {
+            burnupProgressBar.style.width = `${progressPercent}%`;
+        }
+        
+        // Update spent time
+        if (burnupSpentTime) {
+            const minutes = Math.floor(elapsedTime / 60);
+            const seconds = elapsedTime % 60;
+            burnupSpentTime.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        // Update planned time
+        if (burnupPlannedTime) {
+            const totalMinutes = Math.floor(totalTime / 60);
+            const totalSeconds = totalTime % 60;
+            burnupPlannedTime.textContent = `${totalMinutes.toString().padStart(2, '0')}:${totalSeconds.toString().padStart(2, '0')}`;
+        }
+        
+        // Update percentage
+        if (burnupPercentage) {
+            burnupPercentage.textContent = `${Math.round(progressPercent)}%`;
+        }
+        
+        // Add active class for visual enhancement
+        burnupTracker.classList.add('active');
+    }
+}
+
+function showBurnupTracker() {
+    if (isBurnupTrackerEnabled && burnupTracker) {
+        burnupTracker.style.display = 'block';
+        updateBurnupTracker();
+    }
+}
+
+function hideBurnupTracker() {
+    if (burnupTracker) {
+        burnupTracker.style.display = 'none';
+        burnupTracker.classList.remove('active');
+    }
+}
+
+function resetBurnupTracker() {
+    if (burnupTracker) {
+        if (burnupProgressBar) burnupProgressBar.style.width = '0%';
+        if (burnupSpentTime) burnupSpentTime.textContent = '00:00';
+        if (burnupPercentage) burnupPercentage.textContent = '0%';
+        burnupTracker.classList.remove('active');
+    }
+}
+
+// Toggle burn-up tracker on/off
+function setBurnupTrackerEnabled(enabled) {
+    isBurnupTrackerEnabled = enabled;
+    localStorage.setItem('burnupTrackerEnabled', enabled.toString());
+    
+    if (enabled && isRunning) {
+        showBurnupTracker();
+    } else {
+        hideBurnupTracker();
+    }
+}
+
+// Expose the function globally for settings
+window.setBurnupTrackerEnabled = setBurnupTrackerEnabled;
 
 // Toggle timer
 function toggleTimer() {
@@ -324,10 +426,12 @@ function toggleTimer() {
     
     playSound('start');
     showToast(currentMode === 'break' ? "Enjoy your break! 😌" : "Time to focus! 💪");
-    
-    isRunning = true;
+      isRunning = true;
     startButton.textContent = 'STOP';
     updateFavicon('running');
+    
+    // Show burn-up tracker when timer starts
+    showBurnupTracker();
     
     // Play the appropriate timer sound
     playTimerSound();
@@ -385,11 +489,13 @@ function toggleTimer() {
     
     // Stop timer sound when pausing
     stopTimerSound();
-    
-    clearInterval(timerInterval);
+      clearInterval(timerInterval);
     isRunning = false;
     startButton.textContent = 'START';
     updateFavicon('paused');
+    
+    // Hide burn-up tracker when paused
+    hideBurnupTracker();
     
     // Also update locked in mode if active
     if (window.lockedInMode && window.lockedInMode.isActive()) {
@@ -416,6 +522,9 @@ function toggleTimer() {
 function completeSession(playSound = true) {
     clearInterval(timerInterval);
     isRunning = false;
+    
+    // Hide burn-up tracker when session completes
+    hideBurnupTracker();
     
     // Stop timer sound
     stopTimerSound();
@@ -474,6 +583,10 @@ function resetTimer() {
     updateDisplay();
     startButton.textContent = 'START';
     
+    // Reset and hide burn-up tracker
+    resetBurnupTracker();
+    hideBurnupTracker();
+    
     // Stop timer sound
     stopTimerSound();
     
@@ -514,10 +627,13 @@ function switchMode(mode) {
   currentMode = mode;
   reverseTab.classList.toggle('active', mode === 'reverse');
   breakTab.classList.toggle('active', mode === 'break');
-  
-  // Reset timer state
+    // Reset timer state
   clearInterval(timerInterval);
   isRunning = false;
+  
+  // Reset and hide burn-up tracker when switching modes
+  resetBurnupTracker();
+  hideBurnupTracker();
   
   // Stop timer sound
   stopTimerSound();

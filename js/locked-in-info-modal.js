@@ -18,6 +18,12 @@ document.addEventListener('DOMContentLoaded', function() {
             modalOverlay: 'auto-pomodoro-modal-overlay',
             closeButton: 'auto-pomodoro-modal-close',
             confirmButton: 'auto-pomodoro-close-btn'
+        },
+        {
+            infoIcon: 'burnup-tracker-info',
+            modalOverlay: 'burnup-tracker-modal-overlay',
+            closeButton: 'burnup-tracker-modal-close',
+            confirmButton: 'burnup-tracker-close-btn'
         }
     ];
 

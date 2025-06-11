@@ -146,9 +146,11 @@
       
       // Save theme settings
       saveThemeSettings();
-      
-      // Save locked in mode setting
+        // Save locked in mode setting
       saveLockedInModeSettings();
+      
+      // Save burn-up tracker setting
+      saveBurnupTrackerSettings();
       
       // Apply settings immediately to update the timer
       applySettingsToTimer();
@@ -205,9 +207,11 @@
       localStorage.setItem('bgmEnabled', 'false');
       localStorage.setItem('selectedPlaylist', 'deep-focus');
       localStorage.setItem('bgmVolume', '60');
-      
-      // Reset theme to light mode
+        // Reset theme to light mode
       localStorage.setItem('siteTheme', 'light');
+      
+      // Reset burn-up tracker settings
+      localStorage.setItem('burnupTrackerEnabled', 'true');
       
       // Reload settings into form
       loadSettings();
@@ -452,7 +456,6 @@
     }
   }
   
-
   function loadLockedInModeSettings() {
     const lockedInModeToggle = document.getElementById('lockedin-mode-toggle');
     if (lockedInModeToggle) {
@@ -465,6 +468,28 @@
                      (oldKey !== null) ? oldKey !== 'false' : true;
       
       lockedInModeToggle.checked = enabled;
+    }
+  }
+  
+  // Burn-Up Tracker Settings
+  function saveBurnupTrackerSettings() {
+    const burnupTrackerToggle = document.getElementById('burnup-tracker-toggle');
+    if (burnupTrackerToggle) {
+      localStorage.setItem('burnupTrackerEnabled', burnupTrackerToggle.checked);
+      
+      // Update Burn-Up Tracker if the global function exists
+      if (window.setBurnupTrackerEnabled && typeof window.setBurnupTrackerEnabled === 'function') {
+        window.setBurnupTrackerEnabled(burnupTrackerToggle.checked);
+      }
+    }
+  }
+  
+  function loadBurnupTrackerSettings() {
+    const burnupTrackerToggle = document.getElementById('burnup-tracker-toggle');
+    if (burnupTrackerToggle) {
+      // Default to true unless explicitly set to 'false'
+      const enabled = localStorage.getItem('burnupTrackerEnabled') !== 'false';
+      burnupTrackerToggle.checked = enabled;
     }
   }
 
@@ -704,11 +729,11 @@
     } else {
       loadReverseSettings();
     }
-    
-    loadSoundSettings();
+      loadSoundSettings();
     loadAutoStartSettings();
     loadThemeSettings();
     loadLockedInModeSettings();
+    loadBurnupTrackerSettings();
     
     // Setup locked in mode toggle if needed
     if (window.lockedInMode && typeof window.lockedInMode.setup === 'function') {
