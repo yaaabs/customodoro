@@ -1113,11 +1113,11 @@ input:checked + .slider-toggle:before {
 }
 
 .theme-light .option-label {
-  color: rgba(0, 0, 0, 0.9);
+  color: #ddd; /* Use same color as other settings labels */
 }
 
 .theme-light .option-description {
-  color: rgba(0, 0, 0, 0.6);
+  color: rgba(255, 255, 255, 0.7); /* Use same color as default */
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
@@ -1268,4 +1268,45 @@ input:checked + .slider-toggle:before {
 
 .theme-light .info-icon:hover {
   background: rgba(139, 95, 191, 0.2);
+}
+
+/* ===== TRACKER DESIGN INFO MODAL STYLES ===== */
+
+.tracker-design-explanation {
+  margin: 16px 0;
+}
+
+.design-option-explanation {
+  margin-bottom: 16px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.design-option-explanation h4 {
+  margin: 0 0 8px 0;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.design-option-explanation p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.theme-light .design-option-explanation {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.theme-light .design-option-explanation h4 {
+  color: #ddd;
+}
+
+.theme-light .design-option-explanation p {
+  color: rgba(255, 255, 255, 0.8);
 }
