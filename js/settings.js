@@ -715,8 +715,7 @@
       };
     }
   }
-  
-  // Load settings based on the current page
+    // Load settings based on the current page
   function loadSettings() {
     // Determine which page we're on
     const isReversePage = window.location.pathname.includes('reverse');
@@ -734,6 +733,9 @@
     loadThemeSettings();
     loadLockedInModeSettings();
     loadBurnupTrackerSettings();
+    
+    // Initialize tracker design selector
+    initializeTrackerDesignSelector();
     
     // Setup locked in mode toggle if needed
     if (window.lockedInMode && typeof window.lockedInMode.setup === 'function') {
@@ -1327,8 +1329,173 @@ function testSound(type) {
       const savedVolume = localStorage.getItem('volume') || 60;
       volumePercentage.textContent = savedVolume + '%';
     }
-  });
+  });  // ===== BURN-UP TRACKER DESIGN SELECTOR =====
   
+  // Initialize tracker design selector
+  function initializeTrackerDesignSelector() {
+    const trackerDesignRadios = document.querySelectorAll('input[name="tracker-design"]');
+    const trackerDesignOptions = document.querySelectorAll('.tracker-design-option');
+    const trackerDesignInfoIcon = document.getElementById('tracker-design-info');
+    const trackerDesignInfoModal = document.getElementById('tracker-design-info-modal-overlay');
+    const trackerDesignInfoClose = document.getElementById('tracker-design-info-modal-close');
+    const trackerDesignInfoCloseBtn = document.getElementById('tracker-design-info-close-btn');
+    
+    // Load saved design preference
+    const savedDesign = localStorage.getItem('burnupTrackerDesign') || 'match-theme';
+    
+    // Apply saved design
+    if (trackerDesignRadios.length > 0) {
+      trackerDesignRadios.forEach(radio => {
+        if (radio.value === savedDesign) {
+          radio.checked = true;
+          radio.closest('.tracker-design-option').classList.add('selected');
+        }
+      });
+    }
+    
+    // Apply the design to the actual tracker
+    applyTrackerDesign(savedDesign);
+    
+    // Handle design selection
+    trackerDesignRadios.forEach(radio => {
+      radio.addEventListener('change', function() {
+        if (this.checked) {
+          // Update visual selection
+          trackerDesignOptions.forEach(option => {
+            option.classList.remove('selected');
+          });
+          this.closest('.tracker-design-option').classList.add('selected');
+          
+          // Save preference
+          localStorage.setItem('burnupTrackerDesign', this.value);
+          
+          // Apply the design immediately
+          applyTrackerDesign(this.value);
+          
+          // Also update any existing trackers on the page
+          updateAllTrackers(this.value);
+        }
+      });
+    });
+    
+    // Handle clicking on option containers
+    trackerDesignOptions.forEach(option => {
+      option.addEventListener('click', function(e) {
+        // Don't trigger if clicking on the radio button itself
+        if (e.target.type === 'radio') return;
+        
+        const radio = this.querySelector('input[type="radio"]');
+        if (radio && !radio.checked) {
+          radio.checked = true;
+          radio.dispatchEvent(new Event('change'));
+        }
+      });
+    });
+    
+    // Handle info modal
+    if (trackerDesignInfoIcon && trackerDesignInfoModal) {
+      trackerDesignInfoIcon.addEventListener('click', function() {
+        trackerDesignInfoModal.style.display = 'flex';
+      });
+    }
+    
+    if (trackerDesignInfoClose && trackerDesignInfoModal) {
+      trackerDesignInfoClose.addEventListener('click', function() {
+        trackerDesignInfoModal.style.display = 'none';
+      });
+    }
+    
+    if (trackerDesignInfoCloseBtn && trackerDesignInfoModal) {
+      trackerDesignInfoCloseBtn.addEventListener('click', function() {
+        trackerDesignInfoModal.style.display = 'none';
+      });
+    }
+    
+    // Close modal when clicking outside
+    if (trackerDesignInfoModal) {
+      trackerDesignInfoModal.addEventListener('click', function(e) {
+        if (e.target === this) {
+          this.style.display = 'none';
+        }
+      });
+    }
+    
+    // Apply keyboard accessibility
+    trackerDesignRadios.forEach(radio => {
+      radio.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.checked = true;
+          this.dispatchEvent(new Event('change'));
+        }
+      });
+    });
+  }
+  
+  // Apply tracker design styles to a specific tracker
+  function applyTrackerDesign(designType, trackerElement = null) {
+    const burnupTrackers = trackerElement ? [trackerElement] : document.querySelectorAll('.burnup-tracker');
+    
+    if (burnupTrackers.length === 0) return;
+    
+    burnupTrackers.forEach(tracker => {
+      // Remove existing design classes
+      tracker.classList.remove(
+        'tracker-design-match-theme',
+        'tracker-design-use-dark-style', 
+        'tracker-design-use-kimi-style'
+      );
+      
+      // Add new design class based on the design type
+      switch(designType) {
+        case 'match-theme':
+          // Uses default adaptive styling - no additional class needed
+          tracker.classList.add('tracker-design-match-theme');
+          break;
+        case 'use-dark-style':
+          tracker.classList.add('tracker-design-use-dark-style');
+          break;
+        case 'use-kimi-style':
+          tracker.classList.add('tracker-design-use-kimi-style');
+          break;
+        default:
+          tracker.classList.add('tracker-design-match-theme');
+          break;
+      }
+      
+      // Store current design for persistence
+      tracker.setAttribute('data-design', designType);
+    });
+  }
+  
+  // Update all trackers on the page with the selected design
+  function updateAllTrackers(designType) {
+    const allTrackers = document.querySelectorAll('.burnup-tracker');
+    allTrackers.forEach(tracker => {
+      applyTrackerDesign(designType, tracker);
+    });
+  }
+  
+  // Function to get current tracker design
+  function getCurrentTrackerDesign() {
+    return localStorage.getItem('burnupTrackerDesign') || 'match-theme';
+  }
+  
+  // Apply design to newly created trackers
+  function applyDesignToNewTracker(trackerElement) {
+    const currentDesign = getCurrentTrackerDesign();
+    applyTrackerDesign(currentDesign, trackerElement);
+  }
+  
+  // Export function for use in other modules
+  window.trackerDesignManager = {
+    applyDesign: applyTrackerDesign,
+    getCurrentDesign: getCurrentTrackerDesign,
+    initialize: initializeTrackerDesignSelector,
+    updateAll: updateAllTrackers,
+    applyToNew: applyDesignToNewTracker
+  };
+
   // Initialize site theme immediately on page load before DOM is fully loaded
   (function initializeSiteTheme() {
     const savedTheme = localStorage.getItem('siteTheme') || 'light';

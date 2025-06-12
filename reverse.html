@@ -295,8 +295,7 @@
                 <span class="slider-toggle"></span>
               </label>            </div>
           </div>
-          
-          <!-- Productivity Section -->
+            <!-- Productivity Section -->
           <div class="settings-section" id="productivity-section">
             <h3 class="settings-section-title">Productivity</h3>
             <div class="settings-row">
@@ -314,6 +313,94 @@
                 <input type="checkbox" id="burnup-tracker-toggle" checked>
                 <span class="slider-toggle"></span>
               </label>
+            </div>              <!-- Burn-Up Tracker Design Selector -->
+            <div class="settings-row tracker-design-row">
+              <div class="settings-label">
+                Burn-Up Tracker Design Style
+                <span class="info-icon" id="tracker-design-info">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                  </svg>
+                </span>
+              </div>
+              
+              <div class="tracker-design-selector">
+                <div class="tracker-design-options">
+                  <div class="tracker-design-option">
+                    <input type="radio" name="tracker-design" value="match-theme" id="design-match-theme" checked>
+                    <div class="option-content">
+                      <div class="option-text">
+                        <div class="option-label">Match Theme</div>
+                        <div class="option-description">Uses your selected theme style</div>
+                      </div>
+                      <div class="preview-mini-tracker preview-match-theme">
+                        <div class="mini-tracker-header">
+                          <span class="mini-tracker-title">BURN-UP</span>
+                          <div class="mini-tracker-indicator"></div>
+                        </div>
+                        <div class="mini-progress-container">
+                          <div class="mini-progress-bar"></div>
+                        </div>
+                        <div class="mini-tracker-stats">
+                          <span class="mini-stat">15:30</span>
+                          <span class="mini-percentage">62%</span>
+                          <span class="mini-stat">25:00</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="tracker-design-option">
+                    <input type="radio" name="tracker-design" value="use-dark-style" id="design-dark-style">
+                    <div class="option-content">
+                      <div class="option-text">
+                        <div class="option-label">Use Dark Mode Style</div>
+                        <div class="option-description">Always use dark theme design</div>
+                      </div>
+                      <div class="preview-mini-tracker preview-dark-style">
+                        <div class="mini-tracker-header">
+                          <span class="mini-tracker-title">BURN-UP</span>
+                          <div class="mini-tracker-indicator"></div>
+                        </div>
+                        <div class="mini-progress-container">
+                          <div class="mini-progress-bar"></div>
+                        </div>
+                        <div class="mini-tracker-stats">
+                          <span class="mini-stat">15:30</span>
+                          <span class="mini-percentage">62%</span>
+                          <span class="mini-stat">25:00</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="tracker-design-option">
+                    <input type="radio" name="tracker-design" value="use-kimi-style" id="design-kimi-style">
+                    <div class="option-content">
+                      <div class="option-text">
+                        <div class="option-label">Use Kimi no Nawa Style</div>
+                        <div class="option-description">Always use transparent design</div>
+                      </div>
+                      <div class="preview-mini-tracker preview-kimi-style">
+                        <div class="mini-tracker-header">
+                          <span class="mini-tracker-title">BURN-UP</span>
+                          <div class="mini-tracker-indicator"></div>
+                        </div>
+                        <div class="mini-progress-container">
+                          <div class="mini-progress-bar"></div>
+                        </div>
+                        <div class="mini-tracker-stats">
+                          <span class="mini-stat">15:30</span>
+                          <span class="mini-percentage">62%</span>
+                          <span class="mini-stat">25:00</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           
@@ -579,6 +666,48 @@
     </div>
   </div>
   
+  <!-- Tracker Design Info Modal -->
+  <div class="lockedin-info-modal-overlay" id="tracker-design-info-modal-overlay">
+    <div class="lockedin-info-modal">
+      <div class="lockedin-info-modal-header">
+        <h3 class="lockedin-info-modal-title">Tracker Design Styles</h3>
+        <button class="lockedin-info-modal-close" id="tracker-design-info-modal-close">&times;</button>
+      </div>
+      <div class="lockedin-info-modal-content">
+        <p><strong>Choose your preferred visual style for the Burn-Up Tracker:</strong></p>
+        
+        <div class="tracker-design-explanation">
+          <div class="design-option-explanation">
+            <h4>🎨 Match Theme (Default)</h4>
+            <p>Automatically adapts to your selected theme colors and style.</p>
+          </div>
+          
+          <div class="design-option-explanation">
+            <h4>☀️ Light Solid</h4>
+            <p>Clean, minimalistic design with solid light colors - perfect for bright environments.</p>
+          </div>
+          
+          <div class="design-option-explanation">
+            <h4>🌙 Dark Gradient</h4>
+            <p>Professional dark style with subtle gradients - ideal for low-light conditions.</p>
+          </div>
+          
+          <div class="design-option-explanation">
+            <h4>✨ Transparent Glass</h4>
+            <p>Modern glassmorphism effect with transparency and blur - stylish and contemporary.</p>
+          </div>
+        </div>
+        
+        <div class="settings-note">
+          <p><strong>💡 Pro Tip:</strong> Your chosen design will persist across sessions and work independently of theme changes!</p>
+        </div>
+      </div>
+      <div class="lockedin-info-modal-footer">
+        <button class="lockedin-info-btn" id="tracker-design-info-close-btn">Got it</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Burn-Up Tracker Info Modal -->
   <div class="lockedin-info-modal-overlay" id="burnup-tracker-modal-overlay">
     <div class="lockedin-info-modal">

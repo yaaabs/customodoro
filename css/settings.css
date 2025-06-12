@@ -797,175 +797,475 @@ input:checked + .slider-toggle:before {
   margin-top: 5px;
 }
 
+/* ===== BURN-UP TRACKER DESIGN SELECTOR ===== */
+
+/* Main container for the tracker design section */
+.tracker-design-row {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.tracker-design-selector {
+  width: 100%;
+  margin: 20px 0;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tracker-design-selector h3 {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tracker-design-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tracker-design-option {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.tracker-design-option:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(139, 95, 191, 0.3);
+  transform: translateY(-1px);
+}
+
+.tracker-design-option input[type="radio"] {
+  margin: 0 12px 0 0;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #8b5fbf;
+}
+
+.tracker-design-option input[type="radio"]:checked {
+  outline: 2px solid #8b5fbf;
+  outline-offset: 2px;
+}
+
+.tracker-design-option.selected {
+  border-color: #8b5fbf;
+  background: rgba(139, 95, 191, 0.1);
+}
+
+.option-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.option-text {
+  flex: 1;
+}
+
+.option-label {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.option-description {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.4;
+}
+
+/* ===== PREVIEW MINI TRACKER STYLES ===== */
+
+.preview-mini-tracker {
+  width: 120px;
+  height: 60px;
+  border-radius: 8px;
+  padding: 8px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.mini-tracker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.mini-tracker-title {
+  font-size: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.9;
+}
+
+.mini-tracker-indicator {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 4px rgba(16, 185, 129, 0.5);
+}
+
+.mini-progress-container {
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 6px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.mini-progress-bar {
+  height: 100%;
+  width: 65%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #8b5fbf, #a855f7);
+}
+
+.mini-tracker-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 7px;
+  font-weight: 500;
+}
+
+.mini-stat {
+  padding: 2px 4px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.mini-percentage {
+  font-weight: 600;
+  font-size: 8px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(139, 95, 191, 0.2);
+  border: 1px solid rgba(139, 95, 191, 0.3);
+}
+
+/* ===== MATCH THEME PREVIEW STYLE ===== */
+.preview-match-theme {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px) saturate(140%);
+  border: 1px solid rgba(139, 95, 191, 0.25);
+  color: rgba(139, 95, 191, 0.95);
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.1),
+    0 1px 4px rgba(139, 95, 191, 0.1);
+}
+
+.preview-match-theme .mini-tracker-title {
+  color: rgba(139, 95, 191, 0.95);
+}
+
+.preview-match-theme .mini-progress-container {
+  background: rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(139, 95, 191, 0.2);
+}
+
+.preview-match-theme .mini-progress-bar {
+  background: linear-gradient(90deg, #8b5fbf, #a855f7);
+}
+
+.preview-match-theme .mini-stat,
+.preview-match-theme .mini-percentage {
+  color: rgba(139, 95, 191, 0.85);
+  background: rgba(139, 95, 191, 0.1);
+  border-color: rgba(139, 95, 191, 0.2);
+}
+
+/* ===== DARK STYLE PREVIEW ===== */
+.preview-dark-style {
+  background: linear-gradient(135deg, 
+    rgba(17, 24, 39, 0.95) 0%, 
+    rgba(31, 41, 55, 0.9) 50%, 
+    rgba(17, 24, 39, 0.95) 100%);
+  border: 1px solid rgba(139, 95, 191, 0.5);
+  color: rgba(192, 132, 252, 0.95);
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.4),
+    0 2px 10px rgba(139, 95, 191, 0.15);
+}
+
+.preview-dark-style .mini-tracker-title {
+  color: rgba(192, 132, 252, 0.95);
+}
+
+.preview-dark-style .mini-tracker-indicator {
+  background: #c084fc;
+  box-shadow: 0 0 4px rgba(192, 132, 252, 0.5);
+}
+
+.preview-dark-style .mini-progress-container {
+  background: linear-gradient(90deg, 
+    rgba(17, 24, 39, 0.9) 0%, 
+    rgba(31, 41, 55, 0.8) 100%);
+  border: 1px solid rgba(139, 95, 191, 0.4);
+}
+
+.preview-dark-style .mini-progress-bar {
+  background: linear-gradient(90deg, #8b5fbf, #c084fc);
+}
+
+.preview-dark-style .mini-stat,
+.preview-dark-style .mini-percentage {
+  color: rgba(243, 244, 246, 0.95);
+  background: linear-gradient(135deg, 
+    rgba(139, 95, 191, 0.15) 0%, 
+    rgba(168, 85, 247, 0.1) 100%);
+  border-color: rgba(139, 95, 191, 0.3);
+}
+
+/* ===== KIMI NO NAWA STYLE PREVIEW ===== */
+.preview-kimi-style {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.95);
+  box-shadow: 
+    0 6px 24px rgba(0, 0, 0, 0.3),
+    0 2px 8px rgba(255, 255, 255, 0.1);
+}
+
+.preview-kimi-style .mini-tracker-title {
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.preview-kimi-style .mini-tracker-indicator {
+  background: rgba(192, 132, 252, 0.9);
+  box-shadow: 0 0 4px rgba(192, 132, 252, 0.6);
+}
+
+.preview-kimi-style .mini-progress-container {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.preview-kimi-style .mini-progress-bar {
+  background: linear-gradient(90deg, 
+    rgba(139, 95, 191, 0.8), 
+    rgba(192, 132, 252, 0.8));
+  backdrop-filter: blur(2px);
+}
+
+.preview-kimi-style .mini-stat,
+.preview-kimi-style .mini-percentage {
+  color: rgba(255, 255, 255, 0.95);
+  background: rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(2px);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== LIGHT THEME ADJUSTMENTS ===== */
+.theme-light .tracker-design-selector {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.theme-light .tracker-design-selector h3 {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.theme-light .tracker-design-option {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: transparent;
+}
+
+.theme-light .tracker-design-option:hover {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(139, 95, 191, 0.3);
+}
+
+.theme-light .tracker-design-option.selected {
+  background: rgba(139, 95, 191, 0.1);
+  border-color: #8b5fbf;
+}
+
+.theme-light .option-label {
+  color: rgba(0, 0, 0, 0.9);
+}
+
+.theme-light .option-description {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 768px) {
-  .settings-content {
-    flex-direction: column;
-    width: 95%;
-    max-height: 85vh; /* Prevent modal from being too tall */
+  .tracker-design-selector {
+    margin: 16px 0;
+    padding: 12px;
   }
   
-  .settings-sidebar {
-    width: 100%;
-    padding: 15px 0;
-    flex-direction: row;
-    overflow-x: auto;
-    order: 1;
-    justify-content: flex-start;
-    scrollbar-width: thin; /* Firefox */
-    -ms-overflow-style: none; /* IE and Edge */
+  .tracker-design-option {
+    padding: 10px;
+    gap: 12px;
   }
   
-  /* Hide scrollbar for Chrome/Safari */
-  .settings-sidebar::-webkit-scrollbar {
-    height: 4px;
+  .option-content {
+    gap: 12px;
   }
   
-  .settings-sidebar::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
+  .preview-mini-tracker {
+    width: 100px;
+    height: 50px;
+    padding: 6px;
   }
   
-  .settings-nav-item {
-    padding: 10px 20px;
-    border-left: none;
-    border-bottom: 3px solid transparent;
-    white-space: nowrap;
-    flex-shrink: 0; /* Prevent items from shrinking */
-    margin: 0 2px; /* Add some space between items */
+  .mini-tracker-title {
+    font-size: 7px;
   }
   
-  .settings-nav-item.active {
-    border-left: none;
-    border-bottom: 3px solid #8b5fbf; /* Match the purple theme color */
+  .mini-tracker-stats {
+    font-size: 6px;
   }
   
-  .settings-main {
-    order: 2;
-    max-height: calc(85vh - 50px); /* Account for sidebar height */
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .settings-body {
-    padding: 15px;
-    overflow-y: auto;
-    max-height: none; /* Allow content to scroll */
-  }
-  
-  .settings-row {
-    margin-bottom: 25px;
-  }
-  
-  .time-input-group, .volume-container {
-    margin-top: 10px;
+  .mini-percentage {
+    font-size: 7px;
   }
 }
 
-@media (max-width: 576px) {
-  .settings-content {
-    width: 100%;
-    height: 100%;
-    max-height: 100%;
-    border-radius: 0; /* Full screen on very small devices */
+@media (max-width: 480px) {
+  .tracker-design-options {
+    gap: 10px;
   }
   
-  .settings-modal.show {
-    padding: 0;
-  }
-  
-  .settings-sidebar {
-    padding: 10px 0;
-  }
-  
-  .settings-nav-item {
-    padding: 8px 15px;
-    font-size: 14px;
-  }
-  
-  .settings-header {
-    padding: 15px;
-  }
-  
-  .settings-body {
-    padding: 15px;
-  }
-  
-  .settings-footer {
-    padding: 15px;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  
-  /* Stack settings rows on small screens */
-  .settings-row {
+  .tracker-design-option {
+    padding: 8px;
     flex-direction: column;
-    align-items: flex-start;
-    padding-bottom: 20px;
-    margin-bottom: 20px;
-  }
-  
-  .settings-label {
-    margin-bottom: 12px;
-    width: 100%;
-  }
-  
-  .select-wrapper, .time-input-group, .volume-container {
-    width: 100%;
-    margin-top: 8px;
-  }
-  
-  /* Make buttons more touchable */
-  .time-btn {
-    width: 40px;
-    height: 40px;
-  }
-  
-  /* Ensure buttons don't wrap oddly */
-  .settings-footer {
-    justify-content: space-between;
-  }
-  
-  .reset-btn {
-    margin-right: 0;
-    width: 100%;
-    order: 3;
-    margin-top: 8px;
-  }
-  
-  .close-btn, .save-btn {
-    width: 48%;
     text-align: center;
-    padding: 12px 0;
+  }
+  
+  .option-content {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+  
+  .preview-mini-tracker {
+    width: 80px;
+    height: 40px;
+    padding: 4px;
+    align-self: center;
+  }
+  
+  .mini-tracker-header {
+    margin-bottom: 3px;
+  }
+  
+  .mini-progress-container {
+    height: 3px;
+    margin-bottom: 3px;
+  }
+  
+  .mini-tracker-title {
+    font-size: 6px;
+  }
+  
+  .mini-tracker-indicator {
+    width: 3px;
+    height: 3px;
+  }
+  
+  .mini-tracker-stats {
+    font-size: 5px;
+  }
+  
+  .mini-percentage {
+    font-size: 6px;
+    padding: 1px 3px;
+  }
+  
+  .mini-stat {
+    padding: 1px 2px;
   }
 }
 
-@media (max-width: 360px) {
-  /* Extra adjustments for very small screens */
-  .settings-title {
-    font-size: 18px;
+/* ===== ACCESSIBILITY ENHANCEMENTS ===== */
+@media (prefers-reduced-motion: reduce) {
+  .tracker-design-option,
+  .preview-mini-tracker {
+    transition: none !important;
   }
-  
-  .settings-nav-item {
-    padding: 8px 12px;
-    font-size: 13px;
-  }
-  
-  .settings-section-title {
-    font-size: 16px;
-  }
-  
-  .settings-label {
-    font-size: 14px;
-  }
-  
-  /* Make sure form inputs are usable on tiny screens */
-  .time-input {
-    width: 50px;
-  }
-  
-  .time-btn {
-    width: 36px;
-    height: 36px;
-  }
+}
+
+.tracker-design-option:focus-within {
+  outline: 2px solid #8b5fbf;
+  outline-offset: 2px;
+}
+
+/* ===== HOVER EFFECTS FOR PREVIEWS ===== */
+.tracker-design-option:hover .preview-mini-tracker {
+  transform: scale(1.05);
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.2),
+    0 2px 8px rgba(139, 95, 191, 0.15);
+}
+
+.theme-light .tracker-design-option:hover .preview-mini-tracker {
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.15),
+    0 2px 6px rgba(139, 95, 191, 0.1);
+}
+
+/* ===== INFO ICON STYLING ===== */
+.info-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(139, 95, 191, 0.2);
+  border: 1px solid rgba(139, 95, 191, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 600;
+  color: #8b5fbf;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.info-icon:hover {
+  background: rgba(139, 95, 191, 0.3);
+  border-color: rgba(139, 95, 191, 0.5);
+  transform: scale(1.1);
+}
+
+.theme-light .info-icon {
+  background: rgba(139, 95, 191, 0.1);
+  color: #8b5fbf;
+}
+
+.theme-light .info-icon:hover {
+  background: rgba(139, 95, 191, 0.2);
 }

@@ -741,3 +741,528 @@ body.theme-custom.break-mode .burnup-tracker {
     transition: none !important;
   }
 }
+
+/* ===== TRACKER DESIGN STYLE OVERRIDES ===== */
+
+/* Match Theme Design (default - uses existing adaptive styles) */
+.burnup-tracker.tracker-design-match-theme {
+  /* Uses the existing adaptive design - inherits all default styles */
+  position: relative;
+}
+
+/* Light Solid Design */
+.burnup-tracker.tracker-design-light-solid {
+  background: #f8f9fa !important;
+  backdrop-filter: none !important;
+  border: 1px solid #dee2e6 !important;
+  color: #2c3e50 !important;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.1),
+    0 1px 3px rgba(0, 0, 0, 0.08) !important;
+}
+
+.burnup-tracker.tracker-design-light-solid::before {
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(40, 167, 69, 0.1) 50%, 
+    transparent 100%) !important;
+}
+
+.burnup-tracker.tracker-design-light-solid.active {
+  background: #e9ecef !important;
+  border-color: #28a745 !important;
+  box-shadow: 
+    0 4px 12px rgba(40, 167, 69, 0.2),
+    0 2px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+.burnup-tracker.tracker-design-light-solid .burnup-header,
+.burnup-tracker.tracker-design-light-solid .burnup-title,
+.burnup-tracker.tracker-design-light-solid .burnup-timer,
+.burnup-tracker.tracker-design-light-solid .burnup-stats-item span,
+.burnup-tracker.tracker-design-light-solid .burnup-stats-item .burnup-stats-value {
+  color: #2c3e50 !important;
+}
+
+.burnup-tracker.tracker-design-light-solid .burnup-stats-item .burnup-stats-label {
+  color: #6c757d !important;
+}
+
+.burnup-tracker.tracker-design-light-solid .burnup-progress-bar {
+  background: #e9ecef !important;
+  border: 1px solid #dee2e6 !important;
+}
+
+.burnup-tracker.tracker-design-light-solid .burnup-progress-fill {
+  background: linear-gradient(90deg, #28a745, #20c997) !important;
+}
+
+/* Dark Gradient Design */
+.burnup-tracker.tracker-design-dark-gradient {
+  background: linear-gradient(135deg, #1a1a1a, #2d2d2d) !important;
+  backdrop-filter: none !important;
+  border: 1px solid #404040 !important;
+  color: #ffffff !important;
+  box-shadow: 
+    0 6px 20px rgba(0, 0, 0, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+.burnup-tracker.tracker-design-dark-gradient::before {
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(102, 126, 234, 0.2) 50%, 
+    transparent 100%) !important;
+}
+
+.burnup-tracker.tracker-design-dark-gradient.active {
+  background: linear-gradient(135deg, #2d2d2d, #3a3a3a) !important;
+  border-color: #667eea !important;
+  box-shadow: 
+    0 8px 24px rgba(102, 126, 234, 0.3),
+    0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+.burnup-tracker.tracker-design-dark-gradient .burnup-header,
+.burnup-tracker.tracker-design-dark-gradient .burnup-title,
+.burnup-tracker.tracker-design-dark-gradient .burnup-timer,
+.burnup-tracker.tracker-design-dark-gradient .burnup-stats-item span,
+.burnup-tracker.tracker-design-dark-gradient .burnup-stats-item .burnup-stats-value {
+  color: #ffffff !important;
+}
+
+.burnup-tracker.tracker-design-dark-gradient .burnup-stats-item .burnup-stats-label {
+  color: #b0b0b0 !important;
+}
+
+.burnup-tracker.tracker-design-dark-gradient .burnup-progress-bar {
+  background: linear-gradient(90deg, #2a2a2a, #1f1f1f) !important;
+  border: 1px solid #404040 !important;
+}
+
+.burnup-tracker.tracker-design-dark-gradient .burnup-progress-fill {
+  background: linear-gradient(90deg, #667eea, #764ba2) !important;
+}
+
+/* Transparent Glass Design */
+.burnup-tracker.tracker-design-transparent-glass {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 2px 12px rgba(255, 255, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
+.burnup-tracker.tracker-design-transparent-glass::before {
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.15) 50%, 
+    transparent 100%) !important;
+}
+
+.burnup-tracker.tracker-design-transparent-glass.active {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(76, 175, 80, 0.6) !important;
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 4px 16px rgba(76, 175, 80, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+.burnup-tracker.tracker-design-transparent-glass .burnup-header,
+.burnup-tracker.tracker-design-transparent-glass .burnup-title,
+.burnup-tracker.tracker-design-transparent-glass .burnup-timer,
+.burnup-tracker.tracker-design-transparent-glass .burnup-stats-item span,
+.burnup-tracker.tracker-design-transparent-glass .burnup-stats-item .burnup-stats-value {
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.burnup-tracker.tracker-design-transparent-glass .burnup-stats-item .burnup-stats-label {
+  color: rgba(255, 255, 255, 0.8) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.burnup-tracker.tracker-design-transparent-glass .burnup-progress-bar {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.burnup-tracker.tracker-design-transparent-glass .burnup-progress-fill {
+  background: linear-gradient(90deg, 
+    rgba(76, 175, 80, 0.8), 
+    rgba(129, 199, 132, 0.8)) !important;
+  backdrop-filter: blur(5px) !important;
+}
+
+/* Ensure percentage display works with all designs */
+.burnup-tracker.tracker-design-light-solid .burnup-percentage {
+  color: #2c3e50 !important;
+}
+
+.burnup-tracker.tracker-design-dark-gradient .burnup-percentage,
+.burnup-tracker.tracker-design-transparent-glass .burnup-percentage {
+  color: #ffffff !important;
+}
+
+/* Status indicators for different designs */
+.burnup-tracker.tracker-design-light-solid .burnup-status-indicator.on-track {
+  background: #28a745 !important;
+}
+
+.burnup-tracker.tracker-design-light-solid .burnup-status-indicator.behind {
+  background: #dc3545 !important;
+}
+
+.burnup-tracker.tracker-design-light-solid .burnup-status-indicator.ahead {
+  background: #ffc107 !important;
+}
+
+.burnup-tracker.tracker-design-dark-gradient .burnup-status-indicator.on-track {
+  background: #667eea !important;
+}
+
+.burnup-tracker.tracker-design-dark-gradient .burnup-status-indicator.behind {
+  background: #f093fb !important;
+}
+
+.burnup-tracker.tracker-design-dark-gradient .burnup-status-indicator.ahead {
+  background: #f5af19 !important;
+}
+
+.burnup-tracker.tracker-design-transparent-glass .burnup-status-indicator.on-track {
+  background: rgba(76, 175, 80, 0.8) !important;
+  backdrop-filter: blur(5px) !important;
+}
+
+.burnup-tracker.tracker-design-transparent-glass .burnup-status-indicator.behind {
+  background: rgba(244, 67, 54, 0.8) !important;
+  backdrop-filter: blur(5px) !important;
+}
+
+.burnup-tracker.tracker-design-transparent-glass .burnup-status-indicator.ahead {
+  background: rgba(255, 193, 7, 0.8) !important;
+  backdrop-filter: blur(5px) !important;
+}
+
+/* Hover effects for different designs */
+.burnup-tracker.tracker-design-light-solid:hover {
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.15),
+    0 2px 8px rgba(40, 167, 69, 0.1) !important;
+  transform: translateY(-2px);
+}
+
+.burnup-tracker.tracker-design-dark-gradient:hover {
+  box-shadow: 
+    0 12px 32px rgba(0, 0, 0, 0.5),
+    0 4px 16px rgba(102, 126, 234, 0.2) !important;
+  transform: translateY(-2px);
+}
+
+.burnup-tracker.tracker-design-transparent-glass:hover {
+  box-shadow: 
+    0 16px 48px rgba(0, 0, 0, 0.4),
+    0 6px 20px rgba(255, 255, 255, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+  transform: translateY(-2px);
+}
+
+/* Ensure responsive design works with all styles */
+@media (max-width: 768px) {
+  .burnup-tracker.tracker-design-light-solid,
+  .burnup-tracker.tracker-design-dark-gradient,
+  .burnup-tracker.tracker-design-transparent-glass {
+    padding: 12px;
+    margin: 15px 0;
+  }
+}
+
+/* ===== DESIGN SELECTOR STYLE OVERRIDES ===== */
+
+/* Use Dark Style Design - Always applies dark theme styling regardless of current theme */
+.burnup-tracker.tracker-design-use-dark-style {
+  background: linear-gradient(135deg, 
+    rgba(17, 24, 39, 0.95) 0%, 
+    rgba(31, 41, 55, 0.9) 50%, 
+    rgba(17, 24, 39, 0.95) 100%) !important;
+  border: 1px solid rgba(139, 95, 191, 0.5) !important;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    0 2px 16px rgba(139, 95, 191, 0.15),
+    inset 0 1px 0 rgba(139, 95, 191, 0.1) !important;
+  backdrop-filter: none !important;
+}
+
+.burnup-tracker.tracker-design-use-dark-style.active {
+  background: linear-gradient(135deg, 
+    rgba(139, 95, 191, 0.25) 0%, 
+    rgba(168, 85, 247, 0.2) 30%, 
+    rgba(192, 132, 252, 0.15) 70%, 
+    rgba(139, 95, 191, 0.25) 100%) !important;
+  border-color: rgba(139, 95, 191, 0.7) !important;
+  box-shadow: 
+    0 12px 40px rgba(139, 95, 191, 0.35),
+    0 4px 24px rgba(168, 85, 247, 0.25),
+    inset 0 1px 0 rgba(139, 95, 191, 0.2) !important;
+}
+
+.burnup-tracker.tracker-design-use-dark-style .burnup-title {
+  color: rgba(192, 132, 252, 0.95) !important;
+  font-weight: 700 !important;
+  text-shadow: 0 2px 4px rgba(139, 95, 191, 0.4) !important;
+}
+
+.burnup-tracker.tracker-design-use-dark-style .burnup-title::before {
+  color: #c084fc !important;
+  text-shadow: 0 1px 3px rgba(192, 132, 252, 0.5) !important;
+}
+
+.burnup-tracker.tracker-design-use-dark-style .burnup-progress-container {
+  background: linear-gradient(90deg, 
+    rgba(17, 24, 39, 0.9) 0%, 
+    rgba(31, 41, 55, 0.8) 100%) !important;
+  border: 1px solid rgba(139, 95, 191, 0.4) !important;
+  box-shadow: 
+    inset 0 2px 8px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(139, 95, 191, 0.15) !important;
+}
+
+.burnup-tracker.tracker-design-use-dark-style .burnup-spent,
+.burnup-tracker.tracker-design-use-dark-style .burnup-planned {
+  background: linear-gradient(135deg, 
+    rgba(139, 95, 191, 0.15) 0%, 
+    rgba(168, 85, 247, 0.1) 100%) !important;
+  border: 1px solid rgba(139, 95, 191, 0.3) !important;
+  color: rgba(243, 244, 246, 0.95) !important;
+  font-weight: 600 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+}
+
+.burnup-tracker.tracker-design-use-dark-style .burnup-spent:hover,
+.burnup-tracker.tracker-design-use-dark-style .burnup-planned:hover {
+  background: linear-gradient(135deg, 
+    rgba(139, 95, 191, 0.25) 0%, 
+    rgba(168, 85, 247, 0.18) 100%) !important;
+  border-color: rgba(139, 95, 191, 0.5) !important;
+  box-shadow: 0 4px 12px rgba(139, 95, 191, 0.25) !important;
+}
+
+.burnup-tracker.tracker-design-use-dark-style #burnup-spent-time,
+.burnup-tracker.tracker-design-use-dark-style #burnup-planned-time {
+  color: #f9fafb !important;
+  font-weight: 700 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+.burnup-tracker.tracker-design-use-dark-style .burnup-percentage {
+  color: #c084fc !important;
+  background: linear-gradient(135deg, 
+    rgba(139, 95, 191, 0.2) 0%, 
+    rgba(168, 85, 247, 0.15) 100%) !important;
+  border: 1px solid rgba(139, 95, 191, 0.4) !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 12px rgba(139, 95, 191, 0.3) !important;
+}
+
+.burnup-tracker.tracker-design-use-dark-style .burnup-divider {
+  color: rgba(139, 95, 191, 0.8) !important;
+  font-weight: 400 !important;
+}
+
+.burnup-tracker.tracker-design-use-dark-style .burnup-stats {
+  color: rgba(243, 244, 246, 0.9) !important;
+  font-weight: 500 !important;
+}
+
+/* Use Kimi Style Design - Always applies transparent glassmorphism styling */
+.burnup-tracker.tracker-design-use-kimi-style {
+  background: rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(5px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+}
+
+.burnup-tracker.tracker-design-use-kimi-style.active {
+  background: rgba(0, 0, 0, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 4px 24px rgba(139, 95, 191, 0.2) !important;
+}
+
+.burnup-tracker.tracker-design-use-kimi-style .burnup-title {
+  color: rgba(255, 255, 255, 0.95) !important;
+  font-weight: 700 !important;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7) !important;
+}
+
+.burnup-tracker.tracker-design-use-kimi-style .burnup-title::before {
+  color: rgba(192, 132, 252, 0.9) !important;
+  text-shadow: 0 1px 4px rgba(192, 132, 252, 0.6) !important;
+}
+
+.burnup-tracker.tracker-design-use-kimi-style .burnup-progress-container {
+  background: rgba(0, 0, 0, 0.3) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4) !important;
+}
+
+.burnup-tracker.tracker-design-use-kimi-style .burnup-spent,
+.burnup-tracker.tracker-design-use-kimi-style .burnup-planned {
+  background: rgba(0, 0, 0, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+  font-weight: 600 !important;
+  backdrop-filter: blur(3px) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+.burnup-tracker.tracker-design-use-kimi-style .burnup-spent:hover,
+.burnup-tracker.tracker-design-use-kimi-style .burnup-planned:hover {
+  background: rgba(0, 0, 0, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+}
+
+.burnup-tracker.tracker-design-use-kimi-style #burnup-spent-time,
+.burnup-tracker.tracker-design-use-kimi-style #burnup-planned-time {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5) !important;
+}
+
+.burnup-tracker.tracker-design-use-kimi-style .burnup-percentage {
+  color: rgba(255, 255, 255, 0.95) !important;
+  background: rgba(0, 0, 0, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  font-weight: 700 !important;
+  backdrop-filter: blur(3px) !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+.burnup-tracker.tracker-design-use-kimi-style .burnup-divider {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-weight: 400 !important;
+}
+
+.burnup-tracker.tracker-design-use-kimi-style .burnup-stats {
+  color: rgba(255, 255, 255, 0.95) !important;
+  font-weight: 600 !important;
+}
+
+/* Match Theme Design - Uses existing adaptive design (default behavior) */
+.burnup-tracker.tracker-design-match-theme {
+  /* Uses all default styles - no overrides needed */
+  /* This class serves as a marker for the current design preference */
+  position: relative; /* Ensure the class is applied properly */
+}
+
+/* Hover effects for design overrides */
+.burnup-tracker.tracker-design-use-dark-style:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 4px 20px rgba(139, 95, 191, 0.2) !important;
+}
+
+.burnup-tracker.tracker-design-use-dark-style.active:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 16px 50px rgba(139, 95, 191, 0.3),
+    0 8px 30px rgba(168, 85, 247, 0.2) !important;
+}
+
+.burnup-tracker.tracker-design-use-kimi-style:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 4px 20px rgba(255, 255, 255, 0.1) !important;
+}
+
+.burnup-tracker.tracker-design-use-kimi-style.active:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 16px 50px rgba(0, 0, 0, 0.5),
+    0 8px 30px rgba(139, 95, 191, 0.25) !important;
+}
+
+/* Status indicator overrides for design styles */
+.burnup-tracker.tracker-design-use-dark-style .burnup-status-indicator {
+  background: #c084fc !important;
+  box-shadow: 0 0 8px rgba(192, 132, 252, 0.5) !important;
+}
+
+.burnup-tracker.tracker-design-use-kimi-style .burnup-status-indicator {
+  background: rgba(192, 132, 252, 0.9) !important;
+  box-shadow: 0 0 8px rgba(192, 132, 252, 0.6) !important;
+}
+
+/* Progress bar overrides */
+.burnup-tracker.tracker-design-use-dark-style .burnup-progress-bar {
+  background: linear-gradient(135deg, 
+    #8b5fbf 0%, 
+    #a855f7 50%, 
+    #c084fc 100%) !important;
+  box-shadow: 
+    0 0 8px rgba(139, 95, 191, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
+.burnup-tracker.tracker-design-use-kimi-style .burnup-progress-bar {
+  background: linear-gradient(135deg, 
+    #8b5fbf 0%, 
+    #a855f7 50%, 
+    #c084fc 100%) !important;
+  backdrop-filter: blur(2px) !important;
+  box-shadow: 
+    0 0 8px rgba(139, 95, 191, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Ensure overrides work properly across all viewport sizes */
+@media (max-width: 768px) {
+  .burnup-tracker.tracker-design-use-dark-style,
+  .burnup-tracker.tracker-design-use-kimi-style {
+    padding: 16px !important;
+    margin: 18px 0 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .burnup-tracker.tracker-design-use-dark-style,
+  .burnup-tracker.tracker-design-use-kimi-style {
+    padding: 14px !important;
+    margin: 15px 0 !important;
+  }
+}
+
+/* Ensure neural network pattern overlay works with design overrides */
+.burnup-tracker.tracker-design-use-dark-style::after,
+.burnup-tracker.tracker-design-use-kimi-style::after {
+  background-image: 
+    linear-gradient(45deg, transparent 40%, rgba(139, 95, 191, 0.03) 50%, transparent 60%),
+    linear-gradient(-45deg, transparent 40%, rgba(168, 85, 247, 0.03) 50%, transparent 60%),
+    radial-gradient(circle at 25% 25%, rgba(139, 95, 191, 0.1) 1px, transparent 1px),
+    radial-gradient(circle at 75% 75%, rgba(168, 85, 247, 0.1) 1px, transparent 1px) !important;
+  background-size: 60px 60px, 60px 60px, 40px 40px, 50px 50px !important;
+}
+
+/* Particle effect background for design overrides */
+.burnup-tracker.tracker-design-use-dark-style::before {
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(139, 95, 191, 0.1) 50%, 
+    transparent 100%) !important;
+}
+
+.burnup-tracker.tracker-design-use-kimi-style::before {
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.1) 50%, 
+    transparent 100%) !important;
+}

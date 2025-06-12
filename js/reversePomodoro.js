@@ -376,6 +376,13 @@ function updateBurnupTracker() {
 function showBurnupTracker() {
     if (isBurnupTrackerEnabled && burnupTracker) {
         burnupTracker.style.display = 'block';
+        
+        // Apply saved design style
+        if (window.trackerDesignManager) {
+            const savedDesign = window.trackerDesignManager.getCurrentDesign();
+            window.trackerDesignManager.applyDesign(savedDesign);
+        }
+        
         updateBurnupTracker();
     }
 }
@@ -829,6 +836,19 @@ if (muteAlertCloseBtn) {
 
 // Initialize display
 updateDisplay();
+
+// Initialize reverse timer page
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize tracker design if available
+  if (window.trackerDesignManager) {
+    setTimeout(() => {
+      const savedDesign = window.trackerDesignManager.getCurrentDesign();
+      window.trackerDesignManager.applyDesign(savedDesign);
+    }, 100); // Small delay to ensure DOM is fully ready
+  }
+  
+  console.log("Reverse timer initialized");
+});
 
 // Find the startTimer function and modify it like this:
 

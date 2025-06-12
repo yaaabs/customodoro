@@ -564,6 +564,13 @@ function updateBurnupTracker() {
 function showBurnupTracker() {
   if (isBurnupTrackerEnabled && burnupTracker) {
     burnupTracker.style.display = 'block';
+    
+    // Apply saved design style
+    if (window.trackerDesignManager) {
+      const savedDesign = window.trackerDesignManager.getCurrentDesign();
+      window.trackerDesignManager.applyDesign(savedDesign);
+    }
+    
     updateBurnupTracker();
   }
 }
@@ -1132,10 +1139,17 @@ document.addEventListener('DOMContentLoaded', function() {
   } else if (currentMode === 'longBreak') {
     currentSeconds = longBreakTime * 60;
   }
-  
-  initialSeconds = currentSeconds;
+    initialSeconds = currentSeconds;
   updateTimerDisplay();
   updateSessionDots();
+  
+  // Initialize tracker design if available
+  if (window.trackerDesignManager) {
+    setTimeout(() => {
+      const savedDesign = window.trackerDesignManager.getCurrentDesign();
+      window.trackerDesignManager.applyDesign(savedDesign);
+    }, 100); // Small delay to ensure DOM is fully ready
+  }
   
   console.log("Timer initialized with:", 
     {pomodoro: pomodoroTime, short: shortBreakTime, long: longBreakTime, sessions: maxSessions});
