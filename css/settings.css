@@ -198,6 +198,27 @@
   line-height: 1.4;
 }
 
+/* Fix for Burn-Up Tracker Design Style alignment */
+.settings-row.tracker-design-row {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.settings-row.tracker-design-row .settings-label {
+  width: 100%;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.settings-row.tracker-design-row .tracker-design-selector {
+  width: 100%;
+}
+
+/* Ensure consistent spacing */
+.tracker-design-options {
+  margin-top: 5px;
+}
+
 /* Dark theme form elements */
 .theme-selector {
   width: 100%;
