@@ -24,6 +24,12 @@ document.addEventListener('DOMContentLoaded', function() {
             modalOverlay: 'burnup-tracker-modal-overlay',
             closeButton: 'burnup-tracker-modal-close',
             confirmButton: 'burnup-tracker-close-btn'
+        },
+        {
+            infoIcon: 'tracker-design-info',
+            modalOverlay: 'tracker-design-info-modal-overlay',
+            closeButton: 'tracker-design-info-modal-close',
+            confirmButton: 'tracker-design-info-close-btn'
         }
     ];
 
