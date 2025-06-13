@@ -209,9 +209,11 @@
       localStorage.setItem('bgmVolume', '60');
         // Reset theme to light mode
       localStorage.setItem('siteTheme', 'light');
-      
-      // Reset burn-up tracker settings
+        // Reset burn-up tracker settings
       localStorage.setItem('burnupTrackerEnabled', 'true');
+      
+      // Reset burn-up tracker design to default (Match Theme)
+      localStorage.setItem('burnupTrackerDesign', 'match-theme');
       
       // Reload settings into form
       loadSettings();
@@ -279,10 +281,28 @@
         window.bgmPlayer.setVolume(60);
         window.bgmPlayer.stop();
       }
-      
-      // Stop any currently playing timer sounds and reset
+        // Stop any currently playing timer sounds and reset
       if (window.stopTimerSound && typeof window.stopTimerSound === 'function') {
         window.stopTimerSound();
+      }
+      
+      // Reset tracker design selector visually and apply the design
+      const trackerDesignRadios = document.querySelectorAll('input[name="tracker-design"]');
+      const trackerDesignOptions = document.querySelectorAll('.tracker-design-option');
+      
+      if (trackerDesignRadios.length > 0) {
+        trackerDesignRadios.forEach(radio => {
+          if (radio.value === 'match-theme') {
+            radio.checked = true;
+            radio.closest('.tracker-design-option')?.classList.add('selected');
+          } else {
+            radio.checked = false;
+            radio.closest('.tracker-design-option')?.classList.remove('selected');
+          }
+        });
+        
+        // Apply the match-theme design to all trackers
+        applyTrackerDesign('match-theme');
       }
       
       showToast('Settings reset to defaults!');
@@ -1495,7 +1515,6 @@ function testSound(type) {
     updateAll: updateAllTrackers,
     applyToNew: applyDesignToNewTracker
   };
-
   // Initialize site theme immediately on page load before DOM is fully loaded
   (function initializeSiteTheme() {
     const savedTheme = localStorage.getItem('siteTheme') || 'light';
@@ -1507,5 +1526,14 @@ function testSound(type) {
     } else {
       applyTheme(savedTheme);
     }
+  })();
+
+  // Initialize tracker design immediately on page load
+  (function initializeTrackerDesignOnLoad() {
+    const savedDesign = localStorage.getItem('burnupTrackerDesign') || 'match-theme';
+    // Wait a bit for the DOM to be ready
+    setTimeout(() => {
+      applyTrackerDesign(savedDesign);
+    }, 50);
   })();
 })();
