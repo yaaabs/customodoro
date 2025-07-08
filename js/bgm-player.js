@@ -5,18 +5,18 @@
   let trackTitleElement, trackArtistElement;
   let playBtn, prevBtn, nextBtn, playIcon, pauseIcon;
   let progressBar, progressContainer, currentTimeElement, totalTimeElement;
-  let shuffleBtn; // Shuffle button element
+
   // Track list elements
   let trackListContainer, trackList, trackListEmpty, trackSearchInput;
   // State
   let currentPlaylist = null;
   let currentPlaylistName = 'deep-focus'; // Track current playlist name
-  let currentTrackIndex = 0;
+  let currentTrackIndex = 0; // Index in playback list (shuffled or not)
   let playlists = {}; // To be populated
   let isPlaying = false;
   let isBGMEnabled = true; // Default to true, synced with localStorage
-  let isShuffleMode = false; // Shuffle state
-  let originalPlaylist = []; // Store original playlist order
+
+
   let allTracks = []; // Store all tracks for search functionality
   let filteredTracks = []; // Store filtered tracks based on search
 
@@ -40,7 +40,7 @@
     progressContainer = document.getElementById('bgm-progress-container');
     currentTimeElement = document.getElementById('bgm-current-time');
     totalTimeElement = document.getElementById('bgm-total-time');
-    shuffleBtn = document.getElementById('bgm-shuffle-btn'); // New shuffle button
+
     
     // Track list elements
     trackListContainer = document.getElementById('track-list-container');
@@ -195,7 +195,10 @@
     updateTrackDisplay();
     updatePlayButtonIcon(); // Ensure correct icon on load
     updateVolumeDisplay();
-    populateTrackList(currentPlaylistName); // Initialize track list
+    // Only call populateTrackList if trackList and trackListContainer exist
+    if (trackList && trackListContainer) {
+      populateTrackList(currentPlaylistName); // Initialize track list
+    }
 
     // Set initial BGM enabled state
     setBGMEnabled(bgmToggle.checked);
@@ -208,21 +211,15 @@
     const savedPlaylist = localStorage.getItem('bgmPlaylist') || 'deep-focus';
     const savedVolume = parseInt(localStorage.getItem('bgmVolume')) || 30;
     const savedBGMEnabled = localStorage.getItem('bgmEnabled') !== 'false'; // Defaults to true if not set
-    const savedShuffleMode = localStorage.getItem('bgmShuffle') === 'true'; // Load shuffle setting
 
     if (playlistSelector) playlistSelector.value = savedPlaylist;
     if (volumeSlider) volumeSlider.value = savedVolume;
     if (bgmToggle) bgmToggle.checked = savedBGMEnabled;
-    if (shuffleBtn) {
-      shuffleBtn.classList.toggle('active', savedShuffleMode);
-      shuffleBtn.setAttribute('aria-pressed', savedShuffleMode);
-    }
-    
+
     currentPlaylistName = savedPlaylist;
     currentPlaylist = playlists[savedPlaylist];
     audio.volume = savedVolume / 100;
     isBGMEnabled = savedBGMEnabled;
-    isShuffleMode = savedShuffleMode;
   }
 
   // Set up event listeners
@@ -303,10 +300,7 @@
     if (prevBtn) prevBtn.addEventListener('click', previousTrack);
     if (nextBtn) nextBtn.addEventListener('click', nextTrack);
 
-    // Shuffle button
-    if (shuffleBtn) {
-      shuffleBtn.addEventListener('click', toggleShuffle);
-    }
+
 
     // Audio events
     audio.addEventListener('loadedmetadata', function() {
@@ -420,7 +414,8 @@
   }
   // Load a track
   function loadTrack(index) {
-    if (!currentPlaylist || index < 0 || index >= currentPlaylist.length) {
+    const playbackList = getPlaybackList();
+    if (!playbackList || index < 0 || index >= playbackList.length) {
       if (trackTitleElement) trackTitleElement.textContent = 'Select a playlist';
       if (trackArtistElement) trackArtistElement.textContent = 'and press play';
       if (currentTimeElement) currentTimeElement.textContent = '0:00';
@@ -428,9 +423,8 @@
       if (progressBar) progressBar.style.width = '0%';
       return;
     }
-    
     currentTrackIndex = index;
-    const track = currentPlaylist[currentTrackIndex];
+    const track = playbackList[currentTrackIndex];
     audio.src = track.src;
     
     // Update display elements
@@ -448,9 +442,9 @@
 
   // Play audio
   function playAudio() {
-    if (!isBGMEnabled || !currentPlaylist) return;
-    
-    if (!audio.src && currentPlaylist.length > 0) {
+    if (!isBGMEnabled || !getPlaybackList()) return;
+    const playbackList = getPlaybackList();
+    if (!audio.src && playbackList.length > 0) {
       loadTrack(0);
     }
     
@@ -488,34 +482,30 @@
     }
   }
 
-  // Previous track
+  // Previous track (in playback list)
   function previousTrack() {
-    if (!isBGMEnabled || !currentPlaylist) return;
-    
+    if (!isBGMEnabled || !getPlaybackList()) return;
+    const playbackList = getPlaybackList();
     let newIndex = currentTrackIndex - 1;
     if (newIndex < 0) {
-      newIndex = currentPlaylist.length - 1;
+      newIndex = playbackList.length - 1;
     }
-    
     loadTrack(newIndex);
-    
     // If it was playing, continue playing the new track
     if (isPlaying) {
       playAudio();
     }
   }
 
-  // Next track
+  // Next track (in playback list)
   function nextTrack() {
-    if (!isBGMEnabled || !currentPlaylist) return;
-    
+    if (!isBGMEnabled || !getPlaybackList()) return;
+    const playbackList = getPlaybackList();
     let newIndex = currentTrackIndex + 1;
-    if (newIndex >= currentPlaylist.length) {
+    if (newIndex >= playbackList.length) {
       newIndex = 0;
     }
-    
     loadTrack(newIndex);
-    
     // If it was playing, continue playing the new track
     if (isPlaying) {
       playAudio();
@@ -527,15 +517,16 @@
     nextTrack();
   }
 
-  // Update track display
+  // Update track display (from playback list)
   function updateTrackDisplay() {
-    if (!currentPlaylist || currentTrackIndex >= currentPlaylist.length) {
+    const playbackList = getPlaybackList();
+    if (!playbackList || currentTrackIndex >= playbackList.length) {
       if (trackTitleElement) trackTitleElement.textContent = 'Select a playlist';
       if (trackArtistElement) trackArtistElement.textContent = 'and press play';
       return;
     }
     
-    const track = currentPlaylist[currentTrackIndex];
+    const track = playbackList[currentTrackIndex];
     if (trackTitleElement) trackTitleElement.textContent = track.title;
     if (trackArtistElement) trackArtistElement.textContent = track.artist;
   }
@@ -595,101 +586,27 @@
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   }
 
-  // Toggle shuffle mode
-  function toggleShuffle() {
-    isShuffleMode = !isShuffleMode;
-    
-    // Update UI if button exists
-    const shuffleBtn = document.getElementById('bgm-shuffle-btn');
-    if (shuffleBtn) {
-      shuffleBtn.classList.toggle('active', isShuffleMode);
-      shuffleBtn.setAttribute('aria-pressed', isShuffleMode);
-    }
-    
-    // If we're currently in a playlist
-    if (currentPlaylist.length > 0) {
-      // Remember the current track
-      const currentTrack = currentPlaylist[currentTrackIndex];
-      const wasPlaying = isPlaying;
-      
-      if (isShuffleMode) {
-        // Turn shuffle on - store original order if not already stored
-        if (originalPlaylist.length === 0) {
-          originalPlaylist = [...currentPlaylist];
-        }
-        
-        // Create a new shuffled playlist
-        const newShuffledPlaylist = [...originalPlaylist];
-        shuffleArray(newShuffledPlaylist);
-        
-        // If we have a current track playing, make sure it stays as the current track
-        if (currentTrack) {
-          // Find its position in the new shuffled array
-          const newIndex = newShuffledPlaylist.findIndex(track => 
-            track.src === currentTrack.src);
-          
-          if (newIndex !== -1) {
-            currentTrackIndex = newIndex;
-          } else {
-            // If for some reason we can't find the track, reset to first track
-            currentTrackIndex = 0;
-            console.warn("Could not find current track in shuffled playlist");
-          }
-        }
-        
-        currentPlaylist = newShuffledPlaylist;
-        
-      } else {
-        // Turn shuffle off - restore original order
-        if (originalPlaylist.length > 0) {
-          // Find the current track's position in the original playlist
-          if (currentTrack) {
-            const originalIndex = originalPlaylist.findIndex(track => 
-              track.src === currentTrack.src);
-            
-            currentPlaylist = [...originalPlaylist];
-            
-            if (originalIndex !== -1) {
-              currentTrackIndex = originalIndex;
-            } else {
-              // Safety check - this shouldn't happen but just in case
-              currentTrackIndex = 0;
-              console.warn("Could not find current track in original playlist");
-            }
-          } else {
-            currentPlaylist = [...originalPlaylist];
-            currentTrackIndex = 0;
-          }
-        }
-      }
-      
-      // Update the display
-      updateTrackDisplay();
-      
-      // Resume playback if it was playing
-      if (wasPlaying && !isPlaying) {
-        play();
-      }
-    }
-    
-    // Save the setting
-    saveSettings();
-    
-    console.log(`Shuffle mode ${isShuffleMode ? 'enabled' : 'disabled'}`);
-  }
-  
-  // Use Fisher-Yates shuffle algorithm for better randomization
-  function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
+  // Helper: get the current playback list (shuffled or not)
+  function getPlaybackList() {
+    // Only return currentPlaylist, no shuffle
+    return currentPlaylist;
   }
 
-  // Replace the shufflePlaylist function with a call to our shuffleArray function
-  function shufflePlaylist() {
-    shuffleArray(currentPlaylist);
+  // Helper: get the currently playing track (from playback list)
+  function getCurrentPlaybackTrack() {
+    const playbackList = getPlaybackList();
+    if (!playbackList || currentTrackIndex < 0 || currentTrackIndex >= playbackList.length) return null;
+    return playbackList[currentTrackIndex];
   }
+
+  // Helper: map playback track to its index in currentPlaylist (for UI highlighting)
+  function getCurrentTrackOriginalIndex() {
+    const playbackTrack = getCurrentPlaybackTrack();
+    if (!playbackTrack || !currentPlaylist) return -1;
+    return currentPlaylist.findIndex(t => t.src === playbackTrack.src);
+  }
+
+  
 
   // Load a playlist
   function loadPlaylist(playlistName) {
@@ -701,10 +618,6 @@
     currentPlaylistName = playlistName;
     originalPlaylist = [...playlists[playlistName]]; // Store original order
     currentPlaylist = [...originalPlaylist]; // Create a copy to manipulate
-    
-    if (isShuffleMode) {
-      shuffleArray(currentPlaylist);
-    }
     
     currentTrackIndex = 0;
     updateTrackDisplay();
@@ -856,6 +769,145 @@
     return trackItem;
   }
   
+  // When clicking a track in the UI, play the correct track (regardless of shuffle)
+  function playTrackFromList(trackIndexInOriginal) {
+    if (!isBGMEnabled || !currentPlaylist || trackIndexInOriginal < 0 || trackIndexInOriginal >= currentPlaylist.length) {
+      return;
+    }
+    // Always play from original playlist
+    loadTrack(trackIndexInOriginal);
+    playAudio();
+    updateActiveTrack();
+  }
+
+  // Update active track in UI (highlight)
+  function updateActiveTrack() {
+    if (!trackList) return;
+    const trackItems = trackList.querySelectorAll('.track-item');
+    // Find the index in currentPlaylist of the currently playing track
+    const activeOriginalIndex = getCurrentTrackOriginalIndex();
+    trackItems.forEach((item, idx) => {
+      const itemIndex = parseInt(item.dataset.trackIndex);
+      const isActive = itemIndex === activeOriginalIndex;
+      const isPlayingNow = isActive && window.bgmPlayer && window.bgmPlayer.isPlaying();
+      item.classList.toggle('active', isActive);
+      item.classList.toggle('playing', isPlayingNow);
+    });
+  }
+
+  // --- Add these utility functions before their first use (after updateActiveTrack) ---
+
+  function showTrackList() {
+    if (trackListEmpty) trackListEmpty.style.display = 'none';
+    if (trackList) trackList.classList.add('show');
+  }
+
+  function showEmptyTrackList() {
+    if (trackList) trackList.classList.remove('show');
+    if (trackListEmpty) trackListEmpty.style.display = 'flex';
+  }
+
+  // Track list management functions
+  function populateTrackList(playlistName) {
+    if (!trackList || !trackListContainer) return;
+    
+    const playlist = playlists[playlistName];
+    if (!playlist || playlist.length === 0) {
+      showEmptyTrackList();
+      return;
+    }
+    
+    // Store all tracks for search functionality
+    allTracks = playlist.map((track, index) => ({
+      ...track,
+      index: index,
+      playlistName: playlistName
+    }));
+    
+    filteredTracks = [...allTracks];
+    renderTrackList();
+    showTrackList();
+    
+    // Update track count in header
+    updateTrackListHeader(playlist.length, playlist.length);
+  }
+  
+  function renderTrackList() {
+    if (!trackList) return;
+    
+    trackList.innerHTML = '';
+    
+    filteredTracks.forEach((track, displayIndex) => {
+      const trackItem = createTrackItem(track, displayIndex);
+      trackList.appendChild(trackItem);
+    });
+    
+    updateActiveTrack();
+  }
+  function createTrackItem(track, displayIndex) {
+    const trackItem = document.createElement('div');
+    trackItem.className = 'track-item';
+    trackItem.dataset.trackIndex = track.index;
+    
+    // Get search query for highlighting
+    const searchQuery = trackSearchInput ? trackSearchInput.value : '';
+    const highlightedTitle = highlightSearchText(track.title, searchQuery);
+    const highlightedArtist = highlightSearchText(track.artist, searchQuery);
+    
+    // Get album art for this track
+    const albumArtPath = getTrackAlbumArt(track);
+    
+    trackItem.innerHTML = `
+      <div class="track-playing-indicator">
+        <div class="track-playing-bars">
+          <div class="track-playing-bar"></div>
+          <div class="track-playing-bar"></div>
+          <div class="track-playing-bar"></div>
+          <div class="track-playing-bar"></div>
+        </div>
+      </div>
+      <div class="track-number">${displayIndex + 1}</div>
+      <div class="track-album-art">
+        ${albumArtPath ? 
+          `<img src="${albumArtPath}" alt="${track.title} album art" class="track-art-image">` : 
+          `<div class="track-art-placeholder">🎵</div>`
+        }
+      </div>
+      <div class="track-item-info">
+        <div class="track-item-title">${highlightedTitle}</div>
+        <div class="track-item-artist">${highlightedArtist}</div>
+      </div>
+      <div class="track-item-actions">
+        <button class="track-action-btn track-play-btn" title="Play track">
+          <svg viewBox="0 0 24 24" width="16" height="16">
+            <path fill="currentColor" d="M8,5.14V19.14L19,12.14L8,5.14Z" />
+          </svg>
+        </button>
+      </div>
+    `;
+      // Add click handlers
+    trackItem.addEventListener('click', function(e) {
+      if (e.target.closest('.track-action-btn')) return;
+      playTrackFromList(track.index);
+    });
+    
+    // Add double-click for instant play
+    trackItem.addEventListener('dblclick', function(e) {
+      e.preventDefault();
+      playTrackFromList(track.index);
+    });
+    
+    const playBtn = trackItem.querySelector('.track-play-btn');
+    if (playBtn) {
+      playBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        playTrackFromList(track.index);
+      });
+    }
+    
+    return trackItem;
+  }
+  
   function playTrackFromList(trackIndex) {
     if (!isBGMEnabled || !currentPlaylist || trackIndex < 0 || trackIndex >= currentPlaylist.length) {
       return;
@@ -867,31 +919,7 @@
     updateActiveTrack();
   }
   
-  function updateActiveTrack() {
-    if (!trackList) return;
-    
-    const trackItems = trackList.querySelectorAll('.track-item');
-    
-    trackItems.forEach(item => {
-      const itemIndex = parseInt(item.dataset.trackIndex);
-      const isActive = itemIndex === currentTrackIndex;
-      const isPlaying = isActive && window.bgmPlayer && window.bgmPlayer.isPlaying();
-      
-      item.classList.toggle('active', isActive);
-      item.classList.toggle('playing', isPlaying);
-    });
-  }
-  
-  function showTrackList() {
-    if (trackListEmpty) trackListEmpty.style.display = 'none';
-    if (trackList) trackList.classList.add('show');
-  }
-  
-  function showEmptyTrackList() {
-    if (trackList) trackList.classList.remove('show');
-    if (trackListEmpty) trackListEmpty.style.display = 'flex';
-  }
-    function searchTracks(query) {
+  function searchTracks(query) {
     if (!query.trim()) {
       filteredTracks = [...allTracks];
     } else {
@@ -988,7 +1016,6 @@
     
     // Playlist-based album art mapping (fallback)
     const PLAYLIST_ALBUM_ART_MAP = {
-      'deep-focus': 'images/album-art/focus.png',
       'ambient-long': 'images/album-art/ambient.jpg',
       'smile-demons': 'images/album-art/niki.png'
     };
@@ -1013,7 +1040,7 @@
   (function() {
     // Album art mapping (copied from mini music player)
     const ALBUM_ART_MAP = {
-      'deep-focus': 'images/album-art/focus.png',
+      // 'deep-focus': 'images/album-art/focus.png', // Remove or replace
       'ambient-long': 'images/album-art/ambient.jpg',
       'smile-demons': 'images/album-art/niki.png'
     };
@@ -1176,8 +1203,7 @@
       localStorage.setItem('bgmVolume', volume);
     },
     getCurrentTrack: function() {
-      if (!currentPlaylist || currentTrackIndex >= currentPlaylist.length) return null;
-      return currentPlaylist[currentTrackIndex];
+      return getCurrentPlaybackTrack();
     },
     getProgress: function() {
       if (!audio.duration) return 0;
@@ -1193,10 +1219,9 @@
       if (audio.duration && time >= 0 && time <= audio.duration) {
         audio.currentTime = time;
       }
-    },    setBGMEnabled: setBGMEnabled,
+    },
+    setBGMEnabled: setBGMEnabled,
     isInitialized: false,
-    toggleShuffle: toggleShuffle,
-    isShuffleMode: function() { return isShuffleMode; },
     getCurrentPlaylist: function() { return currentPlaylistName; }
   };
 

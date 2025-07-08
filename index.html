@@ -21,8 +21,8 @@
   <link rel="stylesheet" href="css/bgm-player.css">
   <link rel="stylesheet" href="css/mini-music-player.css">
   <link rel="stylesheet" href="css/burnup-tracker.css">
-  
-  <!-- Add this script block right before the closing </head> tag -->
+</head>
+<body class="pomodoro-mode">
   <script>
     // Apply saved theme before the page renders to prevent flashing
     (function() {
@@ -42,8 +42,6 @@
       }
     })();
   </script>
-</head>
-<body class="pomodoro-mode">
   <div class="container">
     <header>
       <h1 class="app-title">Customodoro Timer</h1>
@@ -480,11 +478,7 @@
               </div>
               
               <div class="bgm-controls">
-                <button class="bgm-btn bgm-btn-shuffle" id="bgm-shuffle-btn" aria-pressed="false" title="Shuffle">
-                  <svg viewBox="0 0 24 24" width="24" height="24">
-                    <path fill="currentColor" d="M10.59,9.17L5.41,4L4,5.41l5.17,5.17L10.59,9.17z M14.5,4l2.04,2.04L4,18.59L5.41,20L17.96,7.46L20,9.5V4H14.5z M14.83,13.41l-1.41,1.41l3.13,3.13L14.5,20H20v-5.5l-2.04,2.04L14.83,13.41z" />
-                  </svg>
-                </button>
+                
                 
                 <button class="bgm-btn bgm-btn-prev" id="bgm-prev-btn">
                   <svg viewBox="0 0 24 24" width="24" height="24">
