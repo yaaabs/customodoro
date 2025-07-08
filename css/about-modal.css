@@ -1,0 +1,151 @@
+/* About Info Modal Styles - Modern Design */
+.about-info-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s linear 0.25s, opacity 0.3s ease;
+    backdrop-filter: blur(3px);
+}
+
+.about-info-modal-overlay.active {
+    visibility: visible;
+    opacity: 1;
+    transition-delay: 0s;
+}
+
+.about-info-modal {
+    background: linear-gradient(145deg, rgb(45, 45, 55), rgb(25, 25, 35));
+    border-radius: 16px;
+    width: 90%;
+    max-width: 480px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25), 
+                0 1px 8px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    overflow: hidden;
+    transform: translateY(20px) scale(0.95);
+    transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.about-info-modal-overlay.active .about-info-modal {
+    transform: translateY(0) scale(1);
+}
+
+.about-info-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    position: relative;
+}
+
+.about-info-modal-header:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 4%;
+    right: 4%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2) 20%, rgba(255, 255, 255, 0.2) 80%, transparent);
+}
+
+.about-info-modal-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+    letter-spacing: -0.01em;
+}
+
+.about-info-modal-close {
+    background: none;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.7);
+    transition: all 0.2s ease;
+}
+
+.about-info-modal-close:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+.about-info-modal-content {
+    padding: 24px;
+    color: white;
+    line-height: 1.6;
+}
+
+.about-info-modal-content p {
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.about-info-modal-content strong {
+    font-weight: 600;
+    color: white;
+}
+
+.about-info-modal-content ul {
+    margin-bottom: 16px;
+    padding-left: 24px;
+}
+
+.about-info-modal-content li {
+    margin-bottom: 10px;
+    position: relative;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.about-info-modal-content li::marker {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.about-info-modal-footer {
+    padding: 16px 24px 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.about-info-btn {
+    padding: 10px 20px;
+    background: linear-gradient(to bottom right, #4a7bff, #2e5cd8);
+    color: white;
+    border: none;
+    border-radius: 40px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.about-info-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.about-info-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

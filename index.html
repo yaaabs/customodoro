@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="css/bgm-player.css">
   <link rel="stylesheet" href="css/mini-music-player.css">
   <link rel="stylesheet" href="css/burnup-tracker.css">
+  <link rel="stylesheet" href="css/about-modal.css">
 </head>
 <body class="pomodoro-mode">
   <script>
@@ -104,10 +105,37 @@
         <!-- Tasks will be added here -->
       </ul>
     </div>
-    
-    <div class="footer">
-      © 2025 Customodoro Timer - All Rights Reserved
-    </div>
+   
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          © 2025 <strong>Customodoro</strong>
+          <span class="footer-version">v2.0.1</span>
+          • Handcrafted by <strong><em>YabuTech</em></strong>
+        </div>
+        <nav class="footer-links">
+          <a href="#" id="about-link-footer">
+            <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <span>About</span>
+          </a>
+          <span class="footer-divider">•</span>
+          <a href="mailto:yabutech@gmail.com">
+            <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            <span>Contact</span>
+          </a>
+          <span class="footer-divider">•</span>
+          <a href="https://wakey2x.vercel.app/" target="_blank" rel="noopener">
+            <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            <span>Try Other App</span>
+          </a>
+          <span class="footer-divider">•</span>
+          <a href="https://www.linkedin.com/in/brian-yabut/" target="_blank" rel="noopener">
+            <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+            <span>Connect</span>
+          </a>
+        </nav>
+      </div>
+    </footer>
   </div>
 
   <!-- Fullscreen Button -->
@@ -739,6 +767,32 @@
     </div>
   </div>
   
+  <!-- About Modal -->
+<div class="about-info-modal-overlay" id="about-info-modal-overlay">
+  <div class="about-info-modal">
+    <div class="about-info-modal-header">
+      <h3 class="about-info-modal-title">About Customodoro</h3>
+      <button class="about-info-modal-close" id="about-info-modal-close">&times;</button>
+    </div>
+    <div class="about-info-modal-content">
+      <p><strong>Customodoro</strong> is a handcrafted productivity timer built to help you focus better, manage your time, and maintain balance.</p>
+
+      <p>It features two flexible modes — Classic Pomodoro (work-first) and Reverse Pomodoro (rest-first) — designed to match your unique rhythm whether you're grinding hard or easing in.</p>
+
+      <p>More than just a timer, Customodoro includes themes, background music, locked-in focus mode, and settings that adapt to your workflow — all built inside a calm, distraction-free interface.</p>
+
+      <p><strong>Why I made this?</strong> I built this for someone special — my girlfriend — because she told me the traditional Pomodoro style wasn't working well for her study sessions. So, I designed Reverse Pomodoro just for her — something more gentle and flexible, the way she needed it.</p>
+
+      <p>This app is for anyone who wants to focus with intention, rest with clarity, and make every session feel like progress.</p>
+
+      <p class="settings-note"><strong>Handcrafted by YabuTech — born from feedback, built to empower.</strong></p>
+    </div>
+    <div class="about-info-modal-footer">
+      <button class="about-info-btn" id="about-info-close-btn">Got it</button>
+    </div>
+  </div>
+</div>
+
   <script src="js/script.js"></script>
   <script src="js/settings.js"></script>
   <script src="js/fullscreen.js"></script>
@@ -749,5 +803,6 @@
   <script src="js/radial-menu.js"></script>
   <script src="js/bgm-player.js"></script>
   <script src="js/mini-music-player.js"></script>
+  <script src="js/about-modal.js"></script>
 </body>
 </html>
