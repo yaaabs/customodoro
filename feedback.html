@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Customodoro Timer</title>
+  <title>Feedback - Customodoro Timer</title>
 
   <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png" id="favicon">
@@ -46,65 +46,25 @@
   <div class="container">
     <header>
       <h1 class="app-title">Customodoro Timer</h1>
-      <div class="mode-tabs">
-        <div class="tab active" id="pomodoro-tab">Pomodoro</div>
-        <div class="tab" id="short-break-tab">Short Break</div>
-        <div class="tab" id="long-break-tab">Long Break</div>
-      </div>
+
       <br>
       <div class="switch-mode">
+        <a href="index.html" class="switch-btn">Switch to Classic Pomodoro ⏱️</a>
         <a href="reverse.html" class="switch-btn">Try Reverse Pomodoro ⏱️</a>
       </div>
     </header>
     
-    <div class="timer-container">
-      <div class="timer" id="timer">25:00</div>
-      <div class="timer-actions">
-        <button class="primary-btn" id="start-btn">START</button>
-        <button class="secondary-btn" id="reset-btn">Reset</button>
-      </div>      <div class="progress-container">
-        <div class="progress-bar" id="progress-bar"></div>
-      </div>
+ <br>
       
-      <!-- Burn-Up Time Tracker -->
-      <div class="burnup-tracker" id="burnup-tracker" style="display: none;">
-        <div class="burnup-header">
-          <span class="burnup-title">Burn-Up Tracker</span>
-        </div>
-        <div class="burnup-progress-container">
-          <div class="burnup-progress-bar" id="burnup-progress-bar"></div>
-        </div>
-        <div class="burnup-stats">
-          <span class="burnup-spent">Spent: <span id="burnup-spent-time">00:00</span></span>
-          <span class="burnup-divider">/</span>
-          <span class="burnup-planned">Est: <span id="burnup-planned-time">25:00</span></span>
-          <span class="burnup-percentage" id="burnup-percentage">0%</span>
-        </div>
+      <div class="notion-form-wrapper">
+        <iframe
+          style="border:none;width:100%;height:700px;"
+          id="feedback-and-bug-reporting-form-fnkwn7"
+          src="https://noteforms.com/forms/feedback-and-bug-reporting-form-fnkwn7">
+        </iframe>
+        <script type="text/javascript" onload="initEmbed('feedback-and-bug-reporting-form-fnkwn7')" src="https://noteforms.com/widgets/iframe.min.js"></script>
       </div>
-      
-      <div class="session-info">
-        <div class="session-count" id="session-dots">
-          <span class="session-dot"></span>
-          <span class="session-dot"></span>
-          <span class="session-dot"></span>
-          <span class="session-dot"></span>
-        </div>
-        <div class="session-text" id="session-text">#1</div>
-      </div>
-    </div>
-    
-    <div class="tasks-section">
-      <div class="tasks-header">
-        <div class="tasks-title">Tasks</div>
-      </div>
-      <div class="task-input-container">
-        <input type="text" class="task-input" id="task-input" placeholder="What are you working on?">
-        <button class="add-task-btn" id="add-task-btn">Add</button>
-      </div>
-      <ul class="task-list" id="task-list">
-        <!-- Tasks will be added here -->
-      </ul>
-    </div>
+
    
     <footer class="footer">
       <div class="footer-content">
@@ -132,11 +92,6 @@
           <a href="https://www.linkedin.com/in/brian-yabut/" target="_blank" rel="noopener">
             <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
             <span>Connect</span>
-          </a>
-          <span class="footer-divider">•</span>
-          <a href="feedback.html">
-            <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-            <span>Feedback</span>
           </a>
         </nav>
       </div>
@@ -798,16 +753,7 @@
   </div>
 </div>
 
-  <script src="js/script.js"></script>
-  <script src="js/settings.js"></script>
-  <script src="js/fullscreen.js"></script>
-  <script src="js/lockedin-mode.js"></script>
   <script src="js/theme-manager.js"></script>
-  <script src="js/locked-in-info-modal.js"></script>
-  <script src="js/focus-mode.js"></script>
-  <script src="js/radial-menu.js"></script>
-  <script src="js/bgm-player.js"></script>
-  <script src="js/mini-music-player.js"></script>
   <script src="js/about-modal.js"></script>
 </body>
 </html>

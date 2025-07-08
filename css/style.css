@@ -1818,3 +1818,78 @@ body.lockedin-mode-active {
   transition-delay: 0s;
 }
 
+
+/* ==============================================
+   Feedback & Bug Reporting Section
+   ============================================== */
+
+.feedback-section {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  color: var(--text-dark);
+  box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.feedback-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.feedback-description {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.8;
+}
+
+#feedback-and-bug-reporting-form-fnkwn7 {
+  height: 500px; /* Default height */
+  border-radius: 8px;
+}
+
+/* Dark theme adjustments */
+.theme-dark .feedback-section,
+.theme-yourname .feedback-section,
+.theme-custom .feedback-section {
+  background: rgba(20, 20, 20, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-light);
+  box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .feedback-section {
+    padding: 1.5rem;
+  }
+
+  #feedback-and-bug-reporting-form-fnkwn7 {
+    height: 450px;
+  }
+}
+
+@media (max-width: 480px) {
+  .feedback-section {
+    padding: 1rem;
+  }
+
+  .feedback-title {
+    font-size: 1.25rem;
+  }
+
+  .feedback-description {
+    font-size: 0.9rem;
+  }
+
+  #feedback-and-bug-reporting-form-fnkwn7 {
+    height: 400px;
+  }
+}
