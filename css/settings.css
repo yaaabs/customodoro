@@ -104,11 +104,13 @@ background-color: rgba(255, 255, 255, 0.07);
 
 /* Right content area */
 .settings-main {
-flex: 1;
-display: flex;
-flex-direction: column;
-background-color: #1a1a1a;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #1a1a1a;
+  max-height: 90vh; /* restrict total height */
 }
+
 
 .settings-header {
 padding: 20px 25px;
@@ -143,11 +145,20 @@ color: #fff;
 }
 
 .settings-body {
-padding: 25px;
-overflow-y: auto;
-flex: 1;
-background-color: #1a1a1a; /* Explicitly set background color */
-color: #ddd;
+  padding: 25px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0; /* allow it to shrink if needed */
+  background-color: #1a1a1a;
+  color: #ddd;
+}
+
+
+@media (orientation: portrait) {
+  .settings-body {
+    padding: 30px;
+    min-height: 70vh;
+  }
 }
 
 .settings-section {
@@ -197,6 +208,8 @@ color: #ddd;
 letter-spacing: 0.2px;
 line-height: 1.4;
 }
+
+
 
 /* Dark theme form elements */
 .theme-selector {
@@ -297,13 +310,15 @@ appearance: textfield !important;
 }
 
 .settings-footer {
-padding: 20px 25px;
-border-top: 1px solid #333;
-background-color: #1a1a1a;
-display: flex;
-justify-content: flex-end;
-gap: 10px;
+  padding: 16px 25px;
+  border-top: 1px solid #333;
+  background-color: #1a1a1a;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-shrink: 0; /* prevent shrinking */
 }
+
 
 .reset-btn {
 background-color: rgba(255, 64, 64, 0.1);
@@ -1836,6 +1851,21 @@ padding: 1px 2px;
 
 }
 
+@media (max-width: 360px) {
+  .preview-mini-tracker {
+    width: 60px;
+    height: 30px;
+    padding: 2px;
+  }
+  .mini-tracker-title,
+  .mini-percentage,
+  .mini-tracker-stats {
+    font-size: 5px;
+  }
+  .tracker-design-option {
+    padding: 4px;
+  }
+}
  
 
 /* ===== ACCESSIBILITY ENHANCEMENTS ===== */
