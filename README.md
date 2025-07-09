@@ -49,6 +49,12 @@
 
 *Perfect for deep work sessions, creative flow states, or when you're just "in the zone"*
 
+**Now includes two Reverse Pomodoro modes:**
+
+**Standard Mode:** Default 1-hour max work time (non-editable)
+
+**Dynamic Mode:** Customize max work time up to 6 hours (360 mins). Scales the break rewards proportionally. Perfect for deep work marathons.
+
 ---
 
 ## 🎨 **Stunning Customization Options**
@@ -190,7 +196,7 @@ Elegant floating action menu with quick access to:
 ## 📞 **Get In Touch**
 
 Found a bug? Have a feature request? We'd love to hear from you!
-
+📝 **Feedback:** [Send Feedback](https://noteforms.com/forms/feedback-and-bug-reporting-form-fnkwn7)
 📧 **Contact:** [brianyabutech@gmail.com](mailto:brianyabutech@gmail.com)
 
 <div align="center">
