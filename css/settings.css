@@ -157,9 +157,11 @@ color: #fff;
 @media (orientation: portrait) {
   .settings-body {
     padding: 30px;
-    min-height: 70vh;
+    /* Remove min-height to prevent overflow */
+    min-height: 0;
   }
 }
+
 
 .settings-section {
 margin-bottom: 30px;
