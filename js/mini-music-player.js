@@ -48,9 +48,23 @@
   // Function to update progress circle position
   function updateProgressCirclePosition() {
     const miniProgressCircle = document.getElementById('mini-progress-circle');
-    if (miniProgressCircle && window.bgmPlayer) {
+    const miniProgressBar = document.getElementById('mini-progress-bar');
+    
+    if (miniProgressCircle && miniProgressBar && window.bgmPlayer) {
       const progress = window.bgmPlayer.getProgress() || 0;
       miniProgressCircle.style.left = progress + '%';
+      
+      // Make circle visible when hovering
+      const miniProgressContainer = document.querySelector('.mini-player-progress');
+      if (miniProgressContainer) {
+        miniProgressContainer.addEventListener('mouseover', () => {
+          miniProgressCircle.style.opacity = '1';
+        });
+        
+        miniProgressContainer.addEventListener('mouseout', () => {
+          miniProgressCircle.style.opacity = '0';
+        });
+      }
     }
   }
 
@@ -84,15 +98,27 @@
     const placeholder = document.getElementById('mini-album-art-placeholder');
     const artPath = getAlbumArtPath();
     
-    if (artPath && albumArt && placeholder) {
-      albumArt.src = artPath;
-      albumArt.style.display = 'block';
-      placeholder.style.display = 'none';
-      
-      // Add spinning animation when playing
-      const isPlaying = window.bgmPlayer && window.bgmPlayer.isPlaying();
-      albumArt.classList.toggle('spinning', isPlaying);
-    } else if (albumArt && placeholder) {
+    if (!albumArt || !placeholder) return;
+    
+    if (artPath) {
+      // Preload the image to avoid flashing
+      const img = new Image();
+      img.onload = function() {
+        albumArt.src = artPath;
+        albumArt.style.display = 'block';
+        placeholder.style.display = 'none';
+        
+        // Add spinning animation when playing
+        const isPlaying = window.bgmPlayer && window.bgmPlayer.isPlaying();
+        albumArt.classList.toggle('spinning', isPlaying);
+      };
+      img.onerror = function() {
+        // Show placeholder if image fails to load
+        albumArt.style.display = 'none';
+        placeholder.style.display = 'flex';
+      };
+      img.src = artPath;
+    } else {
       albumArt.style.display = 'none';
       placeholder.style.display = 'flex';
     }
@@ -109,7 +135,7 @@
             <h3>🎵 Music Player</h3>
             <button class="mini-player-close" id="mini-player-close">&times;</button>
           </div>
-            <div class="mini-player-body">
+          <div class="mini-player-body">
             <div class="mini-album-art-container">
               <img class="mini-album-art" id="mini-album-art" src="" alt="Album Art" style="display: none;">
               <div class="mini-album-art-placeholder" id="mini-album-art-placeholder">
@@ -139,25 +165,25 @@
               </button>
               
               <button class="mini-btn mini-btn-next" id="mini-next-btn">
-                <svg viewBox="0 0 24  24" width="20" height="20">
+                <svg viewBox="0 0 24 24" width="20" height="20">
                   <path fill="currentColor" d="M16,18H18V6H16M6,18L14.5,12L6,6V18Z" />
                 </svg>
               </button>
             </div>
-              <div class="mini-player-progress-container">
+            
+            <div class="mini-player-progress-container">
               <div class="mini-player-progress" id="mini-progress">
-                <div class="mini-progress-container" id="mini-progress-container">
-                  <div class="mini-progress-bar" id="mini-progress-bar"></div>
-                  <div class="mini-progress-circle" id="mini-progress-circle"></div>
-                </div>
+                <div class="mini-progress-bar" id="mini-progress-bar"></div>
+                <div class="mini-progress-circle" id="mini-progress-circle"></div>
               </div>
               <div class="mini-player-time">
-                <span id="mini-current-time">0:00</span> / <span id="mini-total-time">0:00</span>
+                <span id="mini-current-time">0:00</span>
+                <span id="mini-total-time">0:00</span>
               </div>
             </div>
             
             <div class="mini-player-volume">
-              <div class="mini-volume-label">Music Volume</div>
+              <div class="mini-volume-label">Volume</div>
               <div class="mini-volume-container">
                 <input type="range" class="mini-volume-slider" id="mini-volume-slider" min="0" max="100" value="30">
                 <span id="mini-volume-display">30%</span>
@@ -166,8 +192,8 @@
           </div>
           
           <div class="mini-player-footer">
-            <button class="mini-settings-btn" id="mini-full-settings-btn">Full Settings</button>
             <button class="mini-close-btn" id="mini-footer-close-btn">Close</button>
+            <button class="mini-settings-btn" id="mini-full-settings-btn">Settings</button>
           </div>
         </div>
       </div>
@@ -179,7 +205,8 @@
   }
 
   // Setup event listeners for mini player
-  function setupMiniPlayerEvents() {    const closeBtn = document.getElementById('mini-player-close');
+  function setupMiniPlayerEvents() {
+    const closeBtn = document.getElementById('mini-player-close');
     const footerCloseBtn = document.getElementById('mini-footer-close-btn');
     const fullSettingsBtn = document.getElementById('mini-full-settings-btn');
     const playBtn = document.getElementById('mini-play-btn');
@@ -188,7 +215,9 @@
     const volumeSlider = document.getElementById('mini-volume-slider');
     const volumeDisplay = document.getElementById('mini-volume-display');
     const miniProgressBar = document.querySelector('.mini-player-progress');
-    const miniProgressContainer = document.getElementById('mini-progress-container');
+    
+    // Fix: Use the correct selector to match the HTML structure
+    const miniProgressContainer = document.querySelector('.mini-player-progress');
     const miniProgressCircle = document.getElementById('mini-progress-circle');
 
     // Close button
@@ -286,6 +315,7 @@
     }
     
    
+    // Fix progress bar click handler
     if (miniProgressContainer) {
       miniProgressContainer.addEventListener('click', function(e) {
         if (window.bgmPlayer && typeof window.bgmPlayer.getDuration === 'function') {
@@ -417,12 +447,26 @@
     }
     
     isOpen = true;
+    
+    // Prepare modal for animation
+    miniPlayerModal.style.opacity = '0';
     miniPlayerModal.classList.add('show');
+    
+    // Trigger reflow for animation
+    void miniPlayerModal.offsetWidth;
+    
+    // Apply animation
+    miniPlayerModal.style.transition = 'opacity 0.3s ease';
+    miniPlayerModal.style.opacity = '1';
+    
     document.body.style.overflow = 'hidden';
     
     // Update initial state and start sync
     updateInitialState();
     startSync();
+    
+    // Check viewport on opening
+    handleViewportChange();
   }
 
   // Close mini player
@@ -533,4 +577,59 @@
     isOpen: () => isOpen,
     sync: syncWithBGMPlayer
   };
+
+  // Handle orientation and size changes more robustly
+window.addEventListener('orientationchange', handleViewportChange);
+window.addEventListener('resize', handleViewportChange);
+
+function handleViewportChange() {
+  if (isOpen) {
+    // Give the browser a moment to adjust
+    setTimeout(() => {
+      const isLandscape = window.innerWidth > window.innerHeight;
+      const miniPlayerContent = document.querySelector('.mini-music-player-content');
+      const miniPlayerBody = document.querySelector('.mini-player-body');
+      
+      if (miniPlayerContent) {
+        // Force a repaint to ensure correct layout
+        miniPlayerContent.style.display = 'none';
+        setTimeout(() => {
+          miniPlayerContent.style.display = '';
+          
+          // Adjust the layout based on orientation
+          if (miniPlayerBody) {
+            if (isLandscape && window.innerHeight < 600) {
+              miniPlayerBody.classList.add('landscape-mode');
+              
+              // Ensure volume slider is properly sized
+              const volumeSlider = document.getElementById('mini-volume-slider');
+              if (volumeSlider) {
+                volumeSlider.style.minWidth = '80px';
+              }
+            } else {
+              miniPlayerBody.classList.remove('landscape-mode');
+              
+              // Reset volume slider size
+              const volumeSlider = document.getElementById('mini-volume-slider');
+              if (volumeSlider) {
+                volumeSlider.style.minWidth = '';
+              }
+            }
+          }
+          
+          // Ensure proper sizing of all controls
+          const controls = miniPlayerBody.querySelectorAll('.mini-btn');
+          controls.forEach(control => {
+            control.style.display = 'flex';
+            control.style.alignItems = 'center';
+            control.style.justifyContent = 'center';
+          });
+          
+          // Update progress circle position
+          updateProgressCirclePosition();
+        }, 20);
+      }
+    }, 200);
+  }
+}
 })();
