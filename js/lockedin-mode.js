@@ -47,12 +47,13 @@
   
   // Initialize locked in mode
   function initLockedInMode() {
-    // Check if locked in mode is enabled in settings
-    isLockedInModeEnabled = localStorage.getItem('lockedInModeEnabled') !== 'false';
-    
-    // For backward compatibility
-    if (localStorage.getItem('lockedInModeEnabled') === null && 
-        localStorage.getItem('focusModeEnabled') !== null) {
+    // Default to OFF unless explicitly enabled
+    if (localStorage.getItem('lockedInModeEnabled') === null && localStorage.getItem('focusModeEnabled') === null) {
+      isLockedInModeEnabled = false;
+      localStorage.setItem('lockedInModeEnabled', 'false');
+    } else if (localStorage.getItem('lockedInModeEnabled') !== null) {
+      isLockedInModeEnabled = localStorage.getItem('lockedInModeEnabled') !== 'false';
+    } else if (localStorage.getItem('focusModeEnabled') !== null) {
       isLockedInModeEnabled = localStorage.getItem('focusModeEnabled') !== 'false';
       localStorage.setItem('lockedInModeEnabled', isLockedInModeEnabled);
     }
@@ -95,6 +96,7 @@
         // Create the toggle row
         const lockedInModeRow = document.createElement('div');
         lockedInModeRow.className = 'settings-row';
+        // Default to unchecked unless enabled in settings
         lockedInModeRow.innerHTML = `
           <div class="settings-label">
             Locked In Mode when running
@@ -118,6 +120,7 @@
         // Add event listener
         const newToggle = document.getElementById('lockedin-mode-toggle');
         if (newToggle) {
+          newToggle.checked = isLockedInModeEnabled; // Ensure correct state
           newToggle.addEventListener('change', function() {
             setLockedInModeEnabled(newToggle.checked);
           });

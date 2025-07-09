@@ -223,7 +223,7 @@
       
       // Reset burn-up tracker design to default (Match Theme)
       localStorage.setItem('burnupTrackerDesign', 'match-theme');
-      
+
       // Reload settings into form
       loadSettings();
       
@@ -277,6 +277,13 @@
       if (autoBreakToggle) autoBreakToggle.checked = true;
       if (autoPomoToggle) autoPomoToggle.checked = true;
       
+      // --- LOCKED IN MODE: Reset toggle to OFF and save ---
+      const lockedInModeToggle = document.getElementById('lockedin-mode-toggle');
+      if (lockedInModeToggle) {
+        lockedInModeToggle.checked = false;
+        saveLockedInModeSettings();
+      }
+
       // Apply defaults to the timer
       applySettingsToTimer();
       forceTimerReset();
