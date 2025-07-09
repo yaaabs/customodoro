@@ -155,6 +155,11 @@
       // Apply settings immediately to update the timer
       applySettingsToTimer();
       
+      // Update info section on main page
+      if (isReversePage && typeof window.updateInfoSection === 'function') {
+        window.updateInfoSection();
+      }
+      
       // Force an immediate timer reset to apply new settings
       forceTimerReset();
       
@@ -180,6 +185,7 @@
         localStorage.setItem('sessionsCount', '4');
       } else {
         // Reset Reverse Timer settings
+        localStorage.setItem('breakLogicMode', 'default');
         localStorage.setItem('reverseMaxTime', '60');
         localStorage.setItem('reverseBreak1', '2');
         localStorage.setItem('reverseBreak2', '5');
@@ -210,7 +216,10 @@
         // Reset theme to light mode
       localStorage.setItem('siteTheme', 'light');
         // Reset burn-up tracker settings
-      localStorage.setItem('burnupTrackerEnabled', 'true');
+      localStorage.setItem('burnupTrackerEnabled', 'false');
+
+      localStorage.setItem('isLockedInModeEnabled', 'false');
+        
       
       // Reset burn-up tracker design to default (Match Theme)
       localStorage.setItem('burnupTrackerDesign', 'match-theme');
@@ -717,21 +726,33 @@
     // Override the calculateBreakTime function to use our custom settings
     if (typeof window.calculateBreakTime === 'function') {
       window.calculateBreakTime = function(workedSeconds) {
-        const minutes = Math.floor(workedSeconds / 60);
-        
-        if (minutes <= 4) return 0;
-        
+        const breakLogicMode = localStorage.getItem('breakLogicMode') || 'default';
+        const maxWorkMinutes = parseInt(localStorage.getItem('reverseMaxTime')) || 60;
+        const workedMinutes = Math.floor(workedSeconds / 60);
+
         const break1 = parseInt(localStorage.getItem('reverseBreak1')) || 2;
         const break2 = parseInt(localStorage.getItem('reverseBreak2')) || 5;
         const break3 = parseInt(localStorage.getItem('reverseBreak3')) || 10;
         const break4 = parseInt(localStorage.getItem('reverseBreak4')) || 15;
         const break5 = parseInt(localStorage.getItem('reverseBreak5')) || 30;
-        
-        if (minutes <= 20) return break1;
-        if (minutes <= 30) return break2;
-        if (minutes <= 45) return break3;
-        if (minutes <= 55) return break4;
-        return break5;
+
+        if (workedMinutes === 0) return 0;
+
+        if (breakLogicMode === 'dynamic') {
+            const percentage = workedMinutes / maxWorkMinutes;
+            if (percentage <= 0.2) return break1;
+            if (percentage <= 0.4) return break2;
+            if (percentage <= 0.6) return break3;
+            if (percentage <= 0.8) return break4;
+            return break5;
+        } else { // 'default' mode
+            if (workedMinutes < 5) return 0;
+            if (workedMinutes <= 20) return break1;
+            if (workedMinutes <= 30) return break2;
+            if (workedMinutes <= 45) return break3;
+            if (workedMinutes <= 55) return break4;
+            return break5;
+        }
       };
     }
   }
@@ -798,6 +819,7 @@
   
   // Save Reverse timer settings
   function saveReverseSettings() {
+    const breakLogicMode = document.getElementById('break-logic-mode-selector').value;
     const maxTime = document.getElementById('max-time').value;
     const break1Time = document.getElementById('break1-time').value;
     const break2Time = document.getElementById('break2-time').value;
@@ -806,6 +828,7 @@
     const break5Time = document.getElementById('break5-time').value;
     
     // Save to localStorage
+    localStorage.setItem('breakLogicMode', breakLogicMode);
     localStorage.setItem('reverseMaxTime', maxTime);
     localStorage.setItem('reverseBreak1', break1Time);
     localStorage.setItem('reverseBreak2', break2Time);
@@ -816,6 +839,7 @@
   
   // Load Reverse timer settings
   function loadReverseSettings() {
+    const breakLogicModeSelector = document.getElementById('break-logic-mode-selector');
     const maxTimeInput = document.getElementById('max-time');
     const break1Input = document.getElementById('break1-time');
     const break2Input = document.getElementById('break2-time');
@@ -824,12 +848,19 @@
     const break5Input = document.getElementById('break5-time');
     
     // Get from localStorage or set defaults
+    if (breakLogicModeSelector) {
+        breakLogicModeSelector.value = localStorage.getItem('breakLogicMode') || 'default';
+    }
     maxTimeInput.value = localStorage.getItem('reverseMaxTime') || 60;
     break1Input.value = localStorage.getItem('reverseBreak1') || 2;
     break2Input.value = localStorage.getItem('reverseBreak2') || 5;
     break3Input.value = localStorage.getItem('reverseBreak3') || 10;
     break4Input.value = localStorage.getItem('reverseBreak4') || 15;
     break5Input.value = localStorage.getItem('reverseBreak5') || 30;
+
+    if (isReversePage) {
+        toggleBreakModeUI();
+    }
   }
   
   // Save sound settings - Now using shared keys for both pages
@@ -1171,7 +1202,7 @@ function testSound(type) {
       { minus: 'short-break-minus-btn', plus: 'short-break-plus-btn', input: 'short-break-time', min: 1, max: 30 },
       { minus: 'long-break-minus-btn', plus: 'long-break-plus-btn', input: 'long-break-time', min: 5, max: 60 },
       { minus: 'sessions-minus-btn', plus: 'sessions-plus-btn', input: 'sessions-count', min: 1, max: 10 },
-      { minus: 'max-time-minus-btn', plus: 'max-time-plus-btn', input: 'max-time', min: 15, max: 120 },
+      { minus: 'max-time-minus-btn', plus: 'max-time-plus-btn', input: 'max-time', min: 15, max: 360 },
       { minus: 'break1-minus-btn', plus: 'break1-plus-btn', input: 'break1-time', min: 1, max: 10 },
       { minus: 'break2-minus-btn', plus: 'break2-plus-btn', input: 'break2-time', min: 2, max: 15 },
       { minus: 'break3-minus-btn', plus: 'break3-plus-btn', input: 'break3-time', min: 5, max: 20 },
@@ -1207,6 +1238,81 @@ function testSound(type) {
         });
       }
     });
+
+    if (isReversePage) {
+        const breakLogicModeSelector = document.getElementById('break-logic-mode-selector');
+        const maxTimeInput = document.getElementById('max-time');
+
+        if (breakLogicModeSelector) {
+            breakLogicModeSelector.addEventListener('change', toggleBreakModeUI);
+        }
+        if (maxTimeInput) {
+            maxTimeInput.addEventListener('input', updateBreakTierLabels);
+        }
+    }
+  }
+  
+  function updateBreakTierLabels() {
+    const breakLogicModeSelector = document.getElementById('break-logic-mode-selector');
+    if (!breakLogicModeSelector) return;
+
+    const breakLogicMode = breakLogicModeSelector.value;
+    const maxTime = parseInt(document.getElementById('max-time').value) || 60;
+
+    const labels = {
+        1: document.getElementById('break1-label'),
+        2: document.getElementById('break2-label'),
+        3: document.getElementById('break3-label'),
+        4: document.getElementById('break4-label'),
+        5: document.getElementById('break5-label'),
+    };
+
+    if (breakLogicMode === 'dynamic') {
+        const tier1 = Math.floor(maxTime * 0.2);
+        const tier2 = Math.floor(maxTime * 0.4);
+        const tier3 = Math.floor(maxTime * 0.6);
+        const tier4 = Math.floor(maxTime * 0.8);
+        // NOTE:
+        // In dynamic mode, break tier scaling becomes inaccurate if maxWorkTime < 15 mins.
+        // This can result in invalid ranges like "5–2 mins", so we clamp the minimum to 15.
+        if (labels[1]) labels[1].textContent = `Break Time (1-${tier1} mins work)`;
+        if (labels[2]) labels[2].textContent = `Break Time (${tier1 + 1}-${tier2} mins work)`;
+        if (labels[3]) labels[3].textContent = `Break Time (${tier2 + 1}-${tier3} mins work)`;
+        if (labels[4]) labels[4].textContent = `Break Time (${tier3 + 1}-${tier4} mins work)`;
+        if (labels[5]) labels[5].textContent = `Break Time (${tier4 + 1}-${maxTime} mins work)`;
+    } else { // default
+        if (labels[1]) labels[1].textContent = 'Break Time (5-20 mins work)';
+        if (labels[2]) labels[2].textContent = 'Break Time (21-30 mins work)';
+        if (labels[3]) labels[3].textContent = 'Break Time (31-45 mins work)';
+        if (labels[4]) labels[4].textContent = 'Break Time (46-55 mins work)';
+        if (labels[5]) labels[5].textContent = 'Break Time (56-60 mins work)';
+    }
+  }
+
+  function toggleBreakModeUI() {
+      const breakLogicModeSelector = document.getElementById('break-logic-mode-selector');
+      if (!breakLogicModeSelector) return;
+
+      const breakLogicMode = breakLogicModeSelector.value;
+      const maxTimeInput = document.getElementById('max-time');
+      const maxTimeMinusBtn = document.getElementById('max-time-minus-btn');
+      const maxTimePlusBtn = document.getElementById('max-time-plus-btn');
+
+      // TEMP FIX: Always disable the + and - buttons for Max Work Time
+      if (maxTimeMinusBtn) maxTimeMinusBtn.disabled = true;
+      if (maxTimePlusBtn) maxTimePlusBtn.disabled = true;
+
+      if (breakLogicMode === 'dynamic') {
+          maxTimeInput.disabled = false;
+          // Clamp the value to a minimum of 15 in dynamic mode to prevent invalid ranges.
+          if (parseInt(maxTimeInput.value) < 15) {
+              maxTimeInput.value = 15;
+          }
+      } else { // default
+          maxTimeInput.disabled = true;
+          maxTimeInput.value = 60;
+      }
+      updateBreakTierLabels();
   }
   
   // Show toast notification (use existing one if available)
@@ -1289,6 +1395,9 @@ function testSound(type) {
     // Apply settings immediately on page load
     setTimeout(() => {
       applySettingsToTimer();
+      if (isReversePage && typeof window.updateInfoSection === 'function') {
+        window.updateInfoSection();
+      }
       forceTimerReset();
     }, 100); // Small delay to ensure all values are initialized
   });

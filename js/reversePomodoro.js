@@ -264,9 +264,9 @@ function updateFavicon(status) {
 }
 
 // Timer variables
-const MAX_TIME = 3600; // 1 hour in seconds
+let MAX_TIME;
 let currentSeconds = 0;
-let initialSeconds = MAX_TIME;
+let initialSeconds;
 let isRunning = false;
 let timerInterval = null;
 let currentMode = 'reverse';
@@ -282,14 +282,74 @@ let burnupElapsedTime = 0;
 
 // Calculate break time based on work duration
 function calculateBreakTime(workedSeconds) {
-    const minutes = Math.floor(workedSeconds / 60);
-    
-    if (minutes <= 4) return 0;        // Less than 5 mins = no break
-    if (minutes <= 20) return 2;       // 5-20 mins = 2 min break
-    if (minutes <= 30) return 5;       // 21-30 mins = 5 min break
-    if (minutes <= 45) return 10;      // 31-45 mins = 10 min break
-    if (minutes <= 55) return 15;      // 46-55 mins = 15 min break
-    return 30;                         // 56-60 mins = 30 min break
+   const breakLogicMode = localStorage.getItem('breakLogicMode') || 'default';
+   const maxWorkMinutes = (parseInt(localStorage.getItem('reverseMaxTime')) || 60);
+   const workedMinutes = Math.floor(workedSeconds / 60);
+
+   const break1 = parseInt(localStorage.getItem('reverseBreak1')) || 2;
+   const break2 = parseInt(localStorage.getItem('reverseBreak2')) || 5;
+   const break3 = parseInt(localStorage.getItem('reverseBreak3')) || 10;
+   const break4 = parseInt(localStorage.getItem('reverseBreak4')) || 15;
+   const break5 = parseInt(localStorage.getItem('reverseBreak5')) || 30;
+
+   if (workedMinutes === 0) return 0; // No break for 0 minutes worked in any mode.
+
+   if (breakLogicMode === 'dynamic') {
+       // NOTE: In dynamic mode, breaks are earned from the first minute based on percentage.
+       const percentage = workedMinutes / maxWorkMinutes;
+       if (percentage <= 0.2) return break1;
+       if (percentage <= 0.4) return break2;
+       if (percentage <= 0.6) return break3;
+       if (percentage <= 0.8) return break4;
+       return break5;
+   } else { // 'default' mode
+       if (workedMinutes < 5) return 0; // Explicitly return 0 for less than 5 minutes.
+       if (workedMinutes <= 20) return break1;
+       if (workedMinutes <= 30) return break2;
+       if (workedMinutes <= 45) return break3;
+       if (workedMinutes <= 55) return break4;
+       return break5;
+   }
+}
+
+// Update the "How it works" info section dynamically
+function updateInfoSection() {
+   const breakLogicMode = localStorage.getItem('breakLogicMode') || 'default';
+   const maxWorkMinutes = parseInt(localStorage.getItem('reverseMaxTime')) || 60;
+   const infoList = document.getElementById('info-break-tiers');
+   if (!infoList) return;
+
+   const break1 = parseInt(localStorage.getItem('reverseBreak1')) || 2;
+   const break2 = parseInt(localStorage.getItem('reverseBreak2')) || 5;
+   const break3 = parseInt(localStorage.getItem('reverseBreak3')) || 10;
+   const break4 = parseInt(localStorage.getItem('reverseBreak4')) || 15;
+   const break5 = parseInt(localStorage.getItem('reverseBreak5')) || 30;
+
+   let tiers = [];
+   if (breakLogicMode === 'dynamic') {
+       const tier1 = Math.floor(maxWorkMinutes * 0.2);
+       const tier2 = Math.floor(maxWorkMinutes * 0.4);
+       const tier3 = Math.floor(maxWorkMinutes * 0.6);
+       const tier4 = Math.floor(maxWorkMinutes * 0.8);
+       // NOTE: Dynamic tiers start from 1, as the 5-minute minimum does not apply.
+       tiers = [
+           `1-${tier1} mins = ${break1} min break`,
+           `${tier1 + 1}-${tier2} mins = ${break2} min break`,
+           `${tier2 + 1}-${tier3} mins = ${break3} min break`,
+           `${tier3 + 1}-${tier4} mins = ${break4} min break`,
+           `${tier4 + 1}-${maxWorkMinutes} mins = ${break5} min break`
+       ];
+   } else { // 'default' mode
+       tiers = [
+           `5-20 mins = ${break1} min break`,
+           `21-30 mins = ${break2} min break`,
+           `31-45 mins = ${break3} min break`,
+           `46-55 mins = ${break4} min break`,
+           `56-60 mins = ${break5} min break`
+       ];
+   }
+   
+   infoList.innerHTML = tiers.map(tier => `<li>${tier}</li>`).join('');
 }
 
 // Update timer display
@@ -324,23 +384,24 @@ function updateDisplay() {
 }
 
 // Burn-Up Tracker Functions
+let totalTime = 0; // Initialize totalTime variable for burn-up tracker calculations
+
 function updateBurnupTracker() {
     if (!isBurnupTrackerEnabled || !burnupTracker) return;
-    
+
+    // This function now only updates the dynamic parts of the tracker
     if (isRunning) {
         let progressPercent = 0;
         let elapsedTime = 0;
-        let totalTime = 0;
         
+        // Make sure totalTime is set correctly based on current mode
         if (currentMode === 'reverse') {
-            // For reverse mode, show progress of work time
+            totalTime = MAX_TIME; // Use MAX_TIME directly for consistency
             elapsedTime = currentSeconds;
-            totalTime = MAX_TIME;
             progressPercent = totalTime > 0 ? (elapsedTime / totalTime) * 100 : 0;
         } else if (currentMode === 'break') {
-            // For break mode, show progress of break consumption
-            elapsedTime = initialSeconds - currentSeconds;
             totalTime = initialSeconds;
+            elapsedTime = initialSeconds - currentSeconds;
             progressPercent = totalTime > 0 ? (elapsedTime / totalTime) * 100 : 0;
         }
         
@@ -356,13 +417,6 @@ function updateBurnupTracker() {
             burnupSpentTime.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
         
-        // Update planned time
-        if (burnupPlannedTime) {
-            const totalMinutes = Math.floor(totalTime / 60);
-            const totalSeconds = totalTime % 60;
-            burnupPlannedTime.textContent = `${totalMinutes.toString().padStart(2, '0')}:${totalSeconds.toString().padStart(2, '0')}`;
-        }
-        
         // Update percentage
         if (burnupPercentage) {
             burnupPercentage.textContent = `${Math.round(progressPercent)}%`;
@@ -374,16 +428,22 @@ function updateBurnupTracker() {
 }
 
 function showBurnupTracker() {
-    if (isBurnupTrackerEnabled && burnupTracker) {
+    // Only show tracker in reverse mode, not during breaks
+    if (isBurnupTrackerEnabled && burnupTracker && currentMode === 'reverse') {
         burnupTracker.style.display = 'block';
-        
+
         // Apply saved design style
         if (window.trackerDesignManager) {
             const savedDesign = window.trackerDesignManager.getCurrentDesign();
             window.trackerDesignManager.applyDesign(savedDesign);
         }
-        
+
+        // Set totalTime for reverse mode
+        totalTime = MAX_TIME;
+
         updateBurnupTracker();
+    } else if (burnupTracker) {
+        burnupTracker.style.display = 'none';
     }
 }
 
@@ -415,12 +475,17 @@ function setBurnupTrackerEnabled(enabled) {
     }
 }
 
-// Expose the function globally for settings
+// Expose functions globally for settings
 window.setBurnupTrackerEnabled = setBurnupTrackerEnabled;
+window.resetBurnupTracker = resetBurnupTracker;
+window.updateBurnupTracker = updateBurnupTracker;
 
 // Toggle timer
 function toggleTimer() {
   if (!isRunning) {
+    // Sync settings before starting, just in case
+    window.updateTimerAndUIFromSettings();
+    
     if (currentMode === 'break') {
       if (currentSeconds <= 0) {
         showToast("Break time is over!");
@@ -513,13 +578,15 @@ function toggleTimer() {
     }
     
     if (currentMode === 'reverse') {
+      const breakLogicMode = localStorage.getItem('breakLogicMode') || 'default';
       const minutes = Math.floor(currentSeconds / 60);
-      if (minutes < 5) {
+      // The "less than 5 minutes" validation only applies to the default mode.
+      if (breakLogicMode === 'default' && minutes < 5) {
         if (confirm('You worked less than 5 minutes. No break earned. Do you want to reset the timer?')) {
           resetTimer();
         }
       } else {
-        completeSession(false); // Auto-start break without confirmation
+        completeSession(false); // For dynamic mode or if work is >= 5 mins in default.
       }
     }
   }
@@ -585,9 +652,11 @@ function resetTimer() {
     clearInterval(timerInterval);
     isRunning = false;
     currentSeconds = 0;
-    initialSeconds = MAX_TIME;
+    
+    // Sync with settings and update UI
+    window.updateTimerAndUIFromSettings();
+    
     updateFavicon('paused');
-    updateDisplay();
     startButton.textContent = 'START';
     
     // Reset and hide burn-up tracker
@@ -835,7 +904,56 @@ if (muteAlertCloseBtn) {
 }
 
 // Initialize display
-updateDisplay();
+// This is the single source of truth for updating the timer state and UI from settings.
+window.updateTimerAndUIFromSettings = function() {
+    const breakLogicMode = localStorage.getItem('breakLogicMode') || 'default';
+    const savedMaxMinutes = parseInt(localStorage.getItem('reverseMaxTime')) || 60;
+
+    const maxMinutes = breakLogicMode === 'default' ? 60 : savedMaxMinutes;
+    MAX_TIME = maxMinutes * 60;
+    
+    // Update totalTime for the Burn-Up Tracker to ensure synchronization
+    // Only update totalTime if we're in reverse mode, otherwise leave it as is for break mode
+    if (currentMode === 'reverse') {
+        totalTime = MAX_TIME;
+    }
+
+    // Only reset timer values if we're not running AND we're in reverse mode
+    // This preserves the break time when in break mode
+    if (!isRunning && currentMode === 'reverse') {
+        initialSeconds = MAX_TIME;
+        currentSeconds = 0;
+    }
+
+    // Update UI elements
+    const maxTimeDisplay = document.querySelector('.max-time');
+    if (maxTimeDisplay) {
+        const hours = Math.floor(maxMinutes / 60);
+        const mins = maxMinutes % 60;
+        const timeString = hours > 0
+            ? `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:00`
+            : `${mins.toString().padStart(2, '0')}:00`;
+        maxTimeDisplay.textContent = `Current Max Time: ${timeString}`;
+    }
+
+    if (burnupPlannedTime) {
+        const hours = Math.floor(maxMinutes / 60);
+        const mins = maxMinutes % 60;
+        const estString = hours > 0
+            ? `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:00`
+            : `${maxMinutes.toString().padStart(2, '0')}:00`;
+        burnupPlannedTime.textContent = estString;
+    }
+    
+    // Refresh the Burn-Up Tracker UI
+    updateDisplay();
+    
+    // If the Burn-Up Tracker is visible, update it with the new settings
+    if (isBurnupTrackerEnabled && burnupTracker && burnupTracker.style.display === 'block') {
+        resetBurnupTracker();
+        updateBurnupTracker();
+    }
+}
 
 // Initialize reverse timer page
 document.addEventListener('DOMContentLoaded', function() {
@@ -848,24 +966,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   console.log("Reverse timer initialized");
+  
+  // Initial UI sync on page load
+  window.updateTimerAndUIFromSettings();
 });
-
-// Find the startTimer function and modify it like this:
-
-function startTimer() {
-  // ...existing code...
-  
-  // Start the timer
-  isRunning = true;
-  interval = setInterval(updateTimer, 1000);
-  startBtn.textContent = 'PAUSE';
-  startBtn.classList.add('active');
-  
-  // Enter locked in mode with a 1-second delay if it's enabled
-  if (window.lockedInMode && typeof window.lockedInMode.isEnabled === 'function' && 
-      window.lockedInMode.isEnabled() && !window.lockedInMode.isActive()) {
-    window.lockedInMode.enter(true); // true = with delay
-  }
-  
-  // ...rest of the existing code...
-}

@@ -1698,10 +1698,8 @@ body.theme-custom .add-task-btn:hover {
   transition: all 0.3s ease;
 }
 
-.fullscreen-btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-}
+/* Improve text readability in custom theme */
+/* Removed misplaced transform and box-shadow properties */
 
 .fullscreen-btn svg {
   width: 22px;
@@ -1893,3 +1891,196 @@ body.lockedin-mode-active {
     height: 400px;
   }
 }
+
+
+
+    /* Update Modal Custom Styles */
+    /* --- Update Modal Responsive & Consistent Styles --- */
+.update-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(30,32,44,0.72);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.update-modal {
+  background: #23243a;
+  color: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  max-width: 370px;
+  width: 92vw;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  font-family: inherit;
+  position: relative;
+  overflow: hidden;
+}
+.update-modal-header {
+  border-radius: 18px 18px 0 0;
+  padding: 1.2em 1.5em 0.7em 1.5em;
+  background: #23243a;
+  border-bottom: 1px solid #292a3e;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.update-modal-title {
+  font-weight: 700;
+  font-size: 1.15em;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+.update-modal-icon {
+  background: #2563eb;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 0.9em;
+  padding: 0.1em 0.5em;
+  margin-right: 0.5em;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+.update-modal-close {
+  background: none;
+  border: none;
+  color: #bfc3d9;
+  font-size: 1.5em;
+  cursor: pointer;
+  transition: color 0.15s;
+  line-height: 1;
+}
+.update-modal-close:hover {
+  color: #fff;
+}
+.update-modal-content {
+  padding: 1.2em 1.5em 0.5em 1.5em;
+  background: #23243a;
+  overflow-y: auto;
+  flex: 1 1 auto;
+}
+.update-changelog-title {
+  font-size: 1.08em;
+  font-weight: 700;
+  margin-bottom: 0.7em;
+  color: #a5b4fc;
+  letter-spacing: 0.01em;
+}
+.update-changelog-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.2em 0;
+}
+.update-changelog-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7em;
+  margin-bottom: 0.7em;
+  font-size: 1em;
+  line-height: 1.5;
+  word-break: break-word;
+}
+.update-changelog-list li b {
+  min-width: 120px;
+  display: inline-block;
+  font-weight: 600;
+  color: #facc15;
+  letter-spacing: 0.01em;
+}
+.update-changelog-list li b[style*="🕒"] {
+  color: #60a5fa;
+}
+.update-changelog-list li b[style*="🔒"] {
+  color: #f87171;
+}
+.update-changelog-list li b[style*="✨"] {
+  color: #facc15;
+}
+.update-changelog-list li b[style*="Custom"] {
+  color: #facc15;
+}
+.update-changelog-list li b[style*="Standard"] {
+  color: #60a5fa;
+}
+.update-changelog-list li b[style*="Locked"] {
+  color: #f87171;
+}
+.update-modal-content ul {
+  margin-left: 0;
+}
+.update-modal-content .update-info-box {
+  background: #2d2e4a;
+  color: #e0e7ff;
+  border-radius: 10px;
+  padding: 1em 1em 0.8em 1em;
+  margin-bottom: 0.5em;
+  margin-top: 1em;
+  font-size: 0.98em;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+.update-modal-content .update-info-box ul {
+  margin: 0.5em 0 0 1.2em;
+  padding: 0;
+  color: #c7d2fe;
+  font-size: 0.97em;
+}
+.update-modal-content .update-info-box b {
+  color: #a5b4fc;
+  font-weight: 600;
+}
+.update-modal-content .update-info-box .feedback-link {
+  color: #38bdf8;
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 500;
+}
+.update-modal-footer {
+  padding: 1em 1.5em 1.3em 1.5em;
+  background: #23243a;
+  border-radius: 0 0 18px 18px;
+  display: flex;
+  justify-content: flex-end;
+}
+.update-modal-btn {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.7em 1.5em;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+}
+.update-modal-btn:hover {
+  background: #1d4ed8;
+}
+    /* Responsive */
+    @media (max-width: 500px) {
+      .update-modal {
+        max-width: 100vw;
+        width: 100vw;
+        min-width: 0;
+        border-radius: 0;
+        max-height: 100vh;
+      }
+      .update-modal-header,
+      .update-modal-content,
+      .update-modal-footer {
+        padding-left: 0.9em;
+        padding-right: 0.9em;
+      }
+      .update-modal-content .update-info-box {
+        padding: 0.7em 0.7em 0.7em 0.7em;
+        font-size: 0.97em;
+      }
+      .update-changelog-list li b {
+        min-width: 90px;
+        font-size: 0.98em;
+      }
+    }
