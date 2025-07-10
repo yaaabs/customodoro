@@ -2556,4 +2556,6 @@ input:checked + .mini-slider-toggle:before {
     width: 42px;
     height: 42px;
     min-width: 42px;
-    min-height:
+    min-height: 42px;
+  }
+}
