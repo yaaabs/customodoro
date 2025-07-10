@@ -23,11 +23,10 @@
   <link rel="stylesheet" href="css/burnup-tracker.css">
   <link rel="stylesheet" href="css/about-modal.css">
 </head>
-<body class="pomodoro-mode">
+<body class="pomodoro-mode"> 
   <script>
     // Apply saved theme before the page renders to prevent flashing
-    (function() {
-      const savedTheme = localStorage.getItem('siteTheme') || 'light';
+    (function() { // TEST PUSH
       document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-yourname', 'theme-custom');
       
       if (savedTheme === 'custom') {
