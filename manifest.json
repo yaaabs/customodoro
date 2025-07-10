@@ -1,7 +1,9 @@
 {
   "name": "Customodoro Timer",
   "short_name": "Customodoro",
-  "start_url": "/index.html",
+  "start_url": "./",
+  "scope": "./",
+  "description": "A customizable Pomodoro timer with a focus on user experience and productivity.",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#e53935",
