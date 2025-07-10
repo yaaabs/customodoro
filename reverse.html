@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- PWA for iOS -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Customodoro">
+
+<meta name="description" content="Customodoro is a customizable Pomodoro timer built to boost your productivity and focus.">
 
   <title>Customodoro - Reverse Timer</title>
 
@@ -18,39 +20,61 @@
 
   <link rel="manifest" href="manifest.json">
 
-  <link rel="stylesheet" href="css/style.css">  <link rel="stylesheet" href="css/settings.css">
-  <link rel="stylesheet" href="css/theme-uploader.css">
-  <link rel="stylesheet" href="css/lockedin-mode.css">
-  <link rel="stylesheet" href="css/focus-mode.css">
-  <link rel="stylesheet" href="css/radial-menu.css">
-  <link rel="stylesheet" href="css/timer-sound.css">
-  <link rel="stylesheet" href="css/bgm-player.css">
+  <!-- Essential CSS (load immediately) -->
+  <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/mini-music-player.css">
-  <link rel="stylesheet" href="css/burnup-tracker.css">
+  <link rel="stylesheet" href="css/focus-mode.css">
+  <link rel="stylesheet" href="css/lockedin-mode.css">
+  <link rel="stylesheet" href="css/bgm-player.css">
+  <link rel="stylesheet" href="css/timer-sound.css">
   <link rel="stylesheet" href="css/about-modal.css">
-  
-  <!-- Add this script block right before the closing </head> tag -->
+  <link rel="stylesheet" href="css/radial-menu.css">
+
+  <script>
+    // Function to load deferred CSS files
+    function loadDeferredCSS() {
+      const deferredStyles = [
+        'settings',
+        'theme-uploader',
+        'burnup-tracker'
+      ];
+      
+      deferredStyles.forEach(style => {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = `css/${style}.css`;
+        document.head.appendChild(link);
+      });
+    }
+    
+    // Load deferred styles when DOM is ready, with a slight delay to prioritize render
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(loadDeferredCSS, 100);
+    });
+  </script>
+</head>
+<body class="reverse-mode">
   <script>
     // Apply saved theme before the page renders to prevent flashing
     (function() {
       const savedTheme = localStorage.getItem('siteTheme') || 'light';
-      document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-yourname', 'theme-custom');
-      
-      if (savedTheme === 'custom') {
-        const customBg = localStorage.getItem('customThemeBackground');
-        if (customBg) {
-          document.body.classList.add('theme-custom');
-          document.body.style.backgroundImage = `url(${customBg})`;
+      // Only run if document.body is available
+      if (document.body) {
+        document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-yourname', 'theme-custom');
+        if (savedTheme === 'custom') {
+          const customBg = localStorage.getItem('customThemeBackground');
+          if (customBg) {
+            document.body.classList.add('theme-custom');
+            document.body.style.backgroundImage = `url(${customBg})`;
+          } else {
+            document.body.classList.add('theme-light');
+          }
         } else {
-          document.body.classList.add('theme-light');
+          document.body.classList.add('theme-' + savedTheme);
         }
-      } else {
-        document.body.classList.add('theme-' + savedTheme);
       }
     })();
   </script>
-</head>
-<body class="reverse-mode">
   <div class="container">
     <header>
       <h1 class="app-title">Customodoro - Reverse Timer</h1>

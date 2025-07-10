@@ -11,6 +11,10 @@
   --transition: all 0.3s ease;
 }
 
+.tab {
+  color: #2c2c2c; /* instead of #888 or light grey */
+}
+
 * {
   margin: 0;
   padding: 0;

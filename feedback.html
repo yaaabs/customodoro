@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- PWA for iOS -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Customodoro">
+
+<meta name="description" content="Customodoro is a customizable Pomodoro timer built to boost your productivity and focus.">
 
   <title>Feedback - Customodoro Timer</title>
 
@@ -18,16 +20,38 @@
 
   <link rel="manifest" href="manifest.json">
 
+  <!-- Essential CSS (load immediately) -->
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/settings.css">
-  <link rel="stylesheet" href="css/theme-uploader.css">
-  <link rel="stylesheet" href="css/lockedin-mode.css">
-  <link rel="stylesheet" href="css/focus-mode.css">
-  <link rel="stylesheet" href="css/radial-menu.css">  <link rel="stylesheet" href="css/timer-sound.css">
-  <link rel="stylesheet" href="css/bgm-player.css">
   <link rel="stylesheet" href="css/mini-music-player.css">
-  <link rel="stylesheet" href="css/burnup-tracker.css">
+  <link rel="stylesheet" href="css/focus-mode.css">
+  <link rel="stylesheet" href="css/lockedin-mode.css">
+  <link rel="stylesheet" href="css/bgm-player.css">
+  <link rel="stylesheet" href="css/timer-sound.css">
   <link rel="stylesheet" href="css/about-modal.css">
+  <link rel="stylesheet" href="css/radial-menu.css">
+
+  <script>
+    // Function to load deferred CSS files
+    function loadDeferredCSS() {
+      const deferredStyles = [
+        'settings',
+        'theme-uploader',
+        'burnup-tracker'
+      ];
+      
+      deferredStyles.forEach(style => {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = `css/${style}.css`;
+        document.head.appendChild(link);
+      });
+    }
+    
+    // Load deferred styles when DOM is ready, with a slight delay to prioritize render
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(loadDeferredCSS, 100);
+    });
+  </script>
 </head>
 <body class="pomodoro-mode">
   <script>
