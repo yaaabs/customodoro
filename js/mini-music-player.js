@@ -6,7 +6,8 @@
   const ALBUM_ART_MAP = {
     'deep-focus': 'images/album-art/focus.png',
     'ambient-long': 'images/album-art/ambient.jpg',
-    'smile-demons': 'images/album-art/niki.png'
+    'smile-demons': 'images/album-art/niki.png',
+    'happy-jazz': 'images/album-art/Happy Jazz.jpg'
   };
 
   // Track-specific album art mapping
@@ -41,7 +42,8 @@
       'Plot Twist': 'images/album-art/moonchild.jpg',
       'See U Never': 'images/album-art/see u never.jpg',
       'Selene': 'images/album-art/moonchild.jpg',    
-      'urs': 'images/album-art/wttd.jpg'
+      'urs': 'images/album-art/wttd.jpg',
+      'Happy Swing Jazz Piano': 'images/album-art/Happy Jazz.jpg'
 
     };
 

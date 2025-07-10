@@ -183,6 +183,10 @@
           artist: 'NIKI',
           src: 'audio/BGM/Si all my demons have your smile pala to eh/Vintage.mp3'
         }
+      ],
+      // Add new jazz playlist
+      'happy-jazz': [
+        { title: 'Happy Swing Jazz Piano', artist: 'Daily Piano Music Youtube', src: 'audio/BGM/Happy Swing Jazz Piano.mp3' }
       ]
     };
 
@@ -1010,8 +1014,10 @@
       'Plot Twist': 'images/album-art/moonchild.jpg',
       'See U Never': 'images/album-art/see u never.jpg',
       'Selene': 'images/album-art/moonchild.jpg',    
-      'urs': 'images/album-art/wttd.jpg'
+      'urs': 'images/album-art/wttd.jpg',
 
+      // Happy Jazz tracks
+      'Happy Swing Jazz Piano': 'images/album-art/Happy Jazz.jpg'
     };
     
     // Playlist-based album art mapping (fallback)
@@ -1042,7 +1048,8 @@
     const ALBUM_ART_MAP = {
       // 'deep-focus': 'images/album-art/focus.png', // Remove or replace
       'ambient-long': 'images/album-art/ambient.jpg',
-      'smile-demons': 'images/album-art/niki.png'
+      'smile-demons': 'images/album-art/niki.png',
+      'happy-jazz': 'images/album-art/Happy Jazz.jpg'
     };
 
     // Track-specific album art mapping (copied from mini music player)
@@ -1078,8 +1085,10 @@
       'Plot Twist': 'images/album-art/moonchild.jpg',
       'See U Never': 'images/album-art/see u never.jpg',
       'Selene': 'images/album-art/moonchild.jpg',    
-      'urs': 'images/album-art/wttd.jpg'
+      'urs': 'images/album-art/wttd.jpg',
 
+      // Happy Jazz tracks
+      'Happy Swing Jazz Piano': 'images/album-art/Happy Jazz.jpg'
     };
 
     // Get album art path based on current track or playlist
