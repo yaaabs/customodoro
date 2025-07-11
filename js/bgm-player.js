@@ -1,6 +1,7 @@
 (function() {
   // DOM Elements
-  let audio = new Audio();
+  let audio = new Audio(); // Initialize without src to prevent preload
+  audio.preload = "none"; // OPTIMIZATION: Prevent automatic preloading
   let playlistSelector, bgmToggle, volumeSlider, volumePercentage;
   let trackTitleElement, trackArtistElement;
   let playBtn, prevBtn, nextBtn, playIcon, pauseIcon;
@@ -16,6 +17,9 @@
   let isPlaying = false;
   let isBGMEnabled = true; // Default to true, synced with localStorage
 
+  // OPTIMIZATION: Track loading state to prevent unnecessary loads
+  let isTrackLoaded = false;
+  let pendingTrackToLoad = null;
 
   let allTracks = []; // Store all tracks for search functionality
   let filteredTracks = []; // Store filtered tracks based on search
@@ -195,10 +199,12 @@
     
     // Setup event listeners
     setupEventListeners();
-      // Initial UI update
+    
+    // Initial UI update
     updateTrackDisplay();
     updatePlayButtonIcon(); // Ensure correct icon on load
     updateVolumeDisplay();
+    
     // Only call populateTrackList if trackList and trackListContainer exist
     if (trackList && trackListContainer) {
       populateTrackList(currentPlaylistName); // Initialize track list
@@ -209,7 +215,10 @@
 
     console.log('BGM Player Initialized');
     window.bgmPlayer.isInitialized = true;
+    
+    // OPTIMIZATION: We're not preloading any audio until user interaction
   }
+  
   // Load settings from localStorage
   function loadSettings() {
     const savedPlaylist = localStorage.getItem('bgmPlaylist') || 'deep-focus';
@@ -375,6 +384,8 @@
       // Add error handling for failed track loads
       audio.addEventListener('error', function(e) {
         console.error('Error loading track:', e);
+        isTrackLoaded = false; // OPTIMIZATION: Reset loaded state
+        
         // Try to skip to next track if current one fails
         nextTrack();
         if (currentPlaylist && currentTrackIndex < currentPlaylist.length) {
@@ -416,8 +427,8 @@
       window.miniMusicPlayer.sync();
     }
   }
-  // Load a track
-  function loadTrack(index) {
+  // OPTIMIZATION: Modified to prevent automatic preload
+  function loadTrack(index, userInitiated = false) {
     const playbackList = getPlaybackList();
     if (!playbackList || index < 0 || index >= playbackList.length) {
       if (trackTitleElement) trackTitleElement.textContent = 'Select a playlist';
@@ -425,11 +436,23 @@
       if (currentTimeElement) currentTimeElement.textContent = '0:00';
       if (totalTimeElement) totalTimeElement.textContent = '0:00';
       if (progressBar) progressBar.style.width = '0%';
+      isTrackLoaded = false;
       return;
     }
+    
     currentTrackIndex = index;
     const track = playbackList[currentTrackIndex];
-    audio.src = track.src;
+    
+    // OPTIMIZATION: Only set audio.src on actual play or user-initiated action
+    if (isPlaying || userInitiated) {
+      audio.src = track.src;
+      audio.load(); // Only load when needed
+      isTrackLoaded = true;
+    } else {
+      // Store the track to be loaded when play is pressed
+      pendingTrackToLoad = track;
+      isTrackLoaded = false;
+    }
     
     // Update display elements
     if (trackTitleElement) trackTitleElement.textContent = track.title;
@@ -440,16 +463,28 @@
     
     // Update track list UI
     updateActiveTrack();
-    
-    // Once metadata is loaded, the loadedmetadata event will update the duration
   }
 
-  // Play audio
+  // OPTIMIZATION: Play audio with lazy loading
   function playAudio() {
     if (!isBGMEnabled || !getPlaybackList()) return;
+    
     const playbackList = getPlaybackList();
-    if (!audio.src && playbackList.length > 0) {
-      loadTrack(0);
+    
+    // Check if we have a pending track to load or if no track is loaded yet
+    if (!isTrackLoaded) {
+      if (pendingTrackToLoad) {
+        // Load the pending track now
+        audio.src = pendingTrackToLoad.src;
+        audio.load();
+        isTrackLoaded = true;
+        pendingTrackToLoad = null;
+      } else if (playbackList.length > 0 && !audio.src) {
+        // Load the first track if nothing is loaded
+        audio.src = playbackList[currentTrackIndex].src;
+        audio.load();
+        isTrackLoaded = true;
+      }
     }
     
     if (audio.src) {
@@ -482,6 +517,10 @@
     if (isPlaying) {
       pauseAudio();
     } else {
+      // OPTIMIZATION: Ensure track is loaded before playing
+      if (!isTrackLoaded && getPlaybackList() && getPlaybackList().length > 0) {
+        loadTrack(currentTrackIndex, true); // User initiated
+      }
       playAudio();
     }
   }
@@ -494,7 +533,10 @@
     if (newIndex < 0) {
       newIndex = playbackList.length - 1;
     }
-    loadTrack(newIndex);
+    
+    // OPTIMIZATION: Pass true only if currently playing to indicate immediate load needed
+    loadTrack(newIndex, isPlaying);
+    
     // If it was playing, continue playing the new track
     if (isPlaying) {
       playAudio();
@@ -509,7 +551,10 @@
     if (newIndex >= playbackList.length) {
       newIndex = 0;
     }
-    loadTrack(newIndex);
+    
+    // OPTIMIZATION: Pass true only if currently playing to indicate immediate load needed
+    loadTrack(newIndex, isPlaying);
+    
     // If it was playing, continue playing the new track
     if (isPlaying) {
       playAudio();
@@ -620,43 +665,23 @@
     }
     
     currentPlaylistName = playlistName;
-    originalPlaylist = [...playlists[playlistName]]; // Store original order
-    currentPlaylist = [...originalPlaylist]; // Create a copy to manipulate
+    currentPlaylist = [...playlists[playlistName]]; // Create a copy to manipulate
     
     currentTrackIndex = 0;
+    isTrackLoaded = false; // Reset loaded state
+    pendingTrackToLoad = null; // Clear any pending track
+    
+    // OPTIMIZATION: Don't preload any audio
+    // Only update the UI with the track info
     updateTrackDisplay();
     
-    // Don't preload any tracks - only load on user interaction
-    // Create audio element with preload="none" to prevent automatic loading
-    const audioElement = document.createElement('audio');
-    audioElement.preload = "none"; // Prevent automatic preloading
-    
-    // Setup audio player but don't set src yet - will be set only on play button click
-    const setupTrack = (trackData) => {
-      // Only set source when explicitly requested to play
-      // This prevents unnecessary data transfer
-      return {
-        load: () => {
-          if (!audioElement.src || audioElement.src !== trackData.url) {
-            audioElement.src = trackData.url;
-            // Only load the file when explicitly requested
-            audioElement.load();
-          }
-        }
-      };
-    };
-    
-    // Preload first track
-    audio.src = currentPlaylist[0].src;
-    audio.load();
-    
     // Save to settings
-    saveSettings();
+    localStorage.setItem('bgmPlaylist', playlistName);
   }
 
-  // Play track with better error handling
+  // OPTIMIZATION: Improved play function with better error handling
   function play() {
-    if (!isBGMEnabled || currentPlaylist.length === 0) return;
+    if (!isBGMEnabled || !currentPlaylist || currentPlaylist.length === 0) return;
     
     try {
       if (!currentPlaylist[currentTrackIndex]) {
@@ -668,30 +693,34 @@
         }
       }
       
-      audio.src = currentPlaylist[currentTrackIndex].src;
-      audio.load();
+      // OPTIMIZATION: Only load and play on demand
+      if (!isTrackLoaded) {
+        audio.src = currentPlaylist[currentTrackIndex].src;
+        audio.load();
+        isTrackLoaded = true;
+      }
       
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise.then(() => {
           isPlaying = true;
-          updatePlayButton();
+          updatePlayButtonIcon();
           updateTrackDisplay();
-          startProgressUpdates();
           console.log(`Playing: ${currentPlaylist[currentTrackIndex].title}`);
         }).catch(error => {
           console.error('Audio playback failed:', error);
           isPlaying = false;
-          updatePlayButton();
+          updatePlayButtonIcon();
         });
       }
       
     } catch (error) {
       console.error('Failed to play audio:', error);
       isPlaying = false;
-      updatePlayButton();
+      updatePlayButtonIcon();
     }
   }
+
   // Track list management functions
   function populateTrackList(playlistName) {
     if (!trackList || !trackListContainer) return;
@@ -742,6 +771,7 @@
     // Get album art for this track
     const albumArtPath = getTrackAlbumArt(track);
     
+    // OPTIMIZATION: Add lazy loading to album art images
     trackItem.innerHTML = `
       <div class="track-playing-indicator">
         <div class="track-playing-bars">
@@ -754,7 +784,7 @@
       <div class="track-number">${displayIndex + 1}</div>
       <div class="track-album-art">
         ${albumArtPath ? 
-          `<img src="${albumArtPath}" alt="${track.title} album art" class="track-art-image">` : 
+          `<img src="${albumArtPath}" alt="${track.title} album art" class="track-art-image" loading="lazy">` : 
           `<div class="track-art-placeholder">🎵</div>`
         }
       </div>
@@ -793,13 +823,15 @@
     return trackItem;
   }
   
-  // When clicking a track in the UI, play the correct track (regardless of shuffle)
-  function playTrackFromList(trackIndexInOriginal) {
-    if (!isBGMEnabled || !currentPlaylist || trackIndexInOriginal < 0 || trackIndexInOriginal >= currentPlaylist.length) {
+  // OPTIMIZATION: Ensure we load the track when playing from list
+  function playTrackFromList(trackIndex) {
+    if (!isBGMEnabled || !currentPlaylist || trackIndex < 0 || trackIndex >= currentPlaylist.length) {
       return;
     }
-    // Always play from original playlist
-    loadTrack(trackIndexInOriginal);
+    
+    currentTrackIndex = trackIndex;
+    // Always load when user explicitly requests play
+    loadTrack(trackIndex, true);
     playAudio();
     updateActiveTrack();
   }
@@ -881,6 +913,7 @@
     // Get album art for this track
     const albumArtPath = getTrackAlbumArt(track);
     
+    // OPTIMIZATION: Add lazy loading to album art images
     trackItem.innerHTML = `
       <div class="track-playing-indicator">
         <div class="track-playing-bars">
@@ -893,7 +926,7 @@
       <div class="track-number">${displayIndex + 1}</div>
       <div class="track-album-art">
         ${albumArtPath ? 
-          `<img src="${albumArtPath}" alt="${track.title} album art" class="track-art-image">` : 
+          `<img src="${albumArtPath}" alt="${track.title} album art" class="track-art-image" loading="lazy">` : 
           `<div class="track-art-placeholder">🎵</div>`
         }
       </div>
@@ -938,7 +971,8 @@
     }
     
     currentTrackIndex = trackIndex;
-    loadTrack(trackIndex);
+    // Always load when user explicitly requests play
+    loadTrack(trackIndex, true);
     playAudio();
     updateActiveTrack();
   }
@@ -1135,7 +1169,7 @@
       return null;
     }
 
-    // Update BGM album art display
+    // Update BGM album art display with lazy loading
     function updateBgmAlbumArt() {
       const albumArt = document.getElementById('bgm-album-art');
       const placeholder = document.getElementById('bgm-album-art-placeholder');
@@ -1144,7 +1178,16 @@
       const artPath = getBgmAlbumArtPath();
       
       if (artPath && albumArt && placeholder) {
-        albumArt.src = artPath;
+        // OPTIMIZATION: Add lazy loading to album art
+        if (!albumArt.hasAttribute('loading')) {
+          albumArt.setAttribute('loading', 'lazy');
+        }
+        
+        // Only update src if it's changed to prevent unnecessary reloads
+        if (albumArt.src !== artPath) {
+          albumArt.src = artPath;
+        }
+        
         albumArt.style.display = 'block';
         placeholder.style.display = 'none';
         
@@ -1199,12 +1242,12 @@
       // Initialize album art
       updateBgmAlbumArt();
       
-      // Set up periodic updates for album art
+      // OPTIMIZATION: Reduce update frequency to reduce CPU usage
       setInterval(function() {
-        if (document.getElementById('bgm-album-art')) {
+        if (document.getElementById('bgm-album-art') && isPlaying) {
           updateBgmAlbumArt();
         }
-      }, 1000);
+      }, 2000); // Less frequent updates (2s instead of 1s)
     });
 
     // Expose functions for external use
@@ -1256,7 +1299,14 @@
 
   // Initialize when DOM is ready
   document.addEventListener('DOMContentLoaded', function() {
-    // Small delay to ensure DOM is fully loaded
-    setTimeout(init, 100);
+    // OPTIMIZATION: Use requestIdleCallback for non-critical initialization
+    if (window.requestIdleCallback) {
+      window.requestIdleCallback(function() {
+        init();
+      }, { timeout: 1000 });
+    } else {
+      // Fallback for browsers that don't support requestIdleCallback
+      setTimeout(init, 100);
+    }
   });
 })();
