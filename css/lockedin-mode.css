@@ -116,19 +116,45 @@ body.lockedin-mode-active {
   }
 }
 
-/* Info icon styles */
+/* Info icon styles - Extracted from settings.css and enhanced for immediate loading */
 .info-icon {
     display: inline-flex;
+    align-items: center;
+    justify-content: center;
     margin-left: 6px;
     cursor: pointer;
-    color: var(--text-secondary);
+    color: var(--text-secondary, rgba(255, 255, 255, 0.7));
     vertical-align: middle;
     transition: transform 0.2s ease, color 0.2s ease;
+    position: relative;
+    top: -1px; /* Align with text baseline */
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(139, 95, 191, 0.2);
+    border: 1px solid rgba(139, 95, 191, 0.3);
 }
 
 .info-icon:hover {
-    color: var(--primary);
+    color: var(--primary, #8b5fbf);
     transform: scale(1.1);
+    background: rgba(139, 95, 191, 0.3);
+    border-color: rgba(139, 95, 191, 0.5);
+}
+
+.settings-label {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.theme-light .info-icon {
+    background: rgba(139, 95, 191, 0.1);
+    color: #8b5fbf;
+}
+
+.theme-light .info-icon:hover {
+    background: rgba(139, 95, 191, 0.2);
 }
 
 /* Focus Info Modal Styles - Modern Design */

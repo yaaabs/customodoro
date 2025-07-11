@@ -313,6 +313,52 @@
     }, 3000);
   }
   
+  // Add this function to ensure info icons work properly even when CSS loading is deferred
+
+  // Function to ensure info icons are properly styled
+  function fixInfoIconStyles() {
+    // Get all info icons
+    const infoIcons = document.querySelectorAll('.info-icon');
+    
+    // Make sure each icon's parent has proper positioning
+    infoIcons.forEach(icon => {
+      const parent = icon.parentElement;
+      if (parent && parent.classList.contains('settings-label')) {
+        // Ensure proper positioning context
+        if (window.getComputedStyle(parent).position === 'static') {
+          parent.style.position = 'relative';
+        }
+        
+        // Ensure proper display
+        if (window.getComputedStyle(parent).display === 'block') {
+          parent.style.display = 'flex';
+          parent.style.alignItems = 'center';
+        }
+      }
+    });
+  }
+
+  // Run this when settings are opened
+  document.addEventListener('DOMContentLoaded', function() {
+    const settingsBtn = document.getElementById('settings-btn');
+    if (settingsBtn) {
+      settingsBtn.addEventListener('click', function() {
+        // Short delay to ensure settings modal is open
+        setTimeout(fixInfoIconStyles, 300);
+      });
+    }
+    
+    // Also run when deferred CSS is loaded
+    if (typeof loadDeferredCSS === 'function') {
+      const originalLoadDeferredCSS = loadDeferredCSS;
+      window.loadDeferredCSS = function() {
+        originalLoadDeferredCSS.apply(this, arguments);
+        // Fix icons after CSS loads
+        setTimeout(fixInfoIconStyles, 200);
+      };
+    }
+  });
+  
   // Make functions available globally
   window.themeManager = {
     applyCustomTheme,
