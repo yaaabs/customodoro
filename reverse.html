@@ -208,7 +208,7 @@
     <div class="settings-content">
       <!-- Add sidebar navigation -->      <div class="settings-sidebar">
         <div class="settings-nav-item active" data-section="timer">Reverse Timer</div>
-        <div class="settings-nav-item" data-section="sound">Sound</div>
+        <div class="settings-nav-item" data-section="sound">Sound <span class="bug-tag">BUG</span></div>
         <div class="settings-nav-item" data-section="auto">Auto Start <span class="beta-tag">BETA</span></div>
         <div class="settings-nav-item" data-section="productivity">Productivity <span class="bug-tag">BUG</span></div>
         <div class="settings-nav-item" data-section="bgm">Music <span class="beta-tag">BETA</span></div>
@@ -311,9 +311,9 @@
               <div class="select-wrapper">
                 <select class="sound-selector" id="timer-sound-selector">
                   <option value="none">None (Default)</option>
-                  <option value="ticking">Wall Clock Ticking</option>
-                  <option value="whitenoise">White Noise</option>
-                  <option value="brownnoise">Brown Noise</option>
+                  <option value="ticking" disabled>Wall Clock Ticking (BUG)</option>
+                  <option value="whitenoise" disabled>White Noise (BUG)</option>
+                  <option value="brownnoise" disabled>Brown Noise (BUG)</option>
                 </select>
               </div>
             </div>
