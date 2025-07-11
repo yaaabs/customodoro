@@ -22,36 +22,8 @@
 
   <!-- Essential CSS (load immediately) -->
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/mini-music-player.css">
-  <link rel="stylesheet" href="css/focus-mode.css">
-  <link rel="stylesheet" href="css/lockedin-mode.css">
-  <link rel="stylesheet" href="css/bgm-player.css">
-  <link rel="stylesheet" href="css/timer-sound.css">
   <link rel="stylesheet" href="css/about-modal.css">
-  <link rel="stylesheet" href="css/radial-menu.css">
 
-  <script>
-    // Function to load deferred CSS files
-    function loadDeferredCSS() {
-      const deferredStyles = [
-        'settings',
-        'theme-uploader',
-        'burnup-tracker'
-      ];
-      
-      deferredStyles.forEach(style => {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = `css/${style}.css`;
-        document.head.appendChild(link);
-      });
-    }
-    
-    // Load deferred styles when DOM is ready, with a slight delay to prioritize render
-    document.addEventListener('DOMContentLoaded', function() {
-      setTimeout(loadDeferredCSS, 100);
-    });
-  </script>
 </head>
 <body class="pomodoro-mode">
   <script>
@@ -159,10 +131,6 @@
     </div>
     <div class="about-info-modal-content">
       <p><strong>Customodoro</strong> is a handcrafted productivity timer built to help you focus better, manage your time, and maintain balance.</p>
-
-      <p>It features two flexible modes — Classic Pomodoro (work-first) and Reverse Pomodoro (rest-first) — designed to match your unique rhythm whether you're grinding hard or easing in.</p>
-
-      <p>More than just a timer, Customodoro includes themes, background music, locked-in focus mode, and settings that adapt to your workflow — all built inside a calm, distraction-free interface.</p>
 
       <p><strong>Why I made this?</strong> I built this for someone special — my girlfriend — because she told me the traditional Pomodoro style wasn't working well for her study sessions. So, I designed Reverse Pomodoro just for her — something more gentle and flexible, the way she needed it.</p>
 
