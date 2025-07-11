@@ -626,6 +626,26 @@
     currentTrackIndex = 0;
     updateTrackDisplay();
     
+    // Don't preload any tracks - only load on user interaction
+    // Create audio element with preload="none" to prevent automatic loading
+    const audioElement = document.createElement('audio');
+    audioElement.preload = "none"; // Prevent automatic preloading
+    
+    // Setup audio player but don't set src yet - will be set only on play button click
+    const setupTrack = (trackData) => {
+      // Only set source when explicitly requested to play
+      // This prevents unnecessary data transfer
+      return {
+        load: () => {
+          if (!audioElement.src || audioElement.src !== trackData.url) {
+            audioElement.src = trackData.url;
+            // Only load the file when explicitly requested
+            audioElement.load();
+          }
+        }
+      };
+    };
+    
     // Preload first track
     audio.src = currentPlaylist[0].src;
     audio.load();
