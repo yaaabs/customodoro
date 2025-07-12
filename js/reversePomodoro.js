@@ -822,6 +822,35 @@ document.querySelectorAll('.time-btn, .secondary-btn, .tab').forEach(button => {
 // Make the playSound function available globally
 window.playSound = playSound;
 
+// Handle page leave/refresh
+window.addEventListener('beforeunload', (e) => {
+  if (isRunning || hasUnsavedTasks || hasUnfinishedTasks) {
+    e.preventDefault();
+    let message = '';
+    if (isRunning) message = 'Timer is still running.';
+    if (hasUnsavedTasks) message = 'You have unsaved tasks.';
+    if (hasUnfinishedTasks) message = 'You have unfinished tasks.';
+    e.returnValue = `${message} Are you sure you want to leave?`;
+    return e.returnValue;
+  }
+});
+
+// Add link handler for mode switching to prevent accidental navigation
+document.querySelector('.switch-btn').addEventListener('click', (e) => {
+  // Only show confirmation when switching between major timer types (reverse/classic)
+  if (isRunning) {
+    const confirmed = confirm('Timer is still running. Are you sure you want to switch to a different timer type? This will reset your progress.');
+    if (!confirmed) {
+      e.preventDefault();
+    }
+  } else if (hasUnfinishedTasks || taskList.children.length > 0) {
+    const confirmed = confirm('Switching to a different timer type will delete all your tasks. Do you want to continue?');
+    if (!confirmed) {
+      e.preventDefault();
+    }
+  }
+});
+
 // Update sound volumes based on shared settings
 function updateSoundVolumes() {
     // Use shared keys for sound settings
