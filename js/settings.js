@@ -1074,9 +1074,9 @@ function testSound(type) {
       case 'whitenoise':
         soundPath = 'audio/Timer Sounds/UnderWaterWhiteNoise.mp3';
         break;
-      case 'brownnoise':
+   /*   case 'brownnoise':
         soundPath = 'audio/Timer Sounds/SoftBrownNoise.mp3';
-        break;
+        break; */
       default:
         return;
     }
