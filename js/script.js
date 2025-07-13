@@ -60,7 +60,7 @@ sounds.complete.volume = 1.0;  // Full volume for alarm
 
 // Add timer sound variables and functionality
 const timerSounds = {
-  ticking: new Audio('audio/Timer Sounds/WallClockTicking.mp3'),
+ //COMMENT ticking: new Audio('audio/Timer Sounds/WallClockTicking.mp3'),
   whitenoise: new Audio('audio/Timer Sounds/UnderWaterWhiteNoise.mp3'),
  //COMMENT brownnoise: new Audio('audio/Timer Sounds/SoftBrownNoise.mp3')
 };
@@ -407,11 +407,26 @@ const motivationalMessages = [
 
 // Add keyboard shortcuts
 document.addEventListener('keydown', (e) => {
+  // Check if user is currently typing in an input field
+  const activeElement = document.activeElement;
+  const isTypingInInput = activeElement && (
+    activeElement.tagName === 'INPUT' || 
+    activeElement.tagName === 'TEXTAREA' || 
+    activeElement.isContentEditable
+  );
+  
   if (e.code === 'Space') {
-    e.preventDefault();
-    toggleTimer();
+    // Only trigger timer control if NOT typing in an input field
+    if (!isTypingInInput) {
+      e.preventDefault();
+      toggleTimer();
+    }
+    // If typing in input field, let the space character be added normally
   } else if (e.code === 'KeyR') {
-    resetTimer();
+    // Only trigger reset if NOT typing in an input field
+    if (!isTypingInInput) {
+      resetTimer();
+    }
   }
 });
 
