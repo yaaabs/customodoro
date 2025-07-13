@@ -30,7 +30,7 @@
     // Apply saved theme before the page renders to prevent flashing
     (function() {
       const savedTheme = localStorage.getItem('siteTheme') || 'light';
-      document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-yourname', 'theme-custom');
+      document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-yourname', 'theme-rain', 'theme-custom');
       
       if (savedTheme === 'custom') {
         const customBg = localStorage.getItem('customThemeBackground');
@@ -40,6 +40,8 @@
         } else {
           document.body.classList.add('theme-light');
         }
+      } else if (savedTheme === 'rain') {
+        document.body.classList.add('theme-rain');
       } else {
         document.body.classList.add('theme-' + savedTheme);
       }

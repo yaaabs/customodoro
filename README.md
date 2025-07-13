@@ -161,7 +161,7 @@ Elegant floating action menu with quick access to:
 <details>
 <summary><strong>🎨 Customization Features</strong></summary>
 
-- 🎭 **4 Built-in Themes** + Custom theme support
+- 🎭 **5 Built-in Themes** + Custom theme support
 - 🖼️ **Custom Background Upload** (JPG, PNG up to 2MB)
 - 🔒 **Locked-In Mode** for distraction-free focus
 - 🎵 **Background Music** with volume control

@@ -328,7 +328,7 @@
   // Update the applyTheme function to handle custom themes
   function applyTheme(themeName) {
     // Remove any previous theme classes from body
-    document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-yourname', 'theme-custom');
+    document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-yourname', 'theme-rain', 'theme-custom');
     
     // Reset any inline background image
     document.body.style.backgroundImage = '';
@@ -387,6 +387,42 @@
       preloadImg.onerror = function() {
         document.body.classList.add('theme-light');
         console.error('Failed to load yourname theme image');
+        // Show error message
+        if (toast) {
+          toast.textContent = 'Failed to load theme image. Using light theme instead.';
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        // Update the selector to match actual theme
+        const themeSelector = document.getElementById('theme-selector');
+        if (themeSelector) themeSelector.value = 'light';
+        // Save the fallback theme
+        localStorage.setItem('siteTheme', 'light');
+      };
+    } else if (themeName === 'rain') {
+      // For rain theme, preload the image first
+      const preloadImg = new Image();
+      preloadImg.src = 'images/Theme/ManInRain.gif';
+      
+      // Show loading indicator
+      const toast = document.getElementById('toast');
+      if (toast) {
+        toast.textContent = 'Loading theme...';
+        toast.classList.add('show');
+      }
+      
+      // When image is loaded, apply the theme
+      preloadImg.onload = function() {
+        document.body.classList.add('theme-rain');
+        // Hide loading indicator
+        if (toast) toast.classList.remove('show');
+        console.log('Rain theme image loaded successfully');
+      };
+      
+      // If image fails to load, fall back to light theme and show error
+      preloadImg.onerror = function() {
+        document.body.classList.add('theme-light');
+        console.error('Failed to load rain theme image');
         // Show error message
         if (toast) {
           toast.textContent = 'Failed to load theme image. Using light theme instead.';

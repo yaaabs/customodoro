@@ -1479,6 +1479,245 @@ body.theme-yourname .add-task-btn:hover {
   }
 }
 
+/* Add Man in Rain Theme */
+body.theme-rain {
+  /* Improved path handling for the background image */
+  background-image: url('../images/Theme/ManInRain.gif');
+  /* Fallback color in case image fails to load */
+  background-color: #1a2a4a;
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  color: #ffffff;
+  position: relative;
+  /* Force hardware acceleration to improve rendering */
+  -webkit-transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  -o-transform: translateZ(0);
+  transform: translateZ(0);
+  /* Fix for some mobile browsers that don't support fixed backgrounds */
+  min-height: 100vh;
+}
+
+/* Mobile-specific fixes for the background image */
+@media (max-width: 768px) {
+  body.theme-rain {
+    /* Some mobile browsers don't support fixed attachment well */
+    background-attachment: scroll;
+    /* Ensure the image always covers the screen */
+    background-size: cover;
+    /* Position from top for better mobile viewing */
+    background-position: top center;
+  }
+}
+
+/* Add overlay to improve readability on rain theme */
+body.theme-rain::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: -1;
+}
+
+/* Special styling for timer containers in rain theme */
+body.theme-rain .timer-container {
+  background-color: rgba(0, 0, 0, 0.0);
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+/* Task and info sections for rain theme */
+body.theme-rain .tasks-section,
+body.theme-rain .info-section,
+body.theme-rain .settings-section {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Improve text readability in rain theme */
+body.theme-rain .app-title,
+body.theme-rain .timer,
+body.theme-rain .tasks-title,
+body.theme-rain .info-box h3 {
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Style task input for rain theme */
+body.theme-rain .task-input {
+  background-color: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+body.theme-rain .task-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Style task items for rain theme */
+body.theme-rain .task-item {
+  border-bottom-color: rgba(255, 255, 255, 0.2);
+}
+
+body.theme-rain .task-text {
+  color: #ffffff;
+}
+
+body.theme-rain .task-completed .task-text {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Style buttons for rain theme */
+body.theme-rain .primary-btn {
+  background-color: rgba(255, 255, 255, 0.25);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(5px);
+}
+
+body.theme-rain .primary-btn:hover {
+  background-color: rgba(255, 255, 255, 0.35);
+}
+
+body.theme-rain .secondary-btn,
+body.theme-rain .switch-btn {
+  background-color: rgba(0, 0, 0, 0.4);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+body.theme-rain .secondary-btn:hover,
+body.theme-rain .switch-btn:hover {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Mode tabs for rain theme */
+body.theme-rain .mode-tabs {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+body.theme-rain .tab {
+  color: rgba(255, 255, 255, 0.8);
+}
+body.theme-rain .tab.active {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+/* Settings button for rain theme */
+body.theme-rain .settings-btn {
+  background-color: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+body.theme-rain .settings-btn svg {
+  color: #ffffff;
+}
+
+/* Progress bar for rain theme */
+body.theme-rain .progress-container {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+body.theme-rain .progress-bar {
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+
+/* Session dots for rain theme */
+body.theme-rain .session-dot {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+body.theme-rain .session-dot.completed {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* Fix info box text for rain theme */
+body.theme-rain .info-box p, 
+body.theme-rain .info-box li {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+body.theme-rain .settings-note {
+  background-color: rgba(0, 0, 0, 0.4);
+  border-left: 3px solid rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Toast notification for rain theme */
+body.theme-rain .toast {
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Add-task button for rain theme */
+body.theme-rain .add-task-btn {
+  background-color: rgba(139, 95, 191, 0.8);
+}
+
+body.theme-rain .add-task-btn:hover {
+  background-color: rgba(139, 95, 191, 1);
+}
+
+/* Ensure the theme preserves across element interactions */
+.focus-mode.theme-rain,
+.short-break-mode.theme-rain,
+.long-break-mode.theme-rain,
+.reverse-mode.theme-rain {
+  background-image: url('../images/Theme/ManInRain.gif');
+  background-color: #1a2a4a; /* Fallback */
+}
+
+/* Handle iOS Safari-specific issues */
+@supports (-webkit-touch-callout: none) {
+  body.theme-rain {
+    /* iOS Safari has issues with background-attachment: fixed */
+    background-attachment: scroll;
+    /* Force hardware acceleration differently for iOS */
+    -webkit-transform: translate3d(0,0,0);
+    transform: translate3d(0,0,0);
+  }
+}
+
+/* Add footer styling for rain theme */
+.theme-rain .footer {
+    background: rgba(20, 20, 20, 0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-light);
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
+}
+
+.theme-rain .footer-brand {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.theme-rain .footer-brand strong {
+    color: white;
+}
+
+.theme-rain .footer-links a {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.theme-rain .footer-links a:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.theme-rain .footer-divider {
+    color: rgba(255, 255, 255, 0.3);
+}
+
 /* Custom Theme with user-uploaded background image */
 body.theme-custom {
   background-size: cover;
