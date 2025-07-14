@@ -19,6 +19,20 @@
   const MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2MB
   const CUSTOM_THEME_STORAGE_KEY = 'customThemeBackground';
   
+  // Color Theme Management
+  let colorThemeSelector;
+  let colorOptions;
+  let customColorInput;
+  let customColorHex;
+  let colorPreviewIndicator;
+  let colorPreviewBtn;
+  let colorResetBtn;
+  let selectedColor = '#4A90E2';
+  
+  // Color Theme Constants
+  const COLOR_THEME_STORAGE_KEY = 'colorThemeBackground';
+  const DEFAULT_COLOR = '#4A90E2';
+  
   // Initialize on document load
   document.addEventListener('DOMContentLoaded', () => {
     initThemeManager();
@@ -43,11 +57,29 @@
     // Setup event listeners
     setupEventListeners();
     
+    // Initialize color theme
+    initColorTheme();
+    
     // Check if we have a saved custom theme
     checkForSavedCustomTheme();
     
     // Update UI based on currently selected theme
     updateThemeUploaderVisibility();
+    
+    // Add observer for settings modal visibility
+    const settingsModal = document.getElementById('settings-modal');
+    if (settingsModal) {
+      const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+            if (settingsModal.classList.contains('show')) {
+              setTimeout(updateColorThemeVisibility, 100);
+            }
+          }
+        });
+      });
+      observer.observe(settingsModal, { attributes: true });
+    }
   }
   
   // Set up event listeners
@@ -96,6 +128,11 @@
     // Theme selector change
     if (themeSelector) {
       themeSelector.addEventListener('change', updateThemeUploaderVisibility);
+      
+      // Also add a direct event listener specifically for color theme visibility
+      themeSelector.addEventListener('change', function() {
+        setTimeout(updateColorThemeVisibility, 50);
+      });
     }
   }
   
@@ -108,6 +145,9 @@
     } else {
       themeUploader.classList.remove('show');
     }
+    
+    // Update color theme visibility
+    updateColorThemeVisibility();
   }
   
   // Handle file selection from input
@@ -287,13 +327,301 @@
     
     if (savedTheme) {
       // Remove any existing theme classes
-      document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-nature');
+      document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-nature', 'theme-rain', 'theme-color');
+      
+      // Clear any CSS custom properties
+      document.documentElement.style.removeProperty('--color-theme-bg');
       
       // Add custom theme class
       document.body.classList.add('theme-custom');
       
       // Set the background image
       document.body.style.backgroundImage = `url(${savedTheme})`;
+    }
+  }
+  
+  // Color Theme Management
+  // Initialize color theme elements
+  function initColorTheme() {
+    colorThemeSelector = document.querySelector('.color-theme-selector');
+    colorOptions = document.querySelectorAll('.color-option');
+    customColorInput = document.getElementById('custom-color-input');
+    customColorHex = document.getElementById('custom-color-hex');
+    colorPreviewIndicator = document.getElementById('color-preview-indicator');
+    colorPreviewBtn = document.getElementById('color-preview-btn');
+    colorResetBtn = document.getElementById('color-reset-btn');
+    
+    if (!colorThemeSelector) return;
+    
+    // Setup color theme event listeners
+    setupColorThemeListeners();
+    
+    // Load saved color theme
+    loadSavedColorTheme();
+    
+    // Initialize color preview indicator with current color
+    if (colorPreviewIndicator && selectedColor) {
+      colorPreviewIndicator.style.backgroundColor = selectedColor;
+      colorPreviewIndicator.style.setProperty('--current-color', selectedColor);
+    }
+    
+    // Initialize custom color input with current color
+    if (customColorInput && selectedColor) {
+      customColorInput.value = selectedColor;
+    }
+    
+    // Initialize hex input with current color
+    if (customColorHex && selectedColor) {
+      customColorHex.value = selectedColor.replace('#', '').toUpperCase();
+    }
+  }
+  
+  // Setup color theme event listeners
+  function setupColorThemeListeners() {
+    // Predefined color options
+    colorOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        const color = option.dataset.color;
+        selectColor(color);
+      });
+    });
+    
+    // Custom color input
+    if (customColorInput) {
+      // Handle input events (typing)
+      customColorInput.addEventListener('input', (e) => {
+        const color = e.target.value;
+        selectColor(color);
+        // Update hex input and color preview indicator in real-time
+        if (customColorHex) {
+          customColorHex.value = color.replace('#', '').toUpperCase();
+        }
+        if (colorPreviewIndicator) {
+          colorPreviewIndicator.style.backgroundColor = color;
+          colorPreviewIndicator.style.setProperty('--current-color', color);
+        }
+      });
+      
+      // Handle paste events
+      customColorInput.addEventListener('paste', (e) => {
+        setTimeout(() => {
+          const color = e.target.value;
+          selectColor(color);
+          // Update hex input and color preview indicator after paste
+          if (customColorHex) {
+            customColorHex.value = color.replace('#', '').toUpperCase();
+          }
+          if (colorPreviewIndicator) {
+            colorPreviewIndicator.style.backgroundColor = color;
+            colorPreviewIndicator.style.setProperty('--current-color', color);
+          }
+        }, 10);
+      });
+      
+      // Handle focus events
+      customColorInput.addEventListener('focus', (e) => {
+        // Update color preview indicator on focus
+        if (colorPreviewIndicator) {
+          colorPreviewIndicator.style.backgroundColor = e.target.value || selectedColor;
+          colorPreviewIndicator.style.setProperty('--current-color', e.target.value || selectedColor);
+        }
+      });
+      
+      // Handle blur events with validation
+      customColorInput.addEventListener('blur', (e) => {
+        // Validate hex color format
+        const color = e.target.value;
+        if (color && !isValidHexColor(color)) {
+          showToast('Invalid hex color format. Please use #RRGGBB format.');
+          e.target.focus();
+        }
+      });
+    }
+    
+    // Custom hex input
+    if (customColorHex) {
+      // Add validation styling
+      customColorHex.addEventListener('input', (e) => {
+        // Clean the input value (remove # if present)
+        let value = e.target.value.replace('#', '');
+        e.target.value = value.toUpperCase();
+        
+        // Create full hex color for validation
+        const fullHex = '#' + value;
+        
+        // Add validation classes
+        if (value.length === 6 && isValidHexColor(fullHex)) {
+          e.target.classList.remove('invalid');
+          e.target.classList.add('valid');
+          selectColor(fullHex);
+          if (customColorInput) {
+            customColorInput.value = fullHex;
+          }
+          if (colorPreviewIndicator) {
+            colorPreviewIndicator.style.backgroundColor = fullHex;
+            colorPreviewIndicator.style.setProperty('--current-color', fullHex);
+          }
+        } else {
+          e.target.classList.remove('valid');
+          e.target.classList.add('invalid');
+        }
+      });
+      
+      customColorHex.addEventListener('paste', (e) => {
+        setTimeout(() => {
+          let value = e.target.value.replace('#', '');
+          e.target.value = value.toUpperCase();
+          
+          const fullHex = '#' + value;
+          if (value.length === 6 && isValidHexColor(fullHex)) {
+            e.target.classList.remove('invalid');
+            e.target.classList.add('valid');
+            selectColor(fullHex);
+            if (customColorInput) {
+              customColorInput.value = fullHex;
+            }
+            if (colorPreviewIndicator) {
+              colorPreviewIndicator.style.backgroundColor = fullHex;
+              colorPreviewIndicator.style.setProperty('--current-color', fullHex);
+            }
+          } else {
+            e.target.classList.remove('valid');
+            e.target.classList.add('invalid');
+          }
+        }, 10);
+      });
+      
+      customColorHex.addEventListener('blur', (e) => {
+        let value = e.target.value.replace('#', '');
+        const fullHex = '#' + value;
+        
+        if (value && value.length === 6 && !isValidHexColor(fullHex)) {
+          showToast('Invalid hex color format. Please use RRGGBB format.');
+          e.target.focus();
+        } else {
+          e.target.classList.remove('invalid', 'valid');
+        }
+      });
+    }
+    
+    // Preview button
+    if (colorPreviewBtn) {
+      colorPreviewBtn.addEventListener('click', () => {
+        applyColorTheme(selectedColor);
+        showToast('Color theme applied!');
+      });
+    }
+    
+    // Reset button
+    if (colorResetBtn) {
+      colorResetBtn.addEventListener('click', () => {
+        resetColorTheme();
+      });
+    }
+  }
+  
+  // Select a color (either from palette or custom)
+  function selectColor(color) {
+    selectedColor = color;
+    
+    // Update visual selection
+    colorOptions.forEach(option => {
+      option.classList.remove('selected');
+      if (option.dataset.color === color) {
+        option.classList.add('selected');
+      }
+    });
+    
+    // Update custom color input
+    if (customColorInput) {
+      customColorInput.value = color;
+    }
+    
+    // Update hex input
+    if (customColorHex) {
+      customColorHex.value = color.replace('#', '').toUpperCase();
+    }
+    
+    // Update color preview indicator
+    if (colorPreviewIndicator) {
+      colorPreviewIndicator.style.backgroundColor = color;
+      colorPreviewIndicator.style.setProperty('--current-color', color);
+    }
+    
+    // Save to localStorage
+    localStorage.setItem(COLOR_THEME_STORAGE_KEY, color);
+  }
+  
+  // Apply color theme
+  function applyColorTheme(color) {
+    if (!color) color = selectedColor;
+    
+    // Remove other theme classes - ensure proper cleanup
+    document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-yourname', 'theme-custom', 'theme-rain');
+    
+    // Clear any existing background images and CSS properties
+    document.body.style.backgroundImage = '';
+    document.documentElement.style.removeProperty('--color-theme-bg');
+    
+    // Clear any existing overlays or pseudo-elements
+    const existingOverlay = document.querySelector('.theme-overlay');
+    if (existingOverlay) {
+      existingOverlay.remove();
+    }
+    
+    // Add color theme class
+    document.body.classList.add('theme-color');
+    
+    // Set CSS custom property for the color
+    document.documentElement.style.setProperty('--color-theme-bg', color);
+    
+    // Update theme selector
+    if (themeSelector) {
+      themeSelector.value = 'color';
+    }
+    
+    // Save theme preference
+    localStorage.setItem('siteTheme', 'color');
+    localStorage.setItem(COLOR_THEME_STORAGE_KEY, color);
+    
+    // Update color theme visibility
+    updateColorThemeVisibility();
+    
+    console.log('Color theme applied:', color);
+  }
+  
+  // Reset color theme to default
+  function resetColorTheme() {
+    selectColor(DEFAULT_COLOR);
+    applyColorTheme(DEFAULT_COLOR);
+    showToast('Color theme reset to default!');
+  }
+  
+  // Load saved color theme
+  function loadSavedColorTheme() {
+    const savedColor = localStorage.getItem(COLOR_THEME_STORAGE_KEY);
+    if (savedColor) {
+      selectColor(savedColor);
+    } else {
+      selectColor(DEFAULT_COLOR);
+    }
+  }
+  
+  // Update color theme selector visibility
+  function updateColorThemeVisibility() {
+    if (!colorThemeSelector) {
+      console.warn('Color theme selector not found');
+      return;
+    }
+    
+    if (themeSelector && themeSelector.value === 'color') {
+      colorThemeSelector.style.display = 'block';
+      colorThemeSelector.classList.add('show');
+      console.log('Color theme selector shown');
+    } else {
+      colorThemeSelector.style.display = 'none';
+      colorThemeSelector.classList.remove('show');
+      console.log('Color theme selector hidden');
     }
   }
   
@@ -313,6 +641,12 @@
     }, 3000);
   }
   
+  // Validate hex color format
+  function isValidHexColor(color) {
+    // Check if it's a valid hex color (3 or 6 digits)
+    return /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
+  }
+
   // Add this function to ensure info icons work properly even when CSS loading is deferred
 
   // Function to ensure info icons are properly styled
@@ -364,5 +698,17 @@
     applyCustomTheme,
     removeCustomTheme,
     previewCustomTheme
+  };
+  window.colorTheme = {
+    applyColorTheme,
+    resetColorTheme,
+    selectColor,
+    updateColorThemeVisibility,
+    // Test function for debugging
+    testColorThemeVisibility: function() {
+      console.log('Theme selector value:', themeSelector ? themeSelector.value : 'not found');
+      console.log('Color theme selector element:', colorThemeSelector);
+      updateColorThemeVisibility();
+    }
   };
 })();

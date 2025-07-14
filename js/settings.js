@@ -37,6 +37,11 @@
         window.lockedInMode.setup();
       }
       
+      // Update color theme visibility
+      if (window.colorTheme && typeof window.colorTheme.updateColorThemeVisibility === 'function') {
+        window.colorTheme.updateColorThemeVisibility();
+      }
+      
       // Initialize BGM player for reverse page if it doesn't exist
       if (isReversePage && window.bgmPlayer && !window.bgmPlayer.isInitialized) {
         window.bgmPlayer.init();
@@ -328,10 +333,50 @@
   // Update the applyTheme function to handle custom themes
   function applyTheme(themeName) {
     // Remove any previous theme classes from body
-    document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-yourname', 'theme-rain', 'theme-custom');
+    document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-yourname', 'theme-rain', 'theme-custom', 'theme-color');
     
-    // Reset any inline background image
+    // Reset any inline background image and CSS custom properties
     document.body.style.backgroundImage = '';
+    document.documentElement.style.removeProperty('--color-theme-bg');
+    
+    // Clear any existing overlays or pseudo-elements
+    const existingOverlay = document.querySelector('.theme-overlay');
+    if (existingOverlay) {
+      existingOverlay.remove();
+    }
+    
+    // If selecting color theme, apply it using theme-manager.js
+    if (themeName === 'color') {
+      const colorTheme = localStorage.getItem('colorThemeBackground'); // Use consistent key
+      if (colorTheme) {
+        // We have a saved color theme
+        document.body.classList.add('theme-color');
+        document.documentElement.style.setProperty('--color-theme-bg', colorTheme);
+        console.log('Color theme applied:', colorTheme);
+        
+        // Force theme-manager to update the color theme visibility
+        if (window.colorTheme && window.colorTheme.updateColorThemeVisibility) {
+          setTimeout(() => {
+            window.colorTheme.updateColorThemeVisibility();
+          }, 100);
+        }
+      } else {
+        // No color theme saved, use default color
+        const defaultColor = '#4A90E2';
+        document.body.classList.add('theme-color');
+        document.documentElement.style.setProperty('--color-theme-bg', defaultColor);
+        localStorage.setItem('colorThemeBackground', defaultColor);
+        console.log('Default color theme applied:', defaultColor);
+        
+        // Force theme-manager to update the color theme visibility
+        if (window.colorTheme && window.colorTheme.updateColorThemeVisibility) {
+          setTimeout(() => {
+            window.colorTheme.updateColorThemeVisibility();
+          }, 100);
+        }
+      }
+      return;
+    }
     
     // If selecting custom theme, apply it using theme-manager.js
     if (themeName === 'custom') {
@@ -457,7 +502,17 @@
     if (themeSelector) {
       const selectedTheme = themeSelector.value;
       localStorage.setItem('siteTheme', selectedTheme); // Use site-wide key
-      applyTheme(selectedTheme);
+      
+      // If it's a color theme, also trigger the color theme save
+      if (selectedTheme === 'color' && window.colorTheme) {
+        // Get the currently selected color and apply it
+        const savedColor = localStorage.getItem('colorThemeBackground');
+        if (savedColor && window.colorTheme.applyColorTheme) {
+          window.colorTheme.applyColorTheme(savedColor);
+        }
+      } else {
+        applyTheme(selectedTheme);
+      }
     }
   }
   

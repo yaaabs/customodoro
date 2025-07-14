@@ -2067,3 +2067,52 @@ color: #ddd;
 color: rgba(255, 255, 255, 0.8);
 
 }
+
+/* Color Theme Modal Styles */
+body.theme-color .settings-content {
+  background: rgba(255, 255, 255, 0.95);
+  color: #333;
+  border: none; /* Remove the white border */
+}
+
+body.theme-color .settings-title {
+  color: #ffffff !important; /* Make settings title white like other themes */
+}
+
+body.theme-color .setting-item label {
+  color: #333;
+}
+
+body.theme-color .setting-item select,
+body.theme-color .setting-item input {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #333;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+body.theme-color .setting-item select:focus,
+body.theme-color .setting-item input:focus {
+  border-color: var(--color-theme-bg, #4A90E2);
+  box-shadow: 0 0 0 2px rgba(var(--color-theme-bg-rgb, 74, 144, 226), 0.2);
+}
+
+body.theme-color .close-btn {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #333;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+body.theme-color .close-btn:hover {
+  background-color: rgba(255, 255, 255, 1);
+}
+
+body.theme-color .setting-item {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+body.theme-color .settings-note {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #333;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}

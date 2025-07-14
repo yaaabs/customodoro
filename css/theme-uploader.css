@@ -164,3 +164,396 @@ body.theme-dark .image-preview {
     text-align: center;
   }
 }
+
+/* Color Theme Selector Styles */
+.color-theme-selector {
+  margin-top: 20px;
+  display: none;  /* Hidden by default, shown when color theme selected */
+  animation: fadeIn 0.3s ease;
+}
+
+.color-theme-selector.show {
+  display: block !important;
+}
+
+.color-theme-header {
+  margin-bottom: 20px;
+}
+
+.color-theme-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+.color-theme-description {
+  font-size: 14px;
+  color: #aaa;
+  margin-bottom: 15px;
+}
+
+/* Predefined Color Palette */
+.predefined-colors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 25px;
+  justify-content: center;
+}
+
+.color-option {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.color-option:hover {
+  transform: scale(1.05);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.color-option.selected {
+  border-color: rgba(139, 95, 191, 0.8);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(139, 95, 191, 0.4);
+}
+
+.color-check {
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.color-option.selected .color-check {
+  display: block !important;
+}
+
+/* Custom Color Picker - Paint 3D Style */
+.custom-color-picker {
+  margin-bottom: 25px;
+  padding: 20px;
+  background: rgba(139, 95, 191, 0.1);
+  border: 2px dashed rgba(139, 95, 191, 0.3);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.custom-color-picker:hover {
+  border-color: rgba(139, 95, 191, 0.5);
+  background: rgba(139, 95, 191, 0.15);
+}
+
+.custom-color-picker::before {
+  content: "🎨 Custom Color Picker";
+  position: absolute;
+  top: -10px;
+  left: 15px;
+  background: rgba(139, 95, 191, 0.9);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.custom-color-label {
+  font-size: 14px;
+  color: #ddd;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.custom-color-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8b5fbf, #a855f7);
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1;
+  box-shadow: 0 2px 8px rgba(139, 95, 191, 0.3);
+}
+
+.color-picker-container {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.color-picker-container:hover {
+  border-color: rgba(139, 95, 191, 0.4);
+  box-shadow: 0 4px 12px rgba(139, 95, 191, 0.2);
+}
+
+.color-input {
+  width: 60px;
+  height: 50px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.color-input:hover {
+  transform: scale(1.05);
+}
+
+.color-input::-webkit-color-swatch {
+  border: none;
+  border-radius: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.color-input::-webkit-color-swatch-wrapper {
+  border: none;
+  border-radius: 0;
+  padding: 0;
+}
+
+.color-input::-moz-color-swatch {
+  border: none;
+  border-radius: 0;
+}
+
+.hex-input-container {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+.hex-prefix {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+  font-weight: 600;
+  padding: 0 12px;
+  font-family: 'Courier New', monospace;
+}
+
+.hex-input {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14px;
+  color: #fff;
+  background-color: transparent;
+  padding: 12px 16px;
+  border: none;
+  width: 120px;
+  text-align: left;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+
+.hex-input:focus {
+  outline: none;
+  background-color: rgba(139, 95, 191, 0.1);
+}
+
+.hex-input::placeholder {
+  color: #888;
+  text-transform: uppercase;
+}
+
+/* Color validation feedback */
+.hex-input.invalid {
+  background-color: rgba(255, 64, 64, 0.1);
+  color: #ff6b6b;
+}
+
+.hex-input.valid {
+  background-color: rgba(64, 255, 64, 0.1);
+  color: #6bff6b;
+}
+
+/* Color preview indicator */
+.color-preview-indicator {
+  width: 20px;
+  height: 50px;
+  background-color: var(--current-color, #4A90E2);
+  border-left: 1px solid #444;
+  transition: background-color 0.2s ease;
+}
+
+/* Color Theme Actions */
+.color-theme-actions {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.color-preview-btn {
+  background-color: #8b5fbf;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.color-preview-btn:hover {
+  background-color: #9d71d0;
+  transform: translateY(-1px);
+}
+
+.color-reset-btn {
+  background-color: rgba(255, 64, 64, 0.2);
+  color: #ff4040;
+  border: 1px solid rgba(255, 64, 64, 0.3);
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.color-reset-btn:hover {
+  background-color: rgba(255, 64, 64, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Mobile responsive optimizations for color theme selector */
+@media (max-width: 480px) {
+  .predefined-colors {
+    gap: 10px;
+  }
+  
+  .color-option {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .color-input {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .color-hex-display {
+    font-size: 14px;
+    padding: 6px 8px;
+    min-width: 70px;
+  }
+  
+  .color-theme-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .color-preview-btn,
+  .color-reset-btn {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .custom-color-picker {
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .custom-color-picker::before {
+    content: "🎨 Custom";
+    font-size: 10px;
+    padding: 3px 6px;
+    top: -8px;
+    left: 10px;
+  }
+}
+
+/* Responsive Design for Paint 3D Style Color Picker */
+@media (max-width: 480px) {
+  .color-picker-container {
+    flex-direction: column;
+    border-radius: 8px;
+  }
+  
+  .color-input {
+    width: 100%;
+    height: 40px;
+    border-radius: 8px 8px 0 0;
+  }
+  
+  .hex-input-container {
+    border-left: none;
+    border-top: 1px solid #444;
+    border-radius: 0;
+  }
+  
+  .hex-input {
+    padding: 12px 15px;
+    font-size: 16px;
+    text-align: center;
+  }
+  
+  .color-preview-indicator {
+    width: 100%;
+    height: 30px;
+    border-left: none;
+    border-top: 1px solid #444;
+    border-radius: 0 0 8px 8px;
+  }
+}
+
+/* Light theme support for color picker */
+body:not(.theme-dark):not(.theme-yourname):not(.theme-custom):not(.theme-color) .color-picker-container {
+  background-color: #f5f5f5;
+  border-color: #ddd;
+}
+
+body:not(.theme-dark):not(.theme-yourname):not(.theme-custom):not(.theme-color) .hex-input-container {
+  background-color: #fff;
+  border-color: #ddd;
+}
+
+body:not(.theme-dark):not(.theme-yourname):not(.theme-custom):not(.theme-color) .hex-prefix {
+  color: #666;
+}
+
+body:not(.theme-dark):not(.theme-yourname):not(.theme-custom):not(.theme-color) .hex-input {
+  color: #333;
+}
+
+body:not(.theme-dark):not(.theme-yourname):not(.theme-custom):not(.theme-color) .hex-input::placeholder {
+  color: #999;
+}
+
+body:not(.theme-dark):not(.theme-yourname):not(.theme-custom):not(.theme-color) .color-preview-indicator {
+  border-color: #ddd;
+}
+
+body:not(.theme-dark):not(.theme-yourname):not(.theme-custom):not(.theme-color) .custom-color-label {
+  color: #333;
+}

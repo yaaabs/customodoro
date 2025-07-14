@@ -141,7 +141,7 @@
       <div class="footer-content">
         <div class="footer-brand">
           © 2025 <strong>Customodoro</strong>
-          <span class="footer-version">v2.1.1</span>
+          <span class="footer-version">v2.2.0</span>
           • Handcrafted by <strong><em>YabuTech</em></strong>
         </div>
         <nav class="footer-links">
@@ -589,6 +589,7 @@
                   <option value="dark">Dark Mode</option>
                   <option value="rain">Man in the Rain (GIF)</option>
                   <option value="yourname">君の名は</option>
+                  <option value="color">Color Theme</option>
                   <option value="custom">Custom Theme</option>
                 </select>
               </div>
@@ -627,6 +628,60 @@
               <div class="settings-note">
                 Upload your own background image to create a custom theme.
                 For best results, use a high-quality landscape image.
+              </div>
+            </div>
+            
+            <!-- Color Theme Selector -->
+            <div class="color-theme-selector" id="color-theme-selector">
+              <div class="color-theme-header">
+                <h4 class="color-theme-title">Choose Color Theme</h4>
+                <div class="color-theme-description">Select a predefined color or create your own</div>
+              </div>
+              
+              <!-- Predefined Color Palette -->
+              <div class="predefined-colors">
+                <div class="color-option" data-color="#4A90E2" style="background-color: #4A90E2;" title="Ocean Blue">
+                  <div class="color-check" style="display: none;">✓</div>
+                </div>
+                <div class="color-option" data-color="#7B68EE" style="background-color: #7B68EE;" title="Purple Rain">
+                  <div class="color-check" style="display: none;">✓</div>
+                </div>
+                <div class="color-option" data-color="#20B2AA" style="background-color: #20B2AA;" title="Teal Green">
+                  <div class="color-check" style="display: none;">✓</div>
+                </div>
+                <div class="color-option" data-color="#FF6B6B" style="background-color: #FF6B6B;" title="Coral Red">
+                  <div class="color-check" style="display: none;">✓</div>
+                </div>
+                <div class="color-option" data-color="#4ECDC4" style="background-color: #4ECDC4;" title="Mint Fresh">
+                  <div class="color-check" style="display: none;">✓</div>
+                </div>
+              </div>
+              
+              <!-- Custom Color Picker -->
+              <div class="custom-color-picker">
+                <div class="custom-color-label">
+                  <span class="custom-color-icon">+</span>
+                  Custom Color:
+                </div>
+                <div class="color-picker-container">
+                  <input type="color" class="color-input" id="custom-color-input" value="#4A90E2" title="Click to open color picker">
+                  <div class="hex-input-container">
+                    <span class="hex-prefix">#</span>
+                    <input type="text" class="hex-input" id="custom-color-hex" value="4A90E2" placeholder="RRGGBB" maxlength="6">
+                  </div>
+                  <div class="color-preview-indicator" id="color-preview-indicator"></div>
+                </div>
+              </div>
+              
+              <!-- Color Theme Actions -->
+              <div class="color-theme-actions">
+                <button class="color-preview-btn" id="color-preview-btn">Preview Color</button>
+                <button class="color-reset-btn" id="color-reset-btn">Reset to Default</button>
+              </div>
+              
+              <div class="settings-note">
+                Color themes apply a solid color background to the light mode layout.
+                Perfect for creating a personalized, distraction-free environment.
               </div>
             </div>
           </div>
@@ -835,19 +890,20 @@
       <button class="update-modal-close" id="update-modal-close" aria-label="Close">&times;</button>
     </div>
     <div class="update-modal-content">
-      <div class="update-changelog-title">v2.1.1 <span class="update-date">(July 9, 2025)</span></div>
+      <div class="update-changelog-title">v2.2.0 <span class="update-date">(July 14, 2025)</span></div>
 
       <div class="update-info-box">
-      <ul>
-        <li><b>✨ Custom Timer (Dynamic):</b> You can now set the max timer to more than 1 hour!</li>
-        <li><b>🕒 Standard Mode:</b> Keeps the classic 1hr max (not editable).</li>
-        <li><b>🐞 Locked In Mode:</b> We’ve tried to fix the issue where it turns ON by default, but if it still happens, you can manually turn it OFF in <b style="text-transform: uppercase; color: #ff5e5e;">SETTINGS &gt; THEME</b>.</li>
-      </ul>
+<ul>
+  <li><b>🎨 Color Themes:</b> Pick from presets or use your own HEX color.</li>
+  <li><b>🌧️ New Theme:</b> Added animated <i>“Man in Rain”</i> GIF.</li>
+  <li><b>🛠️ Fixes & Tweaks:</b> Spacebar bug fixed, sounds removed, cache optimized.</li>
+</ul>
+
       </div>
       <div class="update-info-box">
         <b>We're still improving Customodoro!</b>
         <ul>
-          <li>Dynamic Mode for Reverse Pomodoro is our top priority right now.</li>
+         
           <li>Your feedback helps us make the app better for everyone.</li>
         </ul>
         <div style="margin-top: 0.7em;">
