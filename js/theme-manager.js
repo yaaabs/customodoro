@@ -26,6 +26,7 @@
   let customColorHex;
   let colorPreviewIndicator;
   let colorPreviewBtn;
+  let colorPreviewBtnMobile; // Add this for mobile
   let colorResetBtn;
   let selectedColor = '#4A90E2';
   
@@ -349,6 +350,7 @@
     customColorHex = document.getElementById('custom-color-hex');
     colorPreviewIndicator = document.getElementById('color-preview-indicator');
     colorPreviewBtn = document.getElementById('color-preview-btn');
+    colorPreviewBtnMobile = document.getElementById('color-preview-btn-mobile'); // Add this for mobile
     colorResetBtn = document.getElementById('color-reset-btn');
     
     if (!colorThemeSelector) return;
@@ -504,11 +506,27 @@
       });
     }
     
-    // Preview button
+    // Preview button (desktop)
     if (colorPreviewBtn) {
       colorPreviewBtn.addEventListener('click', () => {
         applyColorTheme(selectedColor);
         showToast('Color theme applied!');
+      });
+    }
+    // Preview button (mobile)
+    if (colorPreviewBtnMobile) {
+      colorPreviewBtnMobile.addEventListener('click', () => {
+        // Get value from hex input
+        const hexInput = document.getElementById('custom-color-hex');
+        let color = hexInput ? hexInput.value : selectedColor;
+        if (color && !color.startsWith('#')) color = '#' + color;
+        if (isValidHexColor(color)) {
+          selectColor(color);
+          applyColorTheme(color);
+          showToast('Color theme applied!');
+        } else {
+          showToast('Invalid HEX code. Use format RRGGBB.');
+        }
       });
     }
     

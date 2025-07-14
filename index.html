@@ -767,21 +767,31 @@
                   <input type="color" class="color-input" id="custom-color-input" value="#4A90E2" title="Click to open color picker">
                   <div class="hex-input-container">
                     <span class="hex-prefix">#</span>
-                    <input type="text" class="hex-input" id="custom-color-hex" value="4A90E2" placeholder="RRGGBB" maxlength="6">
+                    <!-- Make HEX input always visible, larger, and touch-friendly -->
+                    <input 
+                      type="text" 
+                      class="hex-input" 
+                      id="custom-color-hex" 
+                      value="4A90E2" 
+                      placeholder="RRGGBB" 
+                      maxlength="6"
+                      style="font-size:18px; padding:16px; width:100px; border-radius:8px;"
+                      inputmode="text"
+                      autocomplete="off"
+                    >
+                    <!-- Add a preview button for mobile -->
+                    <button 
+                      class="color-preview-btn" 
+                      id="color-preview-btn-mobile" 
+                      style="margin-left:8px; font-size:14px; padding:8px 12px; display:none;"
+                    >Preview</button>
                   </div>
                   <div class="color-preview-indicator" id="color-preview-indicator"></div>
                 </div>
-              </div>
-              
-              <!-- Color Theme Actions -->
-              <div class="color-theme-actions">
-                <button class="color-preview-btn" id="color-preview-btn">Preview Color</button>
-                <button class="color-reset-btn" id="color-reset-btn">Reset to Default</button>
-              </div>
-              
-              <div class="settings-note">
-                Color themes apply a solid color background to the light mode layout.
-                Perfect for creating a personalized, distraction-free environment.
+                <!-- Add a note for mobile users -->
+                <div class="settings-note" style="margin-top:8px;">
+                  <span style="color:#FFD700;">Tip:</span> You can type or paste a HEX code above (e.g. <b>4A90E2</b>) for any color. Tap "Preview" to see it!
+                </div>
               </div>
             </div>
           </div>

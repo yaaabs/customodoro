@@ -362,14 +362,16 @@ body.theme-dark .image-preview {
 
 .hex-input {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 14px;
+  font-size: 18px;
   color: #fff;
   background-color: transparent;
-  padding: 12px 16px;
+  padding: 16px;
   border: none;
-  width: 120px;
-  text-align: left;
-  text-transform: uppercase;
+  width: 100px;
+  border-radius: 8px;
+  /* Make it easier to tap on mobile */
+  min-height: 44px;
+  box-sizing: border-box;
   transition: all 0.2s ease;
 }
 
