@@ -1,11 +1,16 @@
-const CACHE_NAME = "customodoro-cache-v2.1.1";
+const CACHE_NAME = "customodoro-cache-v2.2.0";
 const urlsToCache = [
   "/",
   "/index.html",
+  "/reverse.html",
   "/css/style.css",
   "/css/settings.css",
   "/js/script.js",
   "/js/settings.js",
+  "/js/theme-manager.js",
+  "/css/theme-uploader.css",
+  "/images/Theme/ManInRain.gif",
+  "/sw.js"
 ];
 
 self.addEventListener("install", (event) => {
