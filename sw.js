@@ -1,4 +1,4 @@
-const CACHE_NAME = "customodoro-cache-v2.3.1";
+const CACHE_NAME = "customodoro-cache-v2.3.2";
 const urlsToCache = [
   "/",
   "/index.html",
@@ -31,29 +31,78 @@ self.addEventListener("install", (event) => {
   );
 });
 
-// Activate: remove old caches
+// Activate: remove old caches more aggressively
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) =>
       Promise.all(
         cacheNames
           .filter((name) => name !== CACHE_NAME)
-          .map((name) => caches.delete(name))
+          .map((name) => {
+            console.log("Deleting old cache:", name);
+            return caches.delete(name);
+          })
       )
-    )
-  );
-  self.clients.claim();
-});
-
-// Fetch: serve from cache, fallback to network
-self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
-      return cachedResponse || fetch(event.request).catch(() => {
-        if (event.request.mode === "navigate") {
-          return caches.match("/index.html");
-        }
-      });
+    ).then(() => {
+      console.log("Cache cleanup complete");
+      // Force immediate control of all clients
+      return self.clients.claim();
     })
   );
+});
+
+// Fetch: Network first for HTML, cache first for assets
+self.addEventListener("fetch", (event) => {
+  const url = new URL(event.request.url);
+  
+  // Network first strategy for HTML files to ensure updates
+  if (event.request.mode === "navigate" || url.pathname.endsWith('.html')) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          // Cache the new version
+          if (response.status === 200) {
+            const responseClone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseClone);
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          // Fallback to cache if network fails
+          return caches.match(event.request);
+        })
+    );
+  } else {
+    // Cache first strategy for assets
+    event.respondWith(
+      caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
+        return cachedResponse || fetch(event.request).catch(() => {
+          if (event.request.mode === "navigate") {
+            return caches.match("/index.html");
+          }
+        });
+      })
+    );
+  }
+});
+
+// Listen for messages from the main thread
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'CLEAR_CACHE') {
+    event.waitUntil(
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            console.log("Clearing cache:", cacheName);
+            return caches.delete(cacheName);
+          })
+        );
+      }).then(() => {
+        console.log("All caches cleared by SW");
+        event.ports[0].postMessage({ success: true });
+      })
+    );
+  }
 });
