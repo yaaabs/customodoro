@@ -99,25 +99,38 @@
 /* Tooltip styles */
 .radial-tooltip {
   position: absolute;
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 5px 20px; 
-  border-radius: 4px;
-  font-size: 12px;
-  white-space: nowrap;
+  left: 50%;
+  top: -54px; /* move tooltip higher above the button */
+  transform: translateX(-50%);
+  background: rgba(30, 30, 30, 0.97);
+  color: #fff;
+  padding: 10px 18px; /* more padding for rectangle shape */
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: normal; /* allow wrapping for long text */
+  min-width: 120px;
+  max-width: 340px; /* allow longer rectangle */
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
   opacity: 0;
   visibility: hidden;
-  transition: all 0.3s ease;
+  transition: opacity 0.18s, visibility 0.18s;
   pointer-events: none;
-  top: -30px;
+  text-align: center;
+  z-index: 10;
+  word-break: break-word;
+}
+
+.radial-tooltip::after {
+  content: '';
+  position: absolute;
   left: 50%;
+  top: 100%; /* always below the tooltip box */
   transform: translateX(-50%);
-  width: max-content; 
-  min-width: 100px;
-  text-align: center; 
-  box-sizing: border-box; 
-  display: inline-block;
-  margin: 0 auto;
+  border-width: 7px 7px 0 7px;
+  border-style: solid;
+  border-color: rgba(30,30,30,0.97) transparent transparent transparent;
+  display: block;
 }
 
 .radial-menu-item:hover .radial-tooltip {
