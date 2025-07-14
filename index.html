@@ -20,15 +20,16 @@
 
   <link rel="manifest" href="manifest.json">
 
-  <!-- Essential CSS (load immediately) -->
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/mini-music-player.css">
-  <link rel="stylesheet" href="css/focus-mode.css">
-  <link rel="stylesheet" href="css/lockedin-mode.css">
-  <link rel="stylesheet" href="css/bgm-player.css">
-  <link rel="stylesheet" href="css/timer-sound.css">
-  <link rel="stylesheet" href="css/about-modal.css">
-  <link rel="stylesheet" href="css/radial-menu.css">
+<!-- Essential CSS (load immediately) -->
+<link rel="stylesheet" href="css/style.css?v=2.3.1">
+<link rel="stylesheet" href="css/mini-music-player.css?v=2.3.1">
+<link rel="stylesheet" href="css/focus-mode.css?v=2.3.1">
+<link rel="stylesheet" href="css/lockedin-mode.css?v=2.3.1">
+<link rel="stylesheet" href="css/bgm-player.css?v=2.3.1">
+<link rel="stylesheet" href="css/timer-sound.css?v=2.3.1">
+<link rel="stylesheet" href="css/about-modal.css?v=2.3.1">
+<link rel="stylesheet" href="css/radial-menu.css?v=2.3.1">
+
 
   <script>
     // Function to load deferred CSS files
@@ -141,7 +142,7 @@
       <div class="footer-content">
         <div class="footer-brand">
           © 2025 <strong>Customodoro</strong>
-          <span class="footer-version">v2.2.0</span>
+          <span class="footer-version">v2.3.1</span>
           • Handcrafted by <strong><em>YabuTech</em></strong>
         </div>
         <nav class="footer-links">
@@ -890,7 +891,7 @@
       <button class="update-modal-close" id="update-modal-close" aria-label="Close">&times;</button>
     </div>
     <div class="update-modal-content">
-      <div class="update-changelog-title">v2.2.0 <span class="update-date">(July 14, 2025)</span></div>
+      <div class="update-changelog-title">v2.3.1 <span class="update-date">(July 14, 2025)</span></div>
 
       <div class="update-info-box">
 <ul>
@@ -917,28 +918,48 @@
   </div>
 </div>
 
-  <script src="js/update-modal.js"></script>
-  <script src="js/script.js"></script>
-  <script src="js/settings.js"></script>
-  <script src="js/fullscreen.js"></script>
-  <script src="js/lockedin-mode.js"></script>
-  <script src="js/theme-manager.js"></script>
-  <script src="js/locked-in-info-modal.js"></script>
-  <script src="js/focus-mode.js"></script>
-  <script src="js/radial-menu.js"></script>
-  <script src="js/bgm-player.js"></script>
-  <script src="js/mini-music-player.js"></script>
-  <script src="js/about-modal.js"></script>
+<script src="js/update-modal.js?v=2.3.1"></script>
+<script src="js/script.js?v=2.3.1"></script>
+<script src="js/settings.js?v=2.3.1"></script>
+<script src="js/fullscreen.js?v=2.3.1"></script>
+<script src="js/lockedin-mode.js?v=2.3.1"></script>
+<script src="js/theme-manager.js?v=2.3.1"></script>
+<script src="js/locked-in-info-modal.js?v=2.3.1"></script>
+<script src="js/focus-mode.js?v=2.3.1"></script>
+<script src="js/radial-menu.js?v=2.3.1"></script>
+<script src="js/bgm-player.js?v=2.3.1"></script>
+<script src="js/mini-music-player.js?v=2.3.1"></script>
+<script src="js/about-modal.js?v=2.3.1"></script>
+
 
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then(reg => console.log("✅ Service Worker registered!", reg))
-        .catch(err => console.error("⚠️ Service Worker registration failed:", err));
+      navigator.serviceWorker.register('/sw.js').then((reg) => {
+        console.log("✅ Service Worker registered", reg);
+
+        // 🔄 Listen for updates
+        reg.onupdatefound = () => {
+          const newSW = reg.installing;
+          newSW.onstatechange = () => {
+            if (newSW.state === 'installed') {
+              if (navigator.serviceWorker.controller) {
+                // A new version is available
+                const reload = confirm("🔁 A new version of Customodoro is available. Reload now?");
+                if (reload) window.location.reload();
+              } else {
+                console.log("🆕 Content is cached for offline use.");
+              }
+            }
+          };
+        };
+      }).catch((err) => {
+        console.error("⚠️ SW registration failed", err);
+      });
     });
   }
 </script>
+
 
 
 </body>

@@ -1,13 +1,21 @@
-const CACHE_NAME = "customodoro-cache-v2.2.3";
+const CACHE_NAME = "customodoro-cache-v2.3.1";
 const urlsToCache = [
   "/",
   "/index.html",
-  "/css/style.css",
-  "/css/settings.css",
   "/js/script.js",
+
+  "/reverse.html",
+  "/js/reversePomodoro.js",
+
+  "/feedback.html",
+
+  "/css/style.css",
+
+  "/css/settings.css",
   "/js/settings.js",
-  "/js/theme-manager.js",
+
   "/css/theme-uploader.css",
+  "/js/theme-manager.js",
   "/images/Theme/ManInRain.gif"
 ];
 
