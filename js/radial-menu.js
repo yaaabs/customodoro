@@ -41,7 +41,7 @@
       </button>
     `;
     
-    // Create the radial menu items
+    // Create the radial menu items (now includes cache control)
     const menuHTML = `
       <div class="radial-menu">
         <button class="radial-menu-item" id="radial-fullscreen-btn" aria-label="Toggle Fullscreen">
@@ -67,6 +67,14 @@
           </svg>
           <span class="radial-tooltip">Music Player</span>
         </button>
+        <button class="radial-menu-item" id="radial-cache-btn" aria-label="Clear Cache & Reload">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+          </svg>
+          <span class="radial-tooltip">Clear Cache & Reload</span>
+        </button>
         <button class="radial-menu-item" id="radial-settings-btn" aria-label="Settings">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="3"></circle>
@@ -88,7 +96,7 @@
     const radius = 80; // Distance from center
     const totalItems = menuItems.length;
     const startAngle = -90; // Start from top (270 degrees or -90 degrees)
-    const endAngle = 0; // End at right (0 degrees)
+    const endAngle = 180; // Extended range to accommodate 5 items
     const angleSpread = endAngle - startAngle;
     
     // Calculate position for each item
@@ -173,6 +181,20 @@
       
       // Close the menu after action
       closeMenu();
+    });
+    
+    // Add event listener for the new cache control button
+    document.getElementById('radial-cache-btn').addEventListener('click', function() {
+      // Call the cache manager function to clear cache and reload
+      if (window.cacheManager && typeof window.cacheManager.clearCacheAndReload === 'function') {
+        window.cacheManager.clearCacheAndReload();
+      } else {
+        console.warn('Cache manager not available');
+        // Fallback - reload the page
+        window.location.reload(true);
+      }
+      
+      // No need to close menu as page will reload
     });
     
     // Keyboard shortcut (M for menu)
