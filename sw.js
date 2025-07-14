@@ -1,4 +1,4 @@
-const CACHE_NAME = "customodoro-cache-v1";
+const CACHE_NAME = "customodoro-cache-v8";
 const urlsToCache = [
   "/",
   "/index.html",
