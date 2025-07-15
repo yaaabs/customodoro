@@ -6,7 +6,7 @@ const urlsToCache = [
   "/reverse.html",
   "/feedback.html",
 
-  // JS (core and UI)
+  // JS
   "/js/script.js",
   "/js/reversePomodoro.js",
   "/js/settings.js",
@@ -23,7 +23,7 @@ const urlsToCache = [
   "/js/update-modal.js",
   "/js/deferred-css-loader.js",
 
-  // CSS (all loaded by default or deferred)
+  // CSS
   "/css/style.css",
   "/css/mini-music-player.css",
   "/css/focus-mode.css",
@@ -36,14 +36,13 @@ const urlsToCache = [
   "/css/theme-uploader.css",
   "/css/burnup-tracker.css",
 
-  // Audio (all used by timers)
+  // Audio
   "/audio/SFX/start.wav",
   "/audio/SFX/pause.wav",
   "/audio/Alert%Sounds/alarm.mp3",
   "/audio/Alert%Sounds/zenbell.mp3",
   "/audio/Alert%Sounds/levelup.mp3",
   "/audio/Alert%Sounds/message.mp3",
-
 
   // Manifest & favicon
   "/manifest.json",
@@ -54,24 +53,38 @@ const urlsToCache = [
   "/favicon/android-chrome-512x512.png",
   "/favicon/favicon.ico",
 
-  // Images (used in UI/themes)
+  // Images
   "/images/Theme/ManInRain.gif"
-  // Add more images if referenced by default UI
 ];
 
-// Install: cache only safe existing files
+// Install: cache all files individually to avoid full rejection
 self.addEventListener("install", (event) => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(urlsToCache).catch((err) => {
-        console.warn("Some files failed to cache:", err);
-      });
+    caches.open(CACHE_NAME).then(async (cache) => {
+      const failed = [];
+
+      await Promise.all(
+        urlsToCache.map(async (url) => {
+          try {
+            await cache.add(url);
+          } catch (err) {
+            console.warn("⚠️ Failed to cache:", url, err);
+            failed.push(url);
+          }
+        })
+      );
+
+      if (failed.length > 0) {
+        console.warn("⚠️ Some files failed to cache:", failed);
+      } else {
+        console.log("✅ All files cached successfully.");
+      }
     })
   );
 });
 
-// Activate: remove old caches more aggressively
+// Activate: remove old caches
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) =>
@@ -79,28 +92,26 @@ self.addEventListener("activate", (event) => {
         cacheNames
           .filter((name) => name !== CACHE_NAME)
           .map((name) => {
-            console.log("Deleting old cache:", name);
+            console.log("🧹 Deleting old cache:", name);
             return caches.delete(name);
           })
       )
     ).then(() => {
-      console.log("Cache cleanup complete");
-      // Force immediate control of all clients
+      console.log("✅ Cache cleanup complete");
       return self.clients.claim();
     })
   );
 });
 
-// Fetch: Network first for HTML, cache first for assets
+// Fetch: Network first for HTML, cache-first for everything else
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
-  
-  // Network first strategy for HTML files to ensure updates
-  if (event.request.mode === "navigate" || url.pathname.endsWith('.html')) {
+
+  // HTML: use network-first strategy
+  if (event.request.mode === "navigate" || url.pathname.endsWith(".html")) {
     event.respondWith(
       fetch(event.request)
         .then((response) => {
-          // Cache the new version
           if (response.status === 200) {
             const responseClone = response.clone();
             caches.open(CACHE_NAME).then((cache) => {
@@ -109,16 +120,13 @@ self.addEventListener("fetch", (event) => {
           }
           return response;
         })
-        .catch(() => {
-          // Fallback to cache if network fails
-          return caches.match(event.request);
-        })
+        .catch(() => caches.match(event.request))
     );
   } else {
-    // Cache first strategy for assets
+    // Other assets: use cache-first strategy
     event.respondWith(
-      caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
-        return cachedResponse || fetch(event.request).catch(() => {
+      caches.match(event.request, { ignoreSearch: true }).then((cached) => {
+        return cached || fetch(event.request).catch(() => {
           if (event.request.mode === "navigate") {
             return caches.match("/index.html");
           }
@@ -128,20 +136,20 @@ self.addEventListener("fetch", (event) => {
   }
 });
 
-// Listen for messages from the main thread
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'CLEAR_CACHE') {
+// Listen for runtime "CLEAR_CACHE" command
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "CLEAR_CACHE") {
     event.waitUntil(
-      caches.keys().then((cacheNames) => {
-        return Promise.all(
+      caches.keys().then((cacheNames) =>
+        Promise.all(
           cacheNames.map((cacheName) => {
-            console.log("Clearing cache:", cacheName);
+            console.log("🧨 Clearing cache:", cacheName);
             return caches.delete(cacheName);
           })
-        );
-      }).then(() => {
-        console.log("All caches cleared by SW");
-        event.ports[0].postMessage({ success: true });
+        )
+      ).then(() => {
+        console.log("✅ All caches cleared by SW");
+        event.ports[0]?.postMessage({ success: true });
       })
     );
   }
