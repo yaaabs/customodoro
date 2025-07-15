@@ -1,60 +1,60 @@
-const CACHE_NAME = "customodoro-cache-v2.3.4";
+const CACHE_NAME = "customodoro-cache-v2.3.5";
 const urlsToCache = [
   // HTML
   "/",
   "/index.html",
   "/reverse.html",
-  "/feedback.html",
+  // "/feedback.html",
 
   // JS
   "/js/script.js",
   "/js/reversePomodoro.js",
   "/js/settings.js",
-  "/js/theme-manager.js",
+  // "/js/theme-manager.js",
   "/js/cache-manager.js",
-  "/js/fullscreen.js",
-  "/js/lockedin-mode.js",
-  "/js/locked-in-info-modal.js",
-  "/js/focus-mode.js",
-  "/js/radial-menu.js",
-  "/js/bgm-player.js",
-  "/js/mini-music-player.js",
-  "/js/about-modal.js",
-  "/js/update-modal.js",
+  // "/js/fullscreen.js",
+  // "/js/lockedin-mode.js",
+  // "/js/locked-in-info-modal.js",
+  // "/js/focus-mode.js",
+  // "/js/radial-menu.js",
+  //"/js/bgm-player.js",
+  // "/js/mini-music-player.js",
+  // "/js/about-modal.js",
+  // "/js/update-modal.js",
   "/js/deferred-css-loader.js",
 
   // CSS
   "/css/style.css",
-  "/css/mini-music-player.css",
-  "/css/focus-mode.css",
-  "/css/lockedin-mode.css",
-  "/css/bgm-player.css",
-  "/css/timer-sound.css",
-  "/css/about-modal.css",
-  "/css/radial-menu.css",
-  "/css/settings.css",
-  "/css/theme-uploader.css",
-  "/css/burnup-tracker.css",
+  // "/css/mini-music-player.css",
+  // "/css/focus-mode.css",
+  // "/css/lockedin-mode.css",
+  // "/css/bgm-player.css",
+  // "/css/timer-sound.css",
+  //"/css/about-modal.css",
+  // "/css/radial-menu.css",
+   "/css/settings.css",
+  // "/css/theme-uploader.css",
+  // "/css/burnup-tracker.css",
 
   // Audio
-  "/audio/SFX/start.wav",
-  "/audio/SFX/pause.wav",
-  "/audio/Alert Sounds/alarm.mp3",
-  "/audio/Alert Sounds/bell.mp3",
-  "/audio/Alert Sounds/level_up.mp3",
-  "/audio/Alert Sounds/message_alert.mp3",
+  // "/audio/SFX/start.wav",
+  // "/audio/SFX/pause.wav",
+  // "/audio/Alert Sounds/alarm.mp3",
+  // "/audio/Alert Sounds/bell.mp3",
+  // "/audio/Alert Sounds/level_up.mp3",
+  // "/audio/Alert Sounds/message_alert.mp3",
 
   // Manifest & favicon
-  "/manifest.json",
-  "/favicon/favicon-32x32.png",
-  "/favicon/favicon-16x16.png",
-  "/favicon/apple-touch-icon.png",
-  "/favicon/android-chrome-192x192.png",
-  "/favicon/android-chrome-512x512.png",
-  "/favicon/favicon.ico",
+  // "/manifest.json",
+  // "/favicon/favicon-32x32.png",
+  // "/favicon/favicon-16x16.png",
+  // "/favicon/apple-touch-icon.png",
+  // "/favicon/android-chrome-192x192.png",
+  // "/favicon/android-chrome-512x512.png",
+  // "/favicon/favicon.ico",
 
   // Images
-  "/images/Theme/ManInRain.gif"
+   //"/images/Theme/ManInRain.gif"
 ];
 
 // Install: cache all files individually to avoid full rejection

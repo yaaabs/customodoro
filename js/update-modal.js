@@ -1,6 +1,6 @@
 // Update Modal Logic for Customodoro
 (function() {
-  const modalVersion = 'v2.3.4';
+  const modalVersion = 'v2.3.5';
   const seenVersion = localStorage.getItem('seenModalVersion');
   const overlay = document.getElementById('update-modal-overlay');
   const closeBtn = document.getElementById('update-modal-close');
