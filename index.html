@@ -1045,32 +1045,30 @@
 
 
 <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').then((reg) => {
-        console.log("✅ Service Worker registered", reg);
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').then((reg) => {
+      console.log("✅ SW registered");
 
-        // 🔄 Listen for updates
-        reg.onupdatefound = () => {
-          const newSW = reg.installing;
-          newSW.onstatechange = () => {
-            if (newSW.state === 'installed') {
-              if (navigator.serviceWorker.controller) {
-                // A new version is available
-                const reload = confirm("🔁 A new version of Customodoro is available. Reload now?");
-                if (reload) window.location.reload();
-              } else {
-                console.log("🆕 Content is cached for offline use.");
-              }
+      reg.onupdatefound = () => {
+        const newWorker = reg.installing;
+        newWorker.onstatechange = () => {
+          if (newWorker.state === 'installed') {
+            if (navigator.serviceWorker.controller) {
+              // Only prompt if there's already a SW controlling the page
+              const reload = confirm("🔁 A new version of Customodoro is available. Reload now?");
+              if (reload) window.location.reload();
             }
-          };
+          }
         };
-      }).catch((err) => {
-        console.error("⚠️ SW registration failed", err);
-      });
+      };
+    }).catch((err) => {
+      console.error("❌ SW registration failed:", err);
     });
-  }
+  });
+}
 </script>
+
 
 
 
