@@ -39,10 +39,10 @@ const urlsToCache = [
   // Audio
   "/audio/SFX/start.wav",
   "/audio/SFX/pause.wav",
-  "/audio/Alert%Sounds/alarm.mp3",
-  "/audio/Alert%Sounds/zenbell.mp3",
-  "/audio/Alert%Sounds/levelup.mp3",
-  "/audio/Alert%Sounds/message.mp3",
+  "/audio/Alert Sounds/alarm.mp3",
+  "/audio/Alert Sounds/bell.mp3",
+  "/audio/Alert Sounds/level_up.mp3",
+  "/audio/AlertSounds/message_alert.mp3",
 
   // Manifest & favicon
   "/manifest.json",
