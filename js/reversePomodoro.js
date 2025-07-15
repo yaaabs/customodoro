@@ -18,6 +18,23 @@ const timerSounds = {
  //COMMENT brownnoise: new Audio('audio/Timer Sounds/SoftBrownNoise.mp3')
 };
 
+// Add the missing showToast function
+function showToast(message, duration = 3000) {
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+  
+  // Set the message
+  toast.textContent = message;
+  
+  // Add show class to make it visible
+  toast.classList.add('show');
+  
+  // Hide the toast after the specified duration
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, duration);
+}
+
 let currentTimerSound = null;
 
 // Initialize sound settings from shared localStorage keys
@@ -273,7 +290,7 @@ let currentMode = 'reverse';
 let earnedBreakTime = 0;
 let hasUnsavedTasks = false;
 let hasUnfinishedTasks = false;
-let tasks = [];
+let tasks = []; // This will store our tasks
 
 // Burn-Up Tracker variables
 let isBurnupTrackerEnabled = localStorage.getItem('burnupTrackerEnabled') !== 'false'; // Default to true
@@ -686,24 +703,15 @@ function switchMode(mode) {
     if (!confirmed) return;
   }
 
-  // Only show task deletion warning for manual mode changes
-  if (taskList.children.length > 0 && !isAutoSwitch) {
-    const confirmed = confirm('Switching modes will delete all your tasks. Do you want to continue?');
-    if (!confirmed) return;
-  }
-
-  // Clear tasks only when manually switching, not during automatic transitions
-  if (!isAutoSwitch) {
-    // Clear all tasks if user confirms
-    taskList.innerHTML = '';
-    hasUnfinishedTasks = false;
-    hasUnsavedTasks = false;
-  }
+  // No longer prompt about task deletion when switching between timer/break modes
+  // Save current tasks before switching modes
+  saveTasks();
 
   currentMode = mode;
   reverseTab.classList.toggle('active', mode === 'reverse');
   breakTab.classList.toggle('active', mode === 'break');
-    // Reset timer state
+  
+  // Reset timer state
   clearInterval(timerInterval);
   isRunning = false;
   
@@ -730,14 +738,36 @@ function switchMode(mode) {
   }
 }
 
-// Show toast notification
-function showToast(message) {
-    toast.textContent = message;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3000);
+// Functions to save and load tasks from localStorage
+function saveTasks() {
+  const taskItems = Array.from(taskList.children).map(taskItem => {
+    const text = taskItem.querySelector('.task-text').textContent;
+    const completed = taskItem.querySelector('.task-checkbox').checked;
+    return { text, completed };
+  });
+  
+  localStorage.setItem('reverseTasks', JSON.stringify(taskItems));
+  console.log('Tasks saved to localStorage:', taskItems);
 }
 
-// Create task element
+function loadTasks() {
+  const savedTasks = localStorage.getItem('reverseTasks');
+  if (savedTasks) {
+    try {
+      const taskItems = JSON.parse(savedTasks);
+      taskList.innerHTML = ''; // Clear current tasks
+      taskItems.forEach(task => {
+        createTaskElement(task.text, task.completed);
+      });
+      updateUnfinishedTasks();
+      console.log('Tasks loaded from localStorage:', taskItems);
+    } catch (error) {
+      console.error('Error loading tasks from localStorage:', error);
+    }
+  }
+}
+
+// Create task element - Updated to save tasks after creation
 function createTaskElement(text, completed = false) {
     const taskItem = document.createElement('li');
     taskItem.className = 'task-item';
@@ -750,6 +780,7 @@ function createTaskElement(text, completed = false) {
     checkbox.addEventListener('change', () => {
         taskItem.classList.toggle('task-completed', checkbox.checked);
         updateUnfinishedTasks();
+        saveTasks(); // Save when task status changes
     });
 
     const textElement = document.createElement('span');
@@ -763,6 +794,7 @@ function createTaskElement(text, completed = false) {
         if (confirm('Are you sure you want to delete this task?')) {
             taskList.removeChild(taskItem);
             updateUnfinishedTasks();
+            saveTasks(); // Save when task is deleted
         }
     });
 
@@ -773,12 +805,15 @@ function createTaskElement(text, completed = false) {
     taskList.appendChild(taskItem);
 }
 
-// Add task to task list
+// Add task to task list - Updated to save tasks
 function addTask() {
   const taskText = taskInput.value.trim();
 
   if (taskText !== '') {
     createTaskElement(taskText);
+    
+    // Save tasks after adding a new task
+    saveTasks();
 
     // Clear input
     taskInput.value = '';
@@ -835,7 +870,7 @@ window.addEventListener('beforeunload', (e) => {
   }
 });
 
-// Add link handler for mode switching to prevent accidental navigation
+// Update the link handler for mode switching to only warn about tasks when switching between major timer types (reverse/classic)
 document.querySelector('.switch-btn').addEventListener('click', (e) => {
   // Only show confirmation when switching between major timer types (reverse/classic)
   if (isRunning) {
@@ -993,6 +1028,9 @@ document.addEventListener('DOMContentLoaded', function() {
       window.trackerDesignManager.applyDesign(savedDesign);
     }, 100); // Small delay to ensure DOM is fully ready
   }
+  
+  // Load saved tasks
+  loadTasks();
   
   console.log("Reverse timer initialized");
   
