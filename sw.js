@@ -42,7 +42,7 @@ const urlsToCache = [
   "/audio/Alert Sounds/alarm.mp3",
   "/audio/Alert Sounds/bell.mp3",
   "/audio/Alert Sounds/level_up.mp3",
-  "/audio/AlertSounds/message_alert.mp3",
+  "/audio/Alert Sounds/message_alert.mp3",
 
   // Manifest & favicon
   "/manifest.json",
