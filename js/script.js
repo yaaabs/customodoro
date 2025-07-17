@@ -1225,3 +1225,10 @@ function updateSoundVolumes() {
       alarmSound: selectedAlarmSound
   });
 }
+
+// Lazy load images
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('img').forEach(img => {
+    img.loading = 'lazy';
+  });
+});

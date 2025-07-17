@@ -634,4 +634,20 @@ function handleViewportChange() {
     }, 200);
   }
 }
+
+// Lazy load album art images
+function lazyLoadImage(img) {
+  if ('loading' in HTMLImageElement.prototype) {
+    img.loading = 'lazy';
+  }
+}
+
+// Play audio with deferred loading
+function playMiniMusic(src) {
+  const audio = new Audio();
+  audio.preload = 'none';
+  audio.src = src;
+  audio.load();
+  audio.play();
+}
 })();

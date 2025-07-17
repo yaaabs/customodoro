@@ -1,7 +1,6 @@
 (function() {
   // DOM Elements
-  let audio = new Audio(); // Initialize without src to prevent preload
-  audio.preload = "none"; // OPTIMIZATION: Prevent automatic preloading
+  let audio;
   let playlistSelector, bgmToggle, volumeSlider, volumePercentage;
   let trackTitleElement, trackArtistElement;
   let playBtn, prevBtn, nextBtn, playIcon, pauseIcon;
@@ -26,6 +25,16 @@
 
   // Initialize BGM Player
   function init() {
+    // Initialize audio element FIRST
+    audio = document.getElementById('bgm-audio');
+    if (!audio) {
+      // If not present, create and append a hidden audio element
+      audio = document.createElement('audio');
+      audio.id = 'bgm-audio';
+      audio.style.display = 'none';
+      document.body.appendChild(audio);
+    }
+
     // Get DOM elements
     playlistSelector = document.getElementById('playlist-selector');
     bgmToggle = document.getElementById('bgm-toggle');
@@ -231,7 +240,7 @@
 
     currentPlaylistName = savedPlaylist;
     currentPlaylist = playlists[savedPlaylist];
-    audio.volume = savedVolume / 100;
+    if (audio) audio.volume = savedVolume / 100; // Only set if audio is defined
     isBGMEnabled = savedBGMEnabled;
   }
 

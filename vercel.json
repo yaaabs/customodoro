@@ -25,8 +25,18 @@
           "value": "public, max-age=31536000, immutable"
         }
       ]
+    },
+    {
+      "source": "/(.*)\\.(webp|avif|jpg|jpeg|png|svg|gif|ico|mp3|aac|opus|ogg|wav|m4a|mp4|webm|js|css)$",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     }
   ],
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "analytics": true
 }

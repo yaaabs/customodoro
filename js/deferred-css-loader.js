@@ -56,3 +56,29 @@ document.addEventListener('DOMContentLoaded', function() {
 window.loadCSSFile = loadCSSFile;
 window.loadCSSFiles = loadCSSFiles;
 window.loadSettingsStyles = loadSettingsStyles;
+
+/**
+ * Load CSS file with media attribute for deferred loading
+ * @param {string} href - The href of the CSS file to load
+ */
+export function loadDeferredCSS(href) {
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = href;
+  link.media = 'print';
+  link.onload = () => { link.media = 'all'; };
+  document.head.appendChild(link);
+}
+
+/**
+ * Defer loading of a CSS file by adding it to the document head with media="print"
+ * @param {string} href - The href of the CSS file to load
+ */
+export function deferCSS(href) {
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = href;
+  link.media = 'print';
+  link.onload = () => { link.media = 'all'; };
+  document.head.appendChild(link);
+}

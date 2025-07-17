@@ -209,6 +209,17 @@ class CacheManager {
       }
     }
   }
+
+  /**
+   * Cache an asset (image/audio) to Cache Storage
+   * @param {string} url - The URL of the asset to cache
+   */
+  async cacheAsset(url) {
+    if ('caches' in window) {
+      const cache = await caches.open('assets-v1');
+      await cache.add(url);
+    }
+  }
 }
 
 // Initialize cache manager
