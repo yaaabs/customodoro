@@ -79,122 +79,122 @@
         {
           title: 'Anaheim',
           artist: 'NIKI',
-          src: 'audio/BGM/Si all my demons have your smile pala to eh/Anaheim.mp3'
+          src: 'audio/BGM/NIKI/Anaheim.mp3'
         },
         {
           title: 'Autumn',
           artist: 'NIKI',
-          src: 'audio/BGM/Si all my demons have your smile pala to eh/Autumn.mp3'
+          src: 'audio/BGM/NIKI/Autumn.mp3'
         },
         {
           title: 'Backburner',
           artist: 'NIKI',
-          src: 'audio/BGM/Si all my demons have your smile pala to eh/Backburner.mp3'
+          src: 'audio/BGM/NIKI/Backburner.mp3'
         },
         {
           title: 'Before',
           artist: 'NIKI',
-          src: 'audio/BGM/Si all my demons have your smile pala to eh/Before.mp3'
+          src: 'audio/BGM/NIKI/Before.mp3'
         },
         {
           title: 'Chilly',
           artist: 'NIKI',
-          src: 'audio/BGM/Si all my demons have your smile pala to eh/Chilly.mp3'
+          src: 'audio/BGM/NIKI/Chilly.mp3'
         },
         {
           title: 'Every Summertime',
           artist: 'NIKI',
-          src: 'audio/BGM/Si all my demons have your smile pala to eh/Every Summertime.mp3'
+          src: 'audio/BGM/NIKI/Every Summertime.mp3'
         },
         {
           title: 'Facebook Friends',
           artist: 'NIKI',
-          src: 'audio/BGM/Si all my demons have your smile pala to eh/Facebook Friends.mp3'
+          src: 'audio/BGM/NIKI/Facebook Friends.mp3'
         },
         {
           title: 'Hallway Weather',
           artist: 'NIKI',
-          src: 'audio/BGM/Si all my demons have your smile pala to eh/Hallway Weather.mp3'
+          src: 'audio/BGM/NIKI/Hallway Weather.mp3'
         },
         {
           title: 'High School in Jakarta',
           artist: 'NIKI',
-          src: 'audio/BGM/Si all my demons have your smile pala to eh/High School in Jakarta.mp3'
+          src: 'audio/BGM/NIKI/High School in Jakarta.mp3'
         },
         {
           title: 'I Like U',
           artist: 'NIKI',
-          src: 'audio/BGM/Si all my demons have your smile pala to eh/I Like U.mp3'
+          src: 'audio/BGM/NIKI/I Like U.mp3'
         },
         {
           title: 'Indigo',
           artist: '88rising; NIKI',
-          src: 'audio/BGM/Si all my demons have your smile pala to eh/Indigo.mp3'
+          src: 'audio/BGM/NIKI/Indigo.mp3'
         },
         {
           title: 'La La Lost You - Acoustic',
           artist: 'NIKI Acoustic Sessions Vol. 1',
-          src: 'audio/BGM/Si all my demons have your smile pala to eh/La La Lost You - Acoustic.mp3'
+          src: 'audio/BGM/NIKI/La La Lost You - Acoustic.mp3'
         },
         {
           title: 'La La Lost You',
           artist: '88rising; NIKI',
-          src: 'audio/BGM/Si all my demons have your smile pala to eh/La La Lost You.mp3'
+          src: 'audio/BGM/NIKI/La La Lost You.mp3'
         },
         {
           title: 'Lose',
           artist: 'NIKI',
-          src: 'audio/BGM/Si all my demons have your smile pala to eh/Lose.mp3'
+          src: 'audio/BGM/NIKI/Lose.mp3'
         },
         {
           title: 'lowkey',
           artist: 'NIKI',
-          src: 'audio/BGM/Si all my demons have your smile pala to eh/lowkey.mp3'
+          src: 'audio/BGM/NIKI/lowkey.mp3'
         },
         {
           title: 'Newsflash!',
           artist: 'NIKI',
-          src: 'audio/BGM/Si all my demons have your smile pala to eh/Newsflash!.mp3'
+          src: 'audio/BGM/NIKI/Newsflash!.mp3'
         },
         {
           title: 'Oceans & Engines',
           artist: 'NIKI',
-          src: 'audio/BGM/Si all my demons have your smile pala to eh/Oceans & Engines.mp3'
+          src: 'audio/BGM/NIKI/Oceans & Engines.mp3'
         },
         {
           title: 'Plot Twist',
           artist: 'NIKI',
-          src: 'audio/BGM/Si all my demons have your smile pala to eh/Plot Twist.mp3'
+          src: 'audio/BGM/NIKI/Plot Twist.mp3'
         },
         {
           title: 'See U Never',
           artist: 'NIKI',
-          src: 'audio/BGM/Si all my demons have your smile pala to eh/See U Never.mp3'
+          src: 'audio/BGM/NIKI/See U Never.mp3'
         },
         {
           title: 'Selene',
           artist: 'NIKI',
-          src: 'audio/BGM/Si all my demons have your smile pala to eh/Selene.mp3'
+          src: 'audio/BGM/NIKI/Selene.mp3'
         },
         {
           title: 'Split',
           artist: '88rising; NIKI',
-          src: 'audio/BGM/Si all my demons have your smile pala to eh/Split.mp3'
+          src: 'audio/BGM/NIKI/Split.mp3'
         },
         {
           title: 'Take A Chance With Me',
           artist: 'NIKI',
-          src: 'audio/BGM/Si all my demons have your smile pala to eh/Take A Chance With Me.mp3'
+          src: 'audio/BGM/NIKI/Take A Chance With Me.mp3'
         },
         {
           title: 'urs',
           artist: 'NIKI',
-          src: 'audio/BGM/Si all my demons have your smile pala to eh/urs.mp3'
+          src: 'audio/BGM/NIKI/urs.mp3'
         },
         {
           title: 'Vintage',
           artist: 'NIKI',
-          src: 'audio/BGM/Si all my demons have your smile pala to eh/Vintage.mp3'
+          src: 'audio/BGM/NIKI/Vintage.mp3'
         }
       ],
       // Add new jazz playlist
