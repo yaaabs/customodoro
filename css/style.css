@@ -3023,3 +3023,35 @@ body.theme-rain .add-task-btn:hover {
 .theme-rain .footer-divider {
     color: rgba(255, 255, 255, 0.3);
 }
+
+
+/* Prevent background scroll when modal is open */
+body.modal-open {
+  overflow: hidden !important;
+  height: 100vh;
+  position: fixed;
+  width: 100%;
+}
+
+.settings-modal {
+  display: none; /* hide by default */
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.5);
+}
+
+.settings-modal.open {
+  display: flex;
+}
+
+
+/* Ensure modal content is centered and scrollable if needed */
+.settings-content {
+  max-height: 90vh;
+  overflow-y: auto;
+}
