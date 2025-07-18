@@ -852,8 +852,6 @@ body.theme-color .footer-links a:hover {
 
 body.theme-color .footer-divider {
   color: rgba(0, 0, 0, 0.2);
-  margin: 0 0.2rem;
-  font-weight: 300;
 }
 
 /* ==============================================
@@ -2007,37 +2005,6 @@ body.theme-rain .add-task-btn:hover {
   }
 }
 
-/* Add footer styling for rain theme */
-.theme-rain .footer {
-    background: rgba(20, 20, 20, 0.5);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--text-light);
-    box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
-}
-
-.theme-rain .footer-brand {
-    color: rgba(255, 255, 255, 0.8);
-}
-
-.theme-rain .footer-brand strong {
-    color: white;
-}
-
-.theme-rain .footer-links a {
-    color: rgba(255, 255, 255, 0.8);
-}
-
-.theme-rain .footer-links a:hover {
-    color: white;
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.theme-rain .footer-divider {
-    color: rgba(255, 255, 255, 0.3);
-}
-
 /* Custom Theme with user-uploaded background image */
 body.theme-custom {
   background-size: cover;
@@ -2673,353 +2640,31 @@ body.lockedin-mode-active {
   }
 }
 
-/* Add Kimi no Na wa Theme */
-body.theme-yourname {
-  /* Improved path handling for the background image */
-  background-image: url('../images/Theme/Kimi no Na Wa.jpg');
-  /* Fallback color in case image fails to load */
-  background-color: #1a2a4a;
-  background-size: cover;
-  background-position: center center;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  color: #ffffff;
-  position: relative;
-  /* Force hardware acceleration to improve rendering */
-  -webkit-transform: translateZ(0);
-  -moz-transform: translateZ(0);
-  -ms-transform: translateZ(0);
-  -o-transform: translateZ(0);
-  transform: translateZ(0);
-  /* Fix for some mobile browsers that don't support fixed backgrounds */
-  min-height: 100vh;
-}
-.update-changelog-list li b[style*="🔒"] {
-  color: #f87171;
-}
-.update-changelog-list li b[style*="✨"] {
-  color: #facc15;
-}
-.update-changelog-list li b[style*="Custom"] {
-  color: #facc15;
-}
-.update-changelog-list li b[style*="Standard"] {
-  color: #60a5fa;
-}
-.update-changelog-list li b[style*="Locked"] {
-  color: #f87171;
-}
-.update-modal-content ul {
-  margin-left: 0;
-}
-.update-modal-content .update-info-box {
-  background: #2d2e4a;
-  color: #e0e7ff;
-  border-radius: 10px;
-  padding: 1em 1em 0.8em 1em;
-  margin-bottom: 0.5em;
-  margin-top: 1em;
-  font-size: 0.98em;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-}
-.update-modal-content .update-info-box ul {
-  margin: 0.5em 0 0 1.2em;
-  padding: 0;
-  color: #c7d2fe;
-  font-size: 0.97em;
-}
-.update-modal-content .update-info-box b {
-  color: #a5b4fc;
-  font-weight: 600;
-}
-.update-modal-content .update-info-box .feedback-link {
-  color: #38bdf8;
-  text-decoration: underline;
-  cursor: pointer;
-  font-weight: 500;
-}
-.update-modal-footer {
-  padding: 1em 1.5em 1.3em 1.5em;
-  background: #23243a;
-  border-radius: 0 0 18px 18px;
-  display: flex;
-  justify-content: flex-end;
-}
-.update-modal-btn {
-  background: #2563eb;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 0.7em 1.5em;
-  font-size: 1em;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s;
-  box-shadow: 0 2px 8px rgba(37,99,235,0.08);
-}
-.update-modal-btn:hover {
-  background: #1d4ed8;
-}
-    /* Responsive */
-    @media (max-width: 500px) {
-      .update-modal {
-        max-width: 100vw;
-        width: 100vw;
-        min-width: 0;
-        border-radius: 0;
-        max-height: 100vh;
-      }
-      .update-modal-header,
-      .update-modal-content,
-      .update-modal-footer {
-        padding-left: 0.9em;
-        padding-right: 0.9em;
-      }
-      .update-modal-content .update-info-box {
-        padding: 0.7em 0.7em 0.7em 0.7em;
-        font-size: 0.97em;
-      }
-      .update-changelog-list li b {
-        min-width: 90px;
-        font-size: 0.98em;
-      }
-    }
-
-    /* Add Man in Rain Theme */
-body.theme-rain {
-  /* Improved path handling for the background image */
-  background-image: url('../images/Theme/ManInRain.gif');
-  /* Fallback color in case image fails to load */
-  background-color: #1a2a4a;
-  background-size: cover;
-  background-position: center center;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  color: #ffffff;
-  position: relative;
-  /* Force hardware acceleration to improve rendering */
-  -webkit-transform: translateZ(0);
-  -moz-transform: translateZ(0);
-  -ms-transform: translateZ(0);
-  -o-transform: translateZ(0);
-  transform: translateZ(0);
-  /* Fix for some mobile browsers that don't support fixed backgrounds */
-  min-height: 100vh;
-}
-
-/* Mobile-specific fixes for the background image */
-@media (max-width: 768px) {
-  body.theme-rain {
-    /* Some mobile browsers don't support fixed attachment well */
-    background-attachment: scroll;
-    /* Ensure the image always covers the screen */
-    background-size: cover;
-    /* Position from top for better mobile viewing */
-    background-position: top center;
-  }
-}
-
-/* Add overlay to improve readability on rain theme */
-body.theme-rain::before {
-  content: '';
+/* Prevent background scroll when modal is open */
+body.modal-open {
+  overflow: hidden !important;
+  height: 100vh;
+  /* Prevent iOS overscroll */
   position: fixed;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.3);
-  z-index: -1;
 }
 
-/* Special styling for timer containers in rain theme */
-body.theme-rain .timer-container {
-  background-color: rgba(0, 0, 0, 0.0);
-  border: none;
-  box-shadow: none;
-  backdrop-filter: none;
+/* Ensure settings modal overlays and is centered */
+.settings-modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Optional: darken background */
+  background: rgba(0,0,0,0.5);
 }
 
-/* Task and info sections for rain theme */
-body.theme-rain .tasks-section,
-body.theme-rain .info-section,
-body.theme-rain .settings-section {
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* Improve text readability in rain theme */
-body.theme-rain .app-title,
-body.theme-rain .timer,
-body.theme-rain .tasks-title,
-body.theme-rain .info-box h3 {
-  color: #ffffff;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-/* Style task input for rain theme */
-body.theme-rain .task-input {
-  background-color: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-}
-
-body.theme-rain .task-input::placeholder {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-/* Style task items for rain theme */
-body.theme-rain .task-item {
-  border-bottom-color: rgba(255, 255, 255, 0.2);
-}
-
-body.theme-rain .task-text {
-  color: #ffffff;
-}
-
-body.theme-rain .task-completed .task-text {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-/* Style buttons for rain theme */
-body.theme-rain .primary-btn {
-  background-color: rgba(255, 255, 255, 0.25);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(5px);
-}
-
-body.theme-rain .primary-btn:hover {
-  background-color: rgba(255, 255, 255, 0.35);
-}
-
-body.theme-rain .secondary-btn,
-body.theme-rain .switch-btn {
-  background-color: rgba(0, 0, 0, 0.4);
-  color: rgba(255, 255, 255, 0.9);
-}
-
-body.theme-rain .secondary-btn:hover,
-body.theme-rain .switch-btn:hover {
-  background-color: rgba(0, 0, 0, 0.6);
-}
-
-/* Mode tabs for rain theme */
-body.theme-rain .mode-tabs {
-  background-color: rgba(0, 0, 0, 0.4);
-}
-
-body.theme-rain .tab {
-  color: rgba(255, 255, 255, 0.8);
-}
-body.theme-rain .tab.active {
-  background-color: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
-}
-
-/* Settings button for rain theme */
-body.theme-rain .settings-btn {
-  background-color: rgba(0, 0, 0, 0.5);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-body.theme-rain .settings-btn svg {
-  color: #ffffff;
-}
-
-/* Progress bar for rain theme */
-body.theme-rain .progress-container {
-  background-color: rgba(0, 0, 0, 0.3);
-}
-
-body.theme-rain .progress-bar {
-  background-color: rgba(255, 255, 255, 0.7);
-}
-
-
-/* Session dots for rain theme */
-body.theme-rain .session-dot {
-  background-color: rgba(255, 255, 255, 0.3);
-}
-
-body.theme-rain .session-dot.completed {
-  background-color: rgba(255, 255, 255, 0.9);
-}
-
-/* Fix info box text for rain theme */
-body.theme-rain .info-box p, 
-body.theme-rain .info-box li {
-  color: rgba(255, 255, 255, 0.9);
-}
-
-body.theme-rain .settings-note {
-  background-color: rgba(0, 0, 0, 0.4);
-  border-left: 3px solid rgba(255, 255, 255, 0.5);
-  color: rgba(255, 255, 255, 0.9);
-}
-
-/* Toast notification for rain theme */
-body.theme-rain .toast {
-  background-color: rgba(0, 0, 0, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* Add-task button for rain theme */
-body.theme-rain .add-task-btn {
-  background-color: rgba(139, 95, 191, 0.8);
-}
-
-body.theme-rain .add-task-btn:hover {
-  background-color: rgba(139, 95, 191, 1);
-}
-
-/* Ensure the theme preserves across element interactions */
-.focus-mode.theme-rain,
-.short-break-mode.theme-rain,
-.long-break-mode.theme-rain,
-.reverse-mode.theme-rain {
-  background-image: url('../images/Theme/ManInRain.gif');
-  background-color: #1a2a4a; /* Fallback */
-}
-
-/* Handle iOS Safari-specific issues */
-@supports (-webkit-touch-callout: none) {
-  body.theme-rain {
-    /* iOS Safari has issues with background-attachment: fixed */
-    background-attachment: scroll;
-    /* Force hardware acceleration differently for iOS */
-    -webkit-transform: translate3d(0,0,0);
-    transform: translate3d(0,0,0);
-  }
-}
-
-/* Add footer styling for rain theme */
-.theme-rain .footer {
-    background: rgba(20, 20, 20, 0.5);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--text-light);
-    box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
-}
-
-.theme-rain .footer-brand {
-    color: rgba(255, 255, 255, 0.8);
-}
-
-.theme-rain .footer-brand strong {
-    color: white;
-}
-
-.theme-rain .footer-links a {
-    color: rgba(255, 255, 255, 0.8);
-}
-
-.theme-rain .footer-links a:hover {
-    color: white;
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.theme-rain .footer-divider {
-    color: rgba(255, 255, 255, 0.3);
+/* Ensure modal content is centered and scrollable if needed */
+.settings-content {
+  max-height: 90vh;
+  overflow-y: auto;
 }

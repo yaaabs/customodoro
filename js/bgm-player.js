@@ -68,9 +68,9 @@
     // Load playlists with the actual audio files
     playlists = {
       'deep-focus': [
-        { title: 'Clear Skies', artist: 'Aqua Scholar', src: 'audio/BGM/Deep focus study playlist/Clear Skies - Aqua Scholar.mp3' },
-        { title: 'Gentle Ocean', artist: 'Sonic Strokes, Nahh Chill, Aqua Scholar', src: 'audio/BGM/Deep focus study playlist/Gentle Ocean - Sonic Strokes.mp3' },
-        { title: 'Venusian Vespers', artist: 'Nahh Chill, Aqua Scholar', src: 'audio/BGM/Deep focus study playlist/Venusian Vespers.mp3' }
+        { title: 'Clear Skies', artist: 'Aqua Scholar', src: 'audio/BGM/Deep_Focus_Study_Playlist/Clear Skies - Aqua Scholar.mp3' },
+        { title: 'Gentle Ocean', artist: 'Sonic Strokes, Nahh Chill, Aqua Scholar', src: 'audio/BGM/Deep_Focus_Study_Playlist/Gentle Ocean - Sonic Strokes.mp3' },
+        { title: 'Venusian Vespers', artist: 'Nahh Chill, Aqua Scholar', src: 'audio/BGM/Deep_Focus_Study_Playlist/Venusian Vespers.mp3' }
       ],
       'ambient-long': [
         { title: 'Lofi Hip-hop Chill Beats', artist: 'Various Artists', src: 'audio/BGM/Lofi Hip-hop Chill Beats.mp3' }
