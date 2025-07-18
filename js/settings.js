@@ -24,8 +24,6 @@
   // Open settings modal
   function openSettings() {
     settingsModal.classList.add('show');
-    // Prevent background scroll
-    document.body.classList.add('modal-open');
     loadSettings();
     
     // Ensure the first tab is active
@@ -96,8 +94,6 @@
     
     // Always close the modal, even if there was an error
     settingsModal.classList.remove('show');
-    // Restore background scroll
-    document.body.classList.remove('modal-open');
   }
   
   // Handle tab navigation
