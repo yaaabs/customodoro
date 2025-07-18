@@ -10,11 +10,13 @@
     if (!overlay) return;
     overlay.classList.add('active');
     document.body.style.overflow = 'hidden';
+    document.body.classList.add('modal-open'); // Add this line
   }
   function hideModal() {
     if (!overlay) return;
     overlay.classList.remove('active');
     document.body.style.overflow = '';
+    document.body.classList.remove('modal-open'); // Add this line
   }
 
   // Only show if not seen for this version

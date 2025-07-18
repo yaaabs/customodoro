@@ -4,15 +4,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const aboutModalClose = document.getElementById('about-info-modal-close');
   const aboutModalCloseBtn = document.getElementById('about-info-close-btn');
 
-  const openAboutModal = () => {
+const openAboutModal = () => {
     if (aboutModalOverlay) {
       aboutModalOverlay.classList.add('active');
+      document.body.classList.add('modal-open'); // Add this line
     }
   };
 
-  const closeAboutModal = () => {
+const closeAboutModal = () => {
     if (aboutModalOverlay) {
       aboutModalOverlay.classList.remove('active');
+      document.body.classList.remove('modal-open'); // Add this line
     }
   };
 
