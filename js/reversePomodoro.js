@@ -260,6 +260,7 @@ const burnupPercentage = document.getElementById('burnup-percentage');
 
 // Add task elements
 const taskInput = document.getElementById('task-input');
+const taskDescInput = document.getElementById('task-description-input'); // UPDATED: new textarea id
 const addTaskBtn = document.getElementById('add-task-btn');
 const taskList = document.getElementById('task-list');
 
@@ -639,8 +640,8 @@ function completeSession(playSound = true) {
     switchMode('break'); // The switchMode function will detect this as an automatic transition
     
     // Auto-start the break if enabled in settings (using shared key)
-    const autoStartBreaks = localStorage.getItem('autoBreak') !== 'false';
-    if (earnedBreakTime > 0 && autoStartBreaks) {
+    const autoBreaks = localStorage.getItem('autoBreak') !== 'false';
+    if (earnedBreakTime > 0 && autoBreaks) {
         setTimeout(() => toggleTimer(), 500);
     }
 }
@@ -743,7 +744,9 @@ function saveTasks() {
   const taskItems = Array.from(taskList.children).map(taskItem => {
     const text = taskItem.querySelector('.task-text').textContent;
     const completed = taskItem.querySelector('.task-checkbox').checked;
-    return { text, completed };
+    const descElem = taskItem.querySelector('.task-description');
+    const description = descElem ? descElem.textContent : '';
+    return { text, completed, description };
   });
   
   localStorage.setItem('reverseTasks', JSON.stringify(taskItems));
@@ -755,9 +758,9 @@ function loadTasks() {
   if (savedTasks) {
     try {
       const taskItems = JSON.parse(savedTasks);
-      taskList.innerHTML = ''; // Clear current tasks
+      taskList.innerHTML = '';
       taskItems.forEach(task => {
-        createTaskElement(task.text, task.completed);
+        createTaskElement(task.text, task.completed, task.description);
       });
       updateUnfinishedTasks();
       console.log('Tasks loaded from localStorage:', taskItems);
@@ -767,8 +770,8 @@ function loadTasks() {
   }
 }
 
-// Create task element - Updated to save tasks after creation
-function createTaskElement(text, completed = false) {
+// Create task element - now supports description
+function createTaskElement(title, completed = false, description = '') {
     const taskItem = document.createElement('li');
     taskItem.className = 'task-item';
     if (completed) taskItem.classList.add('task-completed');
@@ -780,12 +783,27 @@ function createTaskElement(text, completed = false) {
     checkbox.addEventListener('change', () => {
         taskItem.classList.toggle('task-completed', checkbox.checked);
         updateUnfinishedTasks();
-        saveTasks(); // Save when task status changes
+        saveTasks();
     });
+
+    // Enhanced: wrap text and description in a .task-content div for better styling
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'task-content';
 
     const textElement = document.createElement('span');
     textElement.className = 'task-text';
-    textElement.textContent = text;
+    textElement.textContent = title;
+
+    // Enhanced: Description element with new class and pre-wrap
+    let descElement = null;
+    if (description && description.trim() !== '') {
+        descElement = document.createElement('div');
+        descElement.className = 'task-description';
+        descElement.textContent = description;
+    }
+
+    contentDiv.appendChild(textElement);
+    if (descElement) contentDiv.appendChild(descElement);
 
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'task-delete';
@@ -794,33 +812,35 @@ function createTaskElement(text, completed = false) {
         if (confirm('Are you sure you want to delete this task?')) {
             taskList.removeChild(taskItem);
             updateUnfinishedTasks();
-            saveTasks(); // Save when task is deleted
+            saveTasks();
         }
     });
 
     taskItem.appendChild(checkbox);
-    taskItem.appendChild(textElement);
+    taskItem.appendChild(contentDiv);
     taskItem.appendChild(deleteBtn);
 
     taskList.appendChild(taskItem);
 }
 
-// Add task to task list - Updated to save tasks
+// Add task to task list - now supports description and new textarea
 function addTask() {
-  const taskText = taskInput.value.trim();
+  const taskTitle = taskInput.value.trim();
+  const taskDesc = taskDescInput.value.trim();
 
-  if (taskText !== '') {
-    createTaskElement(taskText);
-    
+  if (taskTitle !== '') {
+    createTaskElement(taskTitle, false, taskDesc);
+
     // Save tasks after adding a new task
     saveTasks();
 
-    // Clear input
+    // Clear inputs
     taskInput.value = '';
+    taskDescInput.value = '';
     hasUnsavedTasks = false;
+    taskInput.focus();
   } else {
-    // Alert the user when trying to add an empty task
-    alert("Please enter a task before adding!");
+    alert("Please enter a task title before adding!");
   }
 }
 
@@ -844,8 +864,21 @@ taskInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') addTask();
 });
 taskInput.addEventListener('input', () => {
-    hasUnsavedTasks = taskInput.value.trim().length > 0;
+    hasUnsavedTasks = taskInput.value.trim().length > 0 || (taskDescInput && taskDescInput.value.trim().length > 0);
 });
+if (taskDescInput) {
+    // Enhanced: Support Shift+Enter for new line, Enter to add task
+    taskDescInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            addTask();
+        }
+        // Shift+Enter will insert a new line by default
+    });
+    taskDescInput.addEventListener('input', () => {
+        hasUnsavedTasks = taskInput.value.trim().length > 0 || taskDescInput.value.trim().length > 0;
+    });
+}
 
 // Add click sounds to buttons
 document.querySelectorAll('.time-btn, .secondary-btn, .tab').forEach(button => {
