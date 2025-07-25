@@ -23,6 +23,8 @@ const longBreakTab = document.getElementById('long-break-tab');
 const taskInput = document.getElementById('task-input');
 const addTaskBtn = document.getElementById('add-task-btn');
 const taskList = document.getElementById('task-list');
+// Update: reference to new description textarea (now inside .description-group)
+const taskDescInput = document.getElementById('task-description-input');
 
 // Timer variables - Load from localStorage or use defaults
 let pomodoroTime = parseInt(localStorage.getItem('pomodoroTime')) || 25;
@@ -479,11 +481,24 @@ longBreakTab.addEventListener('click', () => switchMode('longBreak'));
 // Task event listeners
 addTaskBtn.addEventListener('click', addTask);
 taskInput.addEventListener('input', () => {
-  hasUnsavedTasks = taskInput.value.trim().length > 0;
+  hasUnsavedTasks = taskInput.value.trim().length > 0 || (taskDescInput && taskDescInput.value.trim().length > 0);
 });
 taskInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') addTask();
 });
+// Add description input listeners (Shift+Enter for newline, Enter to add)
+if (taskDescInput) {
+  taskDescInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      addTask();
+    }
+    // Shift+Enter will insert a new line by default
+  });
+  taskDescInput.addEventListener('input', () => {
+    hasUnsavedTasks = taskInput.value.trim().length > 0 || taskDescInput.value.trim().length > 0;
+  });
+}
 
 // Update timer display
 function updateTimerDisplay() {
@@ -1050,8 +1065,8 @@ function showToast(message) {
   }, 3000);
 }
 
-// Create task element
-function createTaskElement(text, completed = false) {
+// Create task element (now supports description)
+function createTaskElement(text, completed = false, description = '') {
   const taskItem = document.createElement('li');
   taskItem.className = 'task-item';
   if (completed) taskItem.classList.add('task-completed');
@@ -1065,9 +1080,24 @@ function createTaskElement(text, completed = false) {
     updateUnfinishedTasks();
   });
 
+  // Wrap text and description in a .task-content div for better styling
+  const contentDiv = document.createElement('div');
+  contentDiv.className = 'task-content';
+
   const taskText = document.createElement('span');
   taskText.className = 'task-text';
   taskText.textContent = text;
+
+  // Description element (if provided)
+  let descElem = null;
+  if (description && description.trim() !== '') {
+    descElem = document.createElement('div');
+    descElem.className = 'task-description';
+    descElem.textContent = description;
+  }
+
+  contentDiv.appendChild(taskText);
+  if (descElem) contentDiv.appendChild(descElem);
 
   const deleteBtn = document.createElement('button');
   deleteBtn.className = 'task-delete';
@@ -1080,24 +1110,27 @@ function createTaskElement(text, completed = false) {
   });
 
   taskItem.appendChild(checkbox);
-  taskItem.appendChild(taskText);
+  taskItem.appendChild(contentDiv);
   taskItem.appendChild(deleteBtn);
   taskList.appendChild(taskItem);
 }
 
-// Add task to task list
+// Add task to task list (now supports description)
 function addTask() {
   const taskText = taskInput.value.trim();
+  const taskDesc = taskDescInput ? taskDescInput.value.trim() : '';
 
   if (taskText !== '') {
-    createTaskElement(taskText);
+    createTaskElement(taskText, false, taskDesc);
 
-    // Clear input
+    // Clear inputs
     taskInput.value = '';
+    if (taskDescInput) taskDescInput.value = '';
     hasUnsavedTasks = false;
+    taskInput.focus();
   } else {
     // Alert the user when trying to add an empty task
-    alert("Please enter a task before adding!");
+    alert("Please enter a task title before adding!");
   }
 }
 

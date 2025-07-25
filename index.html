@@ -130,30 +130,33 @@
   background: var(--bg-secondary, #f5f5f5);
   color: var(--text-primary, #333);
 }
-</style>
 
-  <script>
-    // Function to load deferred CSS files
-    function loadDeferredCSS() {
-      const deferredStyles = [
-        'settings',
-        'theme-uploader',
-        'burnup-tracker'
-      ];
-      
-      deferredStyles.forEach(style => {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = `css/${style}.css`;
-        document.head.appendChild(link);
-      });
-    }
+
+
+
+</style>
+<script>
+  // Function to load deferred CSS files
+  function loadDeferredCSS() {
+    const deferredStyles = [
+      'settings',
+      'theme-uploader',
+      'burnup-tracker'
+    ];
     
-    // Load deferred styles when DOM is ready, with a slight delay to prioritize render
-    document.addEventListener('DOMContentLoaded', function() {
-      setTimeout(loadDeferredCSS, 100);
+    deferredStyles.forEach(style => {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = `css/${style}.css`;
+      document.head.appendChild(link);
     });
-  </script>
+  }
+  
+  // Load deferred styles when DOM is ready, with a slight delay to prioritize render
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(loadDeferredCSS, 100);
+  });
+</script>
 </head>
 <body class="pomodoro-mode"> 
   <script>
@@ -232,8 +235,15 @@
       </div>
       <div class="task-input-container">
         <input type="text" class="task-input" id="task-input" placeholder="What are you working on?">
-        <button class="add-task-btn" id="add-task-btn">Add</button>
       </div>
+      <!-- Add description textarea below input -->
+      <div class="task-desc-container">
+        <textarea id="task-description-input" class="task-desc-input" placeholder="Optional description... (Shift+Enter for new line, Enter to add task)" maxlength="500" rows="2"></textarea>
+      </div>
+
+      <button id="add-task-btn" class="secondary-btn">Add Task</button>
+
+     
       <ul class="task-list" id="task-list">
         <!-- Tasks will be added here -->
       </ul>
@@ -1072,5 +1082,377 @@ if ('serviceWorker' in navigator) {
 
 
 
+<!-- Add enhanced task input/list CSS styles -->
+<style>
+/* Task input section - base style */
+.task-input-section {
+    margin-bottom: 20px;
+}
+.input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+.description-group {
+    width: 100%;
+}
+#task-input {
+    flex: 1;
+    padding: 12px 18px;
+    border: 2px solid #bbb;
+    border-radius: 12px;
+    font-size: 16px;
+    color: #222;
+    background: #fff;
+    transition: border-color 0.2s;
+    font-weight: 400;
+}
+#task-input:focus {
+    outline: none;
+    border-color: #a89c8e;
+    box-shadow: 0 0 0 2px #e6e1da;
+}
+#task-description-input {
+    width: 100%;
+    padding: 10px 18px;
+    border: 2px solid #bbb;
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 44px;
+    max-height: 120px;
+    color: #444;
+    background: #fff;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+    margin-top: 0;
+}
+#task-description-input:focus {
+    outline: none;
+    border-color: #a89c8e;
+    box-shadow: 0 0 0 2px #e6e1da;
+}
+#task-description-input::placeholder {
+    color: #888;
+    font-style: italic;
+}
+
+/* Add Task button - tan/brown, white bold text, rounded */
+#add-task-btn.secondary-btn {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+.task-input-container {
+    margin-bottom: 6px; /* reduce space below task input */
+}
+.task-desc-container {
+    margin-top: 0;
+    margin-bottom: 6px; /* reduce space below desc input */
+}
+#task-description-input {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+#add-task-btn.secondary-btn {
+    display: block;
+    width: 100%;
+    margin: 0;
+    /* Remove duplicate padding property */
+    padding: 12px 18px;
+    background: #8B5FBF;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 700;
+    height: 48px;
+    transition: background 0.2s, color 0.2s;
+    box-shadow: none;
+    letter-spacing: 0.5px;
+}
+/* Task list - white background, subtle border, rounded */
+.task-list {
+    margin-top: 8px;
+}
+.task-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 14px 18px;
+    background: #fff;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    border: 1.5px solid #ececec;
+    box-shadow: none;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+.task-item:hover {
+    background: #f8f8f8;
+    border-color: #e0e0e0;
+}
+.task-item.task-completed {
+    opacity: 0.7;
+    background: #f6f6f6;
+}
+.task-item.task-completed .task-text,
+.task-item.task-completed .task-description {
+    text-decoration: line-through;
+    color: #bbb;
+}
+.task-checkbox {
+    margin-right: 16px;
+    margin-top: 2px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    flex-shrink: 0;
+    accent-color: #a89c8e;
+    border-radius: 6px;
+    border: 1.5px solid #bbb;
+    background: #fff;
+}
+.task-content {
+    flex: 1;
+    min-width: 0;
+}
+.task-text {
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 2px;
+    word-wrap: break-word;
+    line-height: 1.4;
+    font-size: 16px;
+}
+.task-description {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    margin-top: 2px;
+}
+/* Delete button - light gray, small, minimal */
+.task-delete {
+    background: none;
+    color: #bbb;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+    margin-left: 14px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+    transition: background 0.2s, color 0.2s;
+}
+.task-delete:hover {
+    background: #f2eae2;
+    color: #a89c8e;
+}
+/* Responsive design for mobile */
+@media (max-width: 768px) {
+    .input-group {
+        flex-direction: column;
+        gap: 8px;
+    }
+    #add-task-btn {
+        width: 100%;
+    }
+    .task-item {
+        padding: 12px;
+    }
+    .task-checkbox {
+        margin-right: 10px;
+    }
+    .task-delete {
+        margin-left: 8px;
+    }
+    .task-desc-container {
+    margin-top: 2px !important;
+    margin-bottom: 8px;
+  }
+  .task-input-container {
+    margin-bottom: 2px !important;
+  }
+}
+
+/* THEME OVERRIDES */
+
+/* DARK THEME */
+body.theme-dark #task-input,
+body.theme-dark #task-description-input {
+    background: #232323;
+    color: #fff;
+    border-color: #444;
+}
+body.theme-dark #task-input:focus,
+body.theme-dark #task-description-input:focus {
+    border-color: #8b5fbf;
+    box-shadow: 0 0 0 2px #2d2d2d;
+}
+body.theme-dark #task-input::placeholder,
+body.theme-dark #task-description-input::placeholder {
+    color: #aaa;
+}
+body.theme-dark .task-item {
+    background: #232323;
+    border-color: #222;
+}
+body.theme-dark .task-text {
+    color: #fff;
+}
+body.theme-dark .task-description {
+    color: #bbb;
+}
+body.theme-dark .task-delete {
+    color: #888;
+}
+body.theme-dark .task-delete:hover {
+    background: #2d2d2d;
+    color: #8b5fbf;
+}
+
+/* YOURNAME THEME */
+body.theme-yourname #task-input,
+body.theme-yourname #task-description-input {
+    background: rgba(0,0,0,0.4);
+    color: #fff;
+    border-color: rgba(255,255,255,0.2);
+}
+body.theme-yourname #task-input:focus,
+body.theme-yourname #task-description-input:focus {
+    border-color: #8b5fbf;
+    box-shadow: 0 0 0 2px #8b5fbf;
+}
+body.theme-yourname #task-input::placeholder,
+body.theme-yourname #task-description-input::placeholder {
+    color: rgba(255,255,255,0.7);
+}
+body.theme-yourname .task-item {
+    background: rgba(0,0,0,0.4);
+    border-color: rgba(255,255,255,0.2);
+}
+body.theme-yourname .task-text {
+    color: #fff;
+}
+body.theme-yourname .task-description {
+    color: #eee;
+}
+body.theme-yourname .task-delete {
+    color: #bbb;
+}
+body.theme-yourname .task-delete:hover {
+    background: rgba(139,95,191,0.1);
+    color: #8b5fbf;
+}
+
+/* CUSTOM THEME */
+body.theme-custom #task-input,
+body.theme-custom #task-description-input {
+    background: rgba(0,0,0,0.4);
+    color: #fff;
+    border-color: rgba(255,255,255,0.2);
+}
+body.theme-custom #task-input:focus,
+body.theme-custom #task-description-input:focus {
+    border-color: #8b5fbf;
+    box-shadow: 0 0 0 2px #8b5fbf;
+}
+body.theme-custom #task-input::placeholder,
+body.theme-custom #task-description-input::placeholder {
+    color: rgba(255,255,255,0.7);
+}
+body.theme-custom .task-item {
+    background: rgba(0,0,0,0.4);
+    border-color: rgba(255,255,255,0.2);
+}
+body.theme-custom .task-text {
+    color: #fff;
+}
+body.theme-custom .task-description {
+    color: #eee;
+}
+body.theme-custom .task-delete {
+    color: #bbb;
+}
+body.theme-custom .task-delete:hover {
+    background: rgba(139,95,191,0.1);
+    color: #8b5fbf;
+}
+
+/* RAIN THEME */
+body.theme-rain #task-input,
+body.theme-rain #task-description-input {
+    background: rgba(0,0,0,0.4);
+    color: #fff;
+    border-color: rgba(255,255,255,0.2);
+}
+body.theme-rain #task-input:focus,
+body.theme-rain #task-description-input:focus {
+    border-color: #8b5fbf;
+    box-shadow: 0 0 0 2px #8b5fbf;
+}
+body.theme-rain #task-input::placeholder,
+body.theme-rain #task-description-input::placeholder {
+    color: rgba(255,255,255,0.7);
+}
+body.theme-rain .task-item {
+    background: rgba(0,0,0,0.4);
+    border-color: rgba(255,255,255,0.2);
+}
+body.theme-rain .task-text {
+    color: #fff;
+}
+body.theme-rain .task-description {
+    color: #eee;
+}
+body.theme-rain .task-delete {
+    color: #bbb;
+}
+body.theme-rain .task-delete:hover {
+    background: rgba(139,95,191,0.1);
+    color: #8b5fbf;
+}
+
+/* COLOR THEME */
+body.theme-color #task-input,
+body.theme-color #task-description-input {
+    background: #fff;
+    color: #222;
+    border-color: #bbb;
+}
+body.theme-color #task-input:focus,
+body.theme-color #task-description-input:focus {
+    border-color: #a89c8e;
+    box-shadow: 0 0 0 2px #e6e1da;
+}
+body.theme-color #task-input::placeholder,
+body.theme-color #task-description-input::placeholder {
+    color: #888;
+}
+body.theme-color .task-item {
+    background: #fff;
+    border-color: #ececec;
+}
+body.theme-color .task-text {
+    color: #222;
+}
+body.theme-color .task-description {
+    color: #666;
+}
+body.theme-color .task-delete {
+    color: #bbb;
+}
+body.theme-color .task-delete:hover {
+    background: #f2eae2;
+    color: #a89c8e;
+}
+</style>
 </body>
 </html>

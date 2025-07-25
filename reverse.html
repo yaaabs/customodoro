@@ -132,21 +132,24 @@
       </div>
     </div>
     
-    <div class="tasks-section">
+ <div class="tasks-section">
       <div class="tasks-header">
         <div class="tasks-title">Tasks</div>
       </div>
-      <!-- Replace old task input with enhanced version -->
-      <div class="task-input-section">
-          <div class="input-group">
-              <input type="text" id="task-input" placeholder="Enter task title..." maxlength="100">
-              <button id="add-task-btn" class="secondary-btn">Add Task</button>
-          </div>
-          <div class="description-group">
-              <textarea id="task-description-input" placeholder="Optional description... (Shift+Enter for new line, Enter to add task)" maxlength="500" rows="2"></textarea>
-          </div>
+      <div class="task-input-container">
+        <input type="text" class="task-input" id="task-input" placeholder="What are you working on?">
       </div>
-      <ul class="task-list" id="task-list"></ul>
+      <!-- Add description textarea below input -->
+      <div class="task-desc-container">
+        <textarea id="task-description-input" class="task-desc-input" placeholder="Optional description... (Shift+Enter for new line, Enter to add task)" maxlength="500" rows="2"></textarea>
+      </div>
+      
+      <button id="add-task-btn" class="secondary-btn">Add Task</button>
+
+     
+      <ul class="task-list" id="task-list">
+        <!-- Tasks will be added here -->
+      </ul>
     </div>
     
     <footer class="footer">
@@ -1023,24 +1026,40 @@ if ('serviceWorker' in navigator) {
     color: #888;
     font-style: italic;
 }
+
 /* Add Task button - tan/brown, white bold text, rounded */
 #add-task-btn.secondary-btn {
-    background: #a89c8e;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+.task-input-container {
+    margin-bottom: 6px; /* reduce space below task input */
+}
+.task-desc-container {
+    margin-top: 0;
+    margin-bottom: 6px; /* reduce space below desc input */
+}
+#task-description-input {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+#add-task-btn.secondary-btn {
+    display: block;
+    width: 100%;
+    margin: 0;
+    /* Remove duplicate padding property */
+    padding: 12px 18px;
+    background: #8B5FBF;
     color: #fff;
     border: none;
     border-radius: 12px;
     font-size: 17px;
     font-weight: 700;
-    padding: 0 32px;
     height: 48px;
     transition: background 0.2s, color 0.2s;
     box-shadow: none;
     letter-spacing: 0.5px;
-}
-#add-task-btn.secondary-btn:hover,
-#add-task-btn.secondary-btn:focus {
-    background: #8d7c65;
-    color: #fff;
 }
 /* Task list - white background, subtle border, rounded */
 .task-list {
@@ -1143,6 +1162,13 @@ if ('serviceWorker' in navigator) {
     .task-delete {
         margin-left: 8px;
     }
+    .task-desc-container {
+    margin-top: 2px !important;
+    margin-bottom: 8px;
+  }
+  .task-input-container {
+    margin-bottom: 2px !important;
+  }
 }
 
 /* THEME OVERRIDES */
