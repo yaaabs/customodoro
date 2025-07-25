@@ -1017,6 +1017,7 @@
       <div class="update-info-box">
 <ul>
   <li><b>🆕 New Feature:</b> Descriptions for Tasks + improved UI/UX</li>
+  <li><b>🖱️ Bonus:</b> You can now drag and drop tasks to reorder them easily!</li>
   <li><b>💜 Special Thanks:</b> to "Duck Paddling" for suggesting this feature!</li>
   <li><b>🛠️ In Consideration:</b> Gamma Waves playlist, productivity graphs, and Spotify/YouTube linking</li>
 </ul>
@@ -1452,6 +1453,18 @@ body.theme-color .task-delete {
 body.theme-color .task-delete:hover {
     background: #f2eae2;
     color: #a89c8e;
+}
+
+/* DRAG & DROP TASK REORDERING VISUALS */
+.task-item.dragging {
+  opacity: 0.5;
+  background: #e0e0e0 !important;
+}
+.task-item.drop-above {
+  border-top: 3px solid #8B5FBF;
+}
+.task-item.drop-below {
+  border-bottom: 3px solid #8B5FBF;
 }
 </style>
 </body>

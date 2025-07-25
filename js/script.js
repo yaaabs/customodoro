@@ -1065,6 +1065,82 @@ function showToast(message) {
   }, 3000);
 }
 
+// --- DRAG & DROP TASK REORDERING ---
+
+// Helper to get the closest task-item element
+function getTaskItemElem(elem) {
+  while (elem && !elem.classList.contains('task-item')) {
+    elem = elem.parentElement;
+  }
+  return elem;
+}
+
+// Drag state
+let draggedTask = null;
+
+// Add drag & drop listeners to a task item
+function addDragAndDropListeners(taskItem) {
+  taskItem.setAttribute('draggable', 'true');
+
+  taskItem.addEventListener('dragstart', function (e) {
+    draggedTask = taskItem;
+    taskItem.classList.add('dragging');
+    // For Firefox compatibility
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', '');
+  });
+
+  taskItem.addEventListener('dragend', function () {
+    draggedTask = null;
+    taskItem.classList.remove('dragging');
+    // Remove all drop indicators
+    document.querySelectorAll('.task-item.drop-above, .task-item.drop-below').forEach(el => {
+      el.classList.remove('drop-above', 'drop-below');
+    });
+  });
+
+  taskItem.addEventListener('dragover', function (e) {
+    e.preventDefault();
+    if (!draggedTask || draggedTask === taskItem) return;
+    // Visual feedback: highlight drop position
+    const bounding = taskItem.getBoundingClientRect();
+    const offset = e.clientY - bounding.top;
+    if (offset < bounding.height / 2) {
+      taskItem.classList.add('drop-above');
+      taskItem.classList.remove('drop-below');
+    } else {
+      taskItem.classList.add('drop-below');
+      taskItem.classList.remove('drop-above');
+    }
+  });
+
+  taskItem.addEventListener('dragleave', function () {
+    taskItem.classList.remove('drop-above', 'drop-below');
+  });
+
+  taskItem.addEventListener('drop', function (e) {
+    e.preventDefault();
+    if (!draggedTask || draggedTask === taskItem) return;
+    const bounding = taskItem.getBoundingClientRect();
+    const offset = e.clientY - bounding.top;
+    if (offset < bounding.height / 2) {
+      taskList.insertBefore(draggedTask, taskItem);
+    } else {
+      taskList.insertBefore(draggedTask, taskItem.nextSibling);
+    }
+    // Clean up
+    taskItem.classList.remove('drop-above', 'drop-below');
+    draggedTask.classList.remove('dragging');
+    draggedTask = null;
+    updateUnfinishedTasks();
+  });
+}
+
+// Patch: Add drag & drop listeners to all current tasks on page load
+document.addEventListener('DOMContentLoaded', function () {
+  Array.from(taskList.children).forEach(addDragAndDropListeners);
+});
+
 // Create task element (now supports description)
 function createTaskElement(text, completed = false, description = '') {
   const taskItem = document.createElement('li');
@@ -1113,6 +1189,9 @@ function createTaskElement(text, completed = false, description = '') {
   taskItem.appendChild(contentDiv);
   taskItem.appendChild(deleteBtn);
   taskList.appendChild(taskItem);
+
+  // Add drag & drop listeners
+  addDragAndDropListeners(taskItem);
 }
 
 // Add task to task list (now supports description)
