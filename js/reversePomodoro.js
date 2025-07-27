@@ -1367,7 +1367,7 @@ function renderContributionGraph() {
   }
 
   // Custom/Kimi no Nawa: glass style
-  if (body.classList.contains('theme-custom') || body.classList.contains('theme-yourname')) {
+  if (body.classList.contains('theme-custom') || body.classList.contains('theme-yourname') || body.classList.contains('theme-rain')) {
     bgColor = "rgba(30,30,30,0.7)";
     borderColor = "rgba(255,255,255,0.18)";
     labelColor = "#fff";

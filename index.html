@@ -256,7 +256,7 @@
       <div class="footer-content">
         <div class="footer-brand">
           © 2025 <strong>Customodoro</strong>
-          <span class="footer-version">v2.4.0</span>
+          <span class="footer-version">v2.4.1</span>
           • Handcrafted by <strong><em>YabuTech</em></strong>
         </div>
         <nav class="footer-links">
@@ -1066,9 +1066,35 @@ if ('serviceWorker' in navigator) {
     .then((registration) => {
       console.log('✅ Service Worker registered:', registration);
       
+      // Check for updates immediately and every 30 seconds
+      const checkForUpdates = () => {
+        registration.update().then(() => {
+          console.log('🔍 Checked for updates');
+        });
+      };
+      
+      // Check for updates on registration
+      checkForUpdates();
+      
+      // Check for updates periodically
+      setInterval(checkForUpdates, 30000); // Every 30 seconds
+      
       // Listen for service worker updates
       registration.addEventListener('updatefound', () => {
         console.log('🔄 New service worker found, installing...');
+        const newWorker = registration.installing;
+        
+        if (newWorker) {
+          newWorker.addEventListener('statechange', () => {
+            console.log('🔄 New SW state:', newWorker.state);
+            
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              // New service worker is ready!
+              console.log('🎉 New service worker ready - showing update prompt');
+              showUpdatePrompt();
+            }
+          });
+        }
       });
     })
     .catch((error) => {
@@ -1078,13 +1104,21 @@ if ('serviceWorker' in navigator) {
   // Listen for messages from service worker
   navigator.serviceWorker.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'NEW_VERSION_AVAILABLE') {
+      console.log('📨 Update message received from SW');
       showUpdatePrompt();
     }
     
     if (event.data && event.data.type === 'FORCE_RELOAD') {
+      console.log('🔄 Force reload message received');
       // Perform hard refresh - clears all caches and reloads
       window.location.reload(true);
     }
+  });
+
+  // Also listen for controller changes (when new SW takes over)
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    console.log('🔄 Service worker controller changed - reloading');
+    window.location.reload();
   });
 }
 
@@ -1199,28 +1233,49 @@ function performHardRefresh() {
   `;
   document.body.appendChild(loadingDiv);
   
-  // Clear browser caches via service worker
-  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-    navigator.serviceWorker.controller.postMessage({
-      type: 'HARD_REFRESH'
+  // Force new service worker to activate if waiting
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistration().then((registration) => {
+      if (registration && registration.waiting) {
+        // Tell the waiting service worker to skip waiting
+        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+      } else if (navigator.serviceWorker.controller) {
+        // Clear caches via current service worker
+        navigator.serviceWorker.controller.postMessage({
+          type: 'HARD_REFRESH'
+        });
+      }
     });
   }
   
   // Preserve important user data before clearing storage
-  try {
-    // Keys to preserve - your productivity graph and settings
-    const preservedKeys = [
-      'customodoroStatsByDay',    // 📊 Productivity graph data (MOST IMPORTANT)
-      'customodoroUser',          // 👤 User profile data
-      'customodoroSettings',      // ⚙️ User settings
-      'pomodoroTasks',           // ✅ User tasks
-      'customodoroTheme',        // 🎨 Selected theme
-      'customodoroPreferences',  // 🔧 Other user preferences
-      'customodoroProgress',     // 📈 Any progress tracking
-      'customodoroAchievements', // 🏆 User achievements
-      'customodoroStreaks',      // 🔥 Streak data
-      'customodoroGoals'         // 🎯 User goals
-    ];
+try {
+  // Use real variable names for keys, matching your app code
+  const STATS_BY_DAY_KEY = 'customodoroStatsByDay';      // Productivity graph data
+  const USER_KEY = 'customodoroUser';                    // User profile data
+  const SETTINGS_KEY = 'customodoroSettings';            // User settings
+  const TASKS_KEY = 'pomodoroTasks';                     // Classic tasks
+  const REVERSE_TASKS_KEY = 'reverseTasks';              // Reverse Pomodoro tasks
+  const THEME_KEY = 'customodoroTheme';                  // Selected theme
+  const PREFERENCES_KEY = 'customodoroPreferences';      // Other user preferences
+  const PROGRESS_KEY = 'customodoroProgress';            // Progress tracking
+  const ACHIEVEMENTS_KEY = 'customodoroAchievements';    // Achievements
+  const STREAKS_KEY = 'customodoroStreaks';              // Streak data
+  const GOALS_KEY = 'customodoroGoals';                  // Goals
+
+  const preservedKeys = [
+    STATS_BY_DAY_KEY,
+    USER_KEY,
+    SETTINGS_KEY,
+    TASKS_KEY,
+    REVERSE_TASKS_KEY,
+    THEME_KEY,
+    PREFERENCES_KEY,
+    PROGRESS_KEY,
+    ACHIEVEMENTS_KEY,
+    STREAKS_KEY,
+    GOALS_KEY
+  ];
     
     // Backup preserved data
     const preservedData = {};
@@ -1258,9 +1313,12 @@ function performHardRefresh() {
       // Fallback for older mobile browsers
       window.location.href = window.location.href;
     }
-  }, 1500);
+  }, 2000); // Longer delay to ensure SW processes messages
 }
 </script>
+
+
+
 
 
 

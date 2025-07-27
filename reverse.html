@@ -157,7 +157,7 @@
       <div class="footer-content">
         <div class="footer-brand">
           © 2025 <strong>Customodoro</strong>
-          <span class="footer-version">v2.4.0</span>
+          <span class="footer-version">v2.4.1</span>
           • Handcrafted by <strong><em>YabuTech</em></strong>
         </div>
         <nav class="footer-links">
@@ -949,16 +949,42 @@
 
 
 
-  <script>
+<script>
 // Service Worker Registration and Update Handler
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js')
     .then((registration) => {
       console.log('✅ Service Worker registered:', registration);
       
+      // Check for updates immediately and every 30 seconds
+      const checkForUpdates = () => {
+        registration.update().then(() => {
+          console.log('🔍 Checked for updates');
+        });
+      };
+      
+      // Check for updates on registration
+      checkForUpdates();
+      
+      // Check for updates periodically
+      setInterval(checkForUpdates, 30000); // Every 30 seconds
+      
       // Listen for service worker updates
       registration.addEventListener('updatefound', () => {
         console.log('🔄 New service worker found, installing...');
+        const newWorker = registration.installing;
+        
+        if (newWorker) {
+          newWorker.addEventListener('statechange', () => {
+            console.log('🔄 New SW state:', newWorker.state);
+            
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              // New service worker is ready!
+              console.log('🎉 New service worker ready - showing update prompt');
+              showUpdatePrompt();
+            }
+          });
+        }
       });
     })
     .catch((error) => {
@@ -968,13 +994,21 @@ if ('serviceWorker' in navigator) {
   // Listen for messages from service worker
   navigator.serviceWorker.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'NEW_VERSION_AVAILABLE') {
+      console.log('📨 Update message received from SW');
       showUpdatePrompt();
     }
     
     if (event.data && event.data.type === 'FORCE_RELOAD') {
+      console.log('🔄 Force reload message received');
       // Perform hard refresh - clears all caches and reloads
       window.location.reload(true);
     }
+  });
+
+  // Also listen for controller changes (when new SW takes over)
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    console.log('🔄 Service worker controller changed - reloading');
+    window.location.reload();
   });
 }
 
@@ -984,7 +1018,7 @@ function showUpdatePrompt() {
     return;
   }
   
-  // Enhanced update prompt with hard refresh option
+  // Simple update prompt with single action
   const updateModal = document.createElement('div');
   updateModal.id = 'updateModal';
   updateModal.innerHTML = `
@@ -1000,76 +1034,62 @@ function showUpdatePrompt() {
       align-items: center;
       z-index: 10000;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 20px;
+      box-sizing: border-box;
     ">
       <div style="
         background: white;
         padding: 30px;
-        border-radius: 12px;
+        border-radius: 16px;
         box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        max-width: 400px;
+        max-width: 380px;
+        width: 100%;
         text-align: center;
       ">
-        <div style="font-size: 48px; margin-bottom: 16px;">🔁</div>
-        <h3 style="margin: 0 0 16px 0; color: #333;">Update Available!</h3>
-        <p style="margin: 0 0 24px 0; color: #666; line-height: 1.5;">
-          A new version of Customodoro is available with bug fixes and improvements.
+        <div style="font-size: 48px; margin-bottom: 16px;">🚀</div>
+        <h3 style="margin: 0 0 16px 0; color: #333; font-size: 20px;">Update Available!</h3>
+        <p style="margin: 0 0 24px 0; color: #666; line-height: 1.5; font-size: 15px;">
+          A new version of Customodoro is ready with improvements and bug fixes. Your productivity data will be safely preserved.
         </p>
-        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-          <button id="softRefresh" style="
-            background: #007AFF;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-          ">Quick Reload</button>
-          <button id="hardRefresh" style="
-            background: #FF3B30;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-          ">Hard Refresh</button>
-          <button id="laterBtn" style="
-            background: #8E8E93;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-          ">Later</button>
-        </div>
-        <p style="font-size: 12px; color: #999; margin-top: 16px;">
-          Hard refresh preserves your productivity data but clears cache
-        </p>
+        <button id="updateBtn" style="
+          background: #007AFF;
+          color: white;
+          border: none;
+          padding: 16px 32px;
+          border-radius: 12px;
+          cursor: pointer;
+          font-weight: 600;
+          font-size: 16px;
+          width: 100%;
+          max-width: 200px;
+          transition: all 0.2s ease;
+        " onmouseover="this.style.background='#0056CC'" onmouseout="this.style.background='#007AFF'">
+          Ok, cool! 🎉
+        </button>
       </div>
     </div>
   `;
   
   document.body.appendChild(updateModal);
   
-  // Handle button clicks
-  document.getElementById('softRefresh').onclick = () => {
-    document.body.removeChild(updateModal);
-    window.location.reload();
-  };
-  
-  document.getElementById('hardRefresh').onclick = () => {
+  // Handle button click
+  document.getElementById('updateBtn').onclick = () => {
     document.body.removeChild(updateModal);
     performHardRefresh();
   };
   
-  document.getElementById('laterBtn').onclick = () => {
-    document.body.removeChild(updateModal);
+  // Handle tap on mobile better
+  document.getElementById('updateBtn').ontouchstart = () => {
+    document.getElementById('updateBtn').style.background = '#0056CC';
+  };
+  
+  document.getElementById('updateBtn').ontouchend = () => {
+    document.getElementById('updateBtn').style.background = '#007AFF';
   };
 }
 
 function performHardRefresh() {
-  // Show loading indicator
+  // Show loading indicator with better mobile support
   const loadingDiv = document.createElement('div');
   loadingDiv.innerHTML = `
     <div style="
@@ -1078,43 +1098,74 @@ function performHardRefresh() {
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.8);
+      background: rgba(0,0,0,0.9);
       display: flex;
       justify-content: center;
       align-items: center;
       z-index: 10001;
       color: white;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 20px;
+      box-sizing: border-box;
     ">
       <div style="text-align: center;">
-        <div style="font-size: 48px; margin-bottom: 16px;">⚡</div>
-        <h3>Hard Refreshing...</h3>
-        <p>Preserving your productivity data...</p>
+        <div style="font-size: 64px; margin-bottom: 20px; animation: pulse 1.5s ease-in-out infinite alternate;">⚡</div>
+        <h3 style="margin: 0 0 12px 0; font-size: 22px;">Updating Customodoro...</h3>
+        <p style="margin: 0; opacity: 0.8; font-size: 16px;">Your productivity data is safe! 📊</p>
       </div>
     </div>
+    <style>
+      @keyframes pulse {
+        from { opacity: 0.6; transform: scale(1); }
+        to { opacity: 1; transform: scale(1.1); }
+      }
+    </style>
   `;
   document.body.appendChild(loadingDiv);
   
-  // Clear browser caches via service worker
-  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-    navigator.serviceWorker.controller.postMessage({
-      type: 'HARD_REFRESH'
+  // Force new service worker to activate if waiting
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistration().then((registration) => {
+      if (registration && registration.waiting) {
+        // Tell the waiting service worker to skip waiting
+        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+      } else if (navigator.serviceWorker.controller) {
+        // Clear caches via current service worker
+        navigator.serviceWorker.controller.postMessage({
+          type: 'HARD_REFRESH'
+        });
+      }
     });
   }
   
   // Preserve important user data before clearing storage
-  try {
-    // Keys to preserve (add any other important data keys here)
-    const preservedKeys = [
-      'customodoroStatsByDay',    // Productivity graph data
-      'customodoroUser',          // User profile data
-      'customodoroSettings',      // User settings
-      'pomodoroTasks',           // User tasks
-      'customodoroTheme',        // Selected theme
-      'customodoroPreferences',  // Other user preferences
-      'customodoroProgress',     // Any progress tracking
-      'customodoroAchievements'  // User achievements
-    ];
+try {
+  // Use real variable names for keys, matching your app code
+  const STATS_BY_DAY_KEY = 'customodoroStatsByDay';      // Productivity graph data
+  const USER_KEY = 'customodoroUser';                    // User profile data
+  const SETTINGS_KEY = 'customodoroSettings';            // User settings
+  const TASKS_KEY = 'pomodoroTasks';                     // Classic tasks
+  const REVERSE_TASKS_KEY = 'reverseTasks';              // Reverse Pomodoro tasks
+  const THEME_KEY = 'customodoroTheme';                  // Selected theme
+  const PREFERENCES_KEY = 'customodoroPreferences';      // Other user preferences
+  const PROGRESS_KEY = 'customodoroProgress';            // Progress tracking
+  const ACHIEVEMENTS_KEY = 'customodoroAchievements';    // Achievements
+  const STREAKS_KEY = 'customodoroStreaks';              // Streak data
+  const GOALS_KEY = 'customodoroGoals';                  // Goals
+
+  const preservedKeys = [
+    STATS_BY_DAY_KEY,
+    USER_KEY,
+    SETTINGS_KEY,
+    TASKS_KEY,
+    REVERSE_TASKS_KEY,
+    THEME_KEY,
+    PREFERENCES_KEY,
+    PROGRESS_KEY,
+    ACHIEVEMENTS_KEY,
+    STREAKS_KEY,
+    GOALS_KEY
+  ];
     
     // Backup preserved data
     const preservedData = {};
@@ -1125,27 +1176,39 @@ function performHardRefresh() {
       }
     });
     
+    console.log('💾 Backing up user data...', Object.keys(preservedData));
+    
     // Clear all storage
     localStorage.clear();
     sessionStorage.clear();
     
-    // Restore preserved data
+    // Restore preserved data immediately
     Object.keys(preservedData).forEach(key => {
       localStorage.setItem(key, preservedData[key]);
     });
     
-    console.log('✅ Preserved user data during hard refresh:', Object.keys(preservedData));
+    console.log('✅ User data restored successfully!', Object.keys(preservedData));
     
   } catch (e) {
-    console.warn('Could not clear/restore storage:', e);
+    console.error('❌ Storage operation failed:', e);
+    // Even if storage fails, still proceed with refresh
   }
   
-  // Force hard reload after a brief delay
+  // Force hard reload with a slightly longer delay for mobile
   setTimeout(() => {
-    window.location.reload(true);
-  }, 1000);
+    // Multiple reload methods for better mobile compatibility
+    if (window.location.reload) {
+      window.location.reload(true);
+    } else {
+      // Fallback for older mobile browsers
+      window.location.href = window.location.href;
+    }
+  }, 2000); // Longer delay to ensure SW processes messages
 }
 </script>
+
+
+
 
 
 <!-- Add enhanced task input/list CSS styles -->

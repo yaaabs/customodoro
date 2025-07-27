@@ -1,4 +1,4 @@
-const CACHE_NAME = "customodoro-static-v4"; // 4
+const CACHE_NAME = "customodoro-static-v5"; // Bump to v5 for this test
 const ASSETS_CACHE = "customodoro-assets-v1";
 const urlsToCache = [
   "/", "/index.html", "/reverse.html"
@@ -8,22 +8,24 @@ let isFirstInstall = false;
 
 // Install: cache only the HTML essentials
 self.addEventListener("install", (event) => {
-  console.log('🔧 Service Worker installing...');
+  console.log('🔧 Service Worker v4 installing...');
   
   // Check if this is a first install
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       isFirstInstall = cacheNames.length === 0;
+      console.log('📦 Existing caches:', cacheNames);
       return caches.open(CACHE_NAME);
     }).then(async (cache) => {
       try {
         await cache.addAll(urlsToCache);
-        console.log("✅ HTML cached successfully.");
+        console.log("✅ HTML cached successfully in", CACHE_NAME);
       } catch (err) {
         console.warn("⚠️ Failed to cache core HTML", err);
       }
     }).then(() => {
-      // Skip waiting to activate immediately
+      // Force skip waiting to activate immediately
+      console.log('⚡ Force skipping waiting...');
       return self.skipWaiting();
     })
   );
@@ -31,7 +33,7 @@ self.addEventListener("install", (event) => {
 
 // Activate: clean up old caches and notify clients
 self.addEventListener("activate", (event) => {
-  console.log('🚀 Service Worker activating...');
+  console.log('🚀 Service Worker v4 activating...');
   
   event.waitUntil(
     // Clean up old caches
@@ -39,6 +41,8 @@ self.addEventListener("activate", (event) => {
       const oldCaches = keys.filter((key) => 
         key !== CACHE_NAME && key !== ASSETS_CACHE
       );
+      
+      console.log('🗑️ Old caches to delete:', oldCaches);
       
       return Promise.all(
         oldCaches.map((key) => {
@@ -52,7 +56,9 @@ self.addEventListener("activate", (event) => {
       // Only notify about updates if this isn't the first install
       if (!isFirstInstall) {
         return self.clients.matchAll().then((clients) => {
+          console.log('👥 Found clients:', clients.length);
           clients.forEach((client) => {
+            console.log('📤 Sending update notification to client');
             client.postMessage({
               type: 'NEW_VERSION_AVAILABLE',
               message: 'A new version is available'
@@ -64,6 +70,8 @@ self.addEventListener("activate", (event) => {
         console.log('👋 First install - no update notification needed');
       }
     }).then(() => {
+      // Force claim all clients immediately
+      console.log('🎯 Taking control of all clients');
       return self.clients.claim();
     })
   );
@@ -96,25 +104,24 @@ self.addEventListener('message', (event) => {
       })
     );
   }
+  
+  // Handle skip waiting message
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    console.log('⚡ Skip waiting requested');
+    self.skipWaiting();
+  }
 });
 
 // Combined fetch handler
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   
-  // Handle navigation requests (HTML pages) - Network first for updates
+  // Handle navigation requests (HTML pages)
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request)
-        .then(response => {
-          // Always try to get fresh HTML for updates
-          return response;
-        })
-        .catch(() => {
-          // Fallback to cache if offline
-          console.log('📱 Offline - serving cached HTML');
-          return caches.match(request);
-        })
+        .then(response => response)
+        .catch(() => caches.match(request))
     );
     return;
   }
@@ -125,11 +132,9 @@ self.addEventListener("fetch", (event) => {
       caches.open(ASSETS_CACHE).then(cache =>
         cache.match(request).then(response => {
           if (response) {
-            // Serve from cache immediately
             return response;
           }
           
-          // Fetch and cache if not found
           return fetch(request).then(networkResponse => {
             // Only cache successful responses
             if (networkResponse.status === 200) {
@@ -137,12 +142,8 @@ self.addEventListener("fetch", (event) => {
             }
             return networkResponse;
           }).catch(() => {
-            // Return a simple fallback
-            console.warn('❌ Failed to load asset:', request.url);
-            return new Response('Asset not available', { 
-              status: 404,
-              statusText: 'Not Found'
-            });
+            // Return a fallback if needed
+            return new Response('Asset not available', { status: 404 });
           });
         })
       )
@@ -150,6 +151,5 @@ self.addEventListener("fetch", (event) => {
     return;
   }
   
-  // Let other requests (CSS, JS, API calls) pass through normally
-  // This ensures they always get fresh content
+  // Let other requests pass through normally
 });
