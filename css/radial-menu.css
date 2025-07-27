@@ -12,10 +12,13 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background-color: #8b5fbf;
-  border: none;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  color: white;
+  /* Glassmorphism style */
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  color: #8b5fbf;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
   cursor: pointer;
   z-index: 1001;
   display: flex;
@@ -26,13 +29,15 @@
 
 .radial-menu-toggle:hover {
   transform: scale(1.1);
-  box-shadow: 0 4px 15px rgba(139, 95, 191, 0.5);
+  box-shadow: 0 4px 15px rgba(139, 95, 191, 0.18);
+  background: rgba(255,255,255,0.85);
 }
 
 .radial-menu-toggle svg {
   width: 24px;
   height: 24px;
   transition: transform 0.3s ease;
+  color: #000; /* Set plus sign color to black */
 }
 
 .radial-menu-toggle.active svg {
