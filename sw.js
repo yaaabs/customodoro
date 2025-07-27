@@ -1,4 +1,4 @@
-const CACHE_NAME = "customodoro-static-v3"; // Increment this for updates
+const CACHE_NAME = "customodoro-static-v3.1"; // v3 → v3.1
 const ASSETS_CACHE = "customodoro-assets-v1";
 const urlsToCache = [
   "/", "/index.html", "/reverse.html"
@@ -102,12 +102,19 @@ self.addEventListener('message', (event) => {
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   
-  // Handle navigation requests (HTML pages)
+  // Handle navigation requests (HTML pages) - Network first for updates
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request)
-        .then(response => response)
-        .catch(() => caches.match(request))
+        .then(response => {
+          // Always try to get fresh HTML for updates
+          return response;
+        })
+        .catch(() => {
+          // Fallback to cache if offline
+          console.log('📱 Offline - serving cached HTML');
+          return caches.match(request);
+        })
     );
     return;
   }
@@ -118,9 +125,11 @@ self.addEventListener("fetch", (event) => {
       caches.open(ASSETS_CACHE).then(cache =>
         cache.match(request).then(response => {
           if (response) {
+            // Serve from cache immediately
             return response;
           }
           
+          // Fetch and cache if not found
           return fetch(request).then(networkResponse => {
             // Only cache successful responses
             if (networkResponse.status === 200) {
@@ -128,8 +137,12 @@ self.addEventListener("fetch", (event) => {
             }
             return networkResponse;
           }).catch(() => {
-            // Return a fallback if needed
-            return new Response('Asset not available', { status: 404 });
+            // Return a simple fallback
+            console.warn('❌ Failed to load asset:', request.url);
+            return new Response('Asset not available', { 
+              status: 404,
+              statusText: 'Not Found'
+            });
           });
         })
       )
@@ -137,5 +150,6 @@ self.addEventListener("fetch", (event) => {
     return;
   }
   
-  // Let other requests pass through normally
+  // Let other requests (CSS, JS, API calls) pass through normally
+  // This ensures they always get fresh content
 });
