@@ -366,7 +366,7 @@
         }
       } else {
         // No color theme saved, use default color
-        const defaultColor = '#4A90E2';
+        const defaultColor = '#A53860';
         document.body.classList.add('theme-color');
         document.documentElement.style.setProperty('--color-theme-bg', defaultColor);
         localStorage.setItem('colorThemeBackground', defaultColor);

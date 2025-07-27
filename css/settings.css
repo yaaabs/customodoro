@@ -2092,7 +2092,7 @@ body.theme-color .setting-item input {
 
 body.theme-color .setting-item select:focus,
 body.theme-color .setting-item input:focus {
-  border-color: var(--color-theme-bg, #4A90E2);
+  border-color: var(--color-theme-bg, #A53860);
   box-shadow: 0 0 0 2px rgba(var(--color-theme-bg-rgb, 74, 144, 226), 0.2);
 }
 

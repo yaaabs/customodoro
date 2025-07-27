@@ -538,7 +538,7 @@ body:not(.theme-dark):not(.theme-yourname):not(.theme-custom) .footer-divider {
 
 /* Color Theme Support - Looks exactly like Light Mode but with colored background */
 body.theme-color {
-  background-color: var(--color-theme-bg, #4A90E2);
+  background-color: var(--color-theme-bg, #A53860);
   background-image: none;
   color: var(--text-light); /* Use white text like other modes */
   transition: var(--transition);

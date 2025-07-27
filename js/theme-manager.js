@@ -28,11 +28,11 @@
   let colorPreviewBtn;
   let colorPreviewBtnMobile; // Add this for mobile
   let colorResetBtn;
-  let selectedColor = '#4A90E2';
+  let selectedColor = '#A53860';
   
   // Color Theme Constants
   const COLOR_THEME_STORAGE_KEY = 'colorThemeBackground';
-  const DEFAULT_COLOR = '#4A90E2';
+  const DEFAULT_COLOR = '#A53860';
   
   // Initialize on document load
   document.addEventListener('DOMContentLoaded', () => {
