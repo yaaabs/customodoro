@@ -614,32 +614,30 @@ function toggleTimer() {
 function completeSession(playSound = true) {
     clearInterval(timerInterval);
     isRunning = false;
-    
-    // Hide burn-up tracker when session completes
     hideBurnupTracker();
-    
-    // Stop timer sound
     stopTimerSound();
-    
+
+    const workMinutes = Math.floor(currentSeconds / 60);
+
+    // Always record the session for the graph
+    if (typeof window.addCustomodoroSession === 'function') {
+        window.addCustomodoroSession('reverse', workMinutes);
+    }
+
     // Only play completion sound if the timer reached max time or playSound is true
     if (currentSeconds >= MAX_TIME || playSound) {
         window.playSound('complete');
-        
-        // Show mute alert
-        const workMinutes = Math.floor(currentSeconds / 60);
         showMuteAlert(`Great work! You worked for ${workMinutes} minutes and earned a ${earnedBreakTime}-minute break!`);
     }
-    
+
     // Calculate earned break
     earnedBreakTime = calculateBreakTime(currentSeconds);
-    
-    const workMinutes = Math.floor(currentSeconds / 60);
     showToast(`Great work! You worked for ${workMinutes} minutes and earned a ${earnedBreakTime}-minute break! 🎉`);
-    
+
     startButton.textContent = 'START';
-    switchMode('break'); // The switchMode function will detect this as an automatic transition
-    
-    // Auto-start the break if enabled in settings (using shared key)
+    switchMode('break');
+
+    // Auto-start the break if enabled in settings
     const autoBreaks = localStorage.getItem('autoBreak') !== 'false';
     if (earnedBreakTime > 0 && autoBreaks) {
         setTimeout(() => toggleTimer(), 500);
@@ -1173,3 +1171,491 @@ function addDragAndDropListeners(taskItem) {
 document.addEventListener('DOMContentLoaded', function () {
   Array.from(taskList.children).forEach(addDragAndDropListeners);
 });
+
+
+
+//-------------------------------------------CONTRIB CODES-------------------------------------------------------------//
+
+// === CENTRALIZED DATE HANDLING ===
+// All date operations go through these functions to ensure consistency
+
+// Get current PH date as a Date object
+function getPHToday() {
+  const now = new Date();
+  const phTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Manila" }));
+  // Create a clean date object in local timezone but with PH date values
+  return new Date(phTime.getFullYear(), phTime.getMonth(), phTime.getDate());
+}
+
+// Convert any date to YYYY-MM-DD string
+function formatDateKey(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+// Convert YYYY-MM-DD string back to Date object (always in local timezone)
+function parseDataKey(dateStrWithSuffix) {
+  const [year, month, day] = dateStrWithSuffix.split('-').map(num => parseInt(num));
+  return new Date(year, month - 1, day); // month is 0-indexed
+}
+
+// Format date for display in PH locale
+function formatDateDisplay(date) {
+  return date.toLocaleDateString('en-US', { 
+    month: 'long', 
+    day: 'numeric',
+    timeZone: 'Asia/Manila'
+  });
+}
+
+// === MAIN FUNCTIONS ===
+
+// Utility: get all available dates from localStorage stats
+function getAllAvailableDates() {
+  const stats = getStats();
+  const keys = Object.keys(stats).sort(); // oldest to newest
+  return keys.map(k => parseDataKey(k));
+}
+
+// Utility: get last 12 months of dates, PH timezone
+function getDatesForHeatmap() {
+  const todayPH = getPHToday();
+  console.log('Today PH:', formatDateKey(todayPH)); // Debug log
+  
+  const dates = [];
+  let d = new Date(todayPH);
+  d.setDate(d.getDate() - 364); // Go back 364 days for 365 total days
+  
+  for (let i = 0; i < 365; i++) {
+    dates.push(new Date(d));
+    d.setDate(d.getDate() + 1);
+  }
+  return dates;
+}
+
+// Get stats from localStorage
+function getStats() {
+  return JSON.parse(localStorage.getItem('customodoroStatsByDay') || '{}');
+}
+
+// GitHub-style dynamic color scale based on personal peak
+function getColor(minutes, maxMinutes, emptyColor = "#ebedf0") {
+  if (minutes === 0) return emptyColor; // Use theme-specific empty color
+  
+  // If there's no data yet, use minimum scale
+  if (maxMinutes === 0) return emptyColor;
+  
+  // Calculate quartiles based on personal max
+  const q1 = Math.max(1, Math.ceil(maxMinutes * 0.25));
+  const q2 = Math.max(1, Math.ceil(maxMinutes * 0.5));
+  const q3 = Math.max(1, Math.ceil(maxMinutes * 0.75));
+  
+  if (minutes >= maxMinutes) return "#56D364";  // Brightest (personal best)
+  if (minutes >= q3) return "#2EA043";          // High
+  if (minutes >= q2) return "#196C2E";          // Medium  
+  if (minutes >= q1) return "#033A16";          // Low
+  return emptyColor;                            // Minimal/No contribution
+}
+
+// Day labels (GitHub shows Mon, Wed, Fri)
+const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+// Month labels
+function getMonthLabels(dates) {
+  const labels = [];
+  let lastMonth = -1;
+  dates.forEach((date, i) => {
+    const month = date.getMonth();
+    if (month !== lastMonth) {
+      labels.push({ month: date.toLocaleString('default', { month: 'short' }), x: i });
+      lastMonth = month;
+    }
+  });
+  return labels;
+}
+
+function getThemeMode() {
+  // Try to detect theme from body class
+  const body = document.body;
+  if (body.classList.contains('theme-dark')) return 'dark';
+  if (body.classList.contains('theme-light')) return 'light';
+  // Fallback to localStorage
+  const theme = localStorage.getItem('siteTheme');
+  if (theme === 'dark') return 'dark';
+  return 'light';
+}
+
+// --- Add toggle logic ---
+let showAllData = false;
+
+function renderContributionGraph() {
+  const stats = getStats();
+  console.log('Current stats:', stats); // Debug log
+  
+  let dates;
+  if (showAllData) {
+    dates = getAllAvailableDates();
+    if (dates.length === 0) dates = getDatesForHeatmap();
+  } else {
+    dates = getDatesForHeatmap();
+  }
+
+  // Calculate max minutes for dynamic scaling
+  let maxMinutes = 0;
+  dates.forEach(date => {
+    const key = formatDateKey(date);
+    const dayStats = stats[key] || { total_minutes: 0 };
+    maxMinutes = Math.max(maxMinutes, dayStats.total_minutes || 0);
+  });
+  
+  console.log('Max minutes for scaling:', maxMinutes); // Debug log
+
+  // Arrange dates into weeks (columns, oldest to newest, left to right)
+  const weeks = [];
+  for (let i = 0; i < dates.length; i += 7) {
+    weeks.push(dates.slice(i, i + 7));
+  }
+
+  // Reverse weeks so latest week is on the right (GitHub style)
+  weeks.reverse();
+
+  // Day labels: get weekday for first date in each row
+  const firstDayOfWeek = weeks[0][0].getDay(); // 0=Sun, 1=Mon, ...
+  const dayLabelsAccurate = [];
+  for (let i = 0; i < 7; i++) {
+    dayLabelsAccurate.push(dayLabels[(firstDayOfWeek + i) % 7]);
+  }
+  
+  // Only show Mon, Wed, Fri (GitHub style)
+  const dayLabelIndexes = [];
+  for (let i = 0; i < 7; i++) {
+    if (dayLabelsAccurate[i] === "Mon" || dayLabelsAccurate[i] === "Wed" || dayLabelsAccurate[i] === "Fri") {
+      dayLabelIndexes.push(i);
+    }
+  }
+
+  // Sizing
+  const cellSize = 12, cellGap = 4;
+  const leftPad = 36, topPad = 22, bottomPad = 22;
+  const minGraphWidth = 420;
+  const width = Math.max(leftPad + weeks.length * (cellSize + cellGap) + 8, minGraphWidth);
+  const height = topPad + 7 * (cellSize + cellGap) + bottomPad;
+
+  // Detect theme
+  const mode = getThemeMode();
+  const body = document.body;
+  let bgColor = "#fff";
+  let borderColor = "#d0d7de";
+  let labelColor = "#57606a";
+  let titleColor = "#24292f";
+  let tooltipBg = "#24292f";
+  let tooltipText = "#fff";
+  let cellBorder = "#d0d7de";
+  let emptyCell = "#ebedf0";
+
+  if (mode === "dark") {
+    bgColor = "#1E1E1E";
+    borderColor = "#30363d";
+    labelColor = "#c9d1d9";
+    titleColor = "#fff";
+    tooltipBg = "#1E1E1E";
+    tooltipText = "#fff";
+    cellBorder = "#30363d";
+    emptyCell = "#21262d";
+  }
+
+  // Custom/Kimi no Nawa: glass style
+  if (body.classList.contains('theme-custom') || body.classList.contains('theme-yourname')) {
+    bgColor = "rgba(30,30,30,0.7)";
+    borderColor = "rgba(255,255,255,0.18)";
+    labelColor = "#fff";
+    titleColor = "#fff";
+    tooltipBg = "rgba(30,30,30,0.95)";
+    tooltipText = "#fff";
+    cellBorder = "rgba(255,255,255,0.18)";
+    emptyCell = "rgba(255,255,255,0.12)";
+  }
+
+  // Month labels (top, left to right, latest month rightmost)
+  const monthLabels = getMonthLabels(weeks.map(w => w[0]));
+
+  // SVG
+  let svg = `<svg width="${width}" height="${height}" style="font-family:sans-serif;background:${bgColor};min-width:${minGraphWidth}px;display:block;">`;
+
+  // Month labels (top)
+  monthLabels.forEach(label => {
+    const x = leftPad + label.x * (cellSize + cellGap);
+    svg += `<text x="${x}" y="15" fill="${labelColor}" font-size="11" font-weight="500">${label.month}</text>`;
+  });
+
+  // Day labels (left, accurate)
+  dayLabelIndexes.forEach(idx => {
+    const y = topPad + idx * (cellSize + cellGap) + cellSize / 2 + 3;
+    svg += `<text x="4" y="${y}" fill="${labelColor}" font-size="11" font-weight="500" text-anchor="start">${dayLabelsAccurate[idx]}</text>`;
+  });
+
+  // Store date objects for tooltip use
+  const dateMap = new Map();
+
+  // Cells (weeks: left=oldest, right=latest)
+  weeks.forEach((week, x) => {
+    week.forEach((date, y) => {
+      const key = formatDateKey(date);
+      const dayStats = stats[key] || { classic: 0, reverse: 0, break: 0, total_minutes: 0 };
+      const minutes = dayStats.total_minutes || 0;
+      const points = Math.floor(minutes / 5); // 5 minutes per point
+      const color = getColor(points, Math.floor(maxMinutes / 5), emptyCell);
+      
+      // Store the original date object for tooltip
+      dateMap.set(key, date);
+      
+      console.log(`Date: ${key}, Minutes: ${minutes}, Max: ${maxMinutes}, Color: ${color}`); // Debug log
+      
+      const cellX = leftPad + x * (cellSize + cellGap);
+      const cellY = topPad + y * (cellSize + cellGap);
+      svg += `<rect x="${cellX}" y="${cellY}" width="${cellSize}" height="${cellSize}" rx="3" fill="${color}" stroke="${cellBorder}" stroke-width="1" data-date="${key}" data-classic="${dayStats.classic}" data-reverse="${dayStats.reverse}" data-break="${dayStats.break}" data-minutes="${minutes}" style="cursor:pointer;"/>`;
+    });
+  });
+
+  svg += `</svg>`;
+
+  // Legend (GitHub style with theme-appropriate empty color)
+  const legend = `
+    <div style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;color:${labelColor};">
+      Less
+      <span style="display:inline-block;width:12px;height:12px;background:${emptyCell};border-radius:2px;border:1px solid ${cellBorder};"></span>
+      <span style="display:inline-block;width:12px;height:12px;background:#033A16;border-radius:2px;border:1px solid ${cellBorder};"></span>
+      <span style="display:inline-block;width:12px;height:12px;background:#196C2E;border-radius:2px;border:1px solid ${cellBorder};"></span>
+      <span style="display:inline-block;width:12px;height:12px;background:#2EA043;border-radius:2px;border:1px solid ${cellBorder};"></span>
+      <span style="display:inline-block;width:12px;height:12px;background:#56D364;border-radius:2px;border:1px solid ${cellBorder};"></span>
+      More
+    </div>
+  `;
+
+  // Place toggle above graph
+  const container = document.getElementById('contribution-graph');
+  if (container) {
+    container.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div style="font-weight:600;color:${titleColor};font-size:15px;">Productivity Graph</div>
+        <button id="toggle-graph-range" style="font-size:12px;padding:4px 10px;border-radius:6px;border:1px solid #d0d7de;background:#f6f8fa;cursor:pointer;">
+          ${showAllData ? 'Show Last 12 Months' : 'Show All'}
+        </button>
+      </div>
+      <div style="font-size:12px;color:${labelColor};margin-bottom:8px;"> 1 Focus Point = 5 minutes of work. The brightest shade marks your personal peak; Hover for details. (This Productivity Graph is inspired by GitHub's contribution calendar.)</div>
+      <div class="contribution-graph-scroll" style="overflow-x:auto;overflow-y:hidden;position:relative;padding:0 0 32px 0;">
+        <div style="background:${bgColor};border-radius:6px;border:1px solid ${borderColor};box-shadow:0 1px 4px rgba(27,31,35,0.04);padding:8px 0 0 0;display:inline-block;min-width:${minGraphWidth}px;">
+          ${svg}
+        </div>
+        <div id="contribution-tooltip" style="position:absolute;pointer-events:none;z-index:10000;display:none;background:${tooltipBg};color:${tooltipText};border-radius:6px;padding:7px 12px;font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,0.18);border:1px solid #1b1f23;"></div>
+      </div>
+      ${legend}
+    `;
+    
+    // Add clean scrollbar style
+    const style = document.createElement('style');
+    style.textContent = `
+      .contribution-graph-scroll::-webkit-scrollbar {
+        height: 8px;
+        background: transparent;
+      }
+      .contribution-graph-scroll::-webkit-scrollbar-thumb {
+        background: #e1e4e8;
+        border-radius: 4px;
+      }
+      .contribution-graph-scroll {
+        scrollbar-width: thin;
+        scrollbar-color: #e1e4e8 #fff;
+      }
+    `;
+    container.appendChild(style);
+
+    // NEW APPROACH: Tooltip logic with better positioning
+    const tooltip = container.querySelector('#contribution-tooltip');
+    container.querySelectorAll('rect').forEach(rect => {
+      rect.addEventListener('mouseenter', e => {
+        const d = rect.dataset;
+        const dateKey = d.date;
+        
+        // Use the original date object we stored
+        const dateObj = dateMap.get(dateKey);
+        const day = dateObj.getDate();
+        const month = dateObj.toLocaleString('en-US', { month: 'long' });
+        const dateStrWithSuffix = `${month} ${day}${getOrdinalSuffix(day)}`;
+        
+        console.log(`Tooltip: Key=${dateKey}, Date=${dateObj}, Display=${dateStrWithSuffix}`); // Debug
+        
+const classicSessions = parseInt(d.classic) || 0;
+const reverseSessions = parseInt(d.reverse) || 0;
+const breakSessions = parseInt(d.break) || 0;
+const totalMinutes = parseInt(d.minutes) || 0;
+const totalPoints = Math.floor(totalMinutes / 5);
+
+// Singular/plural helpers
+function pluralize(count, singular, plural) {
+  return count === 1 ? singular : plural;
+}
+
+function getOrdinalSuffix(day) {
+  if (day > 3 && day < 21) return 'th';
+  switch (day % 10) {
+    case 1:  return 'st';
+    case 2:  return 'nd';
+    case 3:  return 'rd';
+    default: return 'th';
+  }
+}
+
+// Time formatting
+function formatMinutes(mins) {
+  if (mins < 60) {
+    return `${mins} ${pluralize(mins, 'min', 'mins')}`;
+  } else {
+    const hrs = mins / 60;
+    return `${mins} ${pluralize(mins, 'min', 'mins')} (${hrs.toFixed(2)} ${pluralize(hrs, 'hr', 'hrs')})`;
+  }
+}
+
+let tip = '';
+if (totalPoints === 0) {
+  tip = `No contributions on ${dateStrWithSuffix}.`;
+} else {
+  tip = `<b>${totalPoints} ${pluralize(totalPoints, 'Focus Point', 'Focus Points')}</b> on ${dateStrWithSuffix}<br>`;
+  if (classicSessions > 0) tip += `${classicSessions} ${pluralize(classicSessions, 'Classic Pomodoro', 'Classic Pomodoros')}<br>`;
+  if (reverseSessions > 0) tip += `${reverseSessions} ${pluralize(reverseSessions, 'Reverse Pomodoro', 'Reverse Pomodoros')}<br>`;
+  if (breakSessions > 0) tip += `${breakSessions} ${pluralize(breakSessions, 'Break', 'Breaks')}<br>`;
+  tip += `<br><b>⏱ ${formatMinutes(totalMinutes)}</b><br>`;
+  tip = tip.replace(/<br>$/, '');
+}
+tooltip.innerHTML = tip;
+tooltip.style.display = 'block';
+        
+        // Better positioning - avoid bottom rows being cut off
+        const rectBox = rect.getBoundingClientRect();
+        const containerBox = container.getBoundingClientRect();
+        const scrollContainer = container.querySelector('.contribution-graph-scroll');
+        const scrollBox = scrollContainer.getBoundingClientRect();
+        
+        // Calculate position relative to scroll container
+        let tooltipX = rectBox.left - scrollBox.left + cellSize + 16;
+        let tooltipY = rectBox.top - scrollBox.top - 8;
+        
+        // Check if tooltip would go below visible area
+        const tooltipHeight = 60; // Estimated tooltip height
+        if (tooltipY + tooltipHeight > scrollBox.height) {
+          // Position above the cell instead
+          tooltipY = rectBox.top - scrollBox.top - tooltipHeight - 8;
+        }
+        
+        // Check if tooltip would go off right edge
+        const tooltipWidth = 200; // Estimated tooltip width
+        if (tooltipX + tooltipWidth > scrollBox.width) {
+          // Position to the left of the cell instead
+          tooltipX = rectBox.left - scrollBox.left - tooltipWidth - 8;
+        }
+        
+        tooltip.style.left = tooltipX + 'px';
+        tooltip.style.top = tooltipY + 'px';
+      });
+      rect.addEventListener('mouseleave', () => {
+        tooltip.style.display = 'none';
+      });
+    });
+
+    // Add toggle event
+    const toggleBtn = container.querySelector('#toggle-graph-range');
+    if (toggleBtn) {
+      toggleBtn.onclick = function() {
+        showAllData = !showAllData;
+        renderContributionGraph();
+      };
+    }
+  }
+}
+
+// Sync graph with theme changes
+function setupThemeSync() {
+  const body = document.body;
+  const observer = new MutationObserver(() => {
+    renderContributionGraph();
+  });
+  observer.observe(body, { attributes: true, attributeFilter: ['class'] });
+
+  window.addEventListener('storage', function(e) {
+    if (e.key === 'siteTheme') {
+      renderContributionGraph();
+    }
+  });
+}
+
+// Call on page load
+document.addEventListener('DOMContentLoaded', function() {
+  renderContributionGraph();
+  setupThemeSync();
+});
+
+// Expose update function for other scripts
+window.renderContributionGraph = renderContributionGraph;
+
+// Session management using centralized date functions
+window.addCustomodoroSession = function(type, minutes) {
+  const key = formatDateKey(getPHToday()); // Use centralized date handling
+  console.log('Adding session for date:', key); // Debug log
+  
+  const stats = getStats();
+  if (!stats[key]) stats[key] = { classic: 0, reverse: 0, break: 0, total_minutes: 0 };
+  
+  if (type === 'classic') stats[key].classic++;
+  if (type === 'reverse') stats[key].reverse++;
+  if (type === 'break') stats[key].break++;
+  stats[key].total_minutes += minutes;
+  
+  localStorage.setItem('customodoroStatsByDay', JSON.stringify(stats));
+  console.log('Updated stats:', stats[key]); // Debug log
+  renderContributionGraph();
+};
+
+// TESTING FUNCTION: Add test data for today
+window.addTestSession = function() {
+  window.addCustomodoroSession('classic', 1);
+  console.log('Added 1 minute test session for today');
+};
+
+
+
+
+
+
+
+// Add this anywhere in your script.js:
+window.testContributionConnection = function() {
+    console.log('🧪 Testing contribution connection...');
+    if (typeof window.addCustomodoroSession === 'function') {
+        window.addCustomodoroSession('classic', 1);
+        console.log('✅ Test session added!');
+    } else {
+        console.error('❌ Function not available!');
+    }
+};
+
+// 4. LOAD ORDER CHECK - Add this to see script loading order:
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📄 Script.js DOM loaded');
+    console.log('🔗 Contribution functions available:', {
+        addSession: typeof window.addCustomodoroSession === 'function',
+        renderGraph: typeof window.renderContributionGraph === 'function'
+    });
+});
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (window.renderContributionGraph) {
+    window.renderContributionGraph();
+  }
+  if (window.setupThemeSync) {
+    window.setupThemeSync();
+  }
+});
+
