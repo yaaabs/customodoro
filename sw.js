@@ -1,59 +1,141 @@
-const CACHE_NAME = "customodoro-static-v2"; // Use a stable name to avoid re-downloading
+const CACHE_NAME = "customodoro-static-v3"; // Increment this for updates
+const ASSETS_CACHE = "customodoro-assets-v1";
 const urlsToCache = [
   "/", "/index.html", "/reverse.html"
 ];
 
+let isFirstInstall = false;
+
 // Install: cache only the HTML essentials
 self.addEventListener("install", (event) => {
-  self.skipWaiting();
+  console.log('🔧 Service Worker installing...');
+  
+  // Check if this is a first install
   event.waitUntil(
-    caches.open(CACHE_NAME).then(async (cache) => {
+    caches.keys().then((cacheNames) => {
+      isFirstInstall = cacheNames.length === 0;
+      return caches.open(CACHE_NAME);
+    }).then(async (cache) => {
       try {
         await cache.addAll(urlsToCache);
         console.log("✅ HTML cached successfully.");
       } catch (err) {
         console.warn("⚠️ Failed to cache core HTML", err);
       }
+    }).then(() => {
+      // Skip waiting to activate immediately
+      return self.skipWaiting();
     })
   );
 });
 
-// Activate: clean up old caches if needed
+// Activate: clean up old caches and notify clients
 self.addEventListener("activate", (event) => {
+  console.log('🚀 Service Worker activating...');
+  
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
-        keys
-          .filter((key) => key !== CACHE_NAME)
-          .map((key) => caches.delete(key))
-      )
-    ).then(() => {
+    // Clean up old caches
+    caches.keys().then((keys) => {
+      const oldCaches = keys.filter((key) => 
+        key !== CACHE_NAME && key !== ASSETS_CACHE
+      );
+      
+      return Promise.all(
+        oldCaches.map((key) => {
+          console.log('🗑️ Deleting old cache:', key);
+          return caches.delete(key);
+        })
+      );
+    }).then(() => {
       console.log("✅ Activated and old caches cleared");
+      
+      // Only notify about updates if this isn't the first install
+      if (!isFirstInstall) {
+        return self.clients.matchAll().then((clients) => {
+          clients.forEach((client) => {
+            client.postMessage({
+              type: 'NEW_VERSION_AVAILABLE',
+              message: 'A new version is available'
+            });
+          });
+          console.log('📢 Notified clients about update');
+        });
+      } else {
+        console.log('👋 First install - no update notification needed');
+      }
+    }).then(() => {
       return self.clients.claim();
     })
   );
 });
 
-// Fetch: network-first for HTML, else pass-through
-self.addEventListener("fetch", (event) => {
-  if (event.request.mode === "navigate") {
-    event.respondWith(
-      fetch(event.request).catch(() => caches.match(event.request))
+// Handle messages from main thread
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'HARD_REFRESH') {
+    console.log('💥 Hard refresh requested');
+    
+    // Clear all caches for hard refresh
+    event.waitUntil(
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            console.log('🗑️ Deleting cache:', cacheName);
+            return caches.delete(cacheName);
+          })
+        );
+      }).then(() => {
+        // Force refresh all clients
+        return self.clients.matchAll().then((clients) => {
+          clients.forEach((client) => {
+            client.postMessage({
+              type: 'FORCE_RELOAD',
+              message: 'Hard refresh initiated'
+            });
+          });
+        });
+      })
     );
   }
 });
 
-self.addEventListener('fetch', event => {
-  if (event.request.destination === 'image' || event.request.destination === 'audio') {
+// Combined fetch handler
+self.addEventListener("fetch", (event) => {
+  const { request } = event;
+  
+  // Handle navigation requests (HTML pages)
+  if (request.mode === "navigate") {
     event.respondWith(
-      caches.open('assets-v1').then(cache =>
-        cache.match(event.request).then(response =>
-          response || fetch(event.request).then(networkResponse => {
-            cache.put(event.request, networkResponse.clone());
+      fetch(request)
+        .then(response => response)
+        .catch(() => caches.match(request))
+    );
+    return;
+  }
+  
+  // Handle images and audio with caching
+  if (request.destination === 'image' || request.destination === 'audio') {
+    event.respondWith(
+      caches.open(ASSETS_CACHE).then(cache =>
+        cache.match(request).then(response => {
+          if (response) {
+            return response;
+          }
+          
+          return fetch(request).then(networkResponse => {
+            // Only cache successful responses
+            if (networkResponse.status === 200) {
+              cache.put(request, networkResponse.clone());
+            }
             return networkResponse;
-          })
-        )
+          }).catch(() => {
+            // Return a fallback if needed
+            return new Response('Asset not available', { status: 404 });
+          });
+        })
       )
     );
+    return;
   }
+  
+  // Let other requests pass through normally
 });

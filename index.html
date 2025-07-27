@@ -1057,27 +1057,200 @@
 
 
 <script>
+// Service Worker Registration and Update Handler
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').then((reg) => {
-      console.log("✅ SW registered");
-
-      reg.onupdatefound = () => {
-        const newWorker = reg.installing;
-        newWorker.onstatechange = () => {
-          if (newWorker.state === 'installed') {
-            if (navigator.serviceWorker.controller) {
-              // Only prompt if there's already a SW controlling the page
-              const reload = confirm("🔁 A new version of Customodoro is available. Reload now?");
-              if (reload) window.location.reload();
-            }
-          }
-        };
-      };
-    }).catch((err) => {
-      console.error("❌ SW registration failed:", err);
+  navigator.serviceWorker.register('/sw.js')
+    .then((registration) => {
+      console.log('✅ Service Worker registered:', registration);
+      
+      // Listen for service worker updates
+      registration.addEventListener('updatefound', () => {
+        console.log('🔄 New service worker found, installing...');
+      });
+    })
+    .catch((error) => {
+      console.error('❌ Service Worker registration failed:', error);
     });
+
+  // Listen for messages from service worker
+  navigator.serviceWorker.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'NEW_VERSION_AVAILABLE') {
+      showUpdatePrompt();
+    }
+    
+    if (event.data && event.data.type === 'FORCE_RELOAD') {
+      // Perform hard refresh - clears all caches and reloads
+      window.location.reload(true);
+    }
   });
+}
+
+function showUpdatePrompt() {
+  // Prevent multiple modals
+  if (document.getElementById('updateModal')) {
+    return;
+  }
+  
+  // Enhanced update prompt with hard refresh option
+  const updateModal = document.createElement('div');
+  updateModal.id = 'updateModal';
+  updateModal.innerHTML = `
+    <div style="
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    ">
+      <div style="
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        max-width: 400px;
+        text-align: center;
+      ">
+        <div style="font-size: 48px; margin-bottom: 16px;">🔁</div>
+        <h3 style="margin: 0 0 16px 0; color: #333;">Update Available!</h3>
+        <p style="margin: 0 0 24px 0; color: #666; line-height: 1.5;">
+          A new version of Customodoro is available with bug fixes and improvements.
+        </p>
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+          <button id="softRefresh" style="
+            background: #007AFF;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+          ">Quick Reload</button>
+          <button id="hardRefresh" style="
+            background: #FF3B30;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+          ">Hard Refresh</button>
+          <button id="laterBtn" style="
+            background: #8E8E93;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+          ">Later</button>
+        </div>
+        <p style="font-size: 12px; color: #999; margin-top: 16px;">
+          Hard refresh preserves your productivity data but clears cache
+        </p>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(updateModal);
+  
+  // Handle button clicks
+  document.getElementById('softRefresh').onclick = () => {
+    document.body.removeChild(updateModal);
+    window.location.reload();
+  };
+  
+  document.getElementById('hardRefresh').onclick = () => {
+    document.body.removeChild(updateModal);
+    performHardRefresh();
+  };
+  
+  document.getElementById('laterBtn').onclick = () => {
+    document.body.removeChild(updateModal);
+  };
+}
+
+function performHardRefresh() {
+  // Show loading indicator
+  const loadingDiv = document.createElement('div');
+  loadingDiv.innerHTML = `
+    <div style="
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10001;
+      color: white;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    ">
+      <div style="text-align: center;">
+        <div style="font-size: 48px; margin-bottom: 16px;">⚡</div>
+        <h3>Hard Refreshing...</h3>
+        <p>Preserving your productivity data...</p>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(loadingDiv);
+  
+  // Clear browser caches via service worker
+  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({
+      type: 'HARD_REFRESH'
+    });
+  }
+  
+  // Preserve important user data before clearing storage
+  try {
+    // Keys to preserve (add any other important data keys here)
+    const preservedKeys = [
+      'customodoroStatsByDay',    // Productivity graph data
+      'customodoroUser',          // User profile data
+      'customodoroSettings',      // User settings
+      'pomodoroTasks',           // User tasks
+      'customodoroTheme',        // Selected theme
+      'customodoroPreferences',  // Other user preferences
+      'customodoroProgress',     // Any progress tracking
+      'customodoroAchievements'  // User achievements
+    ];
+    
+    // Backup preserved data
+    const preservedData = {};
+    preservedKeys.forEach(key => {
+      const value = localStorage.getItem(key);
+      if (value !== null) {
+        preservedData[key] = value;
+      }
+    });
+    
+    // Clear all storage
+    localStorage.clear();
+    sessionStorage.clear();
+    
+    // Restore preserved data
+    Object.keys(preservedData).forEach(key => {
+      localStorage.setItem(key, preservedData[key]);
+    });
+    
+    console.log('✅ Preserved user data during hard refresh:', Object.keys(preservedData));
+    
+  } catch (e) {
+    console.warn('Could not clear/restore storage:', e);
+  }
+  
+  // Force hard reload after a brief delay
+  setTimeout(() => {
+    window.location.reload(true);
+  }, 1000);
 }
 </script>
 
