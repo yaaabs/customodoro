@@ -3077,6 +3077,18 @@ body.long-break-mode #add-task-btn.secondary-btn {
   box-shadow: 0 2px 10px rgba(0,0,0,0.07);
 }
 
+body.reverse-mode #add-task-btn.secondary-btn {
+  background: var(--reverse-color, #393E46);
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+}
+
+body.break-mode #add-task-btn.secondary-btn {
+  background: var(--break-color, #393E46);
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+}
+
 body.theme-color #add-task-btn.secondary-btn {
   background: var(--color-theme-bg, #A53860);
   color: #fff;
@@ -3097,6 +3109,8 @@ body.theme-rain #add-task-btn.secondary-btn {
 body.pomodoro-mode #add-task-btn.secondary-btn:hover,
 body.short-break-mode #add-task-btn.secondary-btn:hover,
 body.long-break-mode #add-task-btn.secondary-btn:hover,
+body.reverse-mode #add-task-btn.secondary-btn:hover,
+body.break-mode #add-task-btn.secondary-btn:hover,
 body.theme-color #add-task-btn.secondary-btn:hover {
   filter: brightness(1.1);
   box-shadow: 0 4px 16px rgba(0,0,0,0.10);
