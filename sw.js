@@ -1,4 +1,4 @@
-const CACHE_NAME = "customodoro-static-v1"; // Use a stable name to avoid re-downloading
+const CACHE_NAME = "customodoro-static-v2"; // Use a stable name to avoid re-downloading
 const urlsToCache = [
   "/", "/index.html", "/reverse.html"
 ];
