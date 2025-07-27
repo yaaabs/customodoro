@@ -1,4 +1,4 @@
-const CACHE_NAME = "customodoro-static-v3.1"; // v3 → v3.1
+const CACHE_NAME = "customodoro-static-v4"; // 4
 const ASSETS_CACHE = "customodoro-assets-v1";
 const urlsToCache = [
   "/", "/index.html", "/reverse.html"
