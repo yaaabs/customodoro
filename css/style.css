@@ -3055,3 +3055,59 @@ body.modal-open {
   max-height: 90vh;
   overflow-y: auto;
 }
+
+/* Add Task Button - Unified Theme Styling */
+
+/* Light mode themes (pomodoro, break modes, color theme) - use theme colors */
+body.pomodoro-mode #add-task-btn.secondary-btn {
+  background: var(--focus-color);
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+}
+
+body.short-break-mode #add-task-btn.secondary-btn {
+  background: var(--short-break-color);
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+}
+
+body.long-break-mode #add-task-btn.secondary-btn {
+  background: var(--long-break-color);
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+}
+
+body.theme-color #add-task-btn.secondary-btn {
+  background: var(--color-theme-bg, #A53860);
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+}
+
+/* Dark mode themes (dark, kimi no nawa, custom, gif) - use white background */
+body.theme-dark #add-task-btn.secondary-btn,
+body.theme-yourname #add-task-btn.secondary-btn,
+body.theme-custom #add-task-btn.secondary-btn,
+body.theme-rain #add-task-btn.secondary-btn {
+  background: #ffffff;
+  color: #000000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Hover states for light mode themes */
+body.pomodoro-mode #add-task-btn.secondary-btn:hover,
+body.short-break-mode #add-task-btn.secondary-btn:hover,
+body.long-break-mode #add-task-btn.secondary-btn:hover,
+body.theme-color #add-task-btn.secondary-btn:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+}
+
+/* Hover states for dark mode themes */
+body.theme-dark #add-task-btn.secondary-btn:hover,
+body.theme-yourname #add-task-btn.secondary-btn:hover,
+body.theme-custom #add-task-btn.secondary-btn:hover,
+body.theme-rain #add-task-btn.secondary-btn:hover {
+  background: #f0f0f0;
+  color: #000000;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.20);
+}

@@ -1639,7 +1639,7 @@ function renderContributionGraph() {
   if (container) {
     container.innerHTML = `
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-        <div style="font-weight:600;color:${titleColor};font-size:15px;">Productivity Graph</div>
+        <div style="font-weight:600;color:${titleColor};font-size:20px;">Productivity Graph</div>
         <button id="toggle-graph-range" style="font-size:12px;padding:4px 10px;border-radius:6px;border:1px solid #d0d7de;background:#f6f8fa;cursor:pointer;">
           ${showAllData ? 'Show Last 12 Months' : 'Show All'}
         </button>
