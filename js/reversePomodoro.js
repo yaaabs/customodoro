@@ -1444,7 +1444,7 @@ function renderContributionGraph() {
           ${showAllData ? 'Show Last 12 Months' : 'Show All'}
         </button>
       </div>
-      <div style="font-size:12px;color:${labelColor};margin-bottom:8px;"> 1 Focus Point = 5 minutes of work. The brightest shade marks your personal peak; Hover for details. (This Productivity Graph is inspired by GitHub's contribution calendar.)</div>
+      <div style="font-size:12px;color:${labelColor};margin-bottom:8px;"><b>1 Focus Point = 5 minutes of work.</b> The brightest shade marks your personal peak; Hover for details. <em>(This Productivity Graph is inspired by GitHub's contribution calendar.)</em></div>
       <div class="contribution-graph-scroll" style="overflow-x:auto;overflow-y:hidden;position:relative;padding:0 0 32px 0;">
         <div style="background:${bgColor};border-radius:6px;border:1px solid ${borderColor};box-shadow:0 1px 4px rgba(27,31,35,0.04);padding:8px 0 0 0;display:inline-block;min-width:${minGraphWidth}px;">
           ${svg}

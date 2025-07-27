@@ -24,14 +24,14 @@
 
 <!-- Essential CSS (load immediately) -->
 <!-- UPDATE! -->
-<link rel="stylesheet" href="css/style.css?v=2.6">
+<link rel="stylesheet" href="css/style.css?v=2.6.1">
 <link rel="stylesheet" href="css/mini-music-player.css?v=2.3.5">
 <link rel="stylesheet" href="css/focus-mode.css?v=2.3.5">
 <link rel="stylesheet" href="css/lockedin-mode.css?v=2.3.5">
 <link rel="stylesheet" href="css/bgm-player.css?v=2.3.5">
 <link rel="stylesheet" href="css/timer-sound.css?v=2.3.5">
 <link rel="stylesheet" href="css/about-modal.css?v=2.3.5">
-<link rel="stylesheet" href="css/radial-menu.css?v=2.3.5">
+<link rel="stylesheet" href="css/radial-menu.css?v=2.6.1">
 
 <style>
 /* Update notification styles */
@@ -256,7 +256,7 @@
       <div class="footer-content">
         <div class="footer-brand">
           © 2025 <strong>Customodoro</strong>
-          <span class="footer-version">v2.4.1</span>
+          <span class="footer-version">v2.6.1</span>
           • Handcrafted by <strong><em>YabuTech</em></strong>
         </div>
         <nav class="footer-links">
@@ -1006,7 +1006,7 @@
     </div>
   </div>
 </div>
-
+<!-- UPDATE! -->
 <!-- Update Modal -->
 <div class="update-modal-overlay" id="update-modal-overlay">
   <div class="update-modal">
@@ -1015,14 +1015,14 @@
       <button class="update-modal-close" id="update-modal-close" aria-label="Close">&times;</button>
     </div>
     <div class="update-modal-content">
-      <div class="update-changelog-title">v2.4.0 <span class="update-date">(July 26, 2025)</span></div>
+      <div class="update-changelog-title">v2.6.1 <span class="update-date">(July 28, 2025)</span></div>
 
       <div class="update-info-box">
 <ul>
-  <li><b>🆕 New Feature:</b> Descriptions for Tasks + improved UI/UX</li>
-  <li><b>🖱️ Bonus:</b> You can now drag and drop tasks to reorder them easily!</li>
-  <li><b>💜 Special Thanks:</b> to "Duck Paddling" for suggesting this feature!</li>
-  <li><b>🛠️ In Consideration:</b> Gamma Waves playlist, productivity graphs, and Spotify/YouTube linking</li>
+  <li><b>🆕 New:</b> Task descriptions + UI tweaks</li>
+  <li><b>📊 Bonus:</b> Productivity Graph (GitHub-style)</li>
+  <li><b>💜 Thanks:</b> to "Duck Paddling" for the descriptions feature!</li>
+  <li><b>🛠️ In Consideration:</b> Gamma Waves playlist, streak, and Spotify/YouTube linking</li>
 </ul>
 
       </div>
@@ -1045,11 +1045,11 @@
 <!-- UPDATE!) -->
 
 <script src="js/update-modal.js?v=2.3.5"></script>
-<script src="js/script.js?v=2.6"></script>
-<script src="js/settings.js?v=2.3.5"></script>
+<script src="js/script.js?v=2.6.1"></script>
+<script src="js/settings.js?v=2.6.1"></script>
 <script src="js/fullscreen.js?v=2.3.5"></script>
 <script src="js/lockedin-mode.js?v=2.3.5"></script>
-<script src="js/theme-manager.js?v=2.3.5"></script>
+<script src="js/theme-manager.js?v=2.6.1"></script>
 <script src="js/locked-in-info-modal.js?v=2.3.5"></script>
 <script src="js/focus-mode.js?v=2.3.5"></script>
 <script src="js/radial-menu.js?v=2.3.5"></script>
@@ -1058,7 +1058,7 @@
 <script src="js/about-modal.js?v=2.3.5"></script>
 
 
-
+<!-- UPDATE!) -->
 <script>
 // Service Worker Registration and Update Handler
 if ('serviceWorker' in navigator) {
@@ -1161,21 +1161,22 @@ function showUpdatePrompt() {
         <p style="margin: 0 0 24px 0; color: #666; line-height: 1.5; font-size: 15px;">
           A new version of Customodoro is ready with improvements and bug fixes. Your productivity data will be safely preserved.
         </p>
-        <button id="updateBtn" style="
-          background: #007AFF;
-          color: white;
-          border: none;
-          padding: 16px 32px;
-          border-radius: 12px;
-          cursor: pointer;
-          font-weight: 600;
-          font-size: 16px;
-          width: 100%;
-          max-width: 200px;
-          transition: all 0.2s ease;
-        " onmouseover="this.style.background='#0056CC'" onmouseout="this.style.background='#007AFF'">
-          Ok, cool! 🎉
-        </button>
+        <div style="display: flex; justify-content: center;">
+          <button id="updateBtn" style="
+            background: #007AFF;
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            max-width: 200px;
+            transition: all 0.2s ease;
+          " onmouseover="this.style.background='#0056CC'" onmouseout="this.style.background='#007AFF'">
+            Ok, cool! 🎉
+          </button>
+        </div>
       </div>
     </div>
   `;
@@ -1316,6 +1317,9 @@ try {
   }, 2000); // Longer delay to ensure SW processes messages
 }
 </script>
+
+
+
 
 
 
