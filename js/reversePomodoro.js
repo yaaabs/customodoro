@@ -372,9 +372,16 @@ function updateInfoSection() {
 
 // Update timer display
 function updateDisplay() {
-    const minutes = Math.floor(currentSeconds / 60);
-    const seconds = currentSeconds % 60;
-    const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    // NEW: Show H:MM:SS if >= 1 hour, else MM:SS
+    let hours = Math.floor(currentSeconds / 3600);
+    let minutes = Math.floor((currentSeconds % 3600) / 60);
+    let seconds = currentSeconds % 60;
+    let timeString;
+    if (hours > 0) {
+        timeString = `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    } else {
+        timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
     timerElement.textContent = timeString;
     
     // Update progress bar based on mode
@@ -429,11 +436,18 @@ function updateBurnupTracker() {
         }
         
         // Update spent time
-        if (burnupSpentTime) {
-            const minutes = Math.floor(elapsedTime / 60);
-            const seconds = elapsedTime % 60;
-            burnupSpentTime.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
+if (burnupSpentTime) {
+    const hours = Math.floor(elapsedTime / 3600);
+    const minutes = Math.floor((elapsedTime % 3600) / 60);
+    const seconds = elapsedTime % 60;
+    let spentString;
+    if (hours > 0) {
+        spentString = `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    } else {
+        spentString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+    burnupSpentTime.textContent = spentString;
+}
         
         // Update percentage
         if (burnupPercentage) {
