@@ -6,6 +6,7 @@
 
 [![Live Demo](https://img.shields.io/badge/🚀%20Live%20Demo-customodoro.vercel.app-blue?style=for-the-badge)](https://customodoro.vercel.app)
 [![PWA Ready](https://img.shields.io/badge/📱%20PWA-Ready-green?style=for-the-badge)](https://customodoro.vercel.app)
+
 [![Made with Love](https://img.shields.io/badge/Made%20with-❤️-red?style=for-the-badge)](https://github.com)
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 [![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://www.w3.org/Style/CSS/Overview.en.html)
