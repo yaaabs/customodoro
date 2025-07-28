@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+
+# Block access to sensitive files
+Disallow: /css/
+Disallow: /js/
+Disallow: /favicon/
+Disallow: /*.json
+
+# Allow important files for SEO
+Allow: /manifest.json
+Allow: /sitemap.xml
+
+# Sitemap location
+Sitemap: https://customodoro.vercel.app/sitemap.xml

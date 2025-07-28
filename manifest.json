@@ -1,22 +1,47 @@
 {
-  "name": "Customodoro Timer",
+  "name": "Customodoro - Custom Pomodoro Timer & Productivity App",
   "short_name": "Customodoro",
   "start_url": "./",
   "scope": "./",
-  "description": "A customizable Pomodoro timer with a focus on user experience and productivity.",
+  "description": "Customodoro is a customizable Pomodoro timer app that helps boost productivity and focus. Track your work sessions, set custom intervals, and achieve your goals with our modern productivity timer.",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "background_color": "#000000",
   "theme_color": "#e53935",
+  "categories": ["productivity", "utilities", "lifestyle"],
+  "lang": "en-US",
+  "dir": "ltr",
   "icons": [
     {
       "src": "favicon/android-chrome-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "favicon/android-chrome-512x512.png",
       "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "favicon/apple-touch-icon.png",
+      "sizes": "180x180",
       "type": "image/png"
+    },
+    {
+      "src": "favicon/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "images/screenshot-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Customodoro mobile interface"
     }
   ]
 }
