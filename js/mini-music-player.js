@@ -12,6 +12,11 @@
 
   // Track-specific album art mapping
       const TRACK_ALBUM_ART_MAP = {
+      
+      // Gamma Waves 40hz
+      '40 Hz Brain Waves': 'images/album-art/headspace.png',
+      'Awakened Mind': 'images/album-art/awakened mind.jpg',
+      'Headspace': 'images/album-art/40 hz brain waves.jpg',
 
       'Clear Skies': 'images/album-art/clear skies.jpg',
       'Gentle Ocean': 'images/album-art/gentle ocean.jpg',

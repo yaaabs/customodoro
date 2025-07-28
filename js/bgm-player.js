@@ -67,6 +67,7 @@
 
     // Load playlists with the actual audio files
     playlists = {
+      // DEEP FOCUS PLAYLIST
       'deep-focus': [
         { title: 'Clear Skies', artist: 'Aqua Scholar', src: 'audio/BGM/Deep_Focus_Study_Playlist/Clear Skies - Aqua Scholar.mp3' },
         { title: 'Gentle Ocean', artist: 'Sonic Strokes, Nahh Chill, Aqua Scholar', src: 'audio/BGM/Deep_Focus_Study_Playlist/Gentle Ocean - Sonic Strokes.mp3' },
@@ -75,6 +76,8 @@
       'ambient-long': [
         { title: 'Lofi Hip-hop Chill Beats', artist: 'Various Artists', src: 'audio/BGM/Lofi Hip-hop Chill Beats.mp3' }
       ],
+
+      // NIKI PLAYLIST
       'smile-demons': [
         {
           title: 'Anaheim',
@@ -197,10 +200,18 @@
           src: 'audio/BGM/NIKI/Vintage.mp3'
         }
       ],
-      // Add new jazz playlist
+
+      // JAZZ PLAYLIST
       'happy-jazz': [
         { title: 'Happy Swing Jazz Piano', artist: 'Daily Piano Music Youtube', src: 'audio/BGM/Happy Swing Jazz Piano.mp3' }
-      ]
+      ],
+
+      // GAMMA WAVES PLAYLIST
+      'gamma-waves': [
+    { title: 'Headspace', artist: 'Gamma Waves', src: 'audio/BGM/Gamma_Waves/Headspace.mp3' },
+    { title: 'Awakened Mind', artist: 'Gamma Waves', src: 'audio/BGM/Gamma_Waves/Awakened Mind.mp3' },
+    { title: '40 Hz Brain Waves', artist: 'Gamma Waves', src: 'audio/BGM/Gamma_Waves/40 Hz Brain Waves.mp3' },
+  ]
     };
 
     // Load settings from localStorage
@@ -1048,6 +1059,11 @@
     // Track-specific album art mapping
     const TRACK_ALBUM_ART_MAP = {
 
+      // Gamma Waves 40hz
+      '40 Hz Brain Waves': 'images/album-art/headspace.png',
+      'Awakened Mind': 'images/album-art/awakened mind.jpg',
+      'Headspace': 'images/album-art/40 hz brain waves.jpg',
+
       'Clear Skies': 'images/album-art/clear skies.jpg',
       'Gentle Ocean': 'images/album-art/gentle ocean.jpg',
       'Venusian Vespers': 'images/album-art/venusian vespers.jpg',
@@ -1112,11 +1128,17 @@
       // 'deep-focus': 'images/album-art/focus.png', // Remove or replace
       'ambient-long': 'images/album-art/ambient.jpg',
       'smile-demons': 'images/album-art/niki.png',
-      'happy-jazz': 'images/album-art/Happy Jazz.jpg'
+      'happy-jazz': 'images/album-art/Happy Jazz.jpg',
+      'gamma-waves': 'images/album-art/headspace.png',
     };
 
     // Track-specific album art mapping (copied from mini music player)
     const TRACK_ALBUM_ART_MAP = {
+      
+      // Gamma Waves 40hz
+      '40 Hz Brain Waves': 'images/album-art/headspace.png',
+      'Awakened Mind': 'images/album-art/awakened mind.jpg',
+      'Headspace': 'images/album-art/40 hz brain waves.jpg',
 
       // Deep Focus tracks
       'Clear Skies': 'images/album-art/clear skies.jpg',
