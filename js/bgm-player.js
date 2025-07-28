@@ -211,6 +211,24 @@
     { title: 'Headspace', artist: 'Gamma Waves', src: 'audio/BGM/Gamma_Waves/Headspace.mp3' },
     { title: 'Awakened Mind', artist: 'Gamma Waves', src: 'audio/BGM/Gamma_Waves/Awakened Mind.mp3' },
     { title: '40 Hz Brain Waves', artist: 'Gamma Waves', src: 'audio/BGM/Gamma_Waves/40 Hz Brain Waves.mp3' },
+    { title: '12 Hz High Level Cognition', artist: 'Gamma Waves', src: 'audio/BGM/Gamma_Waves/12 Hz High Level Cognition.mp3' },
+    { title: 'Brain Waves', artist: 'Gamma Waves', src: 'audio/BGM/Gamma_Waves/Brain Waves.mp3' },
+
+  { title: 'Brain Boost', artist: 'Gamma Waves', src: 'audio/BGM/Gamma_Waves/Brain Boost.mp3' },
+  { title: 'Mind Hack', artist: 'Gamma Waves', src: 'audio/BGM/Gamma_Waves/Mind Hack.mp3' },
+  { title: 'Active Recall', artist: 'Gamma Waves', src: 'audio/BGM/Gamma_Waves/Active Recall.mp3' },
+  { title: 'Neural Spark', artist: 'Gamma Waves', src: 'audio/BGM/Gamma_Waves/Neural Spark.mp3' },
+  { title: 'Mind Enhancement', artist: 'Gamma Waves', src: 'audio/BGM/Gamma_Waves/Mind Enhancement.mp3' },
+
+  { title: 'Deep Working', artist: 'Gamma Waves', src: 'audio/BGM/Gamma_Waves/Deep Working.mp3' },
+  { title: 'Calm Brain', artist: 'Gamma Waves', src: 'audio/BGM/Gamma_Waves/Calm Brain.mp3' },
+  { title: '40 Hz Creativity', artist: 'Gamma Waves', src: 'audio/BGM/Gamma_Waves/40 Hz Creativity.mp3' },
+  { title: '12 Hz Problem Solving', artist: 'Gamma Waves', src: 'audio/BGM/Gamma_Waves/12 Hz Problem Solving.mp3' },
+  { title: 'Clear Mind', artist: 'Gamma Waves', src: 'audio/BGM/Gamma_Waves/Clear Mind.mp3' },
+
+  { title: 'Mind Fuel', artist: 'Gamma Waves', src: 'audio/BGM/Gamma_Waves/Mind Fuel.mp3' },
+  { title: 'Brain Power', artist: 'Gamma Waves', src: 'audio/BGM/Gamma_Waves/Brain Power.mp3' },
+  { title: 'Memorization', artist: 'Gamma Waves', src: 'audio/BGM/Gamma_Waves/Memorization.mp3' },
   ]
     };
 
