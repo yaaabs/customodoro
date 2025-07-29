@@ -744,11 +744,9 @@ body.theme-color .add-task-btn:hover {
 }
 
 body.theme-color .task-item {
-  display: flex;
-  align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid #eee;
-  background-color: transparent;
+  /* Only override what you need for color theme, not layout */
+  border-bottom: 1px solid #ececec;
+  background: #fff;
 }
 
 body.theme-color .task-text {
