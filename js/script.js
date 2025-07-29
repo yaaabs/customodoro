@@ -1442,21 +1442,23 @@ function getStats() {
 
 // GitHub-style dynamic color scale based on personal peak
 function getColor(minutes, maxMinutes, emptyColor = "#ebedf0") {
-  if (minutes === 0) return emptyColor; // Use theme-specific empty color
-  
-  // If there's no data yet, use minimum scale
-  if (maxMinutes === 0) return emptyColor;
-  
-  // Calculate quartiles based on personal max
-  const q1 = Math.max(1, Math.ceil(maxMinutes * 0.25));
-  const q2 = Math.max(1, Math.ceil(maxMinutes * 0.5));
-  const q3 = Math.max(1, Math.ceil(maxMinutes * 0.75));
-  
-  if (minutes >= maxMinutes) return "#56D364";  // Brightest (personal best)
-  if (minutes >= q3) return "#2EA043";          // High
-  if (minutes >= q2) return "#196C2E";          // Medium  
-  if (minutes >= q1) return "#033A16";          // Low
-  return emptyColor;                            // Minimal/No contribution
+    if (minutes === 0) return emptyColor; // Use theme-specific empty color
+    
+    // If there's no data yet, use minimum scale
+    if (maxMinutes === 0) return emptyColor;
+    
+    // Calculate quartiles based on personal max
+    const q1 = Math.max(1, Math.ceil(maxMinutes * 0.15));
+    const q2 = Math.max(1, Math.ceil(maxMinutes * 0.35));
+    const q3 = Math.max(1, Math.ceil(maxMinutes * 0.75));
+    
+    if (minutes >= maxMinutes) return "#56D364";  // Brightest (personal best)
+    if (minutes >= q3) return "#2EA043";          // High
+    if (minutes >= q2) return "#196C2E";          // Medium    
+    if (minutes >= q1) return "#033A16";          // Low
+    
+    // For any non-zero value below q1, use the darkest green instead of empty color
+    return "#033A16";                            // Minimal but visible contribution
 }
 
 // Day labels (GitHub shows Mon, Wed, Fri)
@@ -1623,7 +1625,7 @@ function renderContributionGraph() {
 
   // Legend (GitHub style with theme-appropriate empty color)
   const legend = `
-    <div style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;color:${labelColor};">
+    <div style="display:flex;align-items:center;gap:6px;margin-top:-35px;font-size:12px;color:${labelColor};">
       Less
       <span style="display:inline-block;width:12px;height:12px;background:${emptyCell};border-radius:2px;border:1px solid ${cellBorder};"></span>
       <span style="display:inline-block;width:12px;height:12px;background:#033A16;border-radius:2px;border:1px solid ${cellBorder};"></span>
@@ -1644,7 +1646,49 @@ function renderContributionGraph() {
           ${showAllData ? 'Show Last 12 Months' : 'Show All'}
         </button>
       </div>
-      <div style="font-size:12px;color:${labelColor};margin-bottom:8px;"><b>1 Focus Point = 5 minutes of work.</b> The brightest shade marks your personal peak; Hover for details. <em>(This Productivity Graph is inspired by GitHub's contribution calendar.)</em></div>
+
+      <div style="font-size:12px;color:${labelColor};margin-bottom:8px;"><b>1 Focus Point = 5 minutes of work.</b> The brightest shade marks your personal peak.</div>
+
+<div style="font-size:12px;">
+  <b>Example:</b> If your best day is <b>21 Focus Points</b> - 105 mins (1.75 hrs):<br>
+  <table style="border-collapse:collapse;font-size:12px;margin-top:4px;">
+    <tr>
+      <td style="padding:2px 8px;border:1px solid #d0d7de;">0 FP</td>
+      <td style="padding:2px 8px;border:1px solid #d0d7de;background:#ebedf0;">Gray</td>
+      <td style="padding:2px 8px;border:1px solid #d0d7de;">No activity</td>
+    </tr>
+    <tr>
+      <td style="padding:2px 8px;border:1px solid #d0d7de;">1–3 FP</td>
+      <td style="padding:2px 8px;border:1px solid #d0d7de;background:#033A16;color:#fff;">Low</td>
+      <td style="padding:2px 8px;border:1px solid #d0d7de;">Minimal</td>
+    </tr>
+    <tr>
+      <td style="padding:2px 8px;border:1px solid #d0d7de;">4–7 FP</td>
+      <td style="padding:2px 8px;border:1px solid #d0d7de;background:#033A16;color:#fff;">Low</td>
+      <td style="padding:2px 8px;border:1px solid #d0d7de;">Low</td>
+    </tr>
+    <tr>
+      <td style="padding:2px 8px;border:1px solid #d0d7de;">8–15 FP</td>
+      <td style="padding:2px 8px;border:1px solid #d0d7de;background:#196C2E;color:#fff;">Medium</td>
+      <td style="padding:2px 8px;border:1px solid #d0d7de;">Good</td>
+    </tr>
+    <tr>
+      <td style="padding:2px 8px;border:1px solid #d0d7de;">16–20 FP</td>
+      <td style="padding:2px 8px;border:1px solid #d0d7de;background:#2EA043;color:#fff;">High</td>
+      <td style="padding:2px 8px;border:1px solid #d0d7de;">Great</td>
+    </tr>
+    <tr>
+      <td style="padding:2px 8px;border:1px solid #d0d7de;">21 FP</td>
+      <td style="padding:2px 8px;border:1px solid #d0d7de;background:#56D364;color:#222;">Brightest</td>
+      <td style="padding:2px 8px;border:1px solid #d0d7de;">Personal best</td>
+    </tr>
+  </table>
+  <br>
+  Hover for details.<br>
+  <em>(This Productivity Graph is inspired by GitHub's contribution calendar.)</em>
+  <br><br>
+</div>
+      
       <div class="contribution-graph-scroll" style="overflow-x:auto;overflow-y:hidden;position:relative;padding:0 0 32px 0;">
         <div style="background:${bgColor};border-radius:6px;border:1px solid ${borderColor};box-shadow:0 1px 4px rgba(27,31,35,0.04);padding:8px 0 0 0;display:inline-block;min-width:${minGraphWidth}px;">
           ${svg}
