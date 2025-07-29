@@ -1535,7 +1535,7 @@ function renderStreakDisplay() {
       <div class="duo-streak-pill" style="opacity:0.7;">
         <span class="duo-flame">🔥</span>
         <span class="duo-streak-num">0</span>
-        <span class="duo-streak-label">No streak yet</span>
+        <span class="duo-streak-label">— No streak yet</span>
       </div>
     `;
   }
