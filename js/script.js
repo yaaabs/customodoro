@@ -1504,6 +1504,55 @@ function renderContributionGraph() {
     dates = getDatesForHeatmap();
   }
 
+// STREAK! 
+function calculateCurrentStreak() {
+  const stats = getStats();
+  const today = getPHToday();
+  let streak = 0;
+  let d = new Date(today);
+
+  while (true) {
+    const key = formatDateKey(d);
+    if (stats[key] && stats[key].total_minutes > 0) {
+      streak++;
+      d.setDate(d.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+  return streak;
+}
+function renderStreakDisplay() {
+  const streak = calculateCurrentStreak();
+  const streakNum = document.getElementById('duo-streak-num');
+  const streakDisplay = document.getElementById('streak-display');
+  if (streakNum) {
+    streakNum.textContent = streak;
+  }
+  // Optionally, show/hide or update label for 0 streak
+  if (streakDisplay && streak === 0) {
+    streakDisplay.innerHTML = `
+      <div class="duo-streak-pill" style="opacity:0.7;">
+        <span class="duo-flame">🔥</span>
+        <span class="duo-streak-num">0</span>
+        <span class="duo-streak-label">No streak yet</span>
+      </div>
+    `;
+  }
+}
+
+// Call this after rendering the graph
+const originalRenderContributionGraph = renderContributionGraph;
+window.renderContributionGraph = function() {
+  originalRenderContributionGraph();
+  renderStreakDisplay();
+};
+
+// Initial render on page load
+document.addEventListener('DOMContentLoaded', renderStreakDisplay);
+
+
+
   // Calculate max minutes for dynamic scaling
   let maxMinutes = 0;
   dates.forEach(date => {

@@ -68,7 +68,7 @@
 
 <!-- Essential CSS (load immediately) -->
 <!-- UPDATE! -->
-<link rel="stylesheet" href="css/style.css?v=2.6.2">
+<link rel="stylesheet" href="css/style.css?v=2.6.3">
 <link rel="stylesheet" href="css/mini-music-player.css?v=2.3.5">
 <link rel="stylesheet" href="css/focus-mode.css?v=2.3.5">
 <link rel="stylesheet" href="css/lockedin-mode.css?v=2.3.5">
@@ -292,15 +292,28 @@
       <ul class="task-list" id="task-list">
         <!-- Tasks will be added here -->
       </ul>
-      <!-- Contribution Graph Placement -->
-      <div id="contribution-graph" style="margin:32px 0;"></div>
-    </div>
+
+      <!-- PRODUCTIVITY GRAPH -->
+    <section id="contribution-graph" style="margin:32px 0;"></section>
+
+      <!-- STREAK! -->
+  <div id="streak-display" style="display:flex;justify-content:center;margin-bottom:24px;">
+  <div class="duo-streak-pill">
+    <span class="duo-flame">🔥</span>
+    <span class="duo-streak-num" id="duo-streak-num">0</span>
+    <span class="duo-streak-label">day streak</span>
+  </div>
+  </div>
+</div>
+
+
+
    <!-- UPDATE!) -->
     <footer class="footer">
       <div class="footer-content">
         <div class="footer-brand">
           © 2025 <strong>Customodoro</strong>
-          <span class="footer-version">v2.6.7</span>
+          <span class="footer-version">v2.7.0</span>
           • Handcrafted by <strong><em>YabuTech</em></strong>
         </div>
         <nav class="footer-links">
@@ -1060,7 +1073,7 @@
       <button class="update-modal-close" id="update-modal-close" aria-label="Close">&times;</button>
     </div>
     <div class="update-modal-content">
-      <div class="update-changelog-title">v2.6.2 <span class="update-date">(July 28, 2025)</span></div>
+      <div class="update-changelog-title">v2.7.0 <span class="update-date">(July 28, 2025)</span></div>
 
       <div class="update-info-box">
 <ul>
@@ -1090,7 +1103,7 @@
 <!-- UPDATE!) -->
 
 <script src="js/update-modal.js?v=2.3.5"></script>
-<script src="js/script.js?v=2.6.7"></script>
+<script src="js/script.js?v=2.6.8"></script>
 <script src="js/settings.js?v=2.6.2"></script>
 <script src="js/fullscreen.js?v=2.3.5"></script>
 <script src="js/lockedin-mode.js?v=2.3.5"></script>
