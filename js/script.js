@@ -1693,7 +1693,7 @@ function renderContributionGraph() {
         <div style="background:${bgColor};border-radius:6px;border:1px solid ${borderColor};box-shadow:0 1px 4px rgba(27,31,35,0.04);padding:8px 0 0 0;display:inline-block;min-width:${minGraphWidth}px;">
           ${svg}
         </div>
-        <div id="contribution-tooltip" style="position:absolute;pointer-events:none;z-index:10000;display:none;background:${tooltipBg};color:${tooltipText};border-radius:6px;padding:7px 12px;font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,0.18);border:1px solid #1b1f23;"></div>
+        <div id="contribution-tooltip" style="position:fixed;pointer-events:none;z-index:10000;display:none;background:${tooltipBg};color:${tooltipText};border-radius:6px;padding:7px 12px;font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,0.18);border:1px solid #1b1f23;"></div>
       </div>
       ${legend}
     `;
@@ -1782,28 +1782,32 @@ tooltip.style.display = 'block';
         const containerBox = container.getBoundingClientRect();
         const scrollContainer = container.querySelector('.contribution-graph-scroll');
         const scrollBox = scrollContainer.getBoundingClientRect();
-        
-        // Calculate position relative to scroll container
-        let tooltipX = rectBox.left - scrollBox.left + cellSize + 16;
-        let tooltipY = rectBox.top - scrollBox.top - 8;
-        
-        // Check if tooltip would go below visible area
-        const tooltipHeight = 60; // Estimated tooltip height
-        if (tooltipY + tooltipHeight > scrollBox.height) {
-          // Position above the cell instead
-          tooltipY = rectBox.top - scrollBox.top - tooltipHeight - 8;
-        }
-        
-        // Check if tooltip would go off right edge
-        const tooltipWidth = 200; // Estimated tooltip width
-        if (tooltipX + tooltipWidth > scrollBox.width) {
-          // Position to the left of the cell instead
-          tooltipX = rectBox.left - scrollBox.left - tooltipWidth - 8;
-        }
-        
-        tooltip.style.left = tooltipX + 'px';
-        tooltip.style.top = tooltipY + 'px';
-      });
+
+// Calculate position relative to viewport
+let tooltipX = rectBox.right + 16;
+let tooltipY = rectBox.top - 8;
+
+// Get actual tooltip size after setting content
+tooltip.style.display = 'block';
+tooltip.style.left = '0px';
+tooltip.style.top = '0px';
+const tooltipRect = tooltip.getBoundingClientRect();
+const tooltipWidth = tooltipRect.width || 200;
+const tooltipHeight = tooltipRect.height || 60;
+
+// Adjust if off right edge
+if (tooltipX + tooltipWidth > window.innerWidth) {
+  tooltipX = rectBox.left - tooltipWidth - 16;
+}
+// Adjust if off bottom edge
+if (tooltipY + tooltipHeight > window.innerHeight) {
+  tooltipY = window.innerHeight - tooltipHeight - 16;
+}
+if (tooltipY < 0) tooltipY = 8;
+
+tooltip.style.left = tooltipX + 'px';
+tooltip.style.top = tooltipY + 'px';
+});
       rect.addEventListener('mouseleave', () => {
         tooltip.style.display = 'none';
       });
