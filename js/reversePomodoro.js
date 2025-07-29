@@ -1439,7 +1439,7 @@ function renderContributionGraph() {
 
   // Legend (GitHub style with theme-appropriate empty color)
   const legend = `
-    <div style="display:flex;align-items:center;gap:6px;margin-top:-35px;font-size:12px;color:${labelColor};">
+    <div style="display:flex;align-items:center;gap:6px;margin-top:-25px;font-size:12px;color:${labelColor};">
       Less
       <span style="display:inline-block;width:12px;height:12px;background:${emptyCell};border-radius:2px;border:1px solid ${cellBorder};"></span>
       <span style="display:inline-block;width:12px;height:12px;background:#033A16;border-radius:2px;border:1px solid ${cellBorder};"></span>
@@ -1464,45 +1464,45 @@ function renderContributionGraph() {
 
       <div style="font-size:12px;color:${labelColor};margin-bottom:8px;"><b>1 Focus Point = 5 minutes of work.</b> The brightest shade marks your personal peak.</div>
 
-<div style="font-size:12px;">
-  <b>Example:</b> If your best day is <b>21 Focus Points</b> - 105 mins (1.75 hrs):<br>
+      <div style="font-size:12px;color:${labelColor};margin-bottom:8px;">Example: If your best day is 21 Focus Points - 105 mins (1.75 hrs):</div>
+
+<div style="font-size:12px;color:#222;">
+  
   <table style="border-collapse:collapse;font-size:12px;margin-top:4px;">
     <tr>
-      <td style="padding:2px 8px;border:1px solid #d0d7de;">0 FP</td>
-      <td style="padding:2px 8px;border:1px solid #d0d7de;background:#ebedf0;">Gray</td>
-      <td style="padding:2px 8px;border:1px solid #d0d7de;">No activity</td>
+      <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">0 FP</td>
+      <td style="padding:2px 8px;border:1px solid #000000;background:#ebedf0;color:#222;">Gray</td>
+      <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">No activity</td>
     </tr>
     <tr>
-      <td style="padding:2px 8px;border:1px solid #d0d7de;">1–3 FP</td>
-      <td style="padding:2px 8px;border:1px solid #d0d7de;background:#033A16;color:#fff;">Low</td>
-      <td style="padding:2px 8px;border:1px solid #d0d7de;">Minimal</td>
+      <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">1–3 FP</td>
+      <td style="padding:2px 8px;border:1px solid #000000;background:#033A16;color:#fff;">Low</td>
+      <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">Minimal</td>
     </tr>
     <tr>
-      <td style="padding:2px 8px;border:1px solid #d0d7de;">4–7 FP</td>
-      <td style="padding:2px 8px;border:1px solid #d0d7de;background:#033A16;color:#fff;">Low</td>
-      <td style="padding:2px 8px;border:1px solid #d0d7de;">Low</td>
+      <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">4–7 FP</td>
+      <td style="padding:2px 8px;border:1px solid #000000;background:#033A16;color:#fff;">Low</td>
+      <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">Low</td>
     </tr>
     <tr>
-      <td style="padding:2px 8px;border:1px solid #d0d7de;">8–15 FP</td>
-      <td style="padding:2px 8px;border:1px solid #d0d7de;background:#196C2E;color:#fff;">Medium</td>
-      <td style="padding:2px 8px;border:1px solid #d0d7de;">Good</td>
+      <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">8–15 FP</td>
+      <td style="padding:2px 8px;border:1px solid #000000;background:#196C2E;color:#fff;">Medium</td>
+      <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">Good</td>
     </tr>
     <tr>
-      <td style="padding:2px 8px;border:1px solid #d0d7de;">16–20 FP</td>
-      <td style="padding:2px 8px;border:1px solid #d0d7de;background:#2EA043;color:#fff;">High</td>
-      <td style="padding:2px 8px;border:1px solid #d0d7de;">Great</td>
+      <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">16–20 FP</td>
+      <td style="padding:2px 8px;border:1px solid #000000;background:#2EA043;color:#fff;">High</td>
+      <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">Great</td>
     </tr>
     <tr>
-      <td style="padding:2px 8px;border:1px solid #d0d7de;">21 FP</td>
-      <td style="padding:2px 8px;border:1px solid #d0d7de;background:#56D364;color:#222;">Brightest</td>
-      <td style="padding:2px 8px;border:1px solid #d0d7de;">Personal best</td>
+      <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">21 FP</td>
+      <td style="padding:2px 8px;border:1px solid #000000;background:#56D364;color:#222;">Brightest</td>
+      <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">Personal best</td>
     </tr>
   </table>
   <br>
-  Hover for details.<br>
-  <em>(This Productivity Graph is inspired by GitHub's contribution calendar.)</em>
-  <br><br>
-</div>
+<div style="font-size:12px;color:${labelColor};margin-bottom:8px;">Hover for details.
+(This Productivity Graph is inspired by GitHub's contribution calendar.)</div><br>
       
       <div class="contribution-graph-scroll" style="overflow-x:auto;overflow-y:hidden;position:relative;padding:0 0 32px 0;">
         <div style="background:${bgColor};border-radius:6px;border:1px solid ${borderColor};box-shadow:0 1px 4px rgba(27,31,35,0.04);padding:8px 0 0 0;display:inline-block;min-width:${minGraphWidth}px;">
