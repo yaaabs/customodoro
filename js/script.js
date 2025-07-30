@@ -1463,17 +1463,40 @@ function getCurrentStreakAndRange() {
   let d = new Date(today);
   let end = null;
   let start = null;
-  while (true) {
-    const key = formatDateKey(d);
-    if (stats[key] && stats[key].total_minutes > 0) {
+
+  // Helper to check if a day has activity
+  function hasActivity(date) {
+    const key = formatDateKey(date);
+    return stats[key] && stats[key].total_minutes > 0;
+  }
+
+  if (hasActivity(d)) {
+    // Today has activity, count today and go backward
+    while (hasActivity(d)) {
       if (!end) end = new Date(d);
       start = new Date(d);
       streak++;
       d.setDate(d.getDate() - 1);
+    }
+  } else {
+    // Today has no activity, check if yesterday continues the streak
+    d.setDate(d.getDate() - 1);
+    if (hasActivity(d)) {
+      // Count streak up to yesterday
+      while (hasActivity(d)) {
+        if (!end) end = new Date(d);
+        start = new Date(d);
+        streak++;
+        d.setDate(d.getDate() - 1);
+      }
     } else {
-      break;
+      // Streak is broken
+      streak = 0;
+      start = null;
+      end = null;
     }
   }
+
   return {
     streak,
     range: streak > 0 ? `${formatDateDisplay(start)} - ${formatDateDisplay(end)}` : ''
@@ -1507,18 +1530,26 @@ function getLongestStreakAndRange() {
   };
 }
 
-// Update the streak stats card
+// Update the STREAK STATS CARD
 function updateStreakStatsCard() {
   const total = getTotalFocusPointsAndRange();
   const current = getCurrentStreakAndRange();
   const longest = getLongestStreakAndRange();
 
-  document.getElementById('streak-total').textContent = total.totalPoints;
-  document.getElementById('streak-total-date').textContent = total.range;
-  document.getElementById('streak-current').textContent = current.streak;
-  document.getElementById('streak-current-date').textContent = current.range;
-  document.getElementById('streak-longest').textContent = longest.streak;
-  document.getElementById('streak-longest-date').textContent = longest.range;
+  // Update the DOM elements (make sure these IDs exist in your HTML)
+  const totalElem = document.getElementById('streak-total');
+  const totalDateElem = document.getElementById('streak-total-date');
+  const currentElem = document.getElementById('streak-current');
+  const currentDateElem = document.getElementById('streak-current-date');
+  const longestElem = document.getElementById('streak-longest');
+  const longestDateElem = document.getElementById('streak-longest-date');
+
+  if (totalElem) totalElem.textContent = total.totalPoints;
+  if (totalDateElem) totalDateElem.textContent = total.range;
+  if (currentElem) currentElem.textContent = current.streak;
+  if (currentDateElem) currentDateElem.textContent = current.range;
+  if (longestElem) longestElem.textContent = longest.streak;
+  if (longestDateElem) longestDateElem.textContent = longest.range;
 }
 
 // Call this after DOMContentLoaded and whenever stats change
@@ -1589,23 +1620,43 @@ function renderContributionGraph() {
     dates = getDatesForHeatmap();
   }
 
-// STREAK! 
+// STREAK! Duolingo-style streak calculation
 function calculateCurrentStreak() {
   const stats = getStats();
   const today = getPHToday();
+  const todayKey = formatDateKey(today);
+
+  // Helper to check if a day has activity
+  function hasActivity(date) {
+    const key = formatDateKey(date);
+    return stats[key] && stats[key].total_minutes > 0;
+  }
+
   let streak = 0;
   let d = new Date(today);
 
-  while (true) {
-    const key = formatDateKey(d);
-    if (stats[key] && stats[key].total_minutes > 0) {
+  // If today has activity, count today and go backward
+  if (hasActivity(d)) {
+    while (hasActivity(d)) {
       streak++;
       d.setDate(d.getDate() - 1);
+    }
+    return streak;
+  } else {
+    // Today has no activity, check if yesterday continues the streak
+    d.setDate(d.getDate() - 1);
+    if (hasActivity(d)) {
+      // Count streak up to yesterday
+      while (hasActivity(d)) {
+        streak++;
+        d.setDate(d.getDate() - 1);
+      }
+      return streak;
     } else {
-      break;
+      // Streak is broken
+      return 0;
     }
   }
-  return streak;
 }
 function renderStreakDisplay() {
   const streak = calculateCurrentStreak();

@@ -1278,17 +1278,39 @@ function getCurrentStreakAndRange() {
   let d = new Date(today);
   let end = null;
   let start = null;
-  while (true) {
-    const key = formatDateKey(d);
-    if (stats[key] && stats[key].total_minutes > 0) {
+
+  function hasActivity(date) {
+    const key = formatDateKey(date);
+    return stats[key] && stats[key].total_minutes > 0;
+  }
+
+  if (hasActivity(d)) {
+    // Today has activity, count today and go backward
+    while (hasActivity(d)) {
       if (!end) end = new Date(d);
       start = new Date(d);
       streak++;
       d.setDate(d.getDate() - 1);
+    }
+  } else {
+    // Today has no activity, check if yesterday continues the streak
+    d.setDate(d.getDate() - 1);
+    if (hasActivity(d)) {
+      // Count streak up to yesterday
+      while (hasActivity(d)) {
+        if (!end) end = new Date(d);
+        start = new Date(d);
+        streak++;
+        d.setDate(d.getDate() - 1);
+      }
     } else {
-      break;
+      // Streak is broken
+      streak = 0;
+      start = null;
+      end = null;
     }
   }
+
   return {
     streak,
     range: streak > 0 ? `${formatDateDisplay(start)} - ${formatDateDisplay(end)}` : ''
@@ -1404,20 +1426,32 @@ function renderContributionGraph() {
     dates = getDatesForHeatmap();
   }
 
-  // STREAK! 
+  // STREAK! Duolingo-style streak display
 function calculateCurrentStreak() {
   const stats = getStats();
   const today = getPHToday();
   let streak = 0;
   let d = new Date(today);
 
-  while (true) {
-    const key = formatDateKey(d);
-    if (stats[key] && stats[key].total_minutes > 0) {
+  function hasActivity(date) {
+    const key = formatDateKey(date);
+    return stats[key] && stats[key].total_minutes > 0;
+  }
+
+  if (hasActivity(d)) {
+    while (hasActivity(d)) {
       streak++;
       d.setDate(d.getDate() - 1);
+    }
+  } else {
+    d.setDate(d.getDate() - 1);
+    if (hasActivity(d)) {
+      while (hasActivity(d)) {
+        streak++;
+        d.setDate(d.getDate() - 1);
+      }
     } else {
-      break;
+      streak = 0;
     }
   }
   return streak;
