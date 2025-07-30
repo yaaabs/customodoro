@@ -3124,6 +3124,7 @@ body.theme-rain #add-task-btn.secondary-btn:hover {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.20);
 }
 
+/* STREAK! */
 /* Duolingo-style streak pill */
 .duo-streak-pill {
   display: flex;
@@ -3174,3 +3175,102 @@ body.theme-rain #add-task-btn.secondary-btn:hover {
   letter-spacing: 0.5px;
   opacity: 0.85;
 }
+
+/* Streak Stats Card */
+
+.streak-stats-card {
+  background: #181a1b;
+  border-radius: 10px;
+  border: 1px solid #333;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.18);
+  padding: 28px 18px 18px 18px;
+  max-width: 540px;
+  margin: 32px auto 0 auto;
+  color: #fff;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+.streak-stats-header {
+  display: flex;
+  align-items: center;
+  font-size: 1.3em;
+  font-weight: 700;
+  margin-bottom: 18px;
+  gap: 8px;
+}
+.streak-fire {
+  font-size: 1.5em;
+  margin-right: 6px;
+}
+.streak-title {
+  letter-spacing: 1px;
+}
+.streak-stats-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 18px;
+}
+.streak-stats-block {
+  flex: 1;
+  background: #23272b;
+  border-radius: 8px;
+  padding: 18px 10px 12px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+.streak-stats-value {
+  font-size: 2.2em;
+  font-weight: 800;
+  color: #ffb300;
+  margin-bottom: 4px;
+}
+.streak-stats-label {
+  font-size: 1em;
+  color: #eee;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.streak-stats-date {
+  font-size: 0.95em;
+  color: #bbb;
+  margin-top: 2px;
+}
+.streak-current {
+  border-left: 1.5px solid #333;
+  border-right: 1.5px solid #333;
+  position: relative;
+}
+.streak-stats-circle {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 4px solid #ffb300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+  background: #181a1b;
+  box-shadow: 0 0 0 4px #23272b;
+}
+.streak-current-label {
+  color: #ffb300;
+}
+@media (max-width: 600px) {
+  .streak-stats-content {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .streak-stats-block {
+    border-radius: 8px;
+    border: none;
+    min-width: 0;
+  }
+  .streak-current {
+    border-left: none;
+    border-right: none;
+  }
+}
+
+

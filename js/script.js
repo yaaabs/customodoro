@@ -1434,11 +1434,96 @@ function getDatesForHeatmap() {
   }
   return dates;
 }
-
-// Get stats from localStorage
+// STREAK!
 function getStats() {
   return JSON.parse(localStorage.getItem('customodoroStatsByDay') || '{}');
 }
+
+// Calculate total focus points and date range
+function getTotalFocusPointsAndRange() {
+  const stats = getStats();
+  const keys = Object.keys(stats).sort();
+  let totalPoints = 0;
+  keys.forEach(k => {
+    totalPoints += Math.floor((stats[k].total_minutes || 0) / 5);
+  });
+  const start = keys.length ? keys[0] : null;
+  const end = keys.length ? keys[keys.length - 1] : null;
+  return {
+    totalPoints,
+    range: start && end ? `${formatDateDisplay(parseDataKey(start))} - ${formatDateDisplay(parseDataKey(end))}` : ''
+  };
+}
+
+// Calculate current streak and its date range
+function getCurrentStreakAndRange() {
+  const stats = getStats();
+  const today = getPHToday();
+  let streak = 0;
+  let d = new Date(today);
+  let end = null;
+  let start = null;
+  while (true) {
+    const key = formatDateKey(d);
+    if (stats[key] && stats[key].total_minutes > 0) {
+      if (!end) end = new Date(d);
+      start = new Date(d);
+      streak++;
+      d.setDate(d.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+  return {
+    streak,
+    range: streak > 0 ? `${formatDateDisplay(start)} - ${formatDateDisplay(end)}` : ''
+  };
+}
+
+// Calculate longest streak and its date range
+function getLongestStreakAndRange() {
+  const stats = getStats();
+  const keys = Object.keys(stats).sort();
+  let maxStreak = 0, currentStreak = 0;
+  let maxStart = null, maxEnd = null, curStart = null;
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    if (stats[key] && stats[key].total_minutes > 0) {
+      if (currentStreak === 0) curStart = parseDataKey(key);
+      currentStreak++;
+      if (currentStreak > maxStreak) {
+        maxStreak = currentStreak;
+        maxStart = curStart;
+        maxEnd = parseDataKey(key);
+      }
+    } else {
+      currentStreak = 0;
+      curStart = null;
+    }
+  }
+  return {
+    streak: maxStreak,
+    range: maxStreak > 0 ? `${formatDateDisplay(maxStart)} - ${formatDateDisplay(maxEnd)}` : ''
+  };
+}
+
+// Update the streak stats card
+function updateStreakStatsCard() {
+  const total = getTotalFocusPointsAndRange();
+  const current = getCurrentStreakAndRange();
+  const longest = getLongestStreakAndRange();
+
+  document.getElementById('streak-total').textContent = total.totalPoints;
+  document.getElementById('streak-total-date').textContent = total.range;
+  document.getElementById('streak-current').textContent = current.streak;
+  document.getElementById('streak-current-date').textContent = current.range;
+  document.getElementById('streak-longest').textContent = longest.streak;
+  document.getElementById('streak-longest-date').textContent = longest.range;
+}
+
+// Call this after DOMContentLoaded and whenever stats change
+document.addEventListener('DOMContentLoaded', updateStreakStatsCard);
+// Also call updateStreakStatsCard() after adding sessions or updating stats
 
 // GitHub-style dynamic color scale based on personal peak
 function getColor(minutes, maxMinutes, emptyColor = "#ebedf0") {
@@ -1913,6 +1998,7 @@ window.addCustomodoroSession = function(type, minutes) {
   localStorage.setItem('customodoroStatsByDay', JSON.stringify(stats));
   console.log('Updated stats:', stats[key]); // Debug log
   renderContributionGraph();
+  updateStreakStatsCard();
 };
 
 // TESTING FUNCTION: Add test data for today
