@@ -1163,15 +1163,15 @@ function testSound(type) {
     // Create and play the test sound based on selected timer sound
     let soundPath;
     switch (selectedSound) {
-   /*   case 'ticking':
+      case 'ticking':
         soundPath = 'audio/Timer Sounds/WallClockTicking.mp3';
-        break;*/
+        break;
       case 'whitenoise':
         soundPath = 'audio/Timer Sounds/UnderWaterWhiteNoise.mp3';
         break;
-   /*   case 'brownnoise':
+      case 'brownnoise':
         soundPath = 'audio/Timer Sounds/SoftBrownNoise.mp3';
-        break; */
+        break;
       default:
         return;
     }

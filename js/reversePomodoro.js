@@ -13,9 +13,9 @@ const sounds = {
 
 // Add timer sound variables and functionality
 const timerSounds = {
-  //COMMENT ticking: new Audio('audio/Timer Sounds/WallClockTicking.mp3'),
+  ticking: new Audio('audio/Timer Sounds/WallClockTicking.mp3'),
   whitenoise: new Audio('audio/Timer Sounds/UnderWaterWhiteNoise.mp3'),
- //COMMENT brownnoise: new Audio('audio/Timer Sounds/SoftBrownNoise.mp3')
+  brownnoise: new Audio('audio/Timer Sounds/SoftBrownNoise.mp3')
 };
 
 // Add the missing showToast function
@@ -162,9 +162,9 @@ function playTimerSound() {
     case 'whitenoise':
       sound = timerSounds.whitenoise;
       break;
-  /*  case 'brownnoise':
+    case 'brownnoise':
       sound = timerSounds.brownnoise;
-      break;  */
+      break; 
     default:
       return;
   }
