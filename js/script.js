@@ -1917,9 +1917,15 @@ tooltip.style.display = 'block';
         const scrollContainer = container.querySelector('.contribution-graph-scroll');
         const scrollBox = scrollContainer.getBoundingClientRect();
 
-// Calculate position relative to viewport
-let tooltipX = rectBox.right + 16;
-let tooltipY = rectBox.top - 8;
+// Calculate position relative to the scroll container
+let tooltipX = rectBox.right - scrollBox.left + scrollContainer.scrollLeft + 16;
+let tooltipY = rectBox.top - scrollBox.top + scrollContainer.scrollTop - 8;
+
+// Set tooltip to absolute and append to scrollContainer if not already
+tooltip.style.position = 'absolute';
+if (tooltip.parentElement !== scrollContainer) {
+  scrollContainer.appendChild(tooltip);
+}
 
 // Get actual tooltip size after setting content
 tooltip.style.display = 'block';
@@ -1929,13 +1935,13 @@ const tooltipRect = tooltip.getBoundingClientRect();
 const tooltipWidth = tooltipRect.width || 200;
 const tooltipHeight = tooltipRect.height || 60;
 
-// Adjust if off right edge
-if (tooltipX + tooltipWidth > window.innerWidth) {
-  tooltipX = rectBox.left - tooltipWidth - 16;
+// Adjust if off right edge of scroll container
+if (tooltipX + tooltipWidth > scrollContainer.scrollWidth) {
+  tooltipX = rectBox.left - scrollBox.left - tooltipWidth - 16 + scrollContainer.scrollLeft;
 }
-// Adjust if off bottom edge
-if (tooltipY + tooltipHeight > window.innerHeight) {
-  tooltipY = window.innerHeight - tooltipHeight - 16;
+// Adjust if off bottom edge of scroll container
+if (tooltipY + tooltipHeight > scrollContainer.scrollHeight) {
+  tooltipY = scrollContainer.scrollHeight - tooltipHeight - 16;
 }
 if (tooltipY < 0) tooltipY = 8;
 
