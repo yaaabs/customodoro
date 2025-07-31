@@ -167,3 +167,9 @@ body.focus-mode-active .focus-mode-status {
     right: 10px;
   }
 }
+
+
+/* Hide the Duolingo STREAK pill in focus mode */
+body.focus-mode-active #streak-display {
+  display: none !important;
+}
