@@ -1449,9 +1449,19 @@ function getTotalFocusPointsAndRange() {
   });
   const start = keys.length ? keys[0] : null;
   const end = keys.length ? keys[keys.length - 1] : null;
+
+  let range = '';
+  if (start && end) {
+    if (start === end) {
+      range = formatDateDisplay(parseDataKey(start));
+    } else {
+      range = `${formatDateDisplay(parseDataKey(start))} - ${formatDateDisplay(parseDataKey(end))}`;
+    }
+  }
+
   return {
     totalPoints,
-    range: start && end ? `${formatDateDisplay(parseDataKey(start))} - ${formatDateDisplay(parseDataKey(end))}` : ''
+    range
   };
 }
 
@@ -1464,14 +1474,12 @@ function getCurrentStreakAndRange() {
   let end = null;
   let start = null;
 
-  // Helper to check if a day has activity
   function hasActivity(date) {
     const key = formatDateKey(date);
     return stats[key] && stats[key].total_minutes > 0;
   }
 
   if (hasActivity(d)) {
-    // Today has activity, count today and go backward
     while (hasActivity(d)) {
       if (!end) end = new Date(d);
       start = new Date(d);
@@ -1479,10 +1487,8 @@ function getCurrentStreakAndRange() {
       d.setDate(d.getDate() - 1);
     }
   } else {
-    // Today has no activity, check if yesterday continues the streak
     d.setDate(d.getDate() - 1);
     if (hasActivity(d)) {
-      // Count streak up to yesterday
       while (hasActivity(d)) {
         if (!end) end = new Date(d);
         start = new Date(d);
@@ -1490,43 +1496,80 @@ function getCurrentStreakAndRange() {
         d.setDate(d.getDate() - 1);
       }
     } else {
-      // Streak is broken
       streak = 0;
       start = null;
       end = null;
     }
   }
 
+  let range = '';
+  if (streak === 1 && start) {
+    range = formatDateDisplay(start);
+  } else if (streak > 1 && start && end) {
+    range = `${formatDateDisplay(start)} - ${formatDateDisplay(end)}`;
+  }
+
   return {
     streak,
-    range: streak > 0 ? `${formatDateDisplay(start)} - ${formatDateDisplay(end)}` : ''
+    range
   };
 }
 
 // Calculate longest streak and its date range
 function getLongestStreakAndRange() {
   const stats = getStats();
-  const keys = Object.keys(stats).sort();
-  let maxStreak = 0, currentStreak = 0;
-  let maxStart = null, maxEnd = null, curStart = null;
+  const keys = Object.keys(stats).sort(); // oldest to newest
+  let maxStreak = 0;
+  let currentStreak = 0;
+  let maxStart = null, maxEnd = null;
+  let curStart = null, curEnd = null;
+
+  let prevDate = null;
+
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
+    const date = parseDataKey(key);
+
     if (stats[key] && stats[key].total_minutes > 0) {
-      if (currentStreak === 0) curStart = parseDataKey(key);
-      currentStreak++;
+      if (
+        prevDate &&
+        (date - prevDate) / (1000 * 60 * 60 * 24) === 1 // consecutive day
+      ) {
+        currentStreak++;
+        curEnd = date;
+      } else {
+        currentStreak = 1;
+        curStart = date;
+        curEnd = date;
+      }
+
       if (currentStreak > maxStreak) {
         maxStreak = currentStreak;
-        maxStart = curStart;
-        maxEnd = parseDataKey(key);
+        maxStart = new Date(curStart);
+        maxEnd = new Date(curEnd);
       }
     } else {
       currentStreak = 0;
       curStart = null;
+      curEnd = null;
     }
+    prevDate = date;
   }
+
+  // If the longest streak is only 1, collect all single-day streak dates
+  let range = '';
+  if (maxStreak === 1) {
+    const singleStreakDates = keys
+      .filter(k => stats[k] && stats[k].total_minutes > 0)
+      .map(k => formatDateDisplay(parseDataKey(k)));
+    range = singleStreakDates.join(', ');
+  } else if (maxStreak > 1) {
+    range = `${formatDateDisplay(maxStart)} - ${formatDateDisplay(maxEnd)}`;
+  }
+
   return {
     streak: maxStreak,
-    range: maxStreak > 0 ? `${formatDateDisplay(maxStart)} - ${formatDateDisplay(maxEnd)}` : ''
+    range: range
   };
 }
 
