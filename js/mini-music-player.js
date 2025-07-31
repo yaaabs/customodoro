@@ -14,9 +14,28 @@
       const TRACK_ALBUM_ART_MAP = {
       
       // Gamma Waves 40hz
-      '40 Hz Brain Waves': 'images/album-art/headspace.png',
-      'Awakened Mind': 'images/album-art/awakened mind.jpg',
-      'Headspace': 'images/album-art/40 hz brain waves.jpg',
+      '40 Hz Brain Waves': 'images/album-art/GM_Intense Focus.png',
+      'Awakened Mind': 'images/album-art/GM_Gamma Waves.jpg',
+      'Headspace': 'images/album-art/GM_40 Hz Gamma.jpg',
+      '12 Hz High Level Cognition': 'images/album-art/GM_Alpha Waves.jpg',
+      'Brain Waves': 'images/album-art/GM_Brain Waves.jpg',
+
+      'Brain Boost': 'images/album-art/GM_Theta Waves.jpg',
+      'Mind Hack': 'images/album-art/GM_Intense Focus.png',
+      'Clear Mind': 'images/album-art/GM_Deep Work.jpg',
+      'Active Recall': 'images/album-art/GM_Memorization.jpg',
+      'Neural Spark': 'images/album-art/GM_Gamma Waves.jpg',
+
+      'Mind Enhancement': 'images/album-art/GM_Brain Waves.jpg',
+      'Deep Working': 'images/album-art/GM_Clarity.jpg',
+      'Calm Brain': 'images/album-art/GM_Theta Waves.jpg',
+      '40 Hz Creativity': 'images/album-art/GM_40 Hz Gamma.jpg',
+      '12 Hz Problem Solving': 'images/album-art/GM_Alpha Waves.jpg',
+
+      'Mind Fuel': 'images/album-art/GM_Hyper Focus.jpg',
+      'Memorization': 'images/album-art/GM_Memorization.jpg',
+      'Brain Power': 'images/album-art/GM_13-16 Hz Brain Power.jpg',
+// End of Gamma Waves Playlist
 
       'Clear Skies': 'images/album-art/clear skies.jpg',
       'Gentle Ocean': 'images/album-art/gentle ocean.jpg',
