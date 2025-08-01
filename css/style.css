@@ -3273,4 +3273,33 @@ body.theme-rain #add-task-btn.secondary-btn:hover {
   }
 }
 
+.seo-article-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.2rem;
+  padding: 1.8rem;
+  margin: 3rem auto 2rem;
+  max-width: 640px;
+  color: white;
+  text-align: center;
+}
+.seo-article-card h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+.seo-article-card p {
+  font-size: 1rem;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+.learn-more-link {
+  color: #4fd1c5;
+  display: inline-block;
+  margin-top: 1rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+.learn-more-link:hover {
+  text-decoration: underline;
+}
 
