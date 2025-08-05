@@ -16,7 +16,8 @@ body.focus-mode-active .tasks-section,
 body.focus-mode-active .footer,
 body.focus-mode-active .switch-mode,
 body.focus-mode-active .mode-tabs,
-body.focus-mode-active .pomodoro-preview {
+body.focus-mode-active .pomodoro-preview,
+body.focus-mode-active .user-profile {
   display: none !important;
 }
 
