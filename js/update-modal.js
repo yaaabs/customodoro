@@ -19,11 +19,14 @@
     document.body.classList.remove('modal-open'); // Add this line
   }
 
-  // Only show if not seen for this version
-  if (seenVersion !== modalVersion && overlay) {
-    setTimeout(showModal, 350); // Soft fade-in after page load
-    localStorage.setItem('seenModalVersion', modalVersion);
-  }
+  // Always mark current version as seen to prevent update modal from showing
+  localStorage.setItem('seenModalVersion', modalVersion);
+  
+  // Don't show the update modal
+  // if (seenVersion !== modalVersion && overlay) {
+  //   setTimeout(showModal, 350); // Soft fade-in after page load
+  //   localStorage.setItem('seenModalVersion', modalVersion);
+  // }
 
   // Dismiss logic
   [closeBtn, gotItBtn].forEach(btn => {
