@@ -651,10 +651,15 @@ function completeSession(playSound = true) {
     startButton.textContent = 'START';
     switchMode('break');
 
-    // Auto-start the break if enabled in settings
-    const autoBreaks = localStorage.getItem('autoBreak') !== 'false';
+    // Auto-start the break if enabled in settings - Fixed logic
+    const autoBreaks = localStorage.getItem('autoBreak') === 'true';
+    console.log('🔄 Auto-break check:', { autoBreaks, setting: localStorage.getItem('autoBreak') });
+    
     if (earnedBreakTime > 0 && autoBreaks) {
+        console.log('✅ Auto-starting break timer');
         setTimeout(() => toggleTimer(), 500);
+    } else {
+        console.log('⏸️ Auto-break disabled or no break time earned');
     }
 }
 
@@ -1473,7 +1478,7 @@ function renderContributionGraph() {
   // STREAK! Duolingo-style streak display
 function calculateCurrentStreak() {
   const stats = getStats();
-  const today = getPHToday();
+  const today = getPHToday(); // Use the same date function as working streak calculation
   let streak = 0;
   let d = new Date(today);
 
@@ -1482,22 +1487,34 @@ function calculateCurrentStreak() {
     return stats[key] && stats[key].total_minutes > 0;
   }
 
+  console.log('🔥 Calculating Duolingo streak from:', formatDateKey(today));
+  console.log('📊 Available stats keys:', Object.keys(stats));
+  console.log('📊 Raw stats data:', stats);
+
   if (hasActivity(d)) {
+    console.log('✅ Today has activity, counting backward...');
     while (hasActivity(d)) {
       streak++;
+      console.log(`  📈 Day ${formatDateKey(d)}: ${stats[formatDateKey(d)]?.total_minutes || 0} mins - Streak: ${streak}`);
       d.setDate(d.getDate() - 1);
     }
   } else {
+    console.log('❌ Today has no activity, checking yesterday...');
     d.setDate(d.getDate() - 1);
     if (hasActivity(d)) {
+      console.log('✅ Yesterday has activity, counting backward...');
       while (hasActivity(d)) {
         streak++;
+        console.log(`  📈 Day ${formatDateKey(d)}: ${stats[formatDateKey(d)]?.total_minutes || 0} mins - Streak: ${streak}`);
         d.setDate(d.getDate() - 1);
       }
     } else {
+      console.log('💥 No recent activity found');
       streak = 0;
     }
   }
+  
+  console.log('🎯 Final Duolingo streak:', streak);
   return streak;
 }
 
@@ -1527,8 +1544,42 @@ window.renderContributionGraph = function() {
   renderStreakDisplay();
 };
 
+// Expose streak display function globally
+window.renderStreakDisplay = renderStreakDisplay;
+
 // Initial render on page load
 document.addEventListener('DOMContentLoaded', renderStreakDisplay);
+
+// Listen for sync events to update streak display
+document.addEventListener('DOMContentLoaded', () => {
+  // Listen for auth events to update streak
+  if (window.authService) {
+    window.authService.addEventListener((event, data) => {
+      if (event === 'login' || event === 'restore') {
+        console.log('🔥 Auth event detected, updating streak display in 500ms');
+        setTimeout(() => {
+          if (typeof renderStreakDisplay === 'function') {
+            renderStreakDisplay();
+          }
+        }, 500); // Give time for sync to complete
+      }
+    });
+  }
+  
+  // Listen for sync events to update streak
+  if (window.syncManager) {
+    window.syncManager.addEventListener((event, data) => {
+      if (event === 'sync-complete' || event === 'initial-sync-complete') {
+        console.log('🔥 Sync event detected, updating streak display');
+        setTimeout(() => {
+          if (typeof renderStreakDisplay === 'function') {
+            renderStreakDisplay();
+          }
+        }, 100);
+      }
+    });
+  }
+});
 
   // Calculate max minutes for dynamic scaling
   let maxMinutes = 0;
@@ -1892,11 +1943,37 @@ window.addCustomodoroSession = function(type, minutes) {
   if (type === 'reverse') stats[key].reverse++;
   if (type === 'break') stats[key].break++;
   stats[key].total_minutes += minutes;
+
+  // Add timestamp for sync purposes
+  stats[key].lastUpdate = new Date().toISOString();
   
   localStorage.setItem('customodoroStatsByDay', JSON.stringify(stats));
   console.log('Updated stats:', stats[key]); // Debug log
   renderContributionGraph();
   updateStreakStatsCard();
+  
+  // Update streak display after adding session
+  if (typeof renderStreakDisplay === 'function') {
+    renderStreakDisplay();
+  }
+
+  // Trigger automatic sync if user is logged in
+  if (window.syncManager && window.authService?.isLoggedIn()) {
+    console.log('🔄 Triggering automatic sync after session...');
+    window.syncManager.manualSync()
+      .then(() => {
+        console.log('✅ Auto-sync completed after session');
+        // Update sync UI stats
+        if (window.syncUI) {
+          window.syncUI.updateStats();
+        }
+      })
+      .catch(error => {
+        console.warn('⚠️ Auto-sync failed after session:', error);
+        // Queue for later sync if failed
+        window.syncManager.queueSync(window.syncManager.getCurrentLocalData());
+      });
+  }
 };
 
 // TESTING FUNCTION: Add test data for today

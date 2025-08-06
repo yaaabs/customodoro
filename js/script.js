@@ -465,6 +465,11 @@ function updateStats() {
   dailyStats.completedPomodoros++;
   dailyStats.totalFocusTime += pomodoroTime;
   saveStats();
+  
+  // Update streak display after stats change
+  if (typeof renderStreakDisplay === 'function') {
+    renderStreakDisplay();
+  }
 }
 
 // Initialize stats on load
@@ -700,71 +705,19 @@ function toggleTimer() {
           const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
           const progress = ((initialSeconds - currentSeconds) / initialSeconds) * 100;
           window.lockedInMode.update(timeString, progress, startButton.textContent, sessionText.textContent);
-    }
-  } else {
-    // Timer completed
-    clearInterval(timerInterval);
-    isRunning = false;
-    
-    // Hide burn-up tracker when timer completes
-    hideBurnupTracker();
-    
-    // For pomodoro mode, increment counter BEFORE showing notification
-    if (currentMode === 'pomodoro') {
-      completedPomodoros++;
-      updateStats();
-
-      // 🚀 ENHANCED DEBUG VERSION - Replace your previous addition with this:
-      console.log('🎯 Pomodoro completed! Current mode:', currentMode);
-      console.log('🕐 Initial seconds:', initialSeconds);
-      console.log('⏱️ Current seconds remaining:', currentSeconds);
-      
-      const sessionMinutes = Math.floor(initialSeconds / 60);
-      console.log('📊 Session minutes to add:', sessionMinutes);
-      
-      if (typeof window.addCustomodoroSession === 'function') {
-          console.log('✅ Adding session to contribution graph...');
-          window.addCustomodoroSession('classic', sessionMinutes);
-          console.log('✅ Session added successfully!');
-          
-          // Also manually trigger a re-render
-          if (typeof window.renderContributionGraph === 'function') {
-              window.renderContributionGraph();
-              console.log('✅ Graph re-rendered!');
-          }
+        }
       } else {
-          console.error('❌ addCustomodoroSession function not found!');
-          console.log('Available window functions:', Object.keys(window).filter(key => key.includes('custom')));
+        // Timer completed - handle completion logic here
+        handleTimerCompletion();
       }
-    }
-    
-    // Now show notification with updated counter
-    playNotification();
-    showToast(getCompletionMessage());
-
-    // Move to next timer phase with auto-start
-    if (currentMode === 'pomodoro') {
-      if (completedPomodoros % maxSessions === 0) {
-        switchMode('longBreak', true);
-      } else {
-        switchMode('shortBreak', true);
-      }
-    } else {
-      if (currentMode === 'longBreak') {
-        currentSession = 1;
-      } else {
-        currentSession++;
-      }
-      switchMode('pomodoro', true);
-    }
-    updateSessionDots();
-  }
-}, 1000);
+    }, 1000);
   } else {
     playSound('pause'); // Use function instead of direct play
     
     // Stop timer sound when pausing
-    stopTimerSound();    // Pause timer
+    stopTimerSound();
+    
+    // Pause timer
     clearInterval(timerInterval);
     isRunning = false;
     startButton.textContent = 'START';
@@ -781,31 +734,87 @@ function toggleTimer() {
       window.lockedInMode.update(timeString, null, 'START');
     }
 
-    // Auto-start next phase if timer is complete
-    if (currentSeconds === 0) {
-      if (currentMode === 'pomodoro') {
-        // REMOVED: Don't increment here as it would cause double counting
-        // We already increment when timer completes in the interval function
-        playNotification(); // Keep notification
+    // REMOVED: Auto-start next phase logic - this should only happen in handleTimerCompletion()
+    // This was causing the duplicate stats issue when user clicked pause at 00:00
+  }
+}
+
+// Handle timer completion - centralized logic to prevent duplication
+function handleTimerCompletion() {
+  // Stop the timer
+  clearInterval(timerInterval);
+  isRunning = false;
+  startButton.textContent = 'START';
+  updateFavicon('paused');
+  
+  // Hide burn-up tracker when timer completes
+  hideBurnupTracker();
+  
+  // For pomodoro mode, increment counter and add session
+  if (currentMode === 'pomodoro') {
+    completedPomodoros++;
+    updateStats();
+
+    console.log('🎯 Pomodoro completed! Current mode:', currentMode);
+    console.log('🕐 Initial seconds:', initialSeconds);
+    console.log('⏱️ Current seconds remaining:', currentSeconds);
+    
+    const sessionMinutes = Math.floor(initialSeconds / 60);
+    console.log('📊 Session minutes to add:', sessionMinutes);
+    
+    if (typeof window.addCustomodoroSession === 'function') {
+        console.log('✅ Adding session to contribution graph...');
+        window.addCustomodoroSession('classic', sessionMinutes);
+        console.log('✅ Session added successfully!');
         
-        if (completedPomodoros % maxSessions === 0) {
-          switchMode('longBreak', true);
-        } else {
-          switchMode('shortBreak', true);
+        // Also manually trigger a re-render
+        if (typeof window.renderContributionGraph === 'function') {
+            window.renderContributionGraph();
+            console.log('✅ Graph re-rendered!');
         }
-        toggleTimer(); // Auto-start break
-      } else {
-        if (currentMode === 'longBreak') {
-          currentSession = 1;
-        } else {
-          currentSession++;
+        
+        // Trigger automatic sync if user is logged in
+        if (window.syncManager && window.authService?.isLoggedIn()) {
+            console.log('🔄 Triggering automatic sync after session...');
+            try {
+              // Use queueSync for consistency with other parts of the app
+              window.syncManager.queueSync(window.syncManager.getCurrentLocalData());
+              console.log('✅ Auto-sync queued after session');
+              
+              // Update sync UI stats
+              if (window.syncUI) {
+                window.syncUI.updateStats();
+              }
+            } catch (error) {
+              console.warn('⚠️ Auto-sync failed after session:', error);
+            }
         }
-        switchMode('pomodoro', true);
-        toggleTimer(); // Auto-start next pomodoro
-      }
-      updateSessionDots();
+    } else {
+        console.error('❌ addCustomodoroSession function not found!');
+        console.log('Available window functions:', Object.keys(window).filter(key => key.includes('custom')));
     }
   }
+  
+  // Show notification
+  playNotification();
+  showToast(getCompletionMessage());
+
+  // Move to next timer phase with auto-start
+  if (currentMode === 'pomodoro') {
+    if (completedPomodoros % maxSessions === 0) {
+      switchMode('longBreak', true);
+    } else {
+      switchMode('shortBreak', true);
+    }
+  } else {
+    if (currentMode === 'longBreak') {
+      currentSession = 1;
+    } else {
+      currentSession++;
+    }
+    switchMode('pomodoro', true);
+  }
+  updateSessionDots();
 }
 
 // Reset the current timer - modified to be more robust
@@ -925,15 +934,22 @@ function switchMode(mode, autoStart = false) {
   updateTimerDisplay();
   progressBar.style.width = '0%';
 
-  // Auto-start if requested - Now using shared settings key
+  // Auto-start if requested - Fixed settings check
   if (autoStart) {
     // Check if auto start is enabled based on the mode
     const shouldAutoStart = mode === 'pomodoro' 
-      ? localStorage.getItem('autoPomodoro') !== 'false'
-      : localStorage.getItem('autoBreak') !== 'false';
+      ? localStorage.getItem('autoPomodoro') === 'true'
+      : localStorage.getItem('autoBreak') === 'true';
+      
+    console.log('🔄 Auto-start check:', { mode, shouldAutoStart, 
+      autoPomodoro: localStorage.getItem('autoPomodoro'),
+      autoBreak: localStorage.getItem('autoBreak') });
       
     if (shouldAutoStart) {
+      console.log('✅ Auto-starting timer for mode:', mode);
       setTimeout(toggleTimer, 500);
+    } else {
+      console.log('⏸️ Auto-start disabled for mode:', mode);
     }
   }
 }
@@ -1666,9 +1682,8 @@ function renderContributionGraph() {
 // STREAK! Duolingo-style streak calculation
 function calculateCurrentStreak() {
   const stats = getStats();
-  const today = getPHToday();
-  const todayKey = formatDateKey(today);
-
+  const today = getPHToday(); // Use the same date function as working streak calculation
+  
   // Helper to check if a day has activity
   function hasActivity(date) {
     const key = formatDateKey(date);
@@ -1678,25 +1693,37 @@ function calculateCurrentStreak() {
   let streak = 0;
   let d = new Date(today);
 
+  console.log('🔥 Calculating Duolingo streak from:', formatDateKey(today));
+  console.log('📊 Available stats keys:', Object.keys(stats));
+  console.log('📊 Raw stats data:', stats);
+
   // If today has activity, count today and go backward
   if (hasActivity(d)) {
+    console.log('✅ Today has activity, counting backward...');
     while (hasActivity(d)) {
       streak++;
+      console.log(`  📈 Day ${formatDateKey(d)}: ${stats[formatDateKey(d)]?.total_minutes || 0} mins - Streak: ${streak}`);
       d.setDate(d.getDate() - 1);
     }
+    console.log('🎯 Final Duolingo streak:', streak);
     return streak;
   } else {
+    console.log('❌ Today has no activity, checking yesterday...');
     // Today has no activity, check if yesterday continues the streak
     d.setDate(d.getDate() - 1);
     if (hasActivity(d)) {
+      console.log('✅ Yesterday has activity, counting backward...');
       // Count streak up to yesterday
       while (hasActivity(d)) {
         streak++;
+        console.log(`  📈 Day ${formatDateKey(d)}: ${stats[formatDateKey(d)]?.total_minutes || 0} mins - Streak: ${streak}`);
         d.setDate(d.getDate() - 1);
       }
+      console.log('🎯 Final Duolingo streak:', streak);
       return streak;
     } else {
       // Streak is broken
+      console.log('💥 No recent activity found');
       return 0;
     }
   }
@@ -1727,8 +1754,42 @@ window.renderContributionGraph = function() {
   renderStreakDisplay();
 };
 
+// Expose streak display function globally
+window.renderStreakDisplay = renderStreakDisplay;
+
 // Initial render on page load
 document.addEventListener('DOMContentLoaded', renderStreakDisplay);
+
+// Listen for sync events to update streak display
+document.addEventListener('DOMContentLoaded', () => {
+  // Listen for auth events to update streak
+  if (window.authService) {
+    window.authService.addEventListener((event, data) => {
+      if (event === 'login' || event === 'restore') {
+        console.log('🔥 Auth event detected, updating streak display in 500ms');
+        setTimeout(() => {
+          if (typeof renderStreakDisplay === 'function') {
+            renderStreakDisplay();
+          }
+        }, 500); // Give time for sync to complete
+      }
+    });
+  }
+  
+  // Listen for sync events to update streak
+  if (window.syncManager) {
+    window.syncManager.addEventListener((event, data) => {
+      if (event === 'sync-complete' || event === 'initial-sync-complete') {
+        console.log('🔥 Sync event detected, updating streak display');
+        setTimeout(() => {
+          if (typeof renderStreakDisplay === 'function') {
+            renderStreakDisplay();
+          }
+        }, 100);
+      }
+    });
+  }
+});
 
 
 
@@ -2094,11 +2155,36 @@ window.addCustomodoroSession = function(type, minutes) {
   if (type === 'reverse') stats[key].reverse++;
   if (type === 'break') stats[key].break++;
   stats[key].total_minutes += minutes;
+
+  // Add timestamp for sync purposes
+  stats[key].lastUpdate = new Date().toISOString();
   
   localStorage.setItem('customodoroStatsByDay', JSON.stringify(stats));
   console.log('Updated stats:', stats[key]); // Debug log
   renderContributionGraph();
   updateStreakStatsCard();
+  
+  // Update streak display after adding session
+  if (typeof renderStreakDisplay === 'function') {
+    renderStreakDisplay();
+  }
+
+  // Trigger automatic sync if user is logged in
+  if (window.syncManager && window.authService?.isLoggedIn()) {
+    console.log('🔄 Triggering automatic sync after session...');
+    try {
+      // Use queueSync with current data - this method exists and handles online/offline
+      window.syncManager.queueSync(window.syncManager.getCurrentLocalData());
+      console.log('✅ Auto-sync queued after session');
+      
+      // Update sync UI stats
+      if (window.syncUI) {
+        window.syncUI.updateStats();
+      }
+    } catch (error) {
+      console.warn('⚠️ Auto-sync failed after session:', error);
+    }
+  }
 };
 
 // TESTING FUNCTION: Add test data for today

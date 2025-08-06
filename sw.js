@@ -1,5 +1,5 @@
-const CACHE_NAME = "customodoro-static-v6.7.13"; // Bump to v6.7.13
-const ASSETS_CACHE = "customodoro-assets-v5"; // Bump to v5
+const CACHE_NAME = "customodoro-static-v7.0.1"; // Bump to v7.0.1 
+const ASSETS_CACHE = "customodoro-assets-v6.0.1"; // Bump to v6.0.1 
 const urlsToCache = [
   "/", "/index.html", "/reverse.html"
 ];
@@ -8,7 +8,7 @@ let isFirstInstall = false;
 
 // Install: cache only the HTML essentials
 self.addEventListener("install", (event) => {
-  console.log('🔧 Service Worker v6.7.13 installing...');
+  console.log('🔧 Service Worker v7.0.1 installing...');
   
   // Check if this is a first install
   event.waitUntil(
@@ -33,7 +33,7 @@ self.addEventListener("install", (event) => {
 
 // Activate: clean up old caches and notify clients
 self.addEventListener("activate", (event) => {
-  console.log('🚀 Service Worker v6.7.13 activating...');
+  console.log('🚀 Service Worker v7.0.1 activating...');
   
   event.waitUntil(
     // Clean up old caches
@@ -98,6 +98,40 @@ self.addEventListener('message', (event) => {
             client.postMessage({
               type: 'FORCE_RELOAD',
               message: 'Hard refresh initiated'
+            });
+          });
+        });
+      })
+    );
+  }
+  
+  // 📱 MOBILE FIX: Handle user cache clearing for logout
+  if (event.data && event.data.type === 'CLEAR_USER_CACHE') {
+    console.log('🧹 User cache clear requested (mobile logout)');
+    
+    // Clear caches that might contain user-specific data
+    event.waitUntil(
+      caches.keys().then((cacheNames) => {
+        // Clear assets cache but keep static HTML cache
+        const userCaches = cacheNames.filter(name => 
+          name.includes('assets') || name.includes('user') || name.includes('data')
+        );
+        
+        console.log('🗑️ Clearing user-specific caches:', userCaches);
+        
+        return Promise.all(
+          userCaches.map((cacheName) => {
+            console.log('🗑️ Deleting user cache:', cacheName);
+            return caches.delete(cacheName);
+          })
+        );
+      }).then(() => {
+        // Notify clients that user cache is cleared
+        return self.clients.matchAll().then((clients) => {
+          clients.forEach((client) => {
+            client.postMessage({
+              type: 'USER_CACHE_CLEARED',
+              message: 'User-specific cache cleared for logout'
             });
           });
         });

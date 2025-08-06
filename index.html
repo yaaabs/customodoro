@@ -260,8 +260,40 @@
     })();
   </script>
   <div class="container">
-    <header>
-      <h1 class="app-title">Customodoro Timer</h1>
+    <header>   
+    <h1 class="app-title">Customodoro Timer</h1>
+      <div class="header-top">
+        <!-- User Profile Display -->
+        <div class="user-profile" id="user-profile" style="display: none;">
+          <div class="user-avatar">
+            <div class="user-avatar-icon">👤</div>
+          </div>
+          <div class="user-info">
+            <div class="user-name" id="header-user-name">User</div>
+            <div class="user-sync-status" id="header-sync-status">
+              <span class="sync-indicator" id="header-sync-indicator">✅</span>
+              <span class="sync-text">Synced</span>
+            </div>
+          </div>
+          <div class="user-actions">
+            <button class="user-action-btn" id="header-sync-btn" title="Open Sync Settings">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 12A9 9 0 0 1 12 3a9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                <path d="M21 3v5h-5"/>
+                <path d="M21 12a9 9 0 0 1-12 9 9.75 9.75 0 0 1-6.74-2.74L0 16"/>
+                <path d="M3 16v5h5"/>
+              </svg>
+            </button>
+            <button class="user-action-btn" id="header-logout-btn" title="Sign Out">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16,17 21,12 16,7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
       <div class="mode-tabs">
         <div class="tab active" id="pomodoro-tab">Pomodoro</div>
         <div class="tab" id="short-break-tab">Short Break</div>
@@ -403,7 +435,7 @@
       <div class="footer-content">
         <div class="footer-brand">
           © 2025 <strong>Customodoro</strong>
-          <span class="footer-version">v2.8.3</span>
+          <span class="footer-version">v3.0.1</span>
           • Handcrafted by <strong><em>YabuTech</em></strong>
         </div>
         <nav class="footer-links">
@@ -471,6 +503,7 @@
         <div class="settings-nav-item" data-section="productivity">Productivity <span class="bug-tag">BUG</span></div>
         <div class="settings-nav-item" data-section="bgm">Music <span class="beta-tag">BETA</span></div>
         <div class="settings-nav-item" data-section="theme">Theme <span class="new-tag">NEW</span></div>
+        <div class="settings-nav-item" data-section="sync">Sync Data <span class="new-tag">NEW</span></div>
       </div>
       
       <div class="settings-main">
@@ -958,6 +991,137 @@
               </div>
             </div>
           </div>
+          
+          <!-- Sync Account Section -->
+          <div class="settings-section" id="sync-section">
+            <h3 class="settings-section-title">Sync Account</h3>
+            
+            <!-- Not Logged In State -->
+            <div class="sync-not-logged-in" id="sync-not-logged-in">
+              <div class="sync-hero">
+                <div class="sync-hero-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 12A9 9 0 0 1 12 3a9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                    <path d="M21 3v5h-5"/>
+                    <path d="M21 12a9 9 0 0 1-12 9 9.75 9.75 0 0 1-6.74-2.74L0 16"/>
+                    <path d="M3 16v5h5"/>
+                  </svg>
+                </div>
+                <div class="sync-hero-content">
+                  <h4 class="sync-hero-title">Sync Across Devices</h4>
+                  <p class="sync-hero-description">Keep your streaks and stats synchronized across all your devices.</p>
+                </div>
+              </div>
+              
+              <div class="sync-benefits">
+                <div class="sync-benefit">
+                  <div class="sync-benefit-icon">1️⃣</div>
+                  <div class="sync-benefit-text">Register your email on your laptop to upload your current stats</div>
+                </div>
+                <div class="sync-benefit">
+                  <div class="sync-benefit-icon">2️⃣</div>
+                  <div class="sync-benefit-text">Sign in with the same email on your iPad/phone</div>
+                </div>
+                <div class="sync-benefit">
+                  <div class="sync-benefit-icon">3️⃣</div>
+                  <div class="sync-benefit-text">Your data automatically syncs after each session!</div>
+                </div>
+              </div>
+              
+              <div class="sync-auth-form">
+                <div class="sync-form-group">
+                  <label class="sync-form-label">Email Address</label>
+                  <input type="email" class="sync-form-input" id="sync-email-input" placeholder="Enter your email address">
+                  <div class="sync-form-note">We'll use this to identify your account. No password required!</div>
+                </div>
+                
+                <div class="sync-form-group">
+                  <label class="sync-form-label">Display Name (Optional)</label>
+                  <input type="text" class="sync-form-input" id="sync-username-input" placeholder="How should we call you?">
+                </div>
+                
+                <div class="sync-form-actions">
+                  <button class="sync-btn sync-btn-primary" id="sync-register-btn">
+                    <span class="sync-btn-text">Create Account & Sync</span>
+                    <span class="sync-btn-spinner" style="display: none;">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12a9 9 0 11-6.219-8.56"/>
+                      </svg>
+                    </span>
+                  </button>
+                  <button class="sync-btn sync-btn-secondary" id="sync-login-btn">
+                    <span class="sync-btn-text">Sign In</span>
+                    <span class="sync-btn-spinner" style="display: none;">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12a9 9 0 11-6.219-8.56"/>
+                      </svg>
+                    </span>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="sync-privacy-note">
+                <div class="sync-privacy-icon">🔒</div>
+                <div class="sync-privacy-text">
+                  Your data is stored securely and never shared with third parties.
+                </div>
+              </div>
+            </div>
+            
+            <!-- Logged In State -->
+            <div class="sync-logged-in" id="sync-logged-in" style="display: none;">
+              <div class="sync-user-profile">
+                <div class="sync-user-avatar">
+                  <div class="sync-avatar-icon">👤</div>
+                </div>
+                <div class="sync-user-info">
+                  <div class="sync-user-name" id="sync-user-name">Loading...</div>
+                  <div class="sync-user-email" id="sync-user-email">Loading...</div>
+                </div>
+                <div class="sync-status" id="sync-status">
+                  <div class="sync-status-icon">✅</div>
+                  <div class="sync-status-text">Synced</div>
+                </div>
+              </div>
+              
+              <div class="sync-stats">
+                <div class="sync-stat">
+                  <div class="sync-stat-label">Sessions Synced</div>
+                  <div class="sync-stat-value" id="sync-sessions-count">0</div>
+                </div>
+                <div class="sync-stat">
+                  <div class="sync-stat-label">Last Sync</div>
+                  <div class="sync-stat-value" id="sync-last-sync">Never</div>
+                </div>
+                <div class="sync-stat">
+                  <div class="sync-stat-label">Account Created</div>
+                  <div class="sync-stat-value" id="sync-created-date">-</div>
+                </div>
+              </div>
+              
+              <div class="sync-actions">
+                <button class="sync-btn sync-btn-outline" id="sync-manual-btn">
+                  <span class="sync-btn-text">Sync Now</span>
+                  <span class="sync-btn-spinner" style="display: none;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 12a9 9 0 11-6.219-8.56"/>
+                    </span>
+                  </svg>
+                </button>
+                <button class="sync-btn sync-btn-danger" id="sync-logout-btn">Sign Out</button>
+              </div>
+            </div>
+            
+            <!-- Error State -->
+            <div class="sync-error" id="sync-error" style="display: none;">
+              <div class="sync-error-icon">⚠️</div>
+              <div class="sync-error-content">
+                <div class="sync-error-title">Sync Error</div>
+                <div class="sync-error-message" id="sync-error-message">Unable to connect to sync service.</div>
+                <button class="sync-btn sync-btn-primary" id="sync-retry-btn">Try Again</button>
+              </div>
+            </div>
+          </div>
         </div>
         
         <div class="settings-footer">
@@ -1040,6 +1204,43 @@
       </div>
       <div class="lockedin-info-modal-footer">
         <button class="lockedin-info-btn" id="auto-pomodoro-close-btn">Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sync Data Confirmation Modal -->
+  <div class="lockedin-info-modal-overlay" id="sync-confirm-modal-overlay" style="display: none;">
+    <div class="lockedin-info-modal">
+      <div class="lockedin-info-modal-header">
+        <h3 class="lockedin-info-modal-title">⚠️ Sync Your Data</h3>
+        <button class="lockedin-info-modal-close" id="sync-confirm-modal-close">&times;</button>
+      </div>
+      <div class="lockedin-info-modal-content">
+        <p><strong>Are you sure you want to sync your data to this account?</strong></p>
+        
+        <p>This will:</p>
+        <ul>
+          <li>Upload your current stats, streaks, and sessions to the cloud</li>
+          <li>Link this browser's data to your account permanently</li>
+          <li>Allow you to access this data from other devices</li>
+        </ul>
+        
+        <div class="settings-note" style="background-color: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: 10px; border-radius: 5px; margin: 15px 0;">
+          <p><strong>⚠️ Important:</strong> Make sure you're using the correct email address. Once synced, this data will be associated with this account.</p>
+        </div>
+        
+        <div style="margin: 20px 0; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
+          <p><strong>Current Data Summary:</strong></p>
+          <ul>
+            <li id="sync-confirm-sessions">Sessions: Loading...</li>
+            <li id="sync-confirm-streak">Current Streak: Loading...</li>
+            <li id="sync-confirm-points">Focus Points: Loading...</li>
+          </ul>
+        </div>
+      </div>
+      <div class="lockedin-info-modal-footer">
+        <button class="lockedin-info-btn" id="sync-confirm-cancel" style="background-color: #6c757d; margin-right: 10px;">Cancel</button>
+        <button class="lockedin-info-btn" id="sync-confirm-proceed" style="background-color: #28a745;">Yes, Sync My Data</button>
       </div>
     </div>
   </div>
@@ -1195,6 +1396,10 @@
 <script src="js/update-modal.js?v=2.3.5"></script>
 <script src="js/script.js?v=2.6.13"></script>
 <script src="js/settings.js?v=2.6.3"></script>
+<script src="js/auth-service.js?v=1.0.0"></script>
+<script src="js/sync-manager.js?v=1.0.0"></script>
+<script src="js/sync-ui.js?v=1.0.0"></script>
+<script src="js/header-profile.js?v=1.0.0"></script>
 <script src="js/fullscreen.js?v=2.3.5"></script>
 <script src="js/lockedin-mode.js?v=2.3.5"></script>
 <script src="js/theme-manager.js?v=2.6.2"></script>
