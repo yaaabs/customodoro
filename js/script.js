@@ -1627,13 +1627,13 @@ function getColor(minutes, maxMinutes, emptyColor = "#ebedf0") {
     const q2 = Math.max(1, Math.ceil(maxMinutes * 0.35));
     const q3 = Math.max(1, Math.ceil(maxMinutes * 0.75));
     
-    if (minutes >= maxMinutes) return "#56D364";  // Brightest (personal best)
-    if (minutes >= q3) return "#2EA043";          // High
-    if (minutes >= q2) return "#196C2E";          // Medium    
-    if (minutes >= q1) return "#033A16";          // Low
+    if (minutes >= maxMinutes) return "#a4fba6";  // Brightest (personal best)
+    if (minutes >= q3) return "#56D364";          // High
+    if (minutes >= q2) return "#2EA043";          // Medium    
+    if (minutes >= q1) return "#196C2E";          // Low
     
     // For any non-zero value below q1, use the darkest green instead of empty color
-    return "#033A16";                            // Minimal but visible contribution
+    return "#196C2E";                            // Minimal but visible contribution
 }
 
 // Day labels (GitHub shows Mon, Wed, Fri)
@@ -1917,10 +1917,10 @@ document.addEventListener('DOMContentLoaded', () => {
     <div style="display:flex;align-items:center;gap:6px;margin-top:-25px;font-size:12px;color:${labelColor};">
       Less
       <span style="display:inline-block;width:12px;height:12px;background:${emptyCell};border-radius:2px;border:1px solid ${cellBorder};"></span>
-      <span style="display:inline-block;width:12px;height:12px;background:#033A16;border-radius:2px;border:1px solid ${cellBorder};"></span>
       <span style="display:inline-block;width:12px;height:12px;background:#196C2E;border-radius:2px;border:1px solid ${cellBorder};"></span>
       <span style="display:inline-block;width:12px;height:12px;background:#2EA043;border-radius:2px;border:1px solid ${cellBorder};"></span>
       <span style="display:inline-block;width:12px;height:12px;background:#56D364;border-radius:2px;border:1px solid ${cellBorder};"></span>
+      <span style="display:inline-block;width:12px;height:12px;background:#a4fba6;border-radius:2px;border:1px solid ${cellBorder};"></span>
       More
     </div>
   `;
@@ -1950,27 +1950,27 @@ document.addEventListener('DOMContentLoaded', () => {
     </tr>
     <tr>
       <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">1–3 FP</td>
-      <td style="padding:2px 8px;border:1px solid #000000;background:#033A16;color:#fff;">Low</td>
+      <td style="padding:2px 8px;border:1px solid #000000;background:#196C2E;color:#fff;">Low</td>
       <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">Minimal</td>
     </tr>
     <tr>
       <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">4–7 FP</td>
-      <td style="padding:2px 8px;border:1px solid #000000;background:#033A16;color:#fff;">Low</td>
+      <td style="padding:2px 8px;border:1px solid #000000;background:#196C2E;color:#fff;">Low</td>
       <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">Low</td>
     </tr>
     <tr>
       <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">8–15 FP</td>
-      <td style="padding:2px 8px;border:1px solid #000000;background:#196C2E;color:#fff;">Medium</td>
+      <td style="padding:2px 8px;border:1px solid #000000;background:#2EA043;color:#fff;">Medium</td>
       <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">Good</td>
     </tr>
     <tr>
       <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">16–20 FP</td>
-      <td style="padding:2px 8px;border:1px solid #000000;background:#2EA043;color:#fff;">High</td>
+      <td style="padding:2px 8px;border:1px solid #000000;background:#56D364;color:#fff;">High</td>
       <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">Great</td>
     </tr>
     <tr>
       <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">21 FP</td>
-      <td style="padding:2px 8px;border:1px solid #000000;background:#56D364;color:#222;">Brightest</td>
+      <td style="padding:2px 8px;border:1px solid #000000;background:#a4fba6;color:#222;">Brightest</td>
       <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">Personal best</td>
     </tr>
   </table>
