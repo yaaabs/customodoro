@@ -143,6 +143,22 @@
   visibility: visible;
 }
 
+/* Special styling for Settings button - Simple color enhancement */
+.radial-settings-special {
+  background: #8B5FBF !important;
+  border: 1px solid #7A4FA3 !important;
+  box-shadow: 0 2px 8px rgba(139, 95, 191, 0.25) !important;
+}
+
+.radial-settings-special svg {
+  color: white !important;
+}
+
+.radial-settings-special:hover {
+  background: #9966CC !important;
+  box-shadow: 0 4px 12px rgba(139, 95, 191, 0.35) !important;
+}
+
 /* For mobile devices */
 @media (max-width: 768px) {
   .radial-menu-toggle {

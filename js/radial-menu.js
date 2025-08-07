@@ -67,20 +67,31 @@
           </svg>
           <span class="radial-tooltip">Music Player</span>
         </button>
-        <button class="radial-menu-item" id="radial-cache-btn" aria-label="Clear Cache & Reload">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="23 4 23 10 17 10"></polyline>
-            <polyline points="1 20 1 14 7 14"></polyline>
-            <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
-          </svg>
-          <span class="radial-tooltip">Clear Cache & Reload</span>
-        </button>
-        <button class="radial-menu-item" id="radial-settings-btn" aria-label="Settings">
+                <button class="radial-menu-item radial-settings-special" id="radial-settings-btn" aria-label="Settings">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="3"></circle>
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
           </svg>
-          <span class="radial-tooltip">Settings</span>
+          <span class="radial-tooltip">Settings ⚙️</span>
+        </button>
+        <button class="radial-menu-item" id="radial-cache-btn" aria-label="Clear Cache & Reload">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 6h18"></path>
+            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+            <path d="M8 6V4c0-1 1-2 2-2h4c0-1 1-2 2-2v2"></path>
+            <line x1="10" y1="11" x2="10" y2="17"></line>
+            <line x1="14" y1="11" x2="14" y2="17"></line>
+          </svg>
+          <span class="radial-tooltip">Clear Cache & Reload</span>
+        </button>
+        <button class="radial-menu-item" id="radial-sync-btn" aria-label="Sync Account">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+            <path d="M21 3v5h-5"></path>
+            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+            <path d="M3 21v-5h5"></path>
+          </svg>
+          <span class="radial-tooltip">Sync Account</span>
         </button>
       </div>
     `;
@@ -96,7 +107,7 @@
     const radius = 80; // Distance from center
     const totalItems = menuItems.length;
     const startAngle = -90; // Start from top (270 degrees or -90 degrees)
-    const endAngle = 180; // Extended range to accommodate 5 items
+    const endAngle = 200; // Extended range to accommodate 6 items
     const angleSpread = endAngle - startAngle;
     
     // Calculate position for each item
@@ -195,6 +206,39 @@
       }
       
       // No need to close menu as page will reload
+    });
+    
+    // Add event listener for the Sync Account button
+    document.getElementById('radial-sync-btn').addEventListener('click', function() {
+      // Open settings modal and navigate to sync section (same as header sync button)
+      const settingsBtn = document.getElementById('settings-btn');
+      if (settingsBtn) {
+        settingsBtn.click();
+        
+        // Wait for modal to open, then navigate to sync section
+        setTimeout(() => {
+          const navItems = document.querySelectorAll('.settings-nav-item');
+          const syncNavItem = document.querySelector('.settings-nav-item[data-section="sync"]');
+          const syncSection = document.getElementById('sync-section');
+          
+          if (syncNavItem && syncSection) {
+            // Remove active class from all nav items and sections
+            navItems.forEach(item => item.classList.remove('active'));
+            document.querySelectorAll('.settings-section').forEach(section => section.classList.remove('active'));
+            
+            // Add active class to sync nav item and section
+            syncNavItem.classList.add('active');
+            syncSection.classList.add('active');
+            
+            console.log('Radial menu: Navigated to sync section');
+          }
+        }, 100);
+      } else {
+        console.warn('Settings button not found');
+      }
+      
+      // Close the menu after action
+      closeMenu();
     });
     
     // Keyboard shortcut (M for menu)
