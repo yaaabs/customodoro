@@ -397,32 +397,30 @@ class SyncUI {
       return;
     }
 
-    try {
-      // Check if user has significant local data
-      const hasLocalData = this.hasSignificantLocalData();
-      console.log('🔍 Registration flow debug:');
-      console.log('- User has significant local data:', hasLocalData);
-      console.log('- Will show confirmation modal:', hasLocalData);
-      
-      if (hasLocalData) {
-        // Show confirmation modal before registering
-        console.log('✅ Showing sync confirmation modal for registration');
-        this.showSyncConfirmModal(email, username, 'register');
-      } else {
-        // No significant local data, proceed directly with registration
-        console.log('⚡ No significant local data, proceeding directly with registration');
-        await this.doRegister(email, username);
-      }
-    } catch (error) {
-      console.error('Error in registration flow:', error);
-      // Fallback: try registration directly
-      console.log('Fallback: proceeding with direct registration');
+  try {
+    // Check if user has local data - if so, show confirmation modal
+    const hasLocalData = this.hasSignificantLocalData();
+    if (hasLocalData) {
+      // Show confirmation modal before registering
+      console.log('✅ Showing sync confirmation modal for registration');
+      this.showSyncConfirmModal(email, username, 'register');
+    } else {
+      // No significant local data, ask for confirmation before registering
+      const confirmed = confirm('Are you sure you want to create an account and sync your data with this email?');
+      if (!confirmed) return;
+      console.log('⚡ User confirmed registration with no local data, proceeding...');
       await this.doRegister(email, username);
     }
+  } catch (error) {
+    console.error('Error in registration flow:', error);
+    // Fallback: try register directly
+    console.log('Fallback: proceeding with direct registration');
+    await this.doRegister(email, username);
   }
-  
-  // Handle login
-  async handleLogin() {
+}
+
+// Handle login
+async handleLogin() {
     console.log('Login button clicked');
     if (!window.authService) {
       console.error('AuthService not available');
