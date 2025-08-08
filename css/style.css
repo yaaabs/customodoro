@@ -1598,11 +1598,11 @@ body.theme-yourname {
   color: #ffffff;
   position: relative;
   /* Force hardware acceleration to improve rendering */
-  -webkit-transform: translateZ(0);
-  -moz-transform: translateZ(0);
-  -ms-transform: translateZ(0);
-  -o-transform: translateZ(0);
-  transform: translateZ(0);
+  -webkit-transform: none !important;
+  -moz-transform: none !important;
+  -ms-transform: none !important;
+  -o-transform: none !important;
+  transform: none !important;
   /* Fix for some mobile browsers that don't support fixed backgrounds */
   min-height: 100vh;
 }
@@ -1816,11 +1816,11 @@ body.theme-rain {
   color: #ffffff;
   position: relative;
   /* Force hardware acceleration to improve rendering */
-  -webkit-transform: translateZ(0);
-  -moz-transform: translateZ(0);
-  -ms-transform: translateZ(0);
-  -o-transform: translateZ(0);
-  transform: translateZ(0);
+  -webkit-transform: none !important;
+  -moz-transform: none !important;
+  -ms-transform: none !important;
+  -o-transform: none !important;
+  transform: none !important;
   /* Fix for some mobile browsers that don't support fixed backgrounds */
   min-height: 100vh;
 }
@@ -2051,11 +2051,11 @@ body.theme-custom {
   color: #ffffff;
   position: relative;
   /* Force hardware acceleration to improve rendering */
-  -webkit-transform: translateZ(0);
-  -moz-transform: translateZ(0);
-  -ms-transform: translateZ(0);
-  -o-transform: translateZ(0);
-  transform: translateZ(0);
+  -webkit-transform: none !important;
+  -moz-transform: none !important;
+  -ms-transform: none !important;
+  -o-transform: none !important;
+  transform: none !important;
   min-height: 100vh;
 }
 

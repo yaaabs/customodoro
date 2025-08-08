@@ -1615,25 +1615,23 @@ function updateStreakStatsCard() {
 document.addEventListener('DOMContentLoaded', updateStreakStatsCard);
 // Also call updateStreakStatsCard() after adding sessions or updating stats
 
-// GitHub-style dynamic color scale based on personal peak
+// GitHub-style dynamic color scale based on personal peak (even quartiles)
 function getColor(minutes, maxMinutes, emptyColor = "#ebedf0") {
     if (minutes === 0) return emptyColor; // Use theme-specific empty color
-    
-    // If there's no data yet, use minimum scale
     if (maxMinutes === 0) return emptyColor;
-    
-    // Calculate quartiles based on personal max
-    const q1 = Math.max(1, Math.ceil(maxMinutes * 0.15));
-    const q2 = Math.max(1, Math.ceil(maxMinutes * 0.35));
-    const q3 = Math.max(1, Math.ceil(maxMinutes * 0.75));
-    
+
+    // Calculate even quartiles                           // If peak was 30 contributions for example
+    const q1 = Math.max(1, Math.ceil(maxMinutes * 0.25)); // 25% threshold (7.5 = 8 contributions)
+    const q2 = Math.max(1, Math.ceil(maxMinutes * 0.50)); // 50% threshold (15 contributions)
+    const q3 = Math.max(1, Math.ceil(maxMinutes * 0.93)); // 93% threshold (28 contributions)
+
     if (minutes >= maxMinutes) return "#a4fba6";  // Brightest (personal best)
-    if (minutes >= q3) return "#56D364";          // High
-    if (minutes >= q2) return "#2EA043";          // Medium    
-    if (minutes >= q1) return "#196C2E";          // Low
-    
-    // For any non-zero value below q1, use the darkest green instead of empty color
-    return "#196C2E";                            // Minimal but visible contribution
+    if (minutes >= q3) return "#a4fba6";          // Very High
+    if (minutes >= q2) return "#56D364";          // High
+    if (minutes >= q1) return "#2EA043";          // Medium
+    if (minutes > 0)   return "#196C2E";          // Minimal/Low
+
+    return emptyColor;
 }
 
 // Day labels (GitHub shows Mon, Wed, Fri)
