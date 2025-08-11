@@ -1729,38 +1729,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <div style="font-size:12px;color:#222;">
   
-  <table style="border-collapse:collapse;font-size:12px;margin-top:4px;">
-    <tr>
-      <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">0 FP</td>
-      <td style="padding:2px 8px;border:1px solid #000000;background:#ebedf0;color:#222;">Gray</td>
-      <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">No activity</td>
-    </tr>
-    <tr>
-      <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">1–3 FP</td>
-      <td style="padding:2px 8px;border:1px solid #000000;background:#196C2E;color:#fff;">Low</td>
-      <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">Minimal</td>
-    </tr>
-    <tr>
-      <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">4–7 FP</td>
-      <td style="padding:2px 8px;border:1px solid #000000;background:#196C2E;color:#fff;">Low</td>
-      <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">Low</td>
-    </tr>
-    <tr>
-      <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">8–15 FP</td>
-      <td style="padding:2px 8px;border:1px solid #000000;background:#2EA043;color:#fff;">Medium</td>
-      <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">Good</td>
-    </tr>
-    <tr>
-      <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">16–20 FP</td>
-      <td style="padding:2px 8px;border:1px solid #000000;background:#56D364;color:#fff;">High</td>
-      <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">Great</td>
-    </tr>
-    <tr>
-      <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">21 FP</td>
-      <td style="padding:2px 8px;border:1px solid #000000;background:#a4fba6;color:#222;">Brightest</td>
-      <td style="padding:2px 8px;border:1px solid #000000;background:#1f2937;color:#fff;">Personal best</td>
-    </tr>
-  </table>
+<table style="border-collapse:collapse;font-size:12px;margin-top:4px;">
+  <tr>
+    <td style="padding:2px 8px;border:1px solid #000;background:#1f2937;color:#fff;">0 FP</td>
+    <td style="padding:2px 8px;border:1px solid #000;background:#ebedf0;color:#222;">Gray</td>
+    <td style="padding:2px 8px;border:1px solid #000;background:#1f2937;color:#fff;">No Activity</td>
+  </tr>
+  <tr>
+    <td style="padding:2px 8px;border:1px solid #000;background:#1f2937;color:#fff;">1–5 FP</td>
+    <td style="padding:2px 8px;border:1px solid #000;background:#196C2E;color:#fff;">Low</td>
+    <td style="padding:2px 8px;border:1px solid #000;background:#1f2937;color:#fff;">Minimal</td>
+  </tr>
+  <tr>
+    <td style="padding:2px 8px;border:1px solid #000;background:#1f2937;color:#fff;">6–10 FP</td>
+    <td style="padding:2px 8px;border:1px solid #000;background:#2EA043;color:#fff;">Medium</td>
+    <td style="padding:2px 8px;border:1px solid #000;background:#1f2937;color:#fff;">Good</td>
+  </tr>
+  <tr>
+    <td style="padding:2px 8px;border:1px solid #000;background:#1f2937;color:#fff;">11–19 FP</td>
+    <td style="padding:2px 8px;border:1px solid #000;background:#56D364;color:#fff;">High</td>
+    <td style="padding:2px 8px;border:1px solid #000;background:#1f2937;color:#fff;">Great</td>
+  </tr>
+  <tr>
+    <td style="padding:2px 8px;border:1px solid #000;background:#1f2937;color:#fff;">20 FP</td>
+    <td style="padding:2px 8px;border:1px solid #000;background:#a4fba6;color:#222;">Very High</td>
+    <td style="padding:2px 8px;border:1px solid #000;background:#1f2937;color:#fff;">Almost Peak</td>
+  </tr>
+  <tr>
+    <td style="padding:2px 8px;border:1px solid #000;background:#1f2937;color:#fff;">21 FP</td>
+    <td style="padding:2px 8px;border:1px solid #000;background:#a4fba6;color:#222;">Highest</td>
+    <td style="padding:2px 8px;border:1px solid #000;background:#1f2937;color:#fff;">Personal Best</td>
+  </tr>
+</table>
   <br>
 <div style="font-size:12px;color:${labelColor};margin-bottom:8px;">Hover for details.
 (This Productivity Graph is inspired by GitHub's contribution calendar.)</div><br>
