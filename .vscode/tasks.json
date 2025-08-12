@@ -4,7 +4,7 @@
 		{
 			"label": "Test Backend Connection",
 			"type": "shell",
-			"command": "echo \"To test the backend connection, please open the browser console and run:\" && echo \"\" && echo \"fetch('https://customodoro-backend.up.railway.app/api/health')\" && echo \"  .then(r => r.json())\" && echo \"  .then(d => console.log('✅ Backend connected:', d))\" && echo \"  .catch(e => console.error('❌ Backend error:', e));\" && echo \"\" && echo \"console.log('Auth service loaded:', !!window.authService);\" && echo \"console.log('Sync manager loaded:', !!window.syncManager);\" && echo \"\" && echo \"debugSyncContamination(); // Check if debug functions work\"",
+			"command": "echo \"To test the backend connection, please open the browser console and run:\" && echo \"\" && echo \"fetch('https://customodoro-backend.onrender.com/api/health')\" && echo \"  .then(r => r.json())\" && echo \"  .then(d => console.log('✅ Backend connected:', d))\" && echo \"  .catch(e => console.error('❌ Backend error:', e));\" && echo \"\" && echo \"console.log('Auth service loaded:', !!window.authService);\" && echo \"console.log('Sync manager loaded:', !!window.syncManager);\" && echo \"\" && echo \"debugSyncContamination(); // Check if debug functions work\"",
 			"group": "test",
 			"isBackground": false
 		}

@@ -2,7 +2,7 @@
 class AuthService {
   constructor() {
     console.log('AuthService constructor starting...');
-    this.baseURL = 'https://customodoro-backend.up.railway.app';
+    this.baseURL = 'https://customodoro-backend.onrender.com';
     this.currentUser = null;
     this.listeners = new Set();
     
