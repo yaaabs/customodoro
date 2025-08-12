@@ -1,7 +1,7 @@
 // Sync Manager
 class SyncManager {
   constructor() {
-    this.baseURL = 'https://customodoro-backend.onrender.com';
+    this.baseURL = 'https://customodoro-backend.up.railway.app';
     this.isOnline = navigator.onLine;
     this.syncQueue = [];
     this.lastSyncTime = null;
