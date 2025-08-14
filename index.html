@@ -1413,7 +1413,7 @@
 <!-- UPDATE!) -->
 
 <script src="js/update-modal.js?v=2.3.5"></script>
-<script src="js/script.js?v=2.7.13"></script>
+<script src="js/script.js?v=2.7.14"></script>
 <script src="js/settings.js?v=2.6.3"></script>
 <script src="js/auth-service.js?v=1.0.0"></script>
 <script src="js/sync-manager.js?v=1.0.0"></script>
@@ -1635,6 +1635,10 @@ try {
   const ACHIEVEMENTS_KEY = 'customodoroAchievements';    // Achievements
   const STREAKS_KEY = 'customodoroStreaks';              // Streak data
   const GOALS_KEY = 'customodoroGoals';                  // Goals
+  const AUTH_KEY = 'customodoro-auth';                   // Authentication data
+  const LAST_SYNC_KEY = 'customodoro-last-sync';         // Last sync timestamp
+  const HAS_USED_SYNC_KEY = 'customodoro-has-used-sync'; // Flag for sync usage
+  const SESSIONS_KEY = 'customodoro-sessions';           // Synced sessions data
 
   const preservedKeys = [
     STATS_BY_DAY_KEY,
@@ -1647,7 +1651,11 @@ try {
     PROGRESS_KEY,
     ACHIEVEMENTS_KEY,
     STREAKS_KEY,
-    GOALS_KEY
+    GOALS_KEY,
+    AUTH_KEY,
+    LAST_SYNC_KEY,
+    HAS_USED_SYNC_KEY,
+    SESSIONS_KEY
   ];
     
     // Backup preserved data

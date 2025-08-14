@@ -1263,10 +1263,14 @@ function getStats() {
 function getTotalFocusPointsAndRange() {
   const stats = getStats();
   const keys = Object.keys(stats).sort();
-  let totalPoints = 0;
+  
+  // Sum all minutes first, then calculate focus points
+  let totalMinutes = 0;
   keys.forEach(k => {
-    totalPoints += Math.floor((stats[k].total_minutes || 0) / 5);
+    totalMinutes += (stats[k].total_minutes || 0);
   });
+  let totalPoints = Math.floor(totalMinutes / 5);
+  
   const start = keys.length ? keys[0] : null;
   const end = keys.length ? keys[keys.length - 1] : null;
 
