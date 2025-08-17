@@ -1,7 +1,7 @@
 // Sync Manager
 class SyncManager {
   constructor() {
-    this.baseURL = 'https://customodoro-backend.onrender.com';
+    this.baseURL = 'https://backend-railway-postgre.up.railway.app';
     this.isOnline = navigator.onLine;
     this.syncQueue = [];
     this.lastSyncTime = null;
@@ -290,7 +290,13 @@ class SyncManager {
     
     const serverData = await response.json();
     
-    // 🚨 CRITICAL FIX: Check if server data is meaningful before overwriting local data
+    // �️ CRITICAL: Remove settings from server data to preserve localStorage behavior
+    if (serverData.data && serverData.data.settings) {
+      console.log('🛡️ Removing settings from server response to maintain localStorage-only behavior');
+      delete serverData.data.settings;
+    }
+    
+    // �🚨 CRITICAL FIX: Check if server data is meaningful before overwriting local data
     if (serverData.data && this.hasSignificantServerData(serverData.data)) {
       console.log('📥 Server has significant data, merging with local data');
       this.mergeServerData(serverData.data);
@@ -441,8 +447,8 @@ class SyncManager {
     
     const localData = this.getCurrentLocalData();
     
-    // BACKEND COMPATIBILITY: Only send the 4 fields backend accepts
-    // Backend schema ONLY accepts: sessions, tasks, settings, streaks
+    // BACKEND COMPATIBILITY: Only send the 3 fields backend accepts
+    // Backend schema now syncs: sessions, tasks, streaks (settings excluded)
     const streaksData = {
       ...(localData.streaks || {}),
       // CRITICAL: Embed productivity stats in streaks field as workaround
@@ -452,13 +458,13 @@ class SyncManager {
     const cleanData = {
       sessions: localData.sessions || [],
       tasks: localData.tasks || [],
-      settings: localData.settings || {},
       streaks: streaksData
     };
     
     console.log('Pushing data to server for user:', user.userId);
-    console.log('✅ Sending only backend-accepted fields: sessions, tasks, settings, streaks');
+    console.log('✅ Sending only backend-accepted fields: sessions, tasks, streaks');
     console.log('✅ Productivity stats embedded in streaks.productivityStatsByDay');
+    console.log('✅ Settings excluded from sync to maintain localStorage behavior');
     console.log('Clean data structure:', JSON.stringify(cleanData, null, 2));
     
     const response = await fetch(`${this.baseURL}/api/user/${user.userId}/sync`, {
@@ -514,45 +520,8 @@ class SyncManager {
       console.warn('Failed to read tasks:', error);
     }
     
-    // Settings (collect various settings)
-    const settings = {};
-    const settingsKeys = [
-      'customodoro-theme',
-      'customodoro-volume',
-      'customodoro-sound',
-      'customodoro-auto-break',
-      'customodoro-max-time',
-      'customodoro-break-times',
-      'pomodoroTime',
-      'shortBreakTime', 
-      'longBreakTime',
-      'sessionsCount',
-      'soundEffects',
-      'alarm',
-      'alarmSound',
-      'timerSound',
-      'timerSoundVolume',
-      'burnupTrackerEnabled'
-    ];
-    
-    settingsKeys.forEach(key => {
-      try {
-        const value = localStorage.getItem(key);
-        if (value !== null) {
-          try {
-            settings[key] = JSON.parse(value);
-          } catch {
-            settings[key] = value;
-          }
-        }
-      } catch (error) {
-        console.warn(`Failed to read setting ${key}:`, error);
-      }
-    });
-    
-    if (Object.keys(settings).length > 0) {
-      data.settings = settings;
-    }
+    // Settings excluded from sync - keeping localStorage behavior
+    // Timer settings will persist locally until cache is cleared
     
     // Streaks (include basic streak data)
     try {
@@ -574,14 +543,20 @@ class SyncManager {
       console.warn('Failed to read productivity stats:', error);
     }
 
-    // NOTE: Deliberately NOT including 'stats' or other rejected fields
-    // Backend only accepts: sessions, tasks, settings, streaks
+    // NOTE: Settings excluded from sync to maintain localStorage-only behavior
+    // Backend now only syncs: sessions, tasks, streaks
     
     return data;
   }
   
   // Merge server data with local data
   mergeServerData(serverData) {
+    // CRITICAL: Remove any settings from server data to prevent overriding local settings
+    if (serverData && serverData.settings) {
+      console.log('🛡️ Removing settings from server data to preserve localStorage behavior');
+      delete serverData.settings;
+    }
+    
     console.log('Merging server data:', serverData);
     console.log('✅ Merging productivity stats from streaks field for full sync functionality');
     
@@ -644,24 +619,8 @@ class SyncManager {
       }
     }
     
-    // Merge settings (server takes precedence for newer values)
-    if (serverData.settings && typeof serverData.settings === 'object' && Object.keys(serverData.settings).length > 0) {
-      try {
-        Object.keys(serverData.settings).forEach(key => {
-          const value = serverData.settings[key];
-          if (value !== null && value !== undefined) {
-            if (typeof value === 'object') {
-              localStorage.setItem(key, JSON.stringify(value));
-            } else {
-              localStorage.setItem(key, value);
-            }
-          }
-        });
-        console.log('✅ Settings merged successfully');
-      } catch (error) {
-        console.warn('Failed to merge settings:', error);
-      }
-    }
+    // Settings excluded from sync - maintaining localStorage-only behavior
+    // Timer settings will persist locally and not be overwritten by server data
     
     // Handle streaks and embedded productivity stats
     if (serverData.streaks) {
