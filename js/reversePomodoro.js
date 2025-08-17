@@ -553,7 +553,8 @@ function toggleTimer() {
       }, 1000);
     }
     
-    timerInterval = setInterval(() => {
+    // 🔧 TIMER ACCURACY FIX: Use enhanced timer with throttle compensation
+    const timerCallback = () => {
       if (currentMode === 'break') {
         if (currentSeconds > 0) {
           currentSeconds--;
@@ -587,13 +588,29 @@ function toggleTimer() {
           completeSession();
         }
       }
-    }, 1000);
+    };
+
+    // Use enhanced timer or fallback to regular setInterval
+    if (window.createAccurateTimer) {
+      timerInterval = window.createAccurateTimer(timerCallback, 1000);
+    } else {
+      timerInterval = setInterval(timerCallback, 1000);
+    }
   } else {
     playSound('pause');
     
     // Stop timer sound when pausing
     stopTimerSound();
+    
+    // 🔧 TIMER ACCURACY FIX: Handle both regular timer and Web Worker timer
+    if (timerInterval && timerInterval.stop && typeof timerInterval.stop === 'function') {
+      // Web Worker timer
+      timerInterval.stop();
+    } else {
+      // Regular setInterval timer
       clearInterval(timerInterval);
+    }
+    
     isRunning = false;
     startButton.textContent = 'START';
     updateFavicon('paused');
@@ -626,7 +643,13 @@ function toggleTimer() {
 
 // Complete session
 function completeSession(playSound = true) {
-    clearInterval(timerInterval);
+    // 🔧 TIMER ACCURACY FIX: Handle both regular timer and Web Worker timer
+    if (timerInterval && timerInterval.stop && typeof timerInterval.stop === 'function') {
+      timerInterval.stop();
+    } else {
+      clearInterval(timerInterval);
+    }
+    
     isRunning = false;
     hideBurnupTracker();
     stopTimerSound();
@@ -665,7 +688,13 @@ function completeSession(playSound = true) {
 
 // Complete break
 function completeBreak() {
-    clearInterval(timerInterval);
+    // 🔧 TIMER ACCURACY FIX: Handle both regular timer and Web Worker timer
+    if (timerInterval && timerInterval.stop && typeof timerInterval.stop === 'function') {
+      timerInterval.stop();
+    } else {
+      clearInterval(timerInterval);
+    }
+    
     isRunning = false;
     
     // Stop timer sound
@@ -684,7 +713,15 @@ function completeBreak() {
 
 // Reset timer
 function resetTimer() {
-    clearInterval(timerInterval);
+    // 🔧 TIMER ACCURACY FIX: Handle both regular timer and Web Worker timer
+    if (timerInterval && timerInterval.stop && typeof timerInterval.stop === 'function') {
+      // Web Worker timer
+      timerInterval.stop();
+    } else {
+      // Regular setInterval timer
+      clearInterval(timerInterval);
+    }
+    
     isRunning = false;
     currentSeconds = 0;
     
@@ -730,7 +767,13 @@ function switchMode(mode) {
   breakTab.classList.toggle('active', mode === 'break');
   
   // Reset timer state
-  clearInterval(timerInterval);
+  // 🔧 TIMER ACCURACY FIX: Handle both regular timer and Web Worker timer
+  if (timerInterval && timerInterval.stop && typeof timerInterval.stop === 'function') {
+    timerInterval.stop();
+  } else {
+    clearInterval(timerInterval);
+  }
+  
   isRunning = false;
   
   // Reset and hide burn-up tracker when switching modes

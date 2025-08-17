@@ -93,10 +93,10 @@
 <meta property="og:locale" content="en_US">
 
 
-  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png" id="favicon">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
-  <link rel="shortcut icon" href="favicon/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png?v=1.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png?v=1.1" id="favicon">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png?v=1.1">
+  <link rel="shortcut icon" href="favicon/favicon.ico?v=1.1">
 
   <link rel="manifest" href="manifest.json">
 
@@ -260,8 +260,7 @@
       }
     })();
   </script>
-  <div class="site-content">
-    <div class="container">
+  <div class="container">
     <header>   
     <h1 class="app-title">Customodoro Timer</h1>
       <div class="header-top">
@@ -450,14 +449,13 @@
   </div>
 </section>
 
+
    <!-- UPDATE!) -->
-    </div> <!-- close .container -->
-  </div> <!-- close .site-content -->
-  <footer class="footer">
-      <div class="footer-row">
+    <footer class="footer">
+      <div class="footer-content">
         <div class="footer-brand">
           © 2025 <strong>Customodoro</strong>
-          <span class="footer-version">v3.1.8</span>
+          <span class="footer-version">v3.2.8</span>
           • Handcrafted by <strong><em>YabuTech</em></strong>
         </div>
         <nav class="footer-links">
@@ -486,11 +484,7 @@
             <span>Feedback</span>
           </a>
         </nav>
-        <div class="footer-feedback">
-          <!-- Feedback link moved to nav above for visual consistency -->
-        </div>
       </div>
-    </footer>
     </footer>
   </div>
 
@@ -1419,12 +1413,14 @@
 <!-- UPDATE!) -->
 
 <script src="js/update-modal.js?v=2.3.5"></script>
+
 <script src="js/timer-accuracy-fix.js?v=1.0.0"></script>
 <script src="js/performance-optimizer.js?v=1.0.0"></script>
-<script src="js/script.js?v=2.7.13"></script>
-<script src="js/settings.js?v=2.6.3"></script>
+
+<script src="js/script.js?v=2.7.15"></script>
+<script src="js/settings.js?v=2.6.4"></script>
 <script src="js/auth-service.js?v=1.0.0"></script>
-<script src="js/sync-manager.js?v=1.0.0"></script>
+<script src="js/sync-manager.js?v=1.2.0"></script>
 <script src="js/sync-ui.js?v=1.1.0"></script>
 <script src="js/header-profile.js?v=1.0.0"></script>
 <script src="js/fullscreen.js?v=2.3.5"></script>
@@ -1643,6 +1639,10 @@ try {
   const ACHIEVEMENTS_KEY = 'customodoroAchievements';    // Achievements
   const STREAKS_KEY = 'customodoroStreaks';              // Streak data
   const GOALS_KEY = 'customodoroGoals';                  // Goals
+  const AUTH_KEY = 'customodoro-auth';                   // Authentication data
+  const LAST_SYNC_KEY = 'customodoro-last-sync';         // Last sync timestamp
+  const HAS_USED_SYNC_KEY = 'customodoro-has-used-sync'; // Flag for sync usage
+  const SESSIONS_KEY = 'customodoro-sessions';           // Synced sessions data
 
   const preservedKeys = [
     STATS_BY_DAY_KEY,
@@ -1655,7 +1655,11 @@ try {
     PROGRESS_KEY,
     ACHIEVEMENTS_KEY,
     STREAKS_KEY,
-    GOALS_KEY
+    GOALS_KEY,
+    AUTH_KEY,
+    LAST_SYNC_KEY,
+    HAS_USED_SYNC_KEY,
+    SESSIONS_KEY
   ];
     
     // Backup preserved data
