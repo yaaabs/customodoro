@@ -782,15 +782,7 @@
     window.longBreakTime = newLongBreakTime;
     window.maxSessions = newSessionsCount;
     
-    // CRITICAL: Update sessionSettings cache
-    if (window.sessionSettings) {
-      window.sessionSettings.pomodoroTime = newPomodoroTime;
-      window.sessionSettings.shortBreakTime = newShortBreakTime;
-      window.sessionSettings.longBreakTime = newLongBreakTime;
-      window.sessionSettings.maxSessions = newSessionsCount;
-    }
-    
-    // Always update the current timer based on active mode using sessionSettings
+    // Always update the current timer based on active mode
     if (!window.isRunning) {
       if (window.currentMode === 'pomodoro') {
         window.currentSeconds = newPomodoroTime * 60;
@@ -906,17 +898,6 @@
     localStorage.setItem('shortBreakTime', shortBreakTime);
     localStorage.setItem('longBreakTime', longBreakTime);
     localStorage.setItem('sessionsCount', sessionsCount);
-    
-    // CRITICAL: Add timestamp to track when settings were last modified
-    localStorage.setItem('settingsLastModified', Date.now().toString());
-    
-    // CRITICAL: Update the sessionSettings cache in script.js
-    if (window.sessionSettings) {
-      window.sessionSettings.pomodoroTime = parseInt(pomodoroTime);
-      window.sessionSettings.shortBreakTime = parseInt(shortBreakTime);
-      window.sessionSettings.longBreakTime = parseInt(longBreakTime);
-      window.sessionSettings.maxSessions = parseInt(sessionsCount);
-    }
     
     console.log("Saved settings:", 
       {pomodoro: pomodoroTime, short: shortBreakTime, long: longBreakTime, sessions: sessionsCount});

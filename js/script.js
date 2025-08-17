@@ -46,17 +46,6 @@ let completedPomodoros = 0;
 let hasUnsavedTasks = false;
 let hasUnfinishedTasks = false;
 
-// Session settings cache - persists timer settings across mode switches
-let sessionSettings = {
-  pomodoroTime: parseInt(localStorage.getItem('pomodoroTime')) || 25,
-  shortBreakTime: parseInt(localStorage.getItem('shortBreakTime')) || 5,
-  longBreakTime: parseInt(localStorage.getItem('longBreakTime')) || 15,
-  maxSessions: parseInt(localStorage.getItem('sessionsCount')) || 4
-};
-
-// Expose sessionSettings globally so settings.js can access it
-window.sessionSettings = sessionSettings;
-
 // Burn-Up Tracker variables
 let isBurnupTrackerEnabled = localStorage.getItem('burnupTrackerEnabled') !== 'false'; // Default to true
 let burnupStartTime = 0;
@@ -812,7 +801,7 @@ function handleTimerCompletion() {
 
   // Move to next timer phase with auto-start
   if (currentMode === 'pomodoro') {
-    if (completedPomodoros % sessionSettings.maxSessions === 0) {
+    if (completedPomodoros % maxSessions === 0) {
       switchMode('longBreak', true);
     } else {
       switchMode('shortBreak', true);
@@ -832,13 +821,17 @@ function handleTimerCompletion() {
 function resetTimer() {
   clearInterval(timerInterval);
 
-  // Reset to initial time based on current mode - use sessionSettings
+  // Reset to initial time based on current mode - use latest values
   if (currentMode === 'pomodoro') {
-    currentSeconds = sessionSettings.pomodoroTime * 60;
+    // Grab latest value from localStorage for immediate updates
+    pomodoroTime = parseInt(localStorage.getItem('pomodoroTime')) || pomodoroTime;
+    currentSeconds = pomodoroTime * 60;
   } else if (currentMode === 'shortBreak') {
-    currentSeconds = sessionSettings.shortBreakTime * 60;
+    shortBreakTime = parseInt(localStorage.getItem('shortBreakTime')) || shortBreakTime;
+    currentSeconds = shortBreakTime * 60;
   } else {
-    currentSeconds = sessionSettings.longBreakTime * 60;
+    longBreakTime = parseInt(localStorage.getItem('longBreakTime')) || longBreakTime;
+    currentSeconds = longBreakTime * 60;
   }
   initialSeconds = currentSeconds;
   isRunning = false;
@@ -903,19 +896,22 @@ function switchMode(mode, autoStart = false) {
   const currentTheme = localStorage.getItem('siteTheme') || 'default';
   const themeClass = currentTheme !== 'default' ? `theme-${currentTheme}` : '';
   
-  // Set up the new mode - use sessionSettings instead of localStorage
+  // Set up the new mode - always use the latest values from localStorage
   if (mode === 'pomodoro') {
-    currentSeconds = sessionSettings.pomodoroTime * 60;
+    pomodoroTime = parseInt(localStorage.getItem('pomodoroTime')) || pomodoroTime;
+    currentSeconds = pomodoroTime * 60;
     // Use 'pomodoro-mode' instead of 'focus-mode' to match CSS
     body.className = 'pomodoro-mode' + (themeClass ? ' ' + themeClass : '');
     pomodoroTab.classList.add('active');
   } else if (mode === 'shortBreak') {
-    currentSeconds = sessionSettings.shortBreakTime * 60;
+    shortBreakTime = parseInt(localStorage.getItem('shortBreakTime')) || shortBreakTime;
+    currentSeconds = shortBreakTime * 60;
     // Use 'short-break-mode' to be consistent
     body.className = 'short-break-mode' + (themeClass ? ' ' + themeClass : '');
     shortBreakTab.classList.add('active');
   } else {
-    currentSeconds = sessionSettings.longBreakTime * 60;
+    longBreakTime = parseInt(localStorage.getItem('longBreakTime')) || longBreakTime;
+    currentSeconds = longBreakTime * 60;
     // Use 'long-break-mode' to be consistent
     body.className = 'long-break-mode' + (themeClass ? ' ' + themeClass : '');
     longBreakTab.classList.add('active');
@@ -977,11 +973,11 @@ function updateSessionDots() {
     sessionDots.removeChild(sessionDots.firstChild);
   }
 
-  // Add dots based on sessionSettings.maxSessions
-  for (let i = 0; i < sessionSettings.maxSessions; i++) {
+  // Add dots based on maxSessions
+  for (let i = 0; i < maxSessions; i++) {
     const dot = document.createElement('span');
     dot.className = 'session-dot';
-    if (i < completedPomodoros % sessionSettings.maxSessions) {
+    if (i < completedPomodoros % maxSessions) {
       dot.classList.add('completed');
     }
     sessionDots.appendChild(dot);
@@ -1301,72 +1297,21 @@ document.addEventListener('DOMContentLoaded', function() {
   // Initialize sounds with shared settings
   initializeSoundSettings();
   
-  // CRITICAL: Always load from localStorage first (this persists across page refreshes)
+  // Apply any saved settings immediately when page loads
   pomodoroTime = parseInt(localStorage.getItem('pomodoroTime')) || 25;
   shortBreakTime = parseInt(localStorage.getItem('shortBreakTime')) || 5;
   longBreakTime = parseInt(localStorage.getItem('longBreakTime')) || 15;
   maxSessions = parseInt(localStorage.getItem('sessionsCount')) || 4;
   
-  // CRITICAL: Update sessionSettings cache with localStorage values
-  sessionSettings.pomodoroTime = pomodoroTime;
-  sessionSettings.shortBreakTime = shortBreakTime;
-  sessionSettings.longBreakTime = longBreakTime;
-  sessionSettings.maxSessions = maxSessions;
-  
-  // Check when settings were last modified locally
-  const settingsLastModified = parseInt(localStorage.getItem('settingsLastModified')) || 0;
-  const tenMinutesAgo = Date.now() - (10 * 60 * 1000); // 10 minutes ago
-  
-  // Only allow database sync to override if settings are older than 10 minutes
-  if (window.settingsManager && settingsLastModified < tenMinutesAgo) {
-    window.settingsManager.getSettings().then(settings => {
-      if (settings && settings.lastUpdated && settings.lastUpdated > settingsLastModified) {
-        console.log('🔄 Using database settings (newer than local)');
-        
-        // Update localStorage for persistence across refreshes
-        localStorage.setItem('pomodoroTime', settings.pomodoroTime || pomodoroTime);
-        localStorage.setItem('shortBreakTime', settings.shortBreakTime || shortBreakTime);
-        localStorage.setItem('longBreakTime', settings.longBreakTime || longBreakTime);
-        localStorage.setItem('sessionsCount', settings.sessionsCount || maxSessions);
-        localStorage.setItem('settingsLastModified', Date.now().toString());
-        
-        // Update sessionSettings cache
-        sessionSettings.pomodoroTime = settings.pomodoroTime || pomodoroTime;
-        sessionSettings.shortBreakTime = settings.shortBreakTime || shortBreakTime;
-        sessionSettings.longBreakTime = settings.longBreakTime || longBreakTime;
-        sessionSettings.maxSessions = settings.sessionsCount || maxSessions;
-        
-        // Update the current timer if needed (only if not running)
-        if (!isRunning) {
-          if (currentMode === 'pomodoro') {
-            currentSeconds = sessionSettings.pomodoroTime * 60;
-          } else if (currentMode === 'shortBreak') {
-            currentSeconds = sessionSettings.shortBreakTime * 60;
-          } else if (currentMode === 'longBreak') {
-            currentSeconds = sessionSettings.longBreakTime * 60;
-          }
-          initialSeconds = currentSeconds;
-          updateTimerDisplay();
-        }
-      } else {
-        console.log('🏠 Using localStorage settings (newer or same as database)');
-      }
-    }).catch(err => {
-      console.log('📱 Using localStorage settings (no database connection)');
-    });
-  } else {
-    console.log('⚡ Using localStorage settings (recently modified)');
-  }
-  
-  // Set the initial timer based on current mode using sessionSettings
+  // Set the initial timer based on current mode
   if (currentMode === 'pomodoro') {
-    currentSeconds = sessionSettings.pomodoroTime * 60;
+    currentSeconds = pomodoroTime * 60;
   } else if (currentMode === 'shortBreak') {
-    currentSeconds = sessionSettings.shortBreakTime * 60;
+    currentSeconds = shortBreakTime * 60;
   } else if (currentMode === 'longBreak') {
-    currentSeconds = sessionSettings.longBreakTime * 60;
+    currentSeconds = longBreakTime * 60;
   }
-  initialSeconds = currentSeconds;
+    initialSeconds = currentSeconds;
   updateTimerDisplay();
   updateSessionDots();
   
