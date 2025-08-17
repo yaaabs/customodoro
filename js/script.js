@@ -704,8 +704,7 @@ function toggleTimer() {
       window.lockedInMode.enter(true); // true = with delay
     }
 
-    // 🔧 TIMER ACCURACY FIX: Use enhanced timer with throttle compensation
-    const timerCallback = () => {
+    timerInterval = setInterval(() => {
       if (currentSeconds > 0) {
         currentSeconds--;
         updateTimerDisplay();
@@ -722,29 +721,15 @@ function toggleTimer() {
         // Timer completed - handle completion logic here
         handleTimerCompletion();
       }
-    };
-
-    // Use enhanced timer or fallback to regular setInterval
-    if (window.createAccurateTimer) {
-      timerInterval = window.createAccurateTimer(timerCallback, 1000);
-    } else {
-      timerInterval = setInterval(timerCallback, 1000);
-    }
+    }, 1000);
   } else {
     playSound('pause'); // Use function instead of direct play
     
     // Stop timer sound when pausing
     stopTimerSound();
     
-    // 🔧 TIMER ACCURACY FIX: Handle both regular timer and Web Worker timer
-    if (timerInterval && timerInterval.stop && typeof timerInterval.stop === 'function') {
-      // Web Worker timer
-      timerInterval.stop();
-    } else {
-      // Regular setInterval timer
-      clearInterval(timerInterval);
-    }
-    
+    // Pause timer
+    clearInterval(timerInterval);
     isRunning = false;
     startButton.textContent = 'START';
     updateFavicon('paused');
@@ -799,24 +784,21 @@ function handleTimerCompletion() {
             console.log('✅ Graph re-rendered!');
         }
         
-        // Trigger automatic sync if user is logged in - DELAYED TO AVOID TIMER INTERFERENCE
+        // Trigger automatic sync if user is logged in
         if (window.syncManager && window.authService?.isLoggedIn()) {
-            console.log('🔄 Scheduling delayed sync after session...');
-            // Delay sync to avoid interfering with timer transitions
-            setTimeout(() => {
-              try {
-                // Use queueSync for consistency with other parts of the app
-                window.syncManager.queueSync(window.syncManager.getCurrentLocalData());
-                console.log('✅ Auto-sync queued after session (delayed)');
-                
-                // Update sync UI stats
-                if (window.syncUI) {
-                  window.syncUI.updateStats();
-                }
-              } catch (error) {
-                console.warn('⚠️ Auto-sync failed after session:', error);
+            console.log('🔄 Triggering automatic sync after session...');
+            try {
+              // Use queueSync for consistency with other parts of the app
+              window.syncManager.queueSync(window.syncManager.getCurrentLocalData());
+              console.log('✅ Auto-sync queued after session');
+              
+              // Update sync UI stats
+              if (window.syncUI) {
+                window.syncUI.updateStats();
               }
-            }, 3000); // 3 second delay to avoid timer interference
+            } catch (error) {
+              console.warn('⚠️ Auto-sync failed after session:', error);
+            }
         }
     } else {
         console.error('❌ addCustomodoroSession function not found!');
@@ -848,14 +830,7 @@ function handleTimerCompletion() {
 
 // Reset the current timer - modified to be more robust
 function resetTimer() {
-  // 🔧 TIMER ACCURACY FIX: Handle both regular timer and Web Worker timer
-  if (timerInterval && timerInterval.stop && typeof timerInterval.stop === 'function') {
-    // Web Worker timer
-    timerInterval.stop();
-  } else {
-    // Regular setInterval timer
-    clearInterval(timerInterval);
-  }
+  clearInterval(timerInterval);
 
   // Reset to initial time based on current mode - use sessionSettings
   if (currentMode === 'pomodoro') {
@@ -2251,24 +2226,21 @@ window.addCustomodoroSession = function(type, minutes) {
     renderStreakDisplay();
   }
 
-  // Trigger automatic sync if user is logged in - DELAYED TO AVOID TIMER INTERFERENCE
+  // Trigger automatic sync if user is logged in
   if (window.syncManager && window.authService?.isLoggedIn()) {
-    console.log('🔄 Scheduling delayed sync after session...');
-    // Delay sync to avoid interfering with timer
-    setTimeout(() => {
-      try {
-        // Use queueSync with current data - this method exists and handles online/offline
-        window.syncManager.queueSync(window.syncManager.getCurrentLocalData());
-        console.log('✅ Auto-sync queued after session (delayed)');
-        
-        // Update sync UI stats
-        if (window.syncUI) {
-          window.syncUI.updateStats();
-        }
-      } catch (error) {
-        console.warn('⚠️ Auto-sync failed after session:', error);
+    console.log('🔄 Triggering automatic sync after session...');
+    try {
+      // Use queueSync with current data - this method exists and handles online/offline
+      window.syncManager.queueSync(window.syncManager.getCurrentLocalData());
+      console.log('✅ Auto-sync queued after session');
+      
+      // Update sync UI stats
+      if (window.syncUI) {
+        window.syncUI.updateStats();
       }
-    }, 3000); // 3 second delay to avoid timer interference
+    } catch (error) {
+      console.warn('⚠️ Auto-sync failed after session:', error);
+    }
   }
 };
 

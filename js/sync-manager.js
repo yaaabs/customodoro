@@ -89,9 +89,9 @@ class SyncManager {
           this.queueSync(this.getCurrentLocalData());
         }
       }
-    }, 15 * 60 * 1000); // Every 15 minutes (was 5 minutes) - less aggressive
+    }, 5 * 60 * 1000); // Every 5 minutes
 
-    console.log('🚀 Background auto-sync started (every 15 minutes)');
+    console.log('🚀 Background auto-sync started (every 5 minutes)');
   }
 
   // Stop background auto-sync
@@ -130,16 +130,15 @@ class SyncManager {
       this.notifyListeners('connection', false);
     });
 
-    // Auto-sync when window regains focus (user returns to tab) - LESS AGGRESSIVE
+    // Auto-sync when window regains focus (user returns to tab)
     window.addEventListener('focus', () => {
       if (window.authService?.isLoggedIn() && this.isOnline && !this.syncInProgress) {
-        // Check if it's been more than 10 minutes since last sync (increased from 2 minutes)
+        // Check if it's been more than 2 minutes since last sync
         const timeSinceLastSync = this.lastSyncTime ? 
           (Date.now() - new Date(this.lastSyncTime).getTime()) : Infinity;
         
-        if (timeSinceLastSync > 10 * 60 * 1000) { // 10 minutes (was 2 minutes)
-          console.log('👀 Tab focused after 10+ minutes - triggering gentle auto-sync...');
-          // Increased delay to avoid interfering with timer
+        if (timeSinceLastSync > 2 * 60 * 1000) { // 2 minutes
+          console.log('👀 Tab focused after 2+ minutes - triggering auto-sync...');
           setTimeout(async () => {
             try {
               await this.pullDataFromServer();
@@ -147,7 +146,7 @@ class SyncManager {
             } catch (error) {
               console.warn('⚠️ Focus auto-sync failed:', error);
             }
-          }, 2000); // Increased from 500ms to 2000ms
+          }, 500);
         }
       }
     });
@@ -1187,3 +1186,6 @@ window.debugMobileClear = function() {
   
   console.log('✅ Mobile cleanup complete');
 };
+
+// Create global instance
+window.syncManager = new SyncManager();
