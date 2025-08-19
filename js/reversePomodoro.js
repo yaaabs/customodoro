@@ -1220,10 +1220,10 @@ function parseDataKey(dateStrWithSuffix) {
   return new Date(year, month - 1, day); // month is 0-indexed
 }
 
-// Format date for display in PH locale
+// Format date for display in PH locale (short month for compact cards)
 function formatDateDisplay(date) {
-  return date.toLocaleDateString('en-US', { 
-    month: 'long', 
+  return date.toLocaleDateString('en-US', {
+    month: 'short', // e.g. Aug instead of August
     day: 'numeric',
     timeZone: 'Asia/Manila'
   });
