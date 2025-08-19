@@ -1263,30 +1263,28 @@ function getStats() {
 function getTotalFocusPointsAndRange() {
   const stats = getStats();
   const keys = Object.keys(stats).sort();
-  
+
   // Sum all minutes first, then calculate focus points
   let totalMinutes = 0;
   keys.forEach(k => {
     totalMinutes += (stats[k].total_minutes || 0);
   });
-  let totalPoints = Math.floor(totalMinutes / 5);
-  
+  const totalPoints = Math.floor(totalMinutes / 5);
+
   const start = keys.length ? keys[0] : null;
   const end = keys.length ? keys[keys.length - 1] : null;
+  const todayKey = formatDateKey(getPHToday());
 
+  // GitHub-style: always show first contribution date to Present (today),
+  // even if there's no activity today.
   let range = '';
-  if (start && end) {
-    if (start === end) {
-      range = formatDateDisplay(parseDataKey(start));
-    } else {
-      range = `${formatDateDisplay(parseDataKey(start))} - ${formatDateDisplay(parseDataKey(end))}`;
-    }
+  if (start) {
+    const startDate = parseDataKey(start);
+    const startDisplay = formatDateDisplay(startDate);
+    range = `${startDisplay} - Present`;
   }
 
-  return {
-    totalPoints,
-    range
-  };
+  return { totalPoints, range };
 }
 
 // Calculate current streak and its date range
