@@ -344,6 +344,13 @@ header {
   margin-bottom: 20px;
 }
 
+.current-task {
+  color: var(--text-light);
+  opacity: 0.8;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
 .info-section {
   background-color: white;
   border-radius: 16px;
@@ -369,6 +376,16 @@ header {
 }
 
 .info-box .settings-note {
+  color: var(--text-dark);
+  margin-top: 12px;
+  padding: 8px 12px;
+  background-color: rgba(139, 95, 191, 0.1);
+  border-left: 3px solid #8b5fbf;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.tasks-section .settings-note {
   color: var(--text-dark);
   margin-top: 12px;
   padding: 8px 12px;
@@ -717,6 +734,16 @@ body.theme-color .info-box .settings-note {
   font-size: 14px;
 }
 
+body.theme-color .tasks-section .settings-note {
+  color: var(--text-dark);
+  margin-top: 12px;
+  padding: 8px 12px;
+  background-color: rgba(139, 95, 191, 0.1);
+  border-left: 3px solid #8b5fbf;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
 /* Task styling - same as light mode */
 body.theme-color .task-input {
   flex: 1;
@@ -934,6 +961,13 @@ body.theme-color .footer-divider {
   color: var(--text-dark);
 }
 
+.tasks-helper-text {
+  font-size: 12px;
+  color: #888;
+  font-style: italic;
+  margin-top: 4px;
+}
+
 .task-input-container {
   display: flex;
   margin-bottom: 20px;
@@ -966,6 +1000,32 @@ body.theme-color .footer-divider {
   align-items: center;
   padding: 12px 0;
   border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.task-item:hover {
+  background-color: #f8f8f8;
+}
+
+.task-item.task-focused {
+  background-color: #e3f2fd;
+  border-color: #2196f3;
+  border-radius: 8px;
+  padding: 12px 15px;
+  margin: 5px 0;
+  border: 1px solid #2196f3;
+}
+
+.task-item.task-focused::before {
+  content: "📌 ";
+  margin-right: 6px;
+  font-size: 14px;
+}
+
+.task-item.task-focused .task-text {
+  font-weight: 600;
+  color: #1976d2;
 }
 
 .task-checkbox {
@@ -1211,6 +1271,12 @@ body.theme-dark .task-completed .task-text {
 
 /* Fix for settings-note in dark mode */
 body.theme-dark .info-box .settings-note {
+  background-color: rgba(139, 95, 191, 0.15);
+  border-left: 3px solid #8b5fbf;
+  color: #ddd;
+}
+
+body.theme-dark .tasks-section .settings-note {
   background-color: rgba(139, 95, 191, 0.15);
   border-left: 3px solid #8b5fbf;
   color: #ddd;
@@ -1763,6 +1829,12 @@ body.theme-yourname .info-box li {
 }
 
 body.theme-yourname .settings-note {
+  background-color: rgba(0, 0, 0, 0.4);
+  border-left: 3px solid rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+body.theme-yourname .tasks-section .settings-note {
   background-color: rgba(0, 0, 0, 0.4);
   border-left: 3px solid rgba(255, 255, 255, 0.5);
   color: rgba(255, 255, 255, 0.9);
@@ -3307,5 +3379,19 @@ body.theme-rain #add-task-btn.secondary-btn:hover {
 }
 .learn-more-link:hover {
   text-decoration: underline;
+}
+
+
+/* Additional theme-specific styling for tasks-section settings-note */
+body.theme-rain .tasks-section .settings-note {
+  background-color: rgba(0, 0, 0, 0.4);
+  border-left: 3px solid rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+body.theme-custom .tasks-section .settings-note {
+  background-color: rgba(0, 0, 0, 0.5);
+  border-left: 3px solid rgba(255, 255, 255, 0.4);
+  color: #ffffff;
 }
 

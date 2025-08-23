@@ -31,6 +31,14 @@ const taskList = document.getElementById('task-list');
 // Update: reference to new description textarea (now inside .description-group)
 const taskDescInput = document.getElementById('task-description-input');
 
+// Current task elements
+const currentTaskDisplay = document.getElementById('current-task');
+const currentTaskTitle = document.getElementById('current-task-title');
+
+// Current task tracking variables
+let currentFocusedTask = null;
+let currentFocusedTaskElement = null;
+
 // Timer variables - Load from localStorage or use defaults
 let pomodoroTime = parseInt(localStorage.getItem('pomodoroTime')) || 25;
 let shortBreakTime = parseInt(localStorage.getItem('shortBreakTime')) || 5;
@@ -1184,6 +1192,8 @@ function addDragAndDropListeners(taskItem) {
 // Patch: Add drag & drop listeners to all current tasks on page load
 document.addEventListener('DOMContentLoaded', function () {
   Array.from(taskList.children).forEach(addDragAndDropListeners);
+  // Load focused task after DOM is ready
+  loadFocusedTask();
 });
 
 // Create task element (now supports description)
@@ -1225,18 +1235,45 @@ function createTaskElement(text, completed = false, description = '') {
   deleteBtn.textContent = '×';
   deleteBtn.addEventListener('click', () => {
     if (confirm('Are you sure you want to delete this task?')) {
+      // If this is the focused task, clear the focus
+      if (currentFocusedTaskElement === taskItem) {
+        clearCurrentFocusedTask();
+      }
       taskList.removeChild(taskItem);
       updateUnfinishedTasks();
     }
   });
 
-  taskItem.appendChild(checkbox);
-  taskItem.appendChild(contentDiv);
-  taskItem.appendChild(deleteBtn);
-  taskList.appendChild(taskItem);
 
-  // Add drag & drop listeners
-  addDragAndDropListeners(taskItem);
+  // Add click event to focus on this task
+  taskItem.addEventListener('click', (e) => {
+    // Don't trigger focus when clicking on checkbox or delete button
+    if (e.target.type === 'checkbox' || e.target.classList.contains('task-delete')) {
+        return;
+    }
+    setCurrentFocusedTask(taskItem, taskText.textContent);
+});
+
+// Add right-click context menu to clear focus
+taskItem.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    if (taskItem.classList.contains('task-focused')) {
+        if (confirm('Clear this task as your current focus?')) {
+            clearCurrentFocusedTask();
+        }
+    }
+});
+
+taskItem.appendChild(checkbox);
+taskItem.appendChild(contentDiv);
+taskItem.appendChild(deleteBtn);
+taskList.appendChild(taskItem);
+
+
+// Add drag & drop listeners
+addDragAndDropListeners(taskItem);
+
+taskList.appendChild(taskItem);
 }
 
 // Add task to task list (now supports description)
@@ -1264,6 +1301,67 @@ function updateUnfinishedTasks() {
     !task.querySelector('.task-checkbox').checked
   );
   hasUnfinishedTasks = unfinishedTasks.length > 0;
+}
+
+// Functions to handle task focusing
+function setCurrentFocusedTask(taskElement, taskTitle) {
+  // Remove previous focus styling
+  if (currentFocusedTaskElement) {
+      currentFocusedTaskElement.classList.remove('task-focused');
+  }
+  
+  // Set new focused task
+  currentFocusedTask = taskTitle;
+  currentFocusedTaskElement = taskElement;
+  
+  // Add focus styling
+  taskElement.classList.add('task-focused');
+  
+  // Update displays
+  updateCurrentTaskDisplay();
+  
+  // Save focused task to localStorage
+  localStorage.setItem('currentFocusedTask', taskTitle);
+}
+
+function clearCurrentFocusedTask() {
+  currentFocusedTask = null;
+  if (currentFocusedTaskElement) {
+      currentFocusedTaskElement.classList.remove('task-focused');
+      currentFocusedTaskElement = null;
+  }
+  updateCurrentTaskDisplay();
+  localStorage.removeItem('currentFocusedTask');
+}
+
+function updateCurrentTaskDisplay() {
+  if (currentFocusedTask && currentTaskDisplay && currentTaskTitle) {
+      currentTaskTitle.textContent = currentFocusedTask;
+      currentTaskDisplay.style.display = 'block';
+  } else {
+      if (currentTaskDisplay) {
+          currentTaskDisplay.style.display = 'none';
+      }
+  }
+}
+
+function loadFocusedTask() {
+  const savedFocusedTask = localStorage.getItem('currentFocusedTask');
+  if (savedFocusedTask) {
+      // Find the task element that matches the saved task
+      const taskElements = Array.from(taskList.children);
+      const matchingTaskElement = taskElements.find(taskElement => {
+          const taskText = taskElement.querySelector('.task-text');
+          return taskText && taskText.textContent === savedFocusedTask;
+      });
+      
+      if (matchingTaskElement) {
+          setCurrentFocusedTask(matchingTaskElement, savedFocusedTask);
+      } else {
+          // Task no longer exists, clear the saved focused task
+          localStorage.removeItem('currentFocusedTask');
+      }
+  }
 }
 
 // Add click sound to buttons - update to use our playSound function

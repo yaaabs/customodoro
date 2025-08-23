@@ -264,6 +264,14 @@ const taskDescInput = document.getElementById('task-description-input'); // UPDA
 const addTaskBtn = document.getElementById('add-task-btn');
 const taskList = document.getElementById('task-list');
 
+// Current task elements
+const currentTaskDisplay = document.getElementById('current-task');
+const currentTaskTitle = document.getElementById('current-task-title');
+
+// Current task tracking variables
+let currentFocusedTask = null;
+let currentFocusedTaskElement = null;
+
 // Add favicon update function
 function updateFavicon(status) {
   const favicon = document.getElementById('favicon');
@@ -827,18 +835,44 @@ function createTaskElement(title, completed = false, description = '') {
     deleteBtn.textContent = '×';
     deleteBtn.addEventListener('click', () => {
         if (confirm('Are you sure you want to delete this task?')) {
+            // If this is the focused task, clear the focus
+            if (currentFocusedTaskElement === taskItem) {
+                clearCurrentFocusedTask();
+            }
             taskList.removeChild(taskItem);
             updateUnfinishedTasks();
             saveTasks();
         }
-    });
+      });
 
-    taskItem.appendChild(checkbox);
-    taskItem.appendChild(contentDiv);
-    taskItem.appendChild(deleteBtn);
-
-    taskList.appendChild(taskItem);
-}
+      // Add click event to focus on this task
+      taskItem.addEventListener('click', (e) => {
+          // Don't trigger focus when clicking on checkbox or delete button
+          if (e.target.type === 'checkbox' || e.target.classList.contains('task-delete')) {
+              return;
+          }
+          setCurrentFocusedTask(taskItem, textElement.textContent);
+      });
+  
+      // Add right-click context menu to clear focus
+      taskItem.addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+          if (taskItem.classList.contains('task-focused')) {
+              if (confirm('Clear this task as your current focus?')) {
+                  clearCurrentFocusedTask();
+              }
+          }
+      });
+  
+      taskItem.appendChild(checkbox);
+      taskItem.appendChild(contentDiv);
+      taskItem.appendChild(deleteBtn);
+  
+      // Add drag & drop listeners
+      addDragAndDropListeners(taskItem);
+  
+      taskList.appendChild(taskItem);
+  }
 
 // Add task to task list - now supports description and new textarea
 function addTask() {
@@ -867,6 +901,67 @@ function updateUnfinishedTasks() {
         !task.querySelector('.task-checkbox').checked
     );
     hasUnfinishedTasks = unfinishedTasks.length > 0;
+}
+
+// Functions to handle task focusing
+function setCurrentFocusedTask(taskElement, taskTitle) {
+  // Remove previous focus styling
+  if (currentFocusedTaskElement) {
+      currentFocusedTaskElement.classList.remove('task-focused');
+  }
+  
+  // Set new focused task
+  currentFocusedTask = taskTitle;
+  currentFocusedTaskElement = taskElement;
+  
+  // Add focus styling
+  taskElement.classList.add('task-focused');
+  
+  // Update displays
+  updateCurrentTaskDisplay();
+  
+  // Save focused task to localStorage
+  localStorage.setItem('currentFocusedTask', taskTitle);
+}
+
+function clearCurrentFocusedTask() {
+  currentFocusedTask = null;
+  if (currentFocusedTaskElement) {
+      currentFocusedTaskElement.classList.remove('task-focused');
+      currentFocusedTaskElement = null;
+  }
+  updateCurrentTaskDisplay();
+  localStorage.removeItem('currentFocusedTask');
+}
+
+function updateCurrentTaskDisplay() {
+  if (currentFocusedTask && currentTaskDisplay && currentTaskTitle) {
+      currentTaskTitle.textContent = currentFocusedTask;
+      currentTaskDisplay.style.display = 'block';
+  } else {
+      if (currentTaskDisplay) {
+          currentTaskDisplay.style.display = 'none';
+      }
+  }
+}
+
+function loadFocusedTask() {
+  const savedFocusedTask = localStorage.getItem('currentFocusedTask');
+  if (savedFocusedTask) {
+      // Find the task element that matches the saved task
+      const taskElements = Array.from(taskList.children);
+      const matchingTaskElement = taskElements.find(taskElement => {
+          const taskText = taskElement.querySelector('.task-text');
+          return taskText && taskText.textContent === savedFocusedTask;
+      });
+      
+      if (matchingTaskElement) {
+          setCurrentFocusedTask(matchingTaskElement, savedFocusedTask);
+      } else {
+          // Task no longer exists, clear the saved focused task
+          localStorage.removeItem('currentFocusedTask');
+      }
+  }
 }
 
 // Event listeners
@@ -1081,6 +1176,9 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Load saved tasks
   loadTasks();
+
+  // Load focused task after tasks are loaded
+  loadFocusedTask();
   
   console.log("Reverse timer initialized");
   

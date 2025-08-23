@@ -102,7 +102,7 @@
 
 <!-- Essential CSS (load immediately) -->
 <!-- UPDATE! -->
-<link rel="stylesheet" href="css/style.css?v=2.6.8">
+<link rel="stylesheet" href="css/style.css?v=2.6.9">
 <link rel="stylesheet" href="css/article-styles.css?v=1.0.0">
 <link rel="stylesheet" href="css/mini-music-player.css?v=2.3.5">
 <link rel="stylesheet" href="css/focus-mode.css?v=2.3.6">
@@ -314,7 +314,9 @@
       </div>      <div class="progress-container">
         <div class="progress-bar" id="progress-bar"></div>
       </div>
-      
+      <br>
+      <div class="current-task" id="current-task" style="display: none;">Current Task: <span id="current-task-title"></span></div>
+
       <!-- Burn-Up Time Tracker -->
       <div class="burnup-tracker" id="burnup-tracker" style="display: none;">
         <div class="burnup-header">
@@ -369,6 +371,8 @@
       <ul class="task-list" id="task-list">
         <!-- Tasks will be added here -->
       </ul>
+
+      <p class="settings-note">🖱️ <strong>You can now focus on a task by clicking it, and drag & drop tasks to reorder!</strong></p>
 
       </div>
 
@@ -455,7 +459,7 @@
       <div class="footer-content">
         <div class="footer-brand">
           © 2025 <strong>Customodoro</strong>
-          <span class="footer-version">v3.1.6</span>
+          <span class="footer-version">v3.2.0</span>
           • Handcrafted by <strong><em>YabuTech</em></strong>
         </div>
         <nav class="footer-links">
@@ -1413,7 +1417,7 @@
 <!-- UPDATE!) -->
 
 <script src="js/update-modal.js?v=2.3.5"></script>
-<script src="js/script.js?v=2.7.15"></script>
+<script src="js/script.js?v=2.7.16"></script>
 <script src="js/settings.js?v=2.6.4"></script>
 <script src="js/auth-service.js?v=1.0.0"></script>
 <script src="js/sync-manager.js?v=1.2.0"></script>
