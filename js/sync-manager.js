@@ -449,12 +449,12 @@ class SyncManager {
       productivityStatsByDay: localData.productivityStats || {}
     };
     
-    const cleanData = {
-      sessions: localData.sessions || [],
-      tasks: localData.tasks || [],
-      settings: localData.settings || {},
-      streaks: streaksData
-    };
+const cleanData = {
+  sessions: localData.sessions || [],
+  tasks: localData.tasks || [],
+  // settings removed - keep local only
+  streaks: streaksData
+};
     
     console.log('Pushing data to server for user:', user.userId);
     console.log('✅ Sending only backend-accepted fields: sessions, tasks, settings, streaks');
@@ -514,45 +514,7 @@ class SyncManager {
       console.warn('Failed to read tasks:', error);
     }
     
-    // Settings (collect various settings)
-    const settings = {};
-    const settingsKeys = [
-      'customodoro-theme',
-      'customodoro-volume',
-      'customodoro-sound',
-      'customodoro-auto-break',
-      'customodoro-max-time',
-      'customodoro-break-times',
-      'pomodoroTime',
-      'shortBreakTime', 
-      'longBreakTime',
-      'sessionsCount',
-      'soundEffects',
-      'alarm',
-      'alarmSound',
-      'timerSound',
-      'timerSoundVolume',
-      'burnupTrackerEnabled'
-    ];
-    
-    settingsKeys.forEach(key => {
-      try {
-        const value = localStorage.getItem(key);
-        if (value !== null) {
-          try {
-            settings[key] = JSON.parse(value);
-          } catch {
-            settings[key] = value;
-          }
-        }
-      } catch (error) {
-        console.warn(`Failed to read setting ${key}:`, error);
-      }
-    });
-    
-    if (Object.keys(settings).length > 0) {
-      data.settings = settings;
-    }
+
     
     // Streaks (include basic streak data)
     try {
@@ -644,24 +606,7 @@ class SyncManager {
       }
     }
     
-    // Merge settings (server takes precedence for newer values)
-    if (serverData.settings && typeof serverData.settings === 'object' && Object.keys(serverData.settings).length > 0) {
-      try {
-        Object.keys(serverData.settings).forEach(key => {
-          const value = serverData.settings[key];
-          if (value !== null && value !== undefined) {
-            if (typeof value === 'object') {
-              localStorage.setItem(key, JSON.stringify(value));
-            } else {
-              localStorage.setItem(key, value);
-            }
-          }
-        });
-        console.log('✅ Settings merged successfully');
-      } catch (error) {
-        console.warn('Failed to merge settings:', error);
-      }
-    }
+
     
     // Handle streaks and embedded productivity stats
     if (serverData.streaks) {
