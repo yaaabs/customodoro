@@ -41,6 +41,9 @@ document.addEventListener('DOMContentLoaded', function() {
         leaderboardBtn.removeEventListener('click', handleLeaderboardClick);
         leaderboardBtn.addEventListener('click', handleLeaderboardClick);
         console.log('✅ Leaderboard button listener attached successfully');
+        
+        // Setup mobile tip functionality
+        setupMobileTip();
       } else {
         buttonRetryCount++;
         if (buttonRetryCount <= maxButtonRetries) {
@@ -54,9 +57,76 @@ document.addEventListener('DOMContentLoaded', function() {
     
     trySetupButton();
   }
+
+  // Setup mobile tip functionality
+  function setupMobileTip() {
+    const isMobile = window.innerWidth <= 768;
+    if (!isMobile) return;
+
+    // Check if user has already clicked leaderboard
+    const hasClicked = localStorage.getItem('hasSeenLeaderboardTip');
+    if (hasClicked) return;
+
+    // Show permanent tip after delay
+    setTimeout(() => {
+      showMobileTip();
+    }, 2000);
+  }
+
+  // Show mobile tip function
+  function showMobileTip() {
+    const leaderboardBtn = document.getElementById('leaderboard-btn');
+    if (!leaderboardBtn) return;
+
+    // Don't show if already exists or user has clicked
+    if (document.querySelector('.mobile-leaderboard-tip')) return;
+    const hasClicked = localStorage.getItem('hasSeenLeaderboardTip');
+    if (hasClicked) return;
+
+    // Create tip element
+    const tip = document.createElement('div');
+    tip.className = 'mobile-leaderboard-tip';
+    tip.innerHTML = `
+      <div class="mobile-tip-content">
+      </div>
+    `;
+
+    // Position near the leaderboard button
+    const btnRect = leaderboardBtn.getBoundingClientRect();
+    tip.style.position = 'fixed';
+    tip.style.top = (btnRect.top - 50) + 'px';
+    tip.style.right = '20px';
+    tip.style.zIndex = '10000';
+
+    // Add to body
+    document.body.appendChild(tip);
+
+    // NO AUTO-HIDE - stays permanent until user clicks leaderboard
+    console.log('💬 Permanent mobile leaderboard tip displayed');
+  }
   
   function handleLeaderboardClick() {
     console.log('🏆 Leaderboard button clicked');
+    
+    // Mark that user has seen and interacted with leaderboard
+    localStorage.setItem('hasSeenLeaderboardTip', 'true');
+    
+    // Hide any existing mobile tip immediately
+    const existingTip = document.querySelector('.mobile-leaderboard-tip');
+    if (existingTip) {
+      existingTip.style.animation = 'leaderboardTipFadeOut 0.3s ease-out forwards';
+      setTimeout(() => {
+        if (existingTip.parentNode) {
+          existingTip.parentNode.removeChild(existingTip);
+        }
+      }, 300);
+    }
+    
+    // Hide the mobile tip animations
+    const leaderboardBtn = document.getElementById('leaderboard-btn');
+    if (leaderboardBtn) {
+      leaderboardBtn.classList.add('clicked');
+    }
     
     try {
       // Ensure database leaderboard is active

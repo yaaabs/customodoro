@@ -3319,6 +3319,220 @@ body.theme-rain #add-task-btn.secondary-btn:hover {
   .leaderboard-btn {
     padding: 8px 12px;
     font-size: 0.8em;
+    position: relative;
+  }
+  
+  /* Chat bubble for mobile leaderboard button */
+  .leaderboard-btn::after {
+    content: 'Tap to view leaderboard!';
+    position: absolute;
+    top: -45px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 18px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    animation: 
+      leaderboardTipFadeIn 0.5s ease-out 2s forwards, 
+      leaderboardTipGlow 2s ease-in-out 3s infinite;
+  }
+  
+  /* Speech bubble arrow */
+  .leaderboard-btn::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid #2c3e50;
+    opacity: 0;
+    visibility: hidden;
+    z-index: 1000;
+    animation: 
+      leaderboardTipFadeIn 0.5s ease-out 2s forwards;
+  }
+  
+  @keyframes leaderboardTipFadeIn {
+    0% {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(-50%) translateY(5px) scale(0.8);
+    }
+    100% {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0) scale(1);
+    }
+  }
+  
+  @keyframes leaderboardTipFadeOut {
+    0% {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0) scale(1);
+    }
+    100% {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(-50%) translateY(-5px) scale(0.8);
+    }
+  }
+  
+  @keyframes leaderboardTipGlow {
+    0%, 100% {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    50% {
+      box-shadow: 0 4px 20px rgba(52, 152, 219, 0.4), 0 0 15px rgba(52, 152, 219, 0.3);
+    }
+  }
+  
+  /* Enhanced pulse effect for the button itself */
+  .leaderboard-btn {
+    animation: leaderboardPulse 4s ease-in-out 1s infinite;
+  }
+  
+  @keyframes leaderboardPulse {
+    0%, 70%, 100% {
+      transform: scale(1);
+      box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+    }
+    15% {
+      transform: scale(1.08);
+      box-shadow: 0 4px 20px rgba(255, 215, 0, 0.6), 0 0 15px rgba(255, 215, 0, 0.4);
+    }
+  }
+
+  /* Mobile leaderboard tip - permanent display */
+  .mobile-leaderboard-tip {
+    position: fixed;
+    background: var(--card-bg, #2c3e50);
+    color: var(--text-color, #fff);
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    pointer-events: none;
+    z-index: 10000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    opacity: 1 !important;
+    visibility: visible !important;
+    animation: leaderboardTipFadeIn 0.5s ease-out forwards, leaderboardTipGlow 2s ease-in-out infinite;
+  }
+
+  .mobile-leaderboard-tip .mobile-tip-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 20px;
+    min-height: 12px;
+  }
+
+  /* Theme support for mobile tip */
+  .dark-mode .mobile-leaderboard-tip {
+    background: #34495e;
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .custom-theme .mobile-leaderboard-tip {
+    background: var(--card-bg);
+    color: var(--text-color);
+    border-color: var(--accent-color, rgba(255, 255, 255, 0.2));
+  }
+
+  .rain-theme .mobile-leaderboard-tip {
+    background: rgba(44, 62, 80, 0.9);
+    backdrop-filter: blur(10px);
+  }
+  
+  /* Hide tip after user interacts */
+  .leaderboard-btn.clicked::after,
+  .leaderboard-btn.clicked::before {
+    display: none;
+  }
+  
+  /* Additional mobile visibility enhancements */
+  .leaderboard-btn {
+    position: relative;
+    z-index: 10;
+  }
+  
+  /* Breathing effect for extra attention */
+  .leaderboard-btn:not(.clicked) {
+    animation: leaderboardBreathe 3s ease-in-out 0.5s infinite;
+  }
+  
+  @keyframes leaderboardBreathe {
+    0%, 100% {
+      transform: scale(1);
+      filter: brightness(1);
+    }
+    50% {
+      transform: scale(1.02);
+      filter: brightness(1.1);
+    }
+  }
+  
+  /* Theme support for chat bubble */
+  body.theme-dark .leaderboard-btn::after {
+    background: linear-gradient(135deg, #4a4a4a 0%, #6c63ff 100%);
+    border: 2px solid rgba(108, 99, 255, 0.3);
+  }
+  
+  body.theme-dark .leaderboard-btn::before {
+    border-top-color: #4a4a4a;
+  }
+  
+  body.theme-yourname .leaderboard-btn::after,
+  body.theme-custom .leaderboard-btn::after,
+  body.theme-rain .leaderboard-btn::after {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(79, 28, 81, 0.9) 100%);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(10px);
+  }
+  
+  body.theme-yourname .leaderboard-btn::before,
+  body.theme-custom .leaderboard-btn::before,
+  body.theme-rain .leaderboard-btn::before {
+    border-top-color: rgba(0, 0, 0, 0.9);
+  }
+}
+
+/* Smaller mobile screens optimization */
+@media (max-width: 480px) {
+  .leaderboard-btn::after {
+    font-size: 11px;
+    padding: 6px 10px;
+    top: -40px;
+  }
+  
+  .leaderboard-btn::before {
+    top: -6px;
+    border-top-width: 6px;
+    border-left-width: 5px;
+    border-right-width: 5px;
+  }
+  
+  .leaderboard-btn {
+    font-size: 0.9em;
+    padding: 10px;
   }
 }
 .streak-fire {

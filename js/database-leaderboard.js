@@ -320,7 +320,7 @@ class DatabaseLeaderboardModal {
     this.userBadges = {
       // 🎖️ STATIC BADGES - Manually assigned special recognitions
       'Clari': [
-        { type: 'vip', icon: '⚡', label: 'VIP' }
+        { type: 'vip', icon: '💎', label: 'VIP' }
       ],
       'Yabs': [
         { type: 'founder', icon: '🚀', label: 'Founder' }
