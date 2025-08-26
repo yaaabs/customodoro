@@ -112,6 +112,10 @@
 <link rel="stylesheet" href="css/about-modal.css?v=2.3.5">
 <link rel="stylesheet" href="css/radial-menu.css?v=2.6.3">
 <link rel="stylesheet" href="css/settings.css?v=3.1.1">
+<link rel="stylesheet" href="css/leaderboard-modal.css?v=1.0.6">
+
+<!-- Supabase Client -->
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 <style>
 /* Update notification styles */
@@ -382,11 +386,16 @@
 
 
     <!-- STREAK!!! Streak Stats Card -->
-<div class="streak-stats-card">
-  <div class="streak-stats-header">
-    <span class="streak-fire">🔥</span>
-    <span class="streak-title">My Stats :</span>
-  </div>
+    <div class="streak-stats-card">
+      <div class="streak-stats-header">
+        <div class="streak-title-section">
+          <span class="streak-fire">🔥</span>
+          <span class="streak-title">My Stats :</span>
+        </div>
+        <button class="leaderboard-btn" id="leaderboard-btn" title="View Global Leaderboard">
+          🏆 <span class="leaderboard-btn-text">Leaderboard</span>
+        </button>
+      </div>
   <div class="streak-stats-content">
     <div class="streak-stats-block">
       <div class="streak-stats-value" id="streak-total">421</div>
@@ -1432,6 +1441,9 @@
 <script src="js/bgm-player.js?v=2.3.6"></script>
 <script src="js/mini-music-player.js?v=2.3.6"></script>
 <script src="js/about-modal.js?v=2.3.5"></script>
+<script src="js/leaderboard-integration.js?v=1.0.1"></script>
+<script src="js/database-leaderboard.js?v=1.1.1"></script>
+
 
 
 <!-- UPDATE!) -->

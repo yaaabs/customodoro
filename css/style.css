@@ -3270,10 +3270,56 @@ body.theme-rain #add-task-btn.secondary-btn:hover {
 .streak-stats-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   font-size: 1.3em;
   font-weight: 700;
   margin-bottom: 18px;
   gap: 8px;
+}
+
+.streak-stats-header .streak-title-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.leaderboard-btn {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  color: #2c2c2c;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 0.75em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.leaderboard-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+  background: linear-gradient(135deg, #FFE55C 0%, #FFB347 100%);
+}
+
+.leaderboard-btn:active {
+  transform: translateY(0) scale(1.02);
+}
+
+@media (max-width: 768px) {
+  .leaderboard-btn-text {
+    display: none;
+  }
+  
+  .leaderboard-btn {
+    padding: 8px 12px;
+    font-size: 0.8em;
+  }
 }
 .streak-fire {
   font-size: 1.5em;
