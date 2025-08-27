@@ -14,12 +14,10 @@ class DatabaseLeaderboard {
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtc215a3p2d3V5YW5rdmx6c2lmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MzY2MzUsImV4cCI6MjA3MDQxMjYzNX0.-PTqdJ3jsx7E2lghELJPo5Yo7zgjLzb0Mbaa5tLrUPg';
     
     if (SUPABASE_URL === 'YOUR_SUPABASE_PROJECT_URL' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY') {
-      console.warn('🔧 Please configure your Supabase credentials in database-leaderboard.js');
       return;
     }
 
     this.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    console.log('🔗 Supabase client initialized successfully');
     this.getCurrentUser();
   }
 
@@ -53,28 +51,14 @@ class DatabaseLeaderboard {
       // Option 1: data.streaks.productivityStatsByDay (your actual structure from sync-manager.js)
       if (data.streaks && data.streaks.productivityStatsByDay) {
         productivityStats = data.streaks.productivityStatsByDay;
-        console.log(`📊 Found productivity stats in streaks for ${userData.username}: ${Object.keys(productivityStats).length} days`);
       }
       // Option 2: data.productivityStatsByDay (direct structure - backup)
       else if (data.productivityStatsByDay) {
         productivityStats = data.productivityStatsByDay;
-        console.log(`📊 Found direct productivity stats for ${userData.username}: ${Object.keys(productivityStats).length} days`);
       }
       // Option 3: Check if data contains date keys directly (fallback)
       else if (typeof data === 'object' && Object.keys(data).some(key => key.match(/^\d{4}-\d{2}-\d{2}$/))) {
         productivityStats = data;
-        console.log(`📊 Found date keys directly in data for ${userData.username}: ${Object.keys(productivityStats).length} days`);
-      }
-
-      // If no productivity data found, log the actual structure
-      if (Object.keys(productivityStats).length === 0) {
-        console.log(`❌ No productivity stats found for ${userData.username}. Data structure:`, {
-          hasData: !!data,
-          dataKeys: data ? Object.keys(data) : [],
-          hasStreaks: !!(data.streaks),
-          streakKeys: data.streaks ? Object.keys(data.streaks) : [],
-          fullData: data
-        });
       }
 
       // Calculate totals from existing data structure
@@ -107,7 +91,6 @@ class DatabaseLeaderboard {
         is_current_user: userId === this.currentUser?.userId
       };
     } catch (error) {
-      console.error('Error calculating user stats:', error);
       return null;
     }
   }
@@ -190,34 +173,17 @@ class DatabaseLeaderboard {
   // Get real leaderboard data from database
   async getLeaderboard(category, period = 'all_time', maxUsers = 20) {
     if (!this.supabase) {
-      console.error('Supabase not initialized');
       return { rankings: [], highlightedUser: null, totalCount: 0 };
     }
 
     try {
-      console.log('🔍 Attempting to fetch users from database...');
-      
       // First, try to get all users to see what's there
       const { data: allUsers, error: allError } = await this.supabase
         .from('users')
         .select('user_id, username, data');
 
       if (allError) {
-        console.error('❌ Error fetching all users:', allError);
         throw allError;
-      }
-
-      console.log(`📋 Total users in database: ${allUsers ? allUsers.length : 0}`);
-      
-      if (allUsers && allUsers.length > 0) {
-        const sampleUser = allUsers[0];
-        console.log('👤 Sample user structure:', {
-          user_id: sampleUser.user_id,
-          username: sampleUser.username,
-          hasData: !!sampleUser.data,
-          dataKeys: sampleUser.data ? Object.keys(sampleUser.data) : 'No data',
-          fullDataStructure: sampleUser.data
-        });
       }
 
       // Filter users that have productivity data (more flexible approach)
@@ -230,19 +196,10 @@ class DatabaseLeaderboard {
           (user.data.productivityStatsByDay && Object.keys(user.data.productivityStatsByDay).length > 0) ||
           (typeof user.data === 'object' && Object.keys(user.data).some(key => key.match(/^\d{4}-\d{2}-\d{2}$/)));
         
-        if (hasProductivityData) {
-          console.log(`✅ User ${user.username} has productivity data`);
-        } else {
-          console.log(`❌ User ${user.username} missing productivity data`);
-        }
-        
         return hasProductivityData;
       }) || [];
-
-      console.log(`👥 Found ${users.length} users with productivity data out of ${allUsers?.length || 0} total users`);
       
       if (users.length === 0) {
-        console.log('❌ No users found with productivity data');
         return { rankings: [], highlightedUser: null, totalCount: 0 };
       }
 
@@ -253,11 +210,6 @@ class DatabaseLeaderboard {
       
       const allUserStats = await Promise.all(userStatsPromises);
       const validStats = allUserStats.filter(stat => stat !== null);
-      
-      console.log(`📈 Calculated stats for ${allUserStats.length} users, ${validStats.length} valid`);
-      validStats.forEach(stat => {
-        console.log(`👤 ${stat.username}: ${stat.total_focus_minutes}min, ${stat.total_sessions}sessions, streak:${stat.current_streak}`);
-      });
 
       // Apply time period filters
       let filteredStats = validStats;
@@ -299,7 +251,6 @@ class DatabaseLeaderboard {
       };
 
     } catch (error) {
-      console.error('Error fetching leaderboard:', error);
       return { rankings: [], highlightedUser: null, totalCount: 0 };
     }
   }
@@ -413,7 +364,6 @@ class DatabaseLeaderboardModal {
       return dynamicBadges;
 
     } catch (error) {
-      console.error('Error calculating dynamic badges:', error);
       return this.userBadges; // Fallback to static badges
     }
   }
@@ -588,7 +538,6 @@ class DatabaseLeaderboardModal {
         this.renderLeaderboard(data);
       })
       .catch(error => {
-        console.error('Error loading leaderboard:', error);
         content.innerHTML = `
           <div class="leaderboard-error">
             <h3>Connection Error</h3>
@@ -760,8 +709,5 @@ window.showLeaderboard = function(category = 'total_focus', period = 'all_time')
 window.initDatabaseLeaderboard = function() {
   // Database leaderboard is already initialized when this script loads
   // This function exists for compatibility with the integration script
-  console.log('🔗 Database leaderboard initialization confirmed');
   return window.databaseLeaderboardModal;
 };
-
-console.log('🏆 Database Leaderboard loaded successfully');
