@@ -1,7 +1,20 @@
 const CACHE_NAME = "customodoro-static-v7.2.8 "; // Bump to v7.2.8  
 const ASSETS_CACHE = "customodoro-assets-v6.1.7 "; // Bump to v6.1.7 
 const urlsToCache = [
-  "/", "/index.html", "/reverse.html"
+  "/", 
+  "/index.html", 
+  "/reverse.html",
+  "/favicon/favicon.ico",
+  "/favicon/favicon-32x32.png",
+  "/favicon/favicon-16x16.png",
+  "/favicon/apple-touch-icon.png",
+  "/favicon/android-chrome-192x192.png",
+  "/favicon/android-chrome-512x512.png",
+  "/images/customodoro_card.png",
+  "/manifest.json",
+  "/css/style.css",
+  "/js/script.js",
+  "/js/reversePomodoro.js"
 ];
 
 let isFirstInstall = false;
