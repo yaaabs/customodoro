@@ -14,10 +14,12 @@ class DatabaseLeaderboard {
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtc215a3p2d3V5YW5rdmx6c2lmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MzY2MzUsImV4cCI6MjA3MDQxMjYzNX0.-PTqdJ3jsx7E2lghELJPo5Yo7zgjLzb0Mbaa5tLrUPg';
     
     if (SUPABASE_URL === 'YOUR_SUPABASE_PROJECT_URL' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY') {
+      console.warn('🔧 Please configure your Supabase credentials in database-leaderboard.js');
       return;
     }
 
     this.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    console.log('🔗 Supabase client initialized successfully');
     this.getCurrentUser();
   }
 
@@ -28,7 +30,7 @@ class DatabaseLeaderboard {
   }
 
   // Calculate user stats from existing database data
-  async calculateUserStats(userId) {
+  async calculateUserStats(userId, period = 'all_time') {
     if (!this.supabase) return null;
 
     try {
@@ -51,23 +53,40 @@ class DatabaseLeaderboard {
       // Option 1: data.streaks.productivityStatsByDay (your actual structure from sync-manager.js)
       if (data.streaks && data.streaks.productivityStatsByDay) {
         productivityStats = data.streaks.productivityStatsByDay;
+        console.log(`📊 Found productivity stats in streaks for ${userData.username}: ${Object.keys(productivityStats).length} days`);
       }
       // Option 2: data.productivityStatsByDay (direct structure - backup)
       else if (data.productivityStatsByDay) {
         productivityStats = data.productivityStatsByDay;
+        console.log(`📊 Found direct productivity stats for ${userData.username}: ${Object.keys(productivityStats).length} days`);
       }
       // Option 3: Check if data contains date keys directly (fallback)
       else if (typeof data === 'object' && Object.keys(data).some(key => key.match(/^\d{4}-\d{2}-\d{2}$/))) {
         productivityStats = data;
+        console.log(`📊 Found date keys directly in data for ${userData.username}: ${Object.keys(productivityStats).length} days`);
       }
 
-      // Calculate totals from existing data structure
+      // If no productivity data found, log the actual structure
+      if (Object.keys(productivityStats).length === 0) {
+        console.log(`❌ No productivity stats found for ${userData.username}. Data structure:`, {
+          hasData: !!data,
+          dataKeys: data ? Object.keys(data) : [],
+          hasStreaks: !!(data.streaks),
+          streakKeys: data.streaks ? Object.keys(data.streaks) : [],
+          fullData: data
+        });
+      }
+
+      // Filter dates based on period BEFORE calculating totals
+      const filteredProductivityStats = this.filterStatsByPeriod(productivityStats, period);
+
+      // Calculate totals from filtered data
       let totalMinutes = 0;
       let totalSessions = 0;
-      const dates = Object.keys(productivityStats).sort();
+      const dates = Object.keys(filteredProductivityStats).sort();
 
       dates.forEach(date => {
-        const dayData = productivityStats[date];
+        const dayData = filteredProductivityStats[date];
         if (dayData) {
           // Total minutes from the data
           totalMinutes += dayData.total_minutes || 0;
@@ -76,23 +95,65 @@ class DatabaseLeaderboard {
         }
       });
 
-      // Calculate streaks based on consecutive dates with activity
+      // Calculate streaks based on consecutive dates with activity (use original data for streaks, not filtered)
       const streaks = this.calculateStreaks(productivityStats);
 
       return {
         id: userId,
         username: userData.username,
         full_name: userData.username,
-        // Total focus time = total_minutes / 5 (as specified)
+        // Total focus time = total_minutes / 5 (Focus Points calculation: 5 minutes = 1 FP)
         total_focus_minutes: Math.floor(totalMinutes / 5),
         total_sessions: totalSessions,
         current_streak: streaks.current,
         longest_streak: streaks.longest,
-        is_current_user: userId === this.currentUser?.userId
+        is_current_user: userId === this.currentUser?.userId,
+        period_filtered: period !== 'all_time' // Track if this was period-filtered
       };
     } catch (error) {
+      console.error('Error calculating user stats:', error);
       return null;
     }
+  }
+
+  // NEW METHOD: Filter productivity stats by time period
+  filterStatsByPeriod(productivityStats, period) {
+    if (period === 'all_time') {
+      return productivityStats;
+    }
+
+    const now = new Date();
+    const currentDate = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // Today at 00:00:00
+    
+    let startDate;
+    
+    if (period === 'month') {
+      // This Month: From the 1st day of current month to today
+      startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      console.log(`📅 Filtering for THIS MONTH: ${startDate.toISOString().split('T')[0]} to ${currentDate.toISOString().split('T')[0]}`);
+    } else if (period === 'week') {
+      // This Week: Calendar week (Sunday to Saturday)
+      const dayOfWeek = currentDate.getDay(); // 0 = Sunday, 1 = Monday, etc.
+      startDate = new Date(currentDate);
+      startDate.setDate(currentDate.getDate() - dayOfWeek); // Go back to Sunday
+      console.log(`📅 Filtering for THIS WEEK (Sunday to Saturday): ${startDate.toISOString().split('T')[0]} to ${currentDate.toISOString().split('T')[0]}`);
+    }
+
+    // Filter the productivity stats
+    const filtered = {};
+    Object.keys(productivityStats).forEach(dateStr => {
+      const statDate = new Date(dateStr + 'T00:00:00'); // Ensure we're comparing dates at 00:00:00
+      
+      if (statDate >= startDate && statDate <= currentDate) {
+        filtered[dateStr] = productivityStats[dateStr];
+        console.log(`✅ Including ${dateStr}: ${productivityStats[dateStr].total_minutes}min, ${(productivityStats[dateStr].classic || 0) + (productivityStats[dateStr].reverse || 0)} sessions`);
+      } else {
+        console.log(`❌ Excluding ${dateStr}: outside ${period} range`);
+      }
+    });
+
+    console.log(`📊 Period ${period}: ${Object.keys(filtered).length} days out of ${Object.keys(productivityStats).length} total days`);
+    return filtered;
   }
 
   // Calculate streaks from productivity data (same logic as before)
@@ -173,17 +234,34 @@ class DatabaseLeaderboard {
   // Get real leaderboard data from database
   async getLeaderboard(category, period = 'all_time', maxUsers = 20) {
     if (!this.supabase) {
+      console.error('Supabase not initialized');
       return { rankings: [], highlightedUser: null, totalCount: 0 };
     }
 
     try {
+      console.log('🔍 Attempting to fetch users from database...');
+      
       // First, try to get all users to see what's there
       const { data: allUsers, error: allError } = await this.supabase
         .from('users')
         .select('user_id, username, data');
 
       if (allError) {
+        console.error('❌ Error fetching all users:', allError);
         throw allError;
+      }
+
+      console.log(`📋 Total users in database: ${allUsers ? allUsers.length : 0}`);
+      
+      if (allUsers && allUsers.length > 0) {
+        const sampleUser = allUsers[0];
+        console.log('👤 Sample user structure:', {
+          user_id: sampleUser.user_id,
+          username: sampleUser.username,
+          hasData: !!sampleUser.data,
+          dataKeys: sampleUser.data ? Object.keys(sampleUser.data) : 'No data',
+          fullDataStructure: sampleUser.data
+        });
       }
 
       // Filter users that have productivity data (more flexible approach)
@@ -196,33 +274,37 @@ class DatabaseLeaderboard {
           (user.data.productivityStatsByDay && Object.keys(user.data.productivityStatsByDay).length > 0) ||
           (typeof user.data === 'object' && Object.keys(user.data).some(key => key.match(/^\d{4}-\d{2}-\d{2}$/)));
         
+        if (hasProductivityData) {
+          console.log(`✅ User ${user.username} has productivity data`);
+        } else {
+          console.log(`❌ User ${user.username} missing productivity data`);
+        }
+        
         return hasProductivityData;
       }) || [];
+
+      console.log(`👥 Found ${users.length} users with productivity data out of ${allUsers?.length || 0} total users`);
       
       if (users.length === 0) {
+        console.log('❌ No users found with productivity data');
         return { rankings: [], highlightedUser: null, totalCount: 0 };
       }
 
-      // Calculate stats for all users
+      // Calculate stats for all users with the specified period
       const userStatsPromises = users.map(user => 
-        this.calculateUserStats(user.user_id)
+        this.calculateUserStats(user.user_id, period)
       );
       
       const allUserStats = await Promise.all(userStatsPromises);
       const validStats = allUserStats.filter(stat => stat !== null);
+      
+      console.log(`📈 Calculated stats for ${allUserStats.length} users, ${validStats.length} valid for period: ${period}`);
+      validStats.forEach(stat => {
+        console.log(`👤 ${stat.username} (${period}): ${stat.total_focus_minutes}FP, ${stat.total_sessions}sessions, streak:${stat.current_streak}`);
+      });
 
-      // Apply time period filters
+      // No need for additional time period filters - already handled in calculateUserStats
       let filteredStats = validStats;
-      if (period === 'week' || period === 'month') {
-        // For time periods, we could filter based on recent activity
-        // For now, we'll just reduce scores as a demo
-        const multiplier = period === 'week' ? 0.1 : 0.3;
-        filteredStats = validStats.map(user => ({
-          ...user,
-          total_focus_minutes: Math.floor(user.total_focus_minutes * multiplier),
-          total_sessions: Math.floor(user.total_sessions * multiplier)
-        }));
-      }
 
       // Sort by category
       const sortField = category === 'total_focus' ? 'total_focus_minutes' : 
@@ -251,6 +333,7 @@ class DatabaseLeaderboard {
       };
 
     } catch (error) {
+      console.error('Error fetching leaderboard:', error);
       return { rankings: [], highlightedUser: null, totalCount: 0 };
     }
   }
@@ -271,7 +354,7 @@ class DatabaseLeaderboardModal {
     this.userBadges = {
       // 🎖️ STATIC BADGES - Manually assigned special recognitions
       'Clari': [
-        { type: 'vip', icon: '💎', label: 'VIP' }
+        { type: 'vip', icon: '⚡', label: 'VIP' }
       ],
       'Yabs': [
         { type: 'founder', icon: '🚀', label: 'Founder' }
@@ -364,6 +447,7 @@ class DatabaseLeaderboardModal {
       return dynamicBadges;
 
     } catch (error) {
+      console.error('Error calculating dynamic badges:', error);
       return this.userBadges; // Fallback to static badges
     }
   }
@@ -538,6 +622,7 @@ class DatabaseLeaderboardModal {
         this.renderLeaderboard(data);
       })
       .catch(error => {
+        console.error('Error loading leaderboard:', error);
         content.innerHTML = `
           <div class="leaderboard-error">
             <h3>Connection Error</h3>
@@ -709,5 +794,8 @@ window.showLeaderboard = function(category = 'total_focus', period = 'all_time')
 window.initDatabaseLeaderboard = function() {
   // Database leaderboard is already initialized when this script loads
   // This function exists for compatibility with the integration script
+  console.log('🔗 Database leaderboard initialization confirmed');
   return window.databaseLeaderboardModal;
 };
+
+console.log('🏆 Database Leaderboard loaded successfully');
