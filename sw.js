@@ -1,4 +1,4 @@
-const CACHE_NAME = "customodoro-static-v7.2.8 "; // Bump to v7.2.8  
+const CACHE_NAME = "customodoro-static-v7.2.8"; // Bump to v7.2.8  
 const ASSETS_CACHE = "customodoro-assets-v6.1.7 "; // Bump to v6.1.7 
 const urlsToCache = [
   "/", 
