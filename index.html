@@ -602,9 +602,9 @@
             <h3 class="settings-section-title">Sound Settings</h3>
 
             <div class="settings-row">
-              <div class="settings-label">Select alert sound:</div>
+              <div class="settings-label">Select Pomodoro Alert Sound:</div>
               <div class="select-wrapper">
-                <select class="sound-selector" id="alarm-sound-selector">
+                <select class="sound-selector" id="pomodoro-sound-selector">
                   <option value="bell.mp3">Bell (Default)</option>
                   <option value="alarm.mp3">iPhone Alarm Bell</option>
                   <option value="level_up.mp3">Level Up</option>
@@ -613,14 +613,34 @@
               </div>
             </div>
             <div class="settings-row">
-              <div class="settings-label">Sound Volume</div>
+              <div class="settings-label">Pomodoro Sound Volume</div>
               <div class="volume-container">
-                <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="60">
-                <div class="volume-percentage" id="volume-percentage">60%</div>
+                <input type="range" class="volume-slider" id="pomodoro-volume-slider" min="0" max="100" value="60">
+                <div class="volume-percentage" id="pomodoro-volume-percentage">60%</div>
+              </div>
+            </div>
+            
+            <div class="settings-row">
+              <div class="settings-label">Select Break Alert Sound:</div>
+              <div class="select-wrapper">
+                <select class="sound-selector" id="break-sound-selector">
+                  <option value="bell.mp3">Bell (Default)</option>
+                  <option value="alarm.mp3">iPhone Alarm Bell</option>
+                  <option value="level_up.mp3">Level Up</option>
+                  <option value="message_alert.mp3">Message Alert</option>
+                </select>
               </div>
             </div>
             <div class="settings-row">
-              <div class="settings-label">Select timer sound:</div>
+              <div class="settings-label">Break Sound Volume</div>
+              <div class="volume-container">
+                <input type="range" class="volume-slider" id="break-volume-slider" min="0" max="100" value="60">
+                <div class="volume-percentage" id="break-volume-percentage">60%</div>
+              </div>
+            </div>
+
+            <div class="settings-row">
+              <div class="settings-label">Select Timer Sound:</div>
               <div class="select-wrapper">
                 <select class="sound-selector" id="timer-sound-selector">
                   <option value="none">None (Default)</option>
@@ -638,14 +658,14 @@
               </div>
             </div>
             <div class="settings-row">
-              <div class="settings-label">Timer Sound Effects</div>
+              <div class="settings-label">Timer Sound Effects (UI Click Sound)</div>
               <label class="toggle-switch">
                 <input type="checkbox" id="sound-effects-toggle" checked>
                 <span class="slider-toggle"></span>
               </label>
             </div>
             <div class="settings-row">
-              <div class="settings-label">End of Session Alarm</div>
+              <div class="settings-label">End of Session Alarm (Alert Sound)</div>
               <label class="toggle-switch">
                 <input type="checkbox" id="alarm-toggle" checked>
                 <span class="slider-toggle"></span>
@@ -655,7 +675,8 @@
               <div class="settings-label">Test Sounds</div>
               <div class="sound-test-buttons">
                 <button class="sound-test-btn" id="test-click-sound">UI Sound</button>
-                <button class="sound-test-btn" id="test-alarm-sound">Alarm Sound</button>
+                <button class="sound-test-btn" id="test-pomodoro-sound">Pomodoro Alert</button>
+                <button class="sound-test-btn" id="test-break-sound">Break Alert</button>
                 <button class="sound-test-btn" id="test-timer-sound">Timer Sound</button>
               </div>
             </div>

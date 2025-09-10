@@ -8,7 +8,8 @@ const sounds = {
     click: new Audio('audio/SFX/start.wav'),
     start: new Audio('audio/SFX/start.wav'),
     pause: new Audio('audio/SFX/pause.wav'),
-    complete: new Audio('audio/Alert Sounds/alarm.mp3')
+    pomodoroComplete: new Audio('audio/Alert Sounds/bell.mp3'),
+    breakComplete: new Audio('audio/Alert Sounds/bell.mp3')
 };
 
 // Add timer sound variables and functionality
@@ -37,30 +38,53 @@ function showToast(message, duration = 3000) {
 
 let currentTimerSound = null;
 
-// Initialize sound settings from shared localStorage keys
+// Initialize sound settings from localStorage keys
 function initializeSoundSettings() {
-    const volume = localStorage.getItem('volume') ? 
-                  parseInt(localStorage.getItem('volume')) / 100 : 0.6;
+    // Migration: Handle old shared settings
+    const oldVolume = localStorage.getItem('volume');
+    const oldAlarmSound = localStorage.getItem('alarmSound');
+    
+    if (oldVolume && !localStorage.getItem('pomodoroVolume')) {
+        localStorage.setItem('pomodoroVolume', oldVolume);
+        localStorage.setItem('breakVolume', oldVolume);
+        console.log('Reverse Timer: Migrated old volume settings to separate Pomodoro/Break volumes');
+    }
+    
+    if (oldAlarmSound && !localStorage.getItem('pomodoroSound')) {
+        localStorage.setItem('pomodoroSound', oldAlarmSound);
+        localStorage.setItem('breakSound', 'bell.mp3'); // Default different sound for breaks
+        console.log('Reverse Timer: Migrated old alarm sound to separate Pomodoro/Break sounds');
+    }
+    
+    const pomodoroVolume = localStorage.getItem('pomodoroVolume') ? 
+                          parseInt(localStorage.getItem('pomodoroVolume')) / 100 : 0.6;
+    const breakVolume = localStorage.getItem('breakVolume') ? 
+                       parseInt(localStorage.getItem('breakVolume')) / 100 : 0.6;
     
     // Explicitly check for 'false' string
     const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
     const alarmEnabled = localStorage.getItem('alarm') !== 'false';
     
-    // Get selected alarm sound or use default - FIXED: Load the sound properly
-    const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
-    updateAlarmSound(selectedAlarmSound);
+    // Get selected alarm sounds or use defaults
+    const selectedPomodoroSound = localStorage.getItem('pomodoroSound') || 'bell.mp3';
+    const selectedBreakSound = localStorage.getItem('breakSound') || 'bell.mp3';
+    updatePomodoroAlarmSound(selectedPomodoroSound);
+    updateBreakAlarmSound(selectedBreakSound);
     
-    // Set initial volumes
-    sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
-    sounds.start.volume = soundEffectsEnabled ? volume * 0.6 : 0;
-    sounds.pause.volume = soundEffectsEnabled ? volume * 0.5 : 0;
-    sounds.complete.volume = alarmEnabled ? volume : 0;
+    // Set initial volumes (use pomodoroVolume for UI sounds)
+    sounds.click.volume = soundEffectsEnabled ? pomodoroVolume * 0.5 : 0;
+    sounds.start.volume = soundEffectsEnabled ? pomodoroVolume * 0.6 : 0;
+    sounds.pause.volume = soundEffectsEnabled ? pomodoroVolume * 0.5 : 0;
+    sounds.pomodoroComplete.volume = alarmEnabled ? pomodoroVolume : 0;
+    sounds.breakComplete.volume = alarmEnabled ? breakVolume : 0;
     
     console.log(`Sound settings initialized for Reverse Timer:`, { 
-        volume: volume, 
+        pomodoroVolume: pomodoroVolume,
+        breakVolume: breakVolume,
         soundEffectsEnabled: soundEffectsEnabled, 
         alarmEnabled: alarmEnabled,
-        alarmSound: selectedAlarmSound
+        pomodoroSound: selectedPomodoroSound,
+        breakSound: selectedBreakSound
     });
 }
 
@@ -82,18 +106,32 @@ function initializeTimerSoundSettings() {
   });
 }
 
-// Function to specifically update the alarm sound
-function updateAlarmSound(soundFileName) {
-    // Create a new Audio object for the alarm instead of just changing the src
-    sounds.complete = new Audio('audio/Alert Sounds/' + soundFileName);
+// Function to specifically update the pomodoro alarm sound
+function updatePomodoroAlarmSound(soundFileName) {
+    // Create a new Audio object for the pomodoro alarm
+    sounds.pomodoroComplete = new Audio('audio/Alert Sounds/' + soundFileName);
     
-    // Re-apply volume settings using shared keys
-    const volume = localStorage.getItem('volume') ? 
-                  parseInt(localStorage.getItem('volume')) / 100 : 0.6;
+    // Re-apply volume settings using separate keys
+    const pomodoroVolume = localStorage.getItem('pomodoroVolume') ? 
+                          parseInt(localStorage.getItem('pomodoroVolume')) / 100 : 0.6;
     const alarmEnabled = localStorage.getItem('alarm') !== 'false';
-    sounds.complete.volume = alarmEnabled ? volume : 0;
+    sounds.pomodoroComplete.volume = alarmEnabled ? pomodoroVolume : 0;
     
-    console.log(`Updated alarm sound to: ${soundFileName}`);
+    console.log(`Reverse Timer: Updated pomodoro alarm sound to: ${soundFileName}`);
+}
+
+// Function to specifically update the break alarm sound
+function updateBreakAlarmSound(soundFileName) {
+    // Create a new Audio object for the break alarm
+    sounds.breakComplete = new Audio('audio/Alert Sounds/' + soundFileName);
+    
+    // Re-apply volume settings using separate keys
+    const breakVolume = localStorage.getItem('breakVolume') ? 
+                       parseInt(localStorage.getItem('breakVolume')) / 100 : 0.6;
+    const alarmEnabled = localStorage.getItem('alarm') !== 'false';
+    sounds.breakComplete.volume = alarmEnabled ? breakVolume : 0;
+    
+    console.log(`Reverse Timer: Updated break alarm sound to: ${soundFileName}`);
 }
 
 // Function to update timer sound type and volume
@@ -200,23 +238,36 @@ function stopTimerSound() {
 initializeSoundSettings();
 initializeTimerSoundSettings();
 
-// Play a sound with error handling and respect settings from shared keys
+// Play a sound with error handling and respect settings
 function playSound(soundName) {
     const sound = sounds[soundName];
     if (!sound) return;
     
-    // Check if the sound should be played based on shared settings
-    if (soundName === 'complete') {
-        // For alarm sound
+    // Check if the sound should be played based on settings
+    if (soundName === 'complete' || soundName === 'pomodoroComplete' || soundName === 'breakComplete') {
+        // For alarm sounds
         if (localStorage.getItem('alarm') === 'false') {
             console.log('Alarm sounds disabled in settings');
             return;
         }
         
-        // FIXED: Ensure we're using the latest alarm sound before playing
-        const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
-        if (sound.src.indexOf(selectedAlarmSound) === -1) {
-            updateAlarmSound(selectedAlarmSound);
+        // Handle backward compatibility
+        if (soundName === 'complete') {
+            // Default to break complete for reverse timer
+            soundName = 'breakComplete';
+        }
+        
+        // Ensure we're using the latest alarm sound before playing
+        if (soundName === 'pomodoroComplete') {
+            const selectedPomodoroSound = localStorage.getItem('pomodoroSound') || 'bell.mp3';
+            if (sound.src.indexOf(selectedPomodoroSound) === -1) {
+                updatePomodoroAlarmSound(selectedPomodoroSound);
+            }
+        } else if (soundName === 'breakComplete') {
+            const selectedBreakSound = localStorage.getItem('breakSound') || 'bell.mp3';
+            if (sound.src.indexOf(selectedBreakSound) === -1) {
+                updateBreakAlarmSound(selectedBreakSound);
+            }
         }
     } else {
         // For all other UI sounds
@@ -648,7 +699,7 @@ function completeSession(playSound = true) {
 
     // Only play completion sound if the timer reached max time or playSound is true
     if (currentSeconds >= MAX_TIME || playSound) {
-        window.playSound('complete');
+        window.playSound('pomodoroComplete');
         showMuteAlert(`Great work! You worked for ${workMinutes} minutes and earned a ${earnedBreakTime}-minute break!`);
     }
 
@@ -680,7 +731,7 @@ function completeBreak() {
     stopTimerSound();
     
     // Play completion sound when break is done
-    playSound('complete');
+    playSound('breakComplete');
     
     // Show mute alert
     showMuteAlert("Break time is over! Ready to work again?");
@@ -1033,38 +1084,48 @@ document.querySelector('.switch-btn').addEventListener('click', (e) => {
 
 // Update sound volumes based on shared settings
 function updateSoundVolumes() {
-    // Use shared keys for sound settings
-    const volume = localStorage.getItem('volume') ? 
-                  parseInt(localStorage.getItem('volume')) / 100 : 0.6;
+    // Use separate keys for sound settings
+    const pomodoroVolume = localStorage.getItem('pomodoroVolume') ? 
+                          parseInt(localStorage.getItem('pomodoroVolume')) / 100 : 0.6;
+    const breakVolume = localStorage.getItem('breakVolume') ? 
+                       parseInt(localStorage.getItem('breakVolume')) / 100 : 0.6;
     
     // Explicitly check for 'false' string to handle resets properly
     const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
     const alarmEnabled = localStorage.getItem('alarm') !== 'false';
     
-    // FIXED: Update alarm sound when settings change
-    const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
-    updateAlarmSound(selectedAlarmSound);
+    // Update alarm sounds when settings change
+    const selectedPomodoroSound = localStorage.getItem('pomodoroSound') || 'bell.mp3';
+    const selectedBreakSound = localStorage.getItem('breakSound') || 'bell.mp3';
+    updatePomodoroAlarmSound(selectedPomodoroSound);
+    updateBreakAlarmSound(selectedBreakSound);
     
-    // Set volumes based on settings
-    sounds.click.volume = soundEffectsEnabled ? volume * 0.5 : 0;
-    sounds.start.volume = soundEffectsEnabled ? volume * 0.6 : 0;
-    sounds.pause.volume = soundEffectsEnabled ? volume * 0.5 : 0;
-    sounds.complete.volume = alarmEnabled ? volume : 0;
+    // Set volumes based on settings (use pomodoroVolume for UI sounds)
+    sounds.click.volume = soundEffectsEnabled ? pomodoroVolume * 0.5 : 0;
+    sounds.start.volume = soundEffectsEnabled ? pomodoroVolume * 0.6 : 0;
+    sounds.pause.volume = soundEffectsEnabled ? pomodoroVolume * 0.5 : 0;
+    sounds.pomodoroComplete.volume = alarmEnabled ? pomodoroVolume : 0;
+    sounds.breakComplete.volume = alarmEnabled ? breakVolume : 0;
     
     console.log("Reverse Timer: Sound volumes updated:", { 
-        volume: volume,
+        pomodoroVolume: pomodoroVolume,
+        breakVolume: breakVolume,
         soundEffectsEnabled: soundEffectsEnabled,
         alarmEnabled: alarmEnabled,
-        alarmSound: selectedAlarmSound,
+        pomodoroSound: selectedPomodoroSound,
+        breakSound: selectedBreakSound,
         clickVolume: sounds.click.volume,
         startVolume: sounds.start.volume,
         pauseVolume: sounds.pause.volume,
-        completeVolume: sounds.complete.volume
+        pomodoroCompleteVolume: sounds.pomodoroComplete.volume,
+        breakCompleteVolume: sounds.breakComplete.volume
     });
 }
 
-// Expose the updateAlarmSound function for settings.js
-window.updateAlarmSound = updateAlarmSound;
+// Expose the updateAlarmSound functions for settings.js
+window.updatePomodoroAlarmSound = updatePomodoroAlarmSound;
+window.updateBreakAlarmSound = updateBreakAlarmSound;
+window.updateSoundVolumes = updateSoundVolumes;
 
 // Mute alert elements
 const muteAlertOverlay = document.getElementById('mute-alert-overlay');

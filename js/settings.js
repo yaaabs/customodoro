@@ -207,12 +207,14 @@
       localStorage.setItem('autoBreak', 'true');
       localStorage.setItem('autoPomodoro', 'true');
       
-      // Reset sound settings - using shared keys now
-      localStorage.setItem('volume', '60');
+      // Reset sound settings - using separate keys for Pomodoro and Break
+      localStorage.setItem('pomodoroVolume', '60');
+      localStorage.setItem('breakVolume', '60');
       localStorage.setItem('soundEffects', 'true');
       localStorage.setItem('alarm', 'true');
-      // Set Bell as the default sound
-      localStorage.setItem('alarmSound', 'bell.mp3');
+      // Set Bell as the default sound for both
+      localStorage.setItem('pomodoroSound', 'bell.mp3');
+      localStorage.setItem('breakSound', 'bell.mp3');
       
       // Reset timer sound settings
       localStorage.setItem('timerSound', 'none');
@@ -246,18 +248,24 @@
       }
       
       // Update sound settings visually
-      const volumeSlider = document.getElementById('volume-slider');
-      const volumePercentage = document.getElementById('volume-percentage');
+      const pomodoroVolumeSlider = document.getElementById('pomodoro-volume-slider');
+      const pomodoroVolumePercentage = document.getElementById('pomodoro-volume-percentage');
+      const breakVolumeSlider = document.getElementById('break-volume-slider');
+      const breakVolumePercentage = document.getElementById('break-volume-percentage');
       const soundEffectsToggle = document.getElementById('sound-effects-toggle');
       const alarmToggle = document.getElementById('alarm-toggle');
-      const alarmSoundSelector = document.getElementById('alarm-sound-selector');
+      const pomodoroSoundSelector = document.getElementById('pomodoro-sound-selector');
+      const breakSoundSelector = document.getElementById('break-sound-selector');
       
-      if (volumeSlider) volumeSlider.value = 60;
-      if (volumePercentage) volumePercentage.textContent = '60%';
+      if (pomodoroVolumeSlider) pomodoroVolumeSlider.value = 60;
+      if (pomodoroVolumePercentage) pomodoroVolumePercentage.textContent = '60%';
+      if (breakVolumeSlider) breakVolumeSlider.value = 60;
+      if (breakVolumePercentage) breakVolumePercentage.textContent = '60%';
       if (soundEffectsToggle) soundEffectsToggle.checked = true;
       if (alarmToggle) alarmToggle.checked = true;
-      // Set Bell as selected in the dropdown
-      if (alarmSoundSelector) alarmSoundSelector.value = 'bell.mp3';
+      // Set Bell as selected in both dropdowns
+      if (pomodoroSoundSelector) pomodoroSoundSelector.value = 'bell.mp3';
+      if (breakSoundSelector) breakSoundSelector.value = 'bell.mp3';
       
       // Update timer sound settings visually
       const timerSoundSelector = document.getElementById('timer-sound-selector');
@@ -965,28 +973,40 @@
     }
   }
   
-  // Save sound settings - Now using shared keys for both pages
+  // Save sound settings - Now using separate keys for Pomodoro and Break
   function saveSoundSettings() {
-    const volumeSlider = document.getElementById('volume-slider');
+    const pomodoroVolumeSlider = document.getElementById('pomodoro-volume-slider');
+    const breakVolumeSlider = document.getElementById('break-volume-slider');
     const soundEffectsToggle = document.getElementById('sound-effects-toggle');
     const alarmToggle = document.getElementById('alarm-toggle');
-    const alarmSoundSelector = document.getElementById('alarm-sound-selector');
+    const pomodoroSoundSelector = document.getElementById('pomodoro-sound-selector');
+    const breakSoundSelector = document.getElementById('break-sound-selector');
     const timerSoundSelector = document.getElementById('timer-sound-selector');
     const timerSoundVolumeSlider = document.getElementById('timer-sound-volume-slider');
     
-    if (!volumeSlider || !soundEffectsToggle || !alarmToggle) {
+    if (!soundEffectsToggle || !alarmToggle) {
         console.error("Sound setting elements not found");
         return;
     }
     
-    // Save with shared keys (no page-specific prefix)
-    localStorage.setItem('volume', volumeSlider.value);
+    // Save separate volume settings
+    if (pomodoroVolumeSlider) {
+        localStorage.setItem('pomodoroVolume', pomodoroVolumeSlider.value);
+    }
+    if (breakVolumeSlider) {
+        localStorage.setItem('breakVolume', breakVolumeSlider.value);
+    }
+    
+    // Save shared settings
     localStorage.setItem('soundEffects', soundEffectsToggle.checked);
     localStorage.setItem('alarm', alarmToggle.checked);
     
-    // Save the selected alarm sound
-    if (alarmSoundSelector) {
-        localStorage.setItem('alarmSound', alarmSoundSelector.value);
+    // Save the selected alarm sounds
+    if (pomodoroSoundSelector) {
+        localStorage.setItem('pomodoroSound', pomodoroSoundSelector.value);
+    }
+    if (breakSoundSelector) {
+        localStorage.setItem('breakSound', breakSoundSelector.value);
     }
     
     // Save timer sound settings
@@ -998,11 +1018,13 @@
         localStorage.setItem('timerSoundVolume', timerSoundVolumeSlider.value);
     }
     
-    console.log(`Sound settings saved (shared):`, {
-        volume: volumeSlider.value,
+    console.log(`Sound settings saved (separate):`, {
+        pomodoroVolume: pomodoroVolumeSlider ? pomodoroVolumeSlider.value : 'N/A',
+        breakVolume: breakVolumeSlider ? breakVolumeSlider.value : 'N/A',
         soundEffects: soundEffectsToggle.checked,
         alarm: alarmToggle.checked,
-        alarmSound: alarmSoundSelector ? alarmSoundSelector.value : 'N/A',
+        pomodoroSound: pomodoroSoundSelector ? pomodoroSoundSelector.value : 'N/A',
+        breakSound: breakSoundSelector ? breakSoundSelector.value : 'N/A',
         timerSound: timerSoundSelector ? timerSoundSelector.value : 'N/A',
         timerSoundVolume: timerSoundVolumeSlider ? timerSoundVolumeSlider.value : 'N/A'
     });
@@ -1020,22 +1042,63 @@
     }
 }
 
-// Load sound settings - Now using shared keys for both pages
+// Load sound settings - Now using separate keys for Pomodoro and Break
 function loadSoundSettings() {
-    const volumeSlider = document.getElementById('volume-slider');
+    // Migration: Handle old shared settings
+    const oldVolume = localStorage.getItem('volume');
+    const oldAlarmSound = localStorage.getItem('alarmSound');
+    
+    if (oldVolume && !localStorage.getItem('pomodoroVolume')) {
+        localStorage.setItem('pomodoroVolume', oldVolume);
+        localStorage.setItem('breakVolume', oldVolume);
+        console.log('Settings: Migrated old volume settings to separate Pomodoro/Break volumes');
+    } else if (!localStorage.getItem('pomodoroVolume')) {
+        // Set defaults if no migration is needed
+        localStorage.setItem('pomodoroVolume', '60');
+        localStorage.setItem('breakVolume', '60');
+        console.log('Settings: Set default Pomodoro/Break volumes to 60%');
+    }
+    
+    if (oldAlarmSound && !localStorage.getItem('pomodoroSound')) {
+        localStorage.setItem('pomodoroSound', oldAlarmSound);
+        localStorage.setItem('breakSound', 'bell.mp3'); // Default different sound for breaks
+        console.log('Settings: Migrated old alarm sound to separate Pomodoro/Break sounds');
+    } else if (!localStorage.getItem('pomodoroSound')) {
+        // Set defaults if no migration is needed
+        localStorage.setItem('pomodoroSound', 'bell.mp3');
+        localStorage.setItem('breakSound', 'bell.mp3');
+        console.log('Settings: Set default Pomodoro/Break sounds to bell.mp3');
+    }
+
+    const pomodoroVolumeSlider = document.getElementById('pomodoro-volume-slider');
+    const pomodoroVolumePercentage = document.getElementById('pomodoro-volume-percentage');
+    const breakVolumeSlider = document.getElementById('break-volume-slider');
+    const breakVolumePercentage = document.getElementById('break-volume-percentage');
     const soundEffectsToggle = document.getElementById('sound-effects-toggle');
     const alarmToggle = document.getElementById('alarm-toggle');
-    const alarmSoundSelector = document.getElementById('alarm-sound-selector');
+    const pomodoroSoundSelector = document.getElementById('pomodoro-sound-selector');
+    const breakSoundSelector = document.getElementById('break-sound-selector');
     const timerSoundSelector = document.getElementById('timer-sound-selector');
     const timerSoundVolumeSlider = document.getElementById('timer-sound-volume-slider');
     const timerSoundVolumePercentage = document.getElementById('timer-sound-volume-percentage');
     
-    if (!volumeSlider || !soundEffectsToggle || !alarmToggle) {
+    if (!soundEffectsToggle || !alarmToggle) {
         return;
     }
     
-    // Load from shared keys (no page-specific prefix)
-    volumeSlider.value = localStorage.getItem('volume') || 60;
+    // Load separate volume settings
+    if (pomodoroVolumeSlider) {
+        pomodoroVolumeSlider.value = localStorage.getItem('pomodoroVolume') || 60;
+    }
+    if (pomodoroVolumePercentage) {
+        pomodoroVolumePercentage.textContent = (localStorage.getItem('pomodoroVolume') || 60) + '%';
+    }
+    if (breakVolumeSlider) {
+        breakVolumeSlider.value = localStorage.getItem('breakVolume') || 60;
+    }
+    if (breakVolumePercentage) {
+        breakVolumePercentage.textContent = (localStorage.getItem('breakVolume') || 60) + '%';
+    }
     
     // Explicitly convert to boolean to handle 'false' string correctly
     const soundEffectsEnabled = localStorage.getItem('soundEffects') !== 'false';
@@ -1044,10 +1107,14 @@ function loadSoundSettings() {
     soundEffectsToggle.checked = soundEffectsEnabled;
     alarmToggle.checked = alarmEnabled;
     
-    // Set the selected alarm sound
-    if (alarmSoundSelector) {
-        const savedAlarmSound = localStorage.getItem('alarmSound') || 'bell.mp3';
-        alarmSoundSelector.value = savedAlarmSound;
+    // Set the selected alarm sounds
+    if (pomodoroSoundSelector) {
+        const savedPomodoroSound = localStorage.getItem('pomodoroSound') || 'bell.mp3';
+        pomodoroSoundSelector.value = savedPomodoroSound;
+    }
+    if (breakSoundSelector) {
+        const savedBreakSound = localStorage.getItem('breakSound') || 'bell.mp3';
+        breakSoundSelector.value = savedBreakSound;
     }
     
     // Load timer sound settings
@@ -1064,11 +1131,13 @@ function loadSoundSettings() {
         timerSoundVolumePercentage.textContent = (localStorage.getItem('timerSoundVolume') || 60) + '%';
     }
     
-    console.log(`Sound settings loaded (shared):`, {
-        volume: volumeSlider.value,
+    console.log(`Sound settings loaded (separate):`, {
+        pomodoroVolume: pomodoroVolumeSlider ? pomodoroVolumeSlider.value : 'N/A',
+        breakVolume: breakVolumeSlider ? breakVolumeSlider.value : 'N/A',
         soundEffects: soundEffectsEnabled,
         alarm: alarmEnabled,
-        alarmSound: alarmSoundSelector ? alarmSoundSelector.value : 'N/A',
+        pomodoroSound: pomodoroSoundSelector ? pomodoroSoundSelector.value : 'N/A',
+        breakSound: breakSoundSelector ? breakSoundSelector.value : 'N/A',
         timerSound: timerSoundSelector ? timerSoundSelector.value : 'N/A',
         timerSoundVolume: timerSoundVolumeSlider ? timerSoundVolumeSlider.value : 'N/A'
     });
@@ -1087,39 +1156,51 @@ function loadSoundSettings() {
     }
 }
 
-// Update sounds directly - Now using shared keys
+// Update sounds directly - Now using separate keys for Pomodoro and Break
 function updateSoundsDirectly() {
     if (typeof window.sounds !== 'undefined') {
-        // Use shared keys for sound settings
-        const volume = parseInt(localStorage.getItem('volume') || 60) / 100;
+        // Use separate keys for sound settings
+        const pomodoroVolume = parseInt(localStorage.getItem('pomodoroVolume') || 60) / 100;
+        const breakVolume = parseInt(localStorage.getItem('breakVolume') || 60) / 100;
         const soundsEnabled = localStorage.getItem('soundEffects') !== 'false';
         const alarmEnabled = localStorage.getItem('alarm') !== 'false';
         
-        // Update alarm sound file
-        const selectedAlarmSound = localStorage.getItem('alarmSound') || 'alarm.mp3';
-        if (typeof window.updateAlarmSound === 'function') {
-            window.updateAlarmSound(selectedAlarmSound);
-        } else if (window.sounds.complete) {
-            // Fallback to old method
-            window.sounds.complete.src = 'audio/Alert Sounds/' + selectedAlarmSound;
+        // Update alarm sound files
+        const selectedPomodoroSound = localStorage.getItem('pomodoroSound') || 'alarm.mp3';
+        const selectedBreakSound = localStorage.getItem('breakSound') || 'bell.mp3';
+        
+        // Use the new update functions if available
+        if (typeof window.updatePomodoroAlarmSound === 'function') {
+            window.updatePomodoroAlarmSound(selectedPomodoroSound);
+        }
+        if (typeof window.updateBreakAlarmSound === 'function') {
+            window.updateBreakAlarmSound(selectedBreakSound);
         }
         
-        if (window.sounds.click) window.sounds.click.volume = soundsEnabled ? volume * 0.5 : 0;
-        if (window.sounds.start) window.sounds.start.volume = soundsEnabled ? volume * 0.6 : 0;
-        if (window.sounds.pause) window.sounds.pause.volume = soundsEnabled ? volume * 0.5 : 0;
-        if (window.sounds.complete) window.sounds.complete.volume = alarmEnabled ? volume : 0;
+        // Update UI sound volumes (use Pomodoro volume for UI sounds)
+        if (window.sounds.click) window.sounds.click.volume = soundsEnabled ? pomodoroVolume * 0.5 : 0;
+        if (window.sounds.start) window.sounds.start.volume = soundsEnabled ? pomodoroVolume * 0.6 : 0;
+        if (window.sounds.pause) window.sounds.pause.volume = soundsEnabled ? pomodoroVolume * 0.5 : 0;
+        
+        // Update alarm volumes
+        if (window.sounds.pomodoroComplete) window.sounds.pomodoroComplete.volume = alarmEnabled ? pomodoroVolume : 0;
+        if (window.sounds.breakComplete) window.sounds.breakComplete.volume = alarmEnabled ? breakVolume : 0;
         
         // Update timer sound if the function exists
         if (typeof window.updateTimerSound === 'function') {
             window.updateTimerSound();
         }
         
-        console.log(`Sounds updated directly with shared settings:`, {
-            alarmSound: selectedAlarmSound,
+        console.log(`Sounds updated directly with separate settings:`, {
+            pomodoroSound: selectedPomodoroSound,
+            breakSound: selectedBreakSound,
+            pomodoroVolume: pomodoroVolume,
+            breakVolume: breakVolume,
             clickVolume: window.sounds.click ? window.sounds.click.volume : "N/A",
             startVolume: window.sounds.start ? window.sounds.start.volume : "N/A",
             pauseVolume: window.sounds.pause ? window.sounds.pause.volume : "N/A",
-            completeVolume: window.sounds.complete ? window.sounds.complete.volume : "N/A"
+            pomodoroCompleteVolume: window.sounds.pomodoroComplete ? window.sounds.pomodoroComplete.volume : "N/A",
+            breakCompleteVolume: window.sounds.breakComplete ? window.sounds.breakComplete.volume : "N/A"
         });
     }
 }
@@ -1131,13 +1212,32 @@ function testSound(type) {
   
   // If it's the complete/alarm sound, use the selected sound
   if (type === 'complete') {
-    const prefix = isReversePage ? 'reverse_' : 'classic_';
-    const alarmSoundSelector = document.getElementById('alarm-sound-selector');
-    const selectedSound = alarmSoundSelector ? alarmSoundSelector.value : 'alarm.mp3';
+    // For backward compatibility, test the pomodoro sound
+    type = 'pomodoroComplete';
+  }
+  
+  if (type === 'pomodoroComplete') {
+    const pomodoroSoundSelector = document.getElementById('pomodoro-sound-selector');
+    const selectedSound = pomodoroSoundSelector ? pomodoroSoundSelector.value : 'alarm.mp3';
     
     // Apply the current volume settings
-    const volumeSlider = document.getElementById('volume-slider');
-    const volume = volumeSlider ? parseInt(volumeSlider.value) / 100 : 0.6;
+    const pomodoroVolumeSlider = document.getElementById('pomodoro-volume-slider');
+    const volume = pomodoroVolumeSlider ? parseInt(pomodoroVolumeSlider.value) / 100 : 0.6;
+    
+    // Create and play the test sound
+    currentTestSound = new Audio('audio/Alert Sounds/' + selectedSound);
+    currentTestSound.volume = volume;
+    
+    if (volume > 0) {
+      currentTestSound.play().catch(err => console.log('Audio playback disabled'));
+    }
+  } else if (type === 'breakComplete') {
+    const breakSoundSelector = document.getElementById('break-sound-selector');
+    const selectedSound = breakSoundSelector ? breakSoundSelector.value : 'bell.mp3';
+    
+    // Apply the current volume settings
+    const breakVolumeSlider = document.getElementById('break-volume-slider');
+    const volume = breakVolumeSlider ? parseInt(breakVolumeSlider.value) / 100 : 0.6;
     
     // Create and play the test sound
     currentTestSound = new Audio('audio/Alert Sounds/' + selectedSound);
@@ -1215,7 +1315,8 @@ function testSound(type) {
   // Event listeners for sound test buttons
   document.addEventListener('DOMContentLoaded', function() {
     const clickTestBtn = document.getElementById('test-click-sound');
-    const alarmTestBtn = document.getElementById('test-alarm-sound');
+    const pomodoroTestBtn = document.getElementById('test-pomodoro-sound');
+    const breakTestBtn = document.getElementById('test-break-sound');
     const timerSoundTestBtn = document.getElementById('test-timer-sound');
     
     if (clickTestBtn) {
@@ -1224,9 +1325,15 @@ function testSound(type) {
         });
     }
     
-    if (alarmTestBtn) {
-        alarmTestBtn.addEventListener('click', function() {
-            testSound('complete');
+    if (pomodoroTestBtn) {
+        pomodoroTestBtn.addEventListener('click', function() {
+            testSound('pomodoroComplete');
+        });
+    }
+    
+    if (breakTestBtn) {
+        breakTestBtn.addEventListener('click', function() {
+            testSound('breakComplete');
         });
     }
     
@@ -1505,18 +1612,20 @@ function testSound(type) {
     }, 100); // Small delay to ensure all values are initialized
   });
   
-  // Add event listener for volume slider to update percentage display and play test sound
+  // Add event listeners for separate volume sliders to update percentage display and play test sound
   document.addEventListener('DOMContentLoaded', function() {
-    const volumeSlider = document.getElementById('volume-slider');
-    const volumePercentage = document.getElementById('volume-percentage');
+    const pomodoroVolumeSlider = document.getElementById('pomodoro-volume-slider');
+    const pomodoroVolumePercentage = document.getElementById('pomodoro-volume-percentage');
+    const breakVolumeSlider = document.getElementById('break-volume-slider');
+    const breakVolumePercentage = document.getElementById('break-volume-percentage');
     
-    if (volumeSlider && volumePercentage) {
-      // Update percentage display when slider value changes
-      volumeSlider.addEventListener('input', function() {
-        volumePercentage.textContent = volumeSlider.value + '%';
+    // Pomodoro Volume Slider
+    if (pomodoroVolumeSlider && pomodoroVolumePercentage) {
+      pomodoroVolumeSlider.addEventListener('input', function() {
+        pomodoroVolumePercentage.textContent = pomodoroVolumeSlider.value + '%';
         
-        // Immediately update the volume in localStorage using shared key
-        localStorage.setItem('volume', volumeSlider.value);
+        // Immediately update the volume in localStorage
+        localStorage.setItem('pomodoroVolume', pomodoroVolumeSlider.value);
         
         // Clear any pending timeouts to avoid multiple sounds playing
         if (volumeChangeTimeout) {
@@ -1532,16 +1641,16 @@ function testSound(type) {
         
         // Set a small timeout to avoid firing too many sounds
         volumeChangeTimeout = setTimeout(function() {
-          // Play the selected alarm sound from the dropdown
-          const alarmSoundSelector = document.getElementById('alarm-sound-selector');
-          const selectedSound = alarmSoundSelector ? alarmSoundSelector.value : 'alarm.mp3';
+          // Play the selected pomodoro alarm sound
+          const pomodoroSoundSelector = document.getElementById('pomodoro-sound-selector');
+          const selectedSound = pomodoroSoundSelector ? pomodoroSoundSelector.value : 'alarm.mp3';
           
           // Apply the new volume to sound settings
           updateSoundsDirectly();
           
           // Create and play the test sound
           currentTestSound = new Audio('audio/Alert Sounds/' + selectedSound);
-          currentTestSound.volume = parseInt(volumeSlider.value) / 100;
+          currentTestSound.volume = parseInt(pomodoroVolumeSlider.value) / 100;
           
           // Only play if volume > 0
           if (currentTestSound.volume > 0) {
@@ -1549,19 +1658,69 @@ function testSound(type) {
           }
         }, 150); // Small delay to debounce
       });
-      
-      // Initial setup of percentage display
-      volumeSlider.addEventListener('DOMContentLoaded', function() {
-        // Use shared key
-        const savedVolume = localStorage.getItem('volume') || 60;
-        volumePercentage.textContent = savedVolume + '%';
-      });
-      
-      // Set initial value on load
-      const savedVolume = localStorage.getItem('volume') || 60;
-      volumePercentage.textContent = savedVolume + '%';
     }
-  });  // ===== BURN-UP TRACKER DESIGN SELECTOR =====
+    
+    // Break Volume Slider
+    if (breakVolumeSlider && breakVolumePercentage) {
+      breakVolumeSlider.addEventListener('input', function() {
+        breakVolumePercentage.textContent = breakVolumeSlider.value + '%';
+        
+        // Immediately update the volume in localStorage
+        localStorage.setItem('breakVolume', breakVolumeSlider.value);
+        
+        // Clear any pending timeouts to avoid multiple sounds playing
+        if (volumeChangeTimeout) {
+          clearTimeout(volumeChangeTimeout);
+        }
+        
+        // Stop the current test sound if it exists
+        if (currentTestSound) {
+          currentTestSound.pause();
+          currentTestSound.currentTime = 0;
+          currentTestSound = null;
+        }
+        
+        // Set a small timeout to avoid firing too many sounds
+        volumeChangeTimeout = setTimeout(function() {
+          // Play the selected break alarm sound
+          const breakSoundSelector = document.getElementById('break-sound-selector');
+          const selectedSound = breakSoundSelector ? breakSoundSelector.value : 'bell.mp3';
+          
+          // Apply the new volume to sound settings
+          updateSoundsDirectly();
+          
+          // Create and play the test sound
+          currentTestSound = new Audio('audio/Alert Sounds/' + selectedSound);
+          currentTestSound.volume = parseInt(breakVolumeSlider.value) / 100;
+          
+          // Only play if volume > 0
+          if (currentTestSound.volume > 0) {
+            currentTestSound.play().catch(err => console.log('Audio playback disabled'));
+          }
+        }, 150); // Small delay to debounce
+      });
+    }
+    
+    // Add event listeners for sound selectors
+    const pomodoroSoundSelector = document.getElementById('pomodoro-sound-selector');
+    const breakSoundSelector = document.getElementById('break-sound-selector');
+    
+    if (pomodoroSoundSelector) {
+      pomodoroSoundSelector.addEventListener('change', function() {
+        localStorage.setItem('pomodoroSound', pomodoroSoundSelector.value);
+        updateSoundsDirectly();
+      });
+    }
+    
+    if (breakSoundSelector) {
+      breakSoundSelector.addEventListener('change', function() {
+        localStorage.setItem('breakSound', breakSoundSelector.value);
+        updateSoundsDirectly();
+      });
+    }
+  });
+  
+  // ===== BURN-UP TRACKER DESIGN SELECTOR =====
   
   // Initialize tracker design selector
   function initializeTrackerDesignSelector() {

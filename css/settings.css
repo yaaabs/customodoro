@@ -684,6 +684,46 @@
   .select-wrapper:has(#timer-sound-selector):hover::after {
   border-top-color: #9d71d0;
   }
+
+  /* Custom dropdown arrow for pomodoro sound selector */
+  .select-wrapper:has(#pomodoro-sound-selector)::after {
+  content: '';
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid #8b5fbf;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  }
+  
+  .select-wrapper:has(#pomodoro-sound-selector):hover::after {
+  border-top-color: #9d71d0;
+  }
+
+  /* Custom dropdown arrow for break sound selector */
+  .select-wrapper:has(#break-sound-selector)::after {
+  content: '';
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid #8b5fbf;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  }
+  
+  .select-wrapper:has(#break-sound-selector):hover::after {
+  border-top-color: #9d71d0;
+  }
   
   /* Make the timer sound selector match other dropdown styles */
   #timer-sound-selector {
@@ -712,6 +752,72 @@
   }
   
   #timer-sound-selector option {
+  background-color: #252525;
+  color: #fff;
+  padding: 12px;
+  font-size: 14px;
+  }
+
+  /* Make the pomodoro sound selector match other dropdown styles */
+  #pomodoro-sound-selector {
+  width: 100%;
+  background-color: #252525;
+  border: 1px solid #444;
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 8px;
+  appearance: none;
+  cursor: pointer;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  }
+  
+  #pomodoro-sound-selector:focus {
+  outline: none;
+  border-color: #8b5fbf;
+  box-shadow: 0 0 0 2px rgba(139, 95, 191, 0.2);
+  background-color: #2d2d2d;
+  }
+  
+  #pomodoro-sound-selector:hover {
+  background-color: #2a2a2a;
+  border-color: #555;
+  }
+  
+  #pomodoro-sound-selector option {
+  background-color: #252525;
+  color: #fff;
+  padding: 12px;
+  font-size: 14px;
+  }
+
+  /* Make the break sound selector match other dropdown styles */
+  #break-sound-selector {
+  width: 100%;
+  background-color: #252525;
+  border: 1px solid #444;
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 8px;
+  appearance: none;
+  cursor: pointer;
+  font-size: 15px;
+  transition: all 0.2s ease;
+  }
+  
+  #break-sound-selector:focus {
+  outline: none;
+  border-color: #8b5fbf;
+  box-shadow: 0 0 0 2px rgba(139, 95, 191, 0.2);
+  background-color: #2d2d2d;
+  }
+  
+  #break-sound-selector:hover {
+  background-color: #2a2a2a;
+  border-color: #555;
+  }
+  
+  #break-sound-selector option {
   background-color: #252525;
   color: #fff;
   padding: 12px;
