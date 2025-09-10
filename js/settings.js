@@ -1210,13 +1210,38 @@ function testSound(type) {
   // Stop any currently playing test sound
   stopTestSound();
   
+  // Check toggle states for validation
+  const soundEffectsToggle = document.getElementById('sound-effects-toggle');
+  const alarmToggle = document.getElementById('alarm-toggle');
+  
   // If it's the complete/alarm sound, use the selected sound
   if (type === 'complete') {
     // For backward compatibility, test the pomodoro sound
     type = 'pomodoroComplete';
   }
   
+  // Handle UI Click Sound test
+  if (type === 'click') {
+    // Check if Timer Sound Effects (UI Click Sound) is enabled
+    if (soundEffectsToggle && !soundEffectsToggle.checked) {
+      showToast('The Timer Sound Effects is off');
+      return;
+    }
+    
+    // Use the existing playSound function if available
+    if (typeof window.playSound === 'function') {
+      window.playSound(type);
+    }
+    return;
+  }
+  
   if (type === 'pomodoroComplete') {
+    // Check if End of Session Alarm is enabled
+    if (alarmToggle && !alarmToggle.checked) {
+      showToast('The End of Session Alarm is off');
+      return;
+    }
+    
     const pomodoroSoundSelector = document.getElementById('pomodoro-sound-selector');
     const selectedSound = pomodoroSoundSelector ? pomodoroSoundSelector.value : 'alarm.mp3';
     
@@ -1232,6 +1257,12 @@ function testSound(type) {
       currentTestSound.play().catch(err => console.log('Audio playback disabled'));
     }
   } else if (type === 'breakComplete') {
+    // Check if End of Session Alarm is enabled
+    if (alarmToggle && !alarmToggle.checked) {
+      showToast('The End of Session Alarm is off');
+      return;
+    }
+    
     const breakSoundSelector = document.getElementById('break-sound-selector');
     const selectedSound = breakSoundSelector ? breakSoundSelector.value : 'bell.mp3';
     
