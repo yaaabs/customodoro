@@ -115,18 +115,18 @@
   <link rel="manifest" href="manifest.json">
 
   <!-- Essential CSS (load immediately) -->
-  <!-- UPDATE! first -->
-<link rel="stylesheet" href="css/style.css?v=3.6.9">
+  <!-- UPDATE! FORCE CACHE BUST v7.2.12 -->
+<link rel="stylesheet" href="css/style.css?v=3.6.10">
 <link rel="stylesheet" href="css/article-styles.css?v=1.0.0">
-<link rel="stylesheet" href="css/mini-music-player.css?v=2.3.5">
-<link rel="stylesheet" href="css/focus-mode.css?v=2.3.6">
-<link rel="stylesheet" href="css/lockedin-mode.css?v=2.3.5">
-<link rel="stylesheet" href="css/bgm-player.css?v=2.3.5">
-<link rel="stylesheet" href="css/timer-sound.css?v=2.3.5">
-<link rel="stylesheet" href="css/about-modal.css?v=2.3.5">
-<link rel="stylesheet" href="css/radial-menu.css?v=2.6.3">
-<link rel="stylesheet" href="css/settings.css?v=3.1.3">
-<link rel="stylesheet" href="css/leaderboard-modal.css?v=1.0.6">
+<link rel="stylesheet" href="css/mini-music-player.css?v=2.3.6">
+<link rel="stylesheet" href="css/focus-mode.css?v=2.3.7">
+<link rel="stylesheet" href="css/lockedin-mode.css?v=2.3.6">
+<link rel="stylesheet" href="css/bgm-player.css?v=2.3.6">
+<link rel="stylesheet" href="css/timer-sound.css?v=2.3.6">
+<link rel="stylesheet" href="css/about-modal.css?v=2.3.6">
+<link rel="stylesheet" href="css/radial-menu.css?v=2.6.4">
+<link rel="stylesheet" href="css/settings.css?v=3.1.4">
+<link rel="stylesheet" href="css/leaderboard-modal.css?v=1.0.7">
 
 <!-- Supabase Client -->
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
@@ -1329,9 +1329,9 @@
 <!-- Load cache manager first -->
 <!-- UPDATE! first -->
 
-<script src="js/update-modal.js?v=2.3.5"></script>
-<script src="js/reversePomodoro.js?v=2.7.16"></script>
-<script src="js/settings.js?v=2.6.4"></script>
+<script src="js/update-modal.js?v=2.3.6"></script>
+<script src="js/reversePomodoro.js?v=2.7.17"></script>
+<script src="js/settings.js?v=2.6.5"></script>
 <script src="js/auth-service.js?v=1.0.0"></script>
 <script src="js/sync-manager.js?v=1.2.0"></script>
 <script src="js/sync-ui.js?v=1.1.0"></script>
@@ -1398,7 +1398,32 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'NEW_VERSION_AVAILABLE') {
       console.log('📨 Update message received from SW');
-      showUpdatePrompt();
+      
+      // Check if it's a force update (for immediate updates)
+      if (event.data.forceUpdate) {
+        console.log('⚡ Force update detected - auto-refreshing...');
+        // Show brief notification before refresh
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+          position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+          background: #4F1C51; color: white; padding: 20px; border-radius: 12px;
+          z-index: 99999; font-family: system-ui; text-align: center;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        `;
+        notification.innerHTML = `
+          <div style="font-size: 18px; margin-bottom: 8px;">🚀 Updating App...</div>
+          <div style="font-size: 14px; opacity: 0.9;">Getting the latest version</div>
+        `;
+        document.body.appendChild(notification);
+        
+        // Auto-refresh after brief delay
+        setTimeout(() => {
+          window.location.reload(true);
+        }, 1500);
+      } else {
+        // Show optional update prompt for regular updates
+        showUpdatePrompt();
+      }
     }
     
     if (event.data && event.data.type === 'FORCE_RELOAD') {

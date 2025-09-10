@@ -1,5 +1,5 @@
-const CACHE_NAME = "customodoro-static-v7.2.11"; // Bump to v7.2.11  
-const ASSETS_CACHE = "customodoro-assets-v6.1.8 "; // Bump to v6.1.8 
+const CACHE_NAME = "customodoro-static-v7.2.12"; // Bump to v7.2.12  
+const ASSETS_CACHE = "customodoro-assets-v6.1.9"; // Bump to v6.1.9 (FIXED: removed trailing space) 
 const urlsToCache = [
   "/", 
   "/index.html", 
@@ -14,14 +14,19 @@ const urlsToCache = [
   "/manifest.json",
   "/css/style.css",
   "/js/script.js",
-  "/js/reversePomodoro.js"
+  "/js/reversePomodoro.js",
+  // Add critical audio files to main cache for version control
+  "/audio/Alert Sounds/alarm.mp3",
+  "/audio/Alert Sounds/bell.mp3",
+  "/audio/Alert Sounds/level_up.mp3",
+  "/audio/Alert Sounds/message_alert.mp3"
 ];
 
 let isFirstInstall = false;
 
 // Install: cache only the HTML essentials
 self.addEventListener("install", (event) => {
-  console.log('🔧 Service Worker v7.2.11  installing...');
+  console.log('🔧 Service Worker v7.2.12 installing...');
   
   // Check if this is a first install
   event.waitUntil(
@@ -37,7 +42,7 @@ self.addEventListener("install", (event) => {
         console.warn("⚠️ Failed to cache core HTML", err);
       }
     }).then(() => {
-      // Force skip waiting to activate immediately
+      // Force skip waiting to activate immediately - AGGRESSIVE UPDATE
       console.log('⚡ Force skipping waiting...');
       return self.skipWaiting();
     })
@@ -46,7 +51,7 @@ self.addEventListener("install", (event) => {
 
 // Activate: clean up old caches and notify clients
 self.addEventListener("activate", (event) => {
-  console.log('🚀 Service Worker v7.2.11  activating...');
+  console.log('🚀 Service Worker v7.2.12 activating...');
   
   event.waitUntil(
     // Clean up old caches
@@ -66,22 +71,19 @@ self.addEventListener("activate", (event) => {
     }).then(() => {
       console.log("✅ Activated and old caches cleared");
       
-      // Only notify about updates if this isn't the first install
-      if (!isFirstInstall) {
-        return self.clients.matchAll().then((clients) => {
-          console.log('👥 Found clients:', clients.length);
-          clients.forEach((client) => {
-            console.log('📤 Sending update notification to client');
-            client.postMessage({
-              type: 'NEW_VERSION_AVAILABLE',
-              message: 'A new version is available'
-            });
+      // Always notify about updates (removed isFirstInstall check for aggressive updates)
+      return self.clients.matchAll().then((clients) => {
+        console.log('👥 Found clients:', clients.length);
+        clients.forEach((client) => {
+          console.log('📤 Sending immediate update notification to client');
+          client.postMessage({
+            type: 'NEW_VERSION_AVAILABLE',
+            message: 'A new version is available',
+            forceUpdate: true // Add flag for immediate updates
           });
-          console.log('📢 Notified clients about update');
         });
-      } else {
-        console.log('👋 First install - no update notification needed');
-      }
+        console.log('� Notified all clients about update');
+      });
     }).then(() => {
       // Force claim all clients immediately
       console.log('🎯 Taking control of all clients');

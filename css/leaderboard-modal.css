@@ -708,63 +708,200 @@
 
 /* Theme Support */
 body.theme-dark .leaderboard-modal {
-  background: var(--card-bg, #2c2c2c);
-  color: var(--text-primary, #ffffff);
+  background: #1e1e1e;
+  color: #f1f1f1;
+  border: 1px solid #333;
 }
 
 body.theme-dark .leaderboard-modal-header {
-  background: var(--gradient-bg, linear-gradient(135deg, #4a4a4a 0%, #2c2c2c 100%));
+  background: linear-gradient(135deg, #2c2c2c 0%, #1e1e1e 100%);
+  border-bottom: 1px solid #333;
 }
 
 body.theme-dark .leaderboard-tabs {
-  background: var(--bg-secondary, #3c3c3c);
+  background: #2a2a2a;
+  border-bottom: 1px solid #333;
+}
+
+body.theme-dark .leaderboard-tab {
+  color: #bbb;
+}
+
+body.theme-dark .leaderboard-tab:hover {
+  background: rgba(139, 95, 191, 0.15);
+  color: #8b5fbf;
 }
 
 body.theme-dark .leaderboard-tab.active {
-  background: var(--card-bg, #2c2c2c);
+  background: #1e1e1e;
+  color: #8b5fbf;
+  box-shadow: 0 -2px 0 #8b5fbf;
 }
 
 body.theme-dark .leaderboard-period-filter {
-  background: var(--card-bg, #2c2c2c);
+  background: #1e1e1e;
+  border-bottom: 1px solid #333;
+}
+
+body.theme-dark .period-btn {
+  border-color: #444;
+  color: #bbb;
+}
+
+body.theme-dark .period-btn:hover {
+  border-color: #8b5fbf;
+  color: #8b5fbf;
+}
+
+body.theme-dark .period-btn.active {
+  background: #8b5fbf;
+  border-color: #8b5fbf;
+  color: white;
 }
 
 body.theme-dark .leaderboard-info {
-  background: var(--bg-secondary, #1e1e1e);
+  background: #252525;
+  border-bottom: 1px solid #333;
 }
 
 body.theme-dark .info-text {
-  color: var(--text-secondary, #aaa);
+  color: #ccc;
 }
 
 body.theme-dark .info-text strong {
-  color: var(--accent-color, #8b5fbf);
+  color: #8b5fbf;
+}
+
+body.theme-dark .leaderboard-item {
+  border-bottom: 1px solid #333;
 }
 
 body.theme-dark .leaderboard-item:hover {
-  background: var(--bg-secondary, #3c3c3c);
+  background: #2a2a2a;
+}
+
+body.theme-dark .leaderboard-username {
+  color: #f1f1f1;
+}
+
+body.theme-dark .leaderboard-user-subtitle {
+  color: #999;
+}
+
+body.theme-dark .leaderboard-score {
+  color: #8b5fbf;
+}
+
+body.theme-dark .leaderboard-score-unit {
+  color: #999;
 }
 
 body.theme-dark .highlighted-user-section {
-  background: var(--bg-secondary, #3c3c3c);
+  background: #2a2a2a;
+  border-top: 1px solid #333;
 }
 
-/* Dark Theme Top 3 Highlighting */
+body.theme-dark .highlighted-user-title {
+  color: #bbb;
+}
+
+/* Dark Theme Top 3 Highlighting - Refined for Dark Mode */
 body.theme-dark .leaderboard-item.rank-gold {
-  background: rgba(255, 215, 0, 0.95);
-  border: 2px solid rgba(255, 215, 0, 1);
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 193, 7, 0.08) 100%);
+  border-left: 4px solid #ffc107;
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.2);
+}
+
+body.theme-dark .leaderboard-item.rank-gold .leaderboard-rank {
+  color: #ffc107;
+  text-shadow: 0 0 8px rgba(255, 193, 7, 0.4);
 }
 
 body.theme-dark .leaderboard-item.rank-silver {
-  background: rgba(192, 192, 192, 0.85);
-  border: 2px solid rgba(192, 192, 192, 1);
-  box-shadow: 0 0 10px rgba(192, 192, 192, 0.4);
+  background: linear-gradient(135deg, rgba(192, 192, 192, 0.12) 0%, rgba(158, 158, 158, 0.06) 100%);
+  border-left: 4px solid #9e9e9e;
+  box-shadow: 0 2px 8px rgba(158, 158, 158, 0.15);
+}
+
+body.theme-dark .leaderboard-item.rank-silver .leaderboard-rank {
+  color: #c0c0c0;
+  text-shadow: 0 0 8px rgba(192, 192, 192, 0.3);
 }
 
 body.theme-dark .leaderboard-item.rank-bronze {
-  background: rgba(205, 127, 50, 0.70);
-  border: 2px solid rgba(205, 127, 50, 1);
-  box-shadow: 0 0 8px rgba(205, 127, 50, 0.3);
+  background: linear-gradient(135deg, rgba(205, 127, 50, 0.12) 0%, rgba(184, 115, 51, 0.06) 100%);
+  border-left: 4px solid #b87333;
+  box-shadow: 0 2px 8px rgba(184, 115, 51, 0.15);
+}
+
+body.theme-dark .leaderboard-item.rank-bronze .leaderboard-rank {
+  color: #cd7f32;
+  text-shadow: 0 0 8px rgba(205, 127, 50, 0.3);
+}
+
+/* Dark theme current user highlighting */
+body.theme-dark .leaderboard-item.current-user {
+  background: linear-gradient(90deg, rgba(139, 95, 191, 0.1) 0%, transparent 100%);
+  border-left: 4px solid #8b5fbf;
+}
+
+body.theme-dark .leaderboard-item.current-user .leaderboard-username {
+  color: #8b5fbf;
+  font-weight: 700;
+}
+
+body.theme-dark .leaderboard-avatar.current-user {
+  box-shadow: 0 0 0 3px #8b5fbf, 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Dark theme loading and error states */
+body.theme-dark .leaderboard-loading {
+  color: #bbb;
+}
+
+body.theme-dark .loading-spinner {
+  border-color: #444;
+  border-top-color: #8b5fbf;
+}
+
+body.theme-dark .leaderboard-error {
+  color: #ff6b6b;
+}
+
+body.theme-dark .leaderboard-error h3 {
+  color: #ff6b6b;
+}
+
+body.theme-dark .leaderboard-error p {
+  color: #bbb;
+}
+
+body.theme-dark .leaderboard-empty {
+  color: #bbb;
+}
+
+body.theme-dark .leaderboard-empty h3 {
+  color: #f1f1f1;
+}
+
+/* Dark theme rank styling */
+body.theme-dark .leaderboard-rank {
+  color: #bbb;
+}
+
+body.theme-dark .leaderboard-rank.top-three {
+  font-weight: 700;
+}
+
+/* Dark theme modal close button */
+body.theme-dark .leaderboard-modal-close {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f1f1f1;
+}
+
+body.theme-dark .leaderboard-modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
 }
 
 /* Dark Theme Badge Support */
