@@ -19,8 +19,178 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
 }
+
+/* Font optimization for better performance */
+html {
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  font-variant-ligatures: none;
+  text-rendering: optimizeSpeed;
+}
+
+/* Ensure consistent Inter font application */
+body, button, input, select, textarea, h1, h2, h3, h4, h5, h6, p, span, div {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* ===== INTER TYPOGRAPHY SYSTEM ===== */
+/* Consistent font weights and sizes for smooth transition */
+
+/* Typography CSS Custom Properties */
+:root {
+  /* Font Weights */
+  --font-light: 300;
+  --font-regular: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-extrabold: 800;
+  
+  /* Font Sizes - Maintaining visual consistency */
+  --text-xs: 0.75rem;     /* 12px */
+  --text-sm: 0.875rem;    /* 14px */
+  --text-base: 1rem;      /* 16px */
+  --text-lg: 1.125rem;    /* 18px */
+  --text-xl: 1.25rem;     /* 20px */
+  --text-2xl: 1.5rem;     /* 24px */
+  --text-3xl: 1.875rem;   /* 30px */
+  --text-4xl: 2.25rem;    /* 36px */
+  --text-5xl: 3rem;       /* 48px */
+  
+  /* Line Heights */
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+}
+
+/* Typography Utility Classes */
+.text-light { font-weight: var(--font-light); }
+.text-regular { font-weight: var(--font-regular); }
+.text-medium { font-weight: var(--font-medium); }
+.text-semibold { font-weight: var(--font-semibold); }
+.text-bold { font-weight: var(--font-bold); }
+.text-extrabold { font-weight: var(--font-extrabold); }
+
+/* Enhanced heading consistency */
+h1, .heading-1 {
+  font-size: var(--text-4xl);
+  font-weight: var(--font-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.025em;
+}
+
+h2, .heading-2 {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.025em;
+}
+
+h3, .heading-3 {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-normal);
+}
+
+h4, .heading-4 {
+  font-size: var(--text-xl);
+  font-weight: var(--font-medium);
+  line-height: var(--leading-normal);
+}
+
+h5, .heading-5 {
+  font-size: var(--text-lg);
+  font-weight: var(--font-medium);
+  line-height: var(--leading-normal);
+}
+
+h6, .heading-6 {
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-normal);
+}
+
+/* Body text consistency */
+p, .body-text {
+  font-size: var(--text-base);
+  font-weight: var(--font-regular);
+  line-height: var(--leading-normal);
+}
+
+/* UI Text Classes for Consistency */
+.ui-label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  line-height: var(--leading-normal);
+}
+
+.ui-caption {
+  font-size: var(--text-xs);
+  font-weight: var(--font-regular);
+  line-height: var(--leading-normal);
+}
+
+.timer-display {
+  font-weight: var(--font-extrabold);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.02em;
+}
+
+.button-text {
+  font-weight: var(--font-semibold);
+  line-height: var(--leading-tight);
+}
+
+.stats-number {
+  font-weight: var(--font-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
+}
+
+/* Input and form element consistency */
+input, textarea, select {
+  font-size: var(--text-base);
+  font-weight: var(--font-regular);
+  line-height: var(--leading-normal);
+}
+
+button {
+  font-weight: var(--font-medium);
+  line-height: var(--leading-tight);
+}
+
+/* Stats Card Text Utilities - Ensure Single Line Display */
+.stats-label-single-line {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: block;
+  text-align: center;
+}
+
+.stats-compact {
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  line-height: var(--leading-tight);
+}
+
+.stats-responsive-text {
+  font-size: clamp(0.65rem, 2vw, 0.85rem);
+  font-weight: var(--font-medium);
+  white-space: nowrap;
+  text-align: center;
+}
+
+.stats-responsive-text-emphasis {
+  font-size: clamp(0.7rem, 2.2vw, 0.9rem);
+  font-weight: var(--font-semibold);
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* ===== END TYPOGRAPHY SYSTEM ===== */
 
 body {
   min-height: 100vh;
@@ -106,10 +276,12 @@ header {
 
 .timer {
   font-size: 100px;
-  font-weight: bold;
+  font-weight: var(--font-extrabold);
   color: var(--text-light);
   margin: 20px 0;
-  line-height: 1;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.02em;
+  font-feature-settings: 'tnum';
 }
 
 @media (max-width: 600px) {
@@ -134,8 +306,8 @@ header {
   padding: 16px 50px;
   border: none;
   border-radius: 8px;
-  font-size: 22px;
-  font-weight: 600;
+  font-size: var(--text-xl);
+  font-weight: var(--font-semibold);
   cursor: pointer;
   transition: var(--transition);
   background-color: var(--text-light);
@@ -3212,7 +3384,7 @@ body.theme-rain #add-task-btn.secondary-btn:hover {
   border-radius: 999px;
   box-shadow: 0 2px 12px rgba(255, 200, 40, 0.12);
   padding: 10px 28px 10px 18px;
-  font-family: 'Segoe UI', 'Arial', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Arial', sans-serif;
   font-weight: 700;
   font-size: 22px;
   color: #e67e22;
@@ -3265,7 +3437,7 @@ body.theme-rain #add-task-btn.secondary-btn:hover {
   max-width: 540px;
   margin: 32px auto 0 auto;
   color: #fff;
-  font-family: 'Segoe UI', Arial, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
 .streak-stats-header {
   display: flex;
@@ -3552,28 +3724,37 @@ body.theme-rain #add-task-btn.secondary-btn:hover {
   flex: 1;
   background: #23272b;
   border-radius: 8px;
-  padding: 18px 10px 12px 10px;
+  padding: 16px 8px 12px 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
   min-width: 0;
+  text-align: center;
 }
 .streak-stats-value {
-  font-size: 2.2em;
-  font-weight: 800;
+  font-size: 2em;
+  font-weight: var(--font-extrabold);
   color: #ffb300;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  line-height: 1;
 }
 .streak-stats-label {
-  font-size: 1em;
+  font-size: 0.85em;
   color: #eee;
-  font-weight: 600;
+  font-weight: var(--font-medium);
   margin-bottom: 2px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
 }
 .streak-stats-date {
-  font-size: 0.95em;
+  font-size: 0.75em;
   color: #bbb;
   margin-top: 2px;
+  white-space: nowrap;
+  text-align: center;
 }
 .streak-current {
   border-left: 1.5px solid #333;
@@ -3594,7 +3775,27 @@ body.theme-rain #add-task-btn.secondary-btn:hover {
 }
 .streak-current-label {
   color: #ffb300;
+  font-weight: var(--font-semibold) !important;
+  font-size: 0.9em !important;
+  text-shadow: 0 0 8px rgba(255, 179, 0, 0.3);
+  letter-spacing: 0.02em;
 }
+/* Enhanced responsive design for stats cards */
+@media (max-width: 768px) {
+  .streak-stats-label {
+    font-size: 0.8em;
+  }
+  .streak-current-label {
+    font-size: 0.85em !important;
+  }
+  .streak-stats-date {
+    font-size: 0.7em;
+  }
+  .streak-stats-value {
+    font-size: 1.8em;
+  }
+}
+
 @media (max-width: 600px) {
   .streak-stats-content {
     flex-direction: column;
@@ -3604,10 +3805,44 @@ body.theme-rain #add-task-btn.secondary-btn:hover {
     border-radius: 8px;
     border: none;
     min-width: 0;
+    padding: 14px 6px 10px 6px;
   }
   .streak-current {
     border-left: none;
     border-right: none;
+  }
+  .streak-stats-label {
+    font-size: 0.75em;
+  }
+  .streak-current-label {
+    font-size: 0.8em !important;
+  }
+  .streak-stats-date {
+    font-size: 0.65em;
+  }
+}
+
+@media (max-width: 480px) {
+  .streak-stats-content {
+    gap: 8px;
+  }
+  .streak-stats-block {
+    padding: 12px 4px 8px 4px;
+  }
+  .streak-stats-label {
+    font-size: 0.7em;
+    font-weight: var(--font-regular);
+  }
+  .streak-current-label {
+    font-size: 0.75em !important;
+    font-weight: var(--font-semibold) !important;
+  }
+  .streak-stats-date {
+    font-size: 0.6em;
+  }
+  .streak-stats-value {
+    font-size: 1.6em;
+    margin-bottom: 4px;
   }
 }
 
