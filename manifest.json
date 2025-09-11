@@ -16,32 +16,25 @@
       "src": "favicon/android-chrome-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "favicon/android-chrome-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "favicon/apple-touch-icon.png",
       "sizes": "180x180",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "favicon/favicon-32x32.png",
       "sizes": "32x32",
-      "type": "image/png"
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "images/screenshot-mobile.png",
-      "sizes": "390x844",
       "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Customodoro mobile interface"
+      "purpose": "any"
     }
   ]
 }

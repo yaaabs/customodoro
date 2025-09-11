@@ -3890,3 +3890,47 @@ body.theme-custom .tasks-section .settings-note {
   color: #ffffff;
 }
 
+/* FOR SCROLLBAR AND LATER FOR FOOTER */
+
+html, body {
+  height: 100%;
+}
+
+@media (max-width: 900px) {
+  .mdb-footer-main {
+    flex-direction: column !important;
+    align-items: center !important;
+    padding: 1.5rem 0 !important;
+  }
+  .mdb-footer-main > div {
+    width: 90vw !important;
+    max-width: 420px;
+    min-width: 0 !important;
+    margin: 0 0 2.2rem 0 !important;
+    padding: 0 !important;
+    text-align: center !important;
+    align-items: center !important;
+    display: flex;
+    flex-direction: column;
+  }
+  .mdb-footer-main h6 {
+    font-size: 1.08rem !important;
+    margin-bottom: 0.35rem !important;
+    margin-top: 0 !important;
+    text-align: center !important;
+    width: 100%;
+  }
+  .mdb-footer-main hr {
+    margin: 0 auto 1rem auto !important;
+    width: 48px !important;
+    height: 2px;
+  }
+  .mdb-footer-main p,
+  .mdb-footer-main a {
+    font-size: 1rem !important;
+    margin: 0.25rem 0 !important;
+    text-align: center !important;
+    width: 100%;
+    word-break: break-word;
+  }
+}
