@@ -1915,22 +1915,34 @@ document.addEventListener('DOMContentLoaded', () => {
   const dateMap = new Map();
 
   // Cells (weeks: left=oldest, right=latest)
-  weeks.forEach((week, x) => {
+weeks.forEach((week, x) => {
     week.forEach((date, y) => {
       const key = formatDateKey(date);
       const dayStats = stats[key] || { classic: 0, reverse: 0, break: 0, total_minutes: 0 };
       const minutes = dayStats.total_minutes || 0;
-      const points = Math.floor(minutes / 5); // 5 minutes per point
-      const color = getColor(points, Math.floor(maxMinutes / 5), emptyCell);
+      
+      // Show any activity with decimal Focus Points for under 5 minutes
+      let points;
+      if (minutes === 0) {
+        points = 0;
+      } else if (minutes < 5) {
+        points = (minutes / 5).toFixed(1); // e.g., 2 mins = 0.4 Focus Points
+      } else {
+        points = Math.floor(minutes / 5); // e.g., 12 mins = 2 Focus Points
+      }
+      
+      // For color calculation, treat any activity as at least 1 for visual purposes
+      const colorPoints = minutes > 0 ? Math.max(1, Math.floor(minutes / 5)) : 0;
+      const color = getColor(colorPoints, Math.floor(maxMinutes / 5), emptyCell);
       
       // Store the original date object for tooltip
       dateMap.set(key, date);
       
-      console.log(`Date: ${key}, Minutes: ${minutes}, Max: ${maxMinutes}, Color: ${color}`); // Debug log
+      console.log(`Date: ${key}, Minutes: ${minutes}, Points: ${points}, Color: ${color}`);
       
       const cellX = leftPad + x * (cellSize + cellGap);
       const cellY = topPad + y * (cellSize + cellGap);
-      svg += `<rect x="${cellX}" y="${cellY}" width="${cellSize}" height="${cellSize}" rx="3" fill="${color}" stroke="${cellBorder}" stroke-width="1" data-date="${key}" data-classic="${dayStats.classic}" data-reverse="${dayStats.reverse}" data-break="${dayStats.break}" data-minutes="${minutes}" style="cursor:pointer;"/>`;
+      svg += `<rect x="${cellX}" y="${cellY}" width="${cellSize}" height="${cellSize}" rx="3" fill="${color}" stroke="${cellBorder}" stroke-width="1" data-date="${key}" data-classic="${dayStats.classic}" data-reverse="${dayStats.reverse}" data-break="${dayStats.break}" data-minutes="${minutes}" data-points="${points}" style="cursor:pointer;"/>`;
     });
   });
 
@@ -2049,7 +2061,7 @@ const classicSessions = parseInt(d.classic) || 0;
 const reverseSessions = parseInt(d.reverse) || 0;
 const breakSessions = parseInt(d.break) || 0;
 const totalMinutes = parseInt(d.minutes) || 0;
-const totalPoints = Math.floor(totalMinutes / 5);
+const totalPoints = parseFloat(d.points) || 0;
 
 // Singular/plural helpers
 function pluralize(count, singular, plural) {
@@ -2080,6 +2092,11 @@ let tip = '';
 if (totalPoints === 0) {
   tip = `No contributions on ${dateStrWithSuffix}.`;
 } else {
+  // Format points display - show "2" instead of "2.0" but keep "0.4" as is
+  const pointsDisplay = totalPoints % 1 === 0 ? 
+    totalPoints.toString() : // Show "2" instead of "2.0"
+    totalPoints.toString();   // Show "0.4" as is
+  
   tip = `<b>${totalPoints} ${pluralize(totalPoints, 'Focus Point', 'Focus Points')}</b> on ${dateStrWithSuffix}<br>`;
   if (classicSessions > 0) tip += `${classicSessions} ${pluralize(classicSessions, 'Classic Pomodoro', 'Classic Pomodoros')}<br>`;
   if (reverseSessions > 0) tip += `${reverseSessions} ${pluralize(reverseSessions, 'Reverse Pomodoro', 'Reverse Pomodoros')}<br>`;
