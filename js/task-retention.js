@@ -12,6 +12,7 @@ const TASK_RETENTION_MODAL_HTML = `
   <div class="task-retention-modal">
     <div class="task-retention-modal-header">
       <h3 class="task-retention-modal-title">Keep Your Tasks?</h3>
+      <button class="task-retention-modal-close" id="task-retention-close-btn" title="Close dialog" aria-label="Close dialog">&times;</button>
     </div>
     <div class="task-retention-modal-content">
       <p>You have <span id="task-count"></span> task(s) in your current mode.</p>
@@ -64,6 +65,10 @@ const TASK_RETENTION_MODAL_CSS = `
 .task-retention-modal-header {
   padding: 24px 24px 0;
   text-align: center;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .task-retention-modal-title {
@@ -71,6 +76,37 @@ const TASK_RETENTION_MODAL_CSS = `
   font-size: 1.5rem;
   font-weight: 600;
   color: var(--text-primary, #333);
+  flex: 1;
+}
+
+.task-retention-modal-close {
+  position: absolute;
+  top: 8px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--text-secondary, #666);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.task-retention-modal-close:hover {
+  background: var(--close-hover-bg, rgba(0, 0, 0, 0.1));
+  color: var(--text-primary, #333);
+  transform: scale(1.1);
+}
+
+.task-retention-modal-close:active {
+  transform: scale(0.95);
 }
 
 .task-retention-modal-content {
@@ -203,6 +239,7 @@ const TASK_RETENTION_MODAL_CSS = `
     --success-text: #30d158;
     --secondary-bg: #3a3a3c;
     --secondary-hover: #48484a;
+    --close-hover-bg: rgba(255, 255, 255, 0.1);
   }
 }
 </style>
@@ -246,9 +283,15 @@ class TaskRetentionManager {
   setupEventListeners() {
     const keepBtn = document.getElementById('keep-tasks-btn');
     const discardBtn = document.getElementById('discard-tasks-btn');
+    const closeBtn = document.getElementById('task-retention-close-btn');
     
     keepBtn.addEventListener('click', () => this.handleKeepTasks());
     discardBtn.addEventListener('click', () => this.handleDiscardTasks());
+    
+    // Close button (X)
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => this.handleDiscardTasks());
+    }
     
     // Close on overlay click
     this.modal.addEventListener('click', (e) => {
