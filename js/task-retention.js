@@ -36,94 +36,123 @@ const TASK_RETENTION_MODAL_CSS = `
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(10px);
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
   display: none;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   z-index: 10000;
-  animation: fadeIn 0.3s ease;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s linear 0.25s, opacity 0.3s ease;
+  backdrop-filter: blur(3px);
 }
 
 .task-retention-modal-overlay.show {
   display: flex;
+  visibility: visible;
+  opacity: 1;
+  transition-delay: 0s;
 }
 
 .task-retention-modal {
-  background: var(--modal-bg, white);
+  background: linear-gradient(145deg, rgb(45, 45, 55), rgb(25, 25, 35));
   border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-  max-width: 500px;
   width: 90%;
-  max-height: 80vh;
-  overflow-y: auto;
-  animation: slideIn 0.3s ease;
+  max-width: 500px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25), 
+              0 1px 8px rgba(0, 0, 0, 0.1),
+              0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  overflow: hidden;
+  transform: translateY(20px) scale(0.95);
+  transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.task-retention-modal-overlay.show .task-retention-modal {
+  transform: translateY(0) scale(1);
 }
 
 .task-retention-modal-header {
-  padding: 24px 24px 0;
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
   position: relative;
+}
+
+.task-retention-modal-header:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 4%;
+  right: 4%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2) 20%, rgba(255, 255, 255, 0.2) 80%, transparent);
 }
 
 .task-retention-modal-title {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 20px;
   font-weight: 600;
-  color: var(--text-primary, #333);
+  color: white;
+  letter-spacing: -0.01em;
 }
 
 .task-retention-modal-close {
-  position: absolute;
-  top: 20px;
-  right: 20px;
+  background: none;
+  border: none;
   width: 32px;
   height: 32px;
-  border: none;
-  background: transparent;
-  font-size: 24px;
-  font-weight: bold;
-  color: var(--text-secondary, #666);
-  cursor: pointer;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 24px;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.7);
   transition: all 0.2s ease;
 }
 
 .task-retention-modal-close:hover {
-  background: var(--bg-secondary, #f8f9fa);
-  color: var(--text-primary, #333);
-  transform: scale(1.1);
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
 }
 
 .task-retention-modal-content {
-  padding: 20px 24px;
+  padding: 24px;
+  color: white;
+  line-height: 1.6;
   text-align: center;
 }
 
 .task-retention-modal-content p {
-  margin: 0 0 16px;
-  color: var(--text-secondary, #666);
-  line-height: 1.5;
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.task-retention-modal-content strong {
+  font-weight: 600;
+  color: white;
 }
 
 .task-preview {
   margin: 20px 0;
   padding: 16px;
-  background: var(--bg-secondary, #f8f9fa);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 8px;
   text-align: left;
   max-height: 200px;
   overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .task-preview-item {
   padding: 8px 0;
-  border-bottom: 1px solid var(--border-light, #eee);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: flex-start;
   gap: 8px;
@@ -135,13 +164,13 @@ const TASK_RETENTION_MODAL_CSS = `
 
 .task-preview-item-title {
   font-weight: 500;
-  color: var(--text-primary, #333);
+  color: rgba(255, 255, 255, 0.95);
   flex: 1;
 }
 
 .task-preview-item-desc {
   font-size: 0.9rem;
-  color: var(--text-secondary, #666);
+  color: rgba(255, 255, 255, 0.7);
   margin-top: 4px;
 }
 
@@ -149,92 +178,96 @@ const TASK_RETENTION_MODAL_CSS = `
   font-size: 0.8rem;
   padding: 2px 6px;
   border-radius: 4px;
-  background: var(--status-bg, #e9ecef);
-  color: var(--status-text, #495057);
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .task-preview-item-status.completed {
-  background: var(--success-bg, #d4edda);
-  color: var(--success-text, #155724);
+  background: rgba(48, 209, 88, 0.2);
+  color: rgba(48, 209, 88, 0.9);
 }
 
 .focused-task {
   font-weight: 600;
-  color: var(--primary-color, #007AFF);
+  color: rgba(74, 123, 255, 0.9);
 }
 
 .task-retention-modal-actions {
-  padding: 0 24px 24px;
+  padding: 16px 24px 20px;
   display: flex;
   gap: 12px;
   justify-content: center;
 }
 
 .task-retention-modal-actions button {
-  padding: 12px 24px;
+  padding: 10px 20px;
   border: none;
-  border-radius: 8px;
-  font-weight: 500;
+  border-radius: 40px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  font-weight: 500;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   min-width: 120px;
 }
 
 .btn-primary {
-  background: var(--primary-color, #007AFF);
+  background: linear-gradient(to bottom right, #4a7bff, #2e5cd8);
   color: white;
 }
 
 .btn-primary:hover {
-  background: var(--primary-hover, #0056CC);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .btn-secondary {
-  background: var(--secondary-bg, #f1f3f4);
-  color: var(--text-primary, #333);
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .btn-secondary:hover {
-  background: var(--secondary-hover, #e8eaed);
-  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.btn-secondary:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-@keyframes slideIn {
-  from { 
-    opacity: 0;
-    transform: translateY(-20px) scale(0.95);
-  }
-  to { 
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-/* Dark theme support */
-@media (prefers-color-scheme: dark) {
+/* Add responsive design for mobile */
+@media (max-width: 480px) {
   .task-retention-modal {
-    --modal-bg: #2c2c2e;
-    --text-primary: #ffffff;
-    --text-secondary: #8e8e93;
-    --bg-secondary: #1c1c1e;
-    --border-light: #3a3a3c;
-    --status-bg: #3a3a3c;
-    --status-text: #8e8e93;
-    --success-bg: #1e3a2e;
-    --success-text: #30d158;
-    --secondary-bg: #3a3a3c;
-    --secondary-hover: #48484a;
+    max-width: 98vw;
+    width: 98vw;
+    border-radius: 12px;
   }
   
-  .task-retention-modal-close:hover {
-    background: var(--bg-secondary, #1c1c1e);
-    color: var(--text-primary, #ffffff);
+  .task-retention-modal-header,
+  .task-retention-modal-content,
+  .task-retention-modal-actions {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+  
+  .task-retention-modal-title {
+    font-size: 18px;
+  }
+  
+  .task-retention-modal-actions button {
+    font-size: 14px;
+    padding: 8px 16px;
+    min-width: 100px;
   }
 }
 </style>
@@ -366,9 +399,7 @@ class TaskRetentionManager {
           <div class="task-preview-item-title ${task.focused ? 'focused-task' : ''}">${this.escapeHtml(task.text)} ${task.focused ? '⭐' : ''}</div>
           ${task.description ? `<div class="task-preview-item-desc">${this.escapeHtml(task.description)}</div>` : ''}
         </div>
-        <div class="task-preview-item-status ${task.completed ? 'completed' : ''}">
-          ${task.completed ? 'Completed' : 'Pending'}
-        </div>
+        ${task.completed ? '<div class="task-preview-item-status completed">Completed</div>' : ''}
       </div>
     `).join('');
   }

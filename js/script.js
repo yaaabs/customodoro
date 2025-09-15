@@ -1371,7 +1371,7 @@ window.playSound = playSound;
 
 // Handle page leave/refresh
 window.addEventListener('beforeunload', (e) => {
-  if (isRunning || hasUnsavedTasks || hasUnfinishedTasks) {
+  if (isRunning) {
     e.preventDefault();
     let message = '';
     if (isRunning) message = 'Timer is still running.';
