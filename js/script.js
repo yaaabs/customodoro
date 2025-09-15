@@ -933,15 +933,31 @@ function switchMode(mode, autoStart = false) {
   }
 }
 
-// Add link handler for mode switching
-document.querySelector('.switch-btn').addEventListener('click', (e) => {
-  // Only show confirmation when switching between major timer types (classic/reverse)
-  const hasTasks = taskList.children.length > 0;
-  if (hasTasks) {
-    const confirmed = confirm('Switching to a different timer type will delete all your tasks. Do you want to continue?');
-    if (!confirmed) {
-      e.preventDefault();
-    }
+// Add link handler for mode switching with task retention
+document.addEventListener('DOMContentLoaded', function() {
+  const switchBtn = document.querySelector('.switch-btn');
+  if (switchBtn) {
+    switchBtn.addEventListener('click', async (e) => {
+      e.preventDefault(); // Always prevent default navigation
+      
+      const targetUrl = switchBtn.href;
+      const targetMode = switchBtn.textContent.includes('Reverse') ? 'Reverse Pomodoro' : 'Classic Pomodoro';
+      
+      // Check if we have task retention manager
+      if (window.taskRetentionManager && taskList.children.length > 0) {
+        // Use task retention system
+        await window.taskRetentionManager.handleModeSwitch(targetUrl, targetMode);
+      } else {
+        // Fallback to original behavior
+        if (taskList.children.length > 0) {
+          const confirmed = confirm('Switching to a different timer type will delete all your tasks. Do you want to continue?');
+          if (!confirmed) {
+            return;
+          }
+        }
+        window.location.href = targetUrl;
+      }
+    });
   }
 });
 
@@ -1355,7 +1371,7 @@ window.playSound = playSound;
 
 // Handle page leave/refresh
 window.addEventListener('beforeunload', (e) => {
-  if (isRunning || hasUnsavedTasks || hasUnfinishedTasks) {
+  if (isRunning) {
     e.preventDefault();
     let message = '';
     if (isRunning) message = 'Timer is still running.';

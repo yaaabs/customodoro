@@ -1055,7 +1055,7 @@ window.playSound = playSound;
 
 // Handle page leave/refresh
 window.addEventListener('beforeunload', (e) => {
-  if (isRunning || hasUnsavedTasks || hasUnfinishedTasks) {
+  if (isRunning) {
     e.preventDefault();
     let message = '';
     if (isRunning) message = 'Timer is still running.';
@@ -1066,19 +1066,33 @@ window.addEventListener('beforeunload', (e) => {
   }
 });
 
-// Update the link handler for mode switching to only warn about tasks when switching between major timer types (reverse/classic)
-document.querySelector('.switch-btn').addEventListener('click', (e) => {
-  // Only show confirmation when switching between major timer types (reverse/classic)
-  if (isRunning) {
-    const confirmed = confirm('Timer is still running. Are you sure you want to switch to a different timer type? This will reset your progress.');
-    if (!confirmed) {
-      e.preventDefault();
-    }
-  } else if (hasUnfinishedTasks || taskList.children.length > 0) {
-    const confirmed = confirm('Switching to a different timer type will delete all your tasks. Do you want to continue?');
-    if (!confirmed) {
-      e.preventDefault();
-    }
+// Update the link handler for mode switching with task retention
+document.addEventListener('DOMContentLoaded', function() {
+  const switchBtn = document.querySelector('.switch-btn');
+  if (switchBtn) {
+    switchBtn.addEventListener('click', async (e) => {
+      e.preventDefault(); // Always prevent default navigation
+      
+      const targetUrl = switchBtn.href;
+      const targetMode = switchBtn.textContent.includes('Classic') ? 'Classic Pomodoro' : 'Reverse Pomodoro';
+      
+      // Check for running timer first
+      if (isRunning) {
+        const confirmed = confirm('Timer is still running. Are you sure you want to switch to a different timer type? This will reset your progress.');
+        if (!confirmed) {
+          return;
+        }
+      }
+      
+      // Check if we have task retention manager and tasks
+      if (window.taskRetentionManager && taskList.children.length > 0) {
+        // Use task retention system
+        await window.taskRetentionManager.handleModeSwitch(targetUrl, targetMode);
+      } else {
+        // Fallback to original behavior for no tasks or no retention manager
+        window.location.href = targetUrl;
+      }
+    });
   }
 });
 
