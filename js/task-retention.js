@@ -451,6 +451,17 @@ class TaskRetentionManager {
   }
 
   handleDiscardTasks() {
+    // Clear any existing tasks in the target mode to ensure a fresh start
+    const targetKey = this.targetMode === 'Classic Pomodoro' ? CLASSIC_TASKS_KEY : REVERSE_TASKS_KEY;
+    // Instead of merging tasks, we'll make sure the target mode starts fresh
+    localStorage.setItem(targetKey, JSON.stringify([]));
+    console.log(`Tasks cleared in ${this.targetMode} (Start Fresh selected)`);
+    
+    // Show notification if possible
+    if (typeof window.showToast === 'function') {
+      window.showToast(`Starting fresh in ${this.targetMode}! 🔄`);
+    }
+    
     this.hideModal();
     this.resolvePromise?.(false);
   }
@@ -469,11 +480,23 @@ class TaskRetentionManager {
     const existingTasks = localStorage.getItem(targetKey);
     let targetTasks = existingTasks ? JSON.parse(existingTasks) : [];
     
-    // Filter out duplicate tasks (based on text content)
-    const existingTexts = new Set(targetTasks.map(t => t.text));
-    const newTasks = tasks.filter(task => !existingTexts.has(task.text));
+    // Create deep copies of tasks to ensure no shared references
+    const tasksCopy = JSON.parse(JSON.stringify(tasks));
     
-    // Add only non-duplicate tasks to target mode
+    // Create a more robust deduplication system using both text and description
+    const isDuplicate = (newTask, existingTask) => {
+      return (
+        newTask.text === existingTask.text && 
+        newTask.description === existingTask.description
+      );
+    };
+    
+    // Filter out duplicate tasks using the more robust comparison
+    const newTasks = tasksCopy.filter(newTask => 
+      !targetTasks.some(existingTask => isDuplicate(newTask, existingTask))
+    );
+    
+    // Use completely fresh data for the target mode
     targetTasks = [...targetTasks, ...newTasks];
     
     // Save to localStorage
@@ -484,12 +507,20 @@ class TaskRetentionManager {
 
   // Method to handle mode switching with task retention
   async handleModeSwitch(targetUrl, targetMode) {
-    const shouldTransfer = await this.showRetentionDialog(targetMode);
+    // Get latest tasks from DOM before showing dialog
+    this.currentTasks = this.getTasksFromTaskList();
     
-    if (shouldTransfer) {
-      console.log(`Tasks transferred to ${targetMode}`);
+    // Only show the dialog if there are actually tasks to transfer
+    if (this.currentTasks.length > 0) {
+      const shouldTransfer = await this.showRetentionDialog(targetMode);
+      
+      if (shouldTransfer) {
+        console.log(`${this.currentTasks.length} tasks transferred to ${targetMode}`);
+      } else {
+        console.log('User chose to start fresh in the target mode');
+      }
     } else {
-      console.log('User chose not to transfer tasks');
+      console.log('No tasks to transfer, proceeding directly');
     }
     
     // Navigate to target page
@@ -617,6 +648,49 @@ function addClassicTaskSaving() {
 
 // Initialize classic task saving
 addClassicTaskSaving();
+
+// Helper function to ensure tasks are only deleted in the current mode
+function setupIsolatedTaskDeletion() {
+  // Watch for task deletion events
+  document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('task-delete')) {
+      // Get the task item being deleted
+      const taskItem = e.target.closest('.task-item');
+      if (!taskItem) return;
+      
+      // Get the task text
+      const taskText = taskItem.querySelector('.task-text')?.textContent;
+      if (!taskText) return;
+      
+      // Determine current mode based on current page
+      const currentPage = window.location.pathname;
+      const isReversePage = currentPage.includes('reverse.html');
+      const currentKey = isReversePage ? REVERSE_TASKS_KEY : CLASSIC_TASKS_KEY;
+      
+      // Get current tasks from localStorage
+      const savedTasks = localStorage.getItem(currentKey);
+      if (!savedTasks) return;
+      
+      try {
+        // Parse tasks
+        const tasks = JSON.parse(savedTasks);
+        
+        // Filter out the deleted task
+        const updatedTasks = tasks.filter(task => task.text !== taskText);
+        
+        // Save back to localStorage for current mode only
+        localStorage.setItem(currentKey, JSON.stringify(updatedTasks));
+        
+        console.log(`Task "${taskText}" deleted from ${isReversePage ? 'Reverse' : 'Classic'} mode only.`);
+      } catch (error) {
+        console.error('Error processing task deletion:', error);
+      }
+    }
+  });
+}
+
+// Initialize isolated task deletion on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', setupIsolatedTaskDeletion);
 
 // Export for global access
 window.TaskRetentionManager = TaskRetentionManager;
