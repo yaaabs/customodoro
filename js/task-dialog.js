@@ -15,27 +15,31 @@ class TaskDialog {
       <div class="task-dialog-overlay" id="task-dialog-overlay" style="display: none;">
         <div class="task-dialog">
           <div class="task-dialog-header">
-            <h3 id="task-dialog-title">You have tasks in progress</h3>
+            <h3 id="task-dialog-title">Switch Timer Mode</h3>
             <button class="task-dialog-close" id="task-dialog-close">&times;</button>
           </div>
           <div class="task-dialog-content">
-            <p id="task-dialog-message">What would you like to do with your current tasks?</p>
+            <p id="task-dialog-message">You have tasks in progress. What would you like to do?</p>
             <div class="task-dialog-preview" id="task-dialog-preview">
               <!-- Task preview will be inserted here -->
             </div>
           </div>
           <div class="task-dialog-actions">
             <button class="task-dialog-btn task-dialog-keep" id="task-dialog-keep">
-              <span class="btn-icon">📋</span>
-              Keep Tasks
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+              </svg>
+              Keep Tasks & Switch
             </button>
-            <button class="task-dialog-btn task-dialog-delete" id="task-dialog-delete">
-              <span class="btn-icon">🗑️</span>
-              Delete Tasks
-            </button>
-            <button class="task-dialog-btn task-dialog-cancel" id="task-dialog-cancel">
-              <span class="btn-icon">❌</span>
-              Cancel
+            <button class="task-dialog-btn task-dialog-switch" id="task-dialog-switch">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                <path d="M21 3v5h-5"/>
+                <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                <path d="M3 21v-5h5"/>
+              </svg>
+              Switch Without Tasks
             </button>
           </div>
         </div>
@@ -68,52 +72,69 @@ class TaskDialog {
 
         .task-dialog {
           background: white;
-          border-radius: 12px;
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-          max-width: 480px;
-          width: 90%;
-          max-height: 80vh;
-          overflow-y: auto;
-          animation: dialogSlideIn 0.3s ease-out;
+          border-radius: 16px;
+          box-shadow: 0 24px 80px rgba(0, 0, 0, 0.15);
+          max-width: 520px;
+          width: 92%;
+          max-height: 85vh;
+          overflow: hidden;
+          animation: dialogSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .task-dialog-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 20px 24px 16px;
-          border-bottom: 1px solid #e0e0e0;
+          padding: 24px 28px 20px;
+          border-bottom: 1px solid #f0f0f0;
+          background: linear-gradient(to bottom, #ffffff, #fafafa);
         }
 
         .task-dialog-header h3 {
           margin: 0;
-          font-size: 1.2em;
+          font-size: 1.25em;
           font-weight: 600;
-          color: #333;
+          color: #1a1a1a;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .task-dialog-header h3::before {
+          content: '🔄';
+          font-size: 1.1em;
         }
 
         .task-dialog-close {
           background: none;
           border: none;
-          font-size: 24px;
+          width: 32px;
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 20px;
           cursor: pointer;
-          color: #666;
-          padding: 4px;
-          border-radius: 4px;
-          transition: all 0.2s ease;
+          color: #6b7280;
+          border-radius: 8px;
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .task-dialog-close:hover {
-          background: #f0f0f0;
-          color: #333;
+          background: #f3f4f6;
+          color: #374151;
+          transform: scale(1.05);
         }
 
         .task-dialog-content {
-          padding: 20px 24px;
+          padding: 24px 28px;
         }
 
         .task-dialog-content p {
-          margin: 0 0 16px 0;
+          margin: 0 0 20px 0;
+          font-size: 15px;
+          line-height: 1.5;
+          color: #4b5563;
           color: #555;
           line-height: 1.5;
         }
@@ -161,57 +182,79 @@ class TaskDialog {
 
         .task-dialog-actions {
           display: flex;
-          gap: 12px;
-          padding: 16px 24px 24px;
-          justify-content: flex-end;
+          gap: 16px;
+          padding: 20px 28px 28px;
+          justify-content: center;
+          background: linear-gradient(to bottom, #fafafa, #ffffff);
+          border-top: 1px solid #f0f0f0;
         }
 
         .task-dialog-btn {
           display: flex;
           align-items: center;
-          gap: 8px;
-          padding: 10px 16px;
-          border: 1px solid transparent;
-          border-radius: 6px;
-          font-size: 14px;
-          font-weight: 500;
+          gap: 10px;
+          padding: 14px 24px;
+          border: 2px solid transparent;
+          border-radius: 12px;
+          font-size: 15px;
+          font-weight: 600;
           cursor: pointer;
-          transition: all 0.2s ease;
-          min-width: 110px;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          min-width: 160px;
           justify-content: center;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .task-dialog-btn::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+          transition: left 0.5s;
+        }
+
+        .task-dialog-btn:hover::before {
+          left: 100%;
         }
 
         .task-dialog-keep {
-          background: #28a745;
+          background: linear-gradient(135deg, #10b981, #059669);
           color: white;
-          border-color: #28a745;
+          border-color: #059669;
+          box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
         }
 
         .task-dialog-keep:hover {
-          background: #218838;
-          border-color: #1e7e34;
+          background: linear-gradient(135deg, #059669, #047857);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .task-dialog-keep::after {
+          content: '📋';
+          font-size: 16px;
         }
 
         .task-dialog-delete {
-          background: #dc3545;
+          background: linear-gradient(135deg, #6b7280, #4b5563);
           color: white;
-          border-color: #dc3545;
+          border-color: #4b5563;
+          box-shadow: 0 4px 14px rgba(107, 114, 128, 0.3);
         }
 
         .task-dialog-delete:hover {
-          background: #c82333;
-          border-color: #bd2130;
+          background: linear-gradient(135deg, #4b5563, #374151);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(107, 114, 128, 0.4);
         }
 
-        .task-dialog-cancel {
-          background: #6c757d;
-          color: white;
-          border-color: #6c757d;
-        }
-
-        .task-dialog-cancel:hover {
-          background: #5a6268;
-          border-color: #545b62;
+        .task-dialog-delete::after {
+          content: '🔄';
+          font-size: 16px;
         }
 
         @keyframes dialogFadeIn {
@@ -232,61 +275,101 @@ class TaskDialog {
 
         /* Theme Support */
         body.theme-dark .task-dialog {
-          background: #2c2c2c;
-          color: #e0e0e0;
+          background: linear-gradient(145deg, #1f2937, #111827);
+          color: #f9fafb;
+          box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
         }
 
         body.theme-dark .task-dialog-header {
-          border-bottom-color: #444;
+          border-bottom-color: #374151;
+          background: linear-gradient(to bottom, #1f2937, #1a1a1a);
         }
 
         body.theme-dark .task-dialog-header h3 {
-          color: #e0e0e0;
+          color: #f3f4f6;
         }
 
         body.theme-dark .task-dialog-close {
-          color: #ccc;
+          color: #9ca3af;
         }
 
         body.theme-dark .task-dialog-close:hover {
-          background: #444;
-          color: #fff;
+          background: #374151;
+          color: #f3f4f6;
         }
 
         body.theme-dark .task-dialog-content p {
-          color: #ccc;
+          color: #d1d5db;
         }
 
-        body.theme-dark .task-dialog-preview {
-          background: #3a3a3a;
-          border-color: #555;
+        body.theme-dark .task-dialog-actions {
+          background: linear-gradient(to bottom, #1a1a1a, #1f2937);
+          border-top-color: #374151;
         }
 
-        body.theme-dark .task-dialog-preview-item {
-          border-bottom-color: #555;
+        body.theme-dark .task-dialog-keep {
+          background: linear-gradient(135deg, #059669, #047857);
+          box-shadow: 0 4px 14px rgba(5, 150, 105, 0.4);
         }
 
-        body.theme-dark .task-dialog-preview-title {
-          color: #e0e0e0;
+        body.theme-dark .task-dialog-keep:hover {
+          box-shadow: 0 6px 20px rgba(5, 150, 105, 0.5);
         }
 
-        body.theme-dark .task-dialog-preview-desc {
-          color: #aaa;
+        body.theme-dark .task-dialog-delete {
+          background: linear-gradient(135deg, #4b5563, #374151);
+          box-shadow: 0 4px 14px rgba(75, 85, 99, 0.4);
+        }
+
+        body.theme-dark .task-dialog-delete:hover {
+          box-shadow: 0 6px 20px rgba(75, 85, 99, 0.5);
         }
 
         /* Responsive Design */
-        @media (max-width: 480px) {
+        @media (max-width: 600px) {
           .task-dialog {
             width: 95%;
-            margin: 20px;
+            margin: 16px;
+            border-radius: 12px;
+          }
+
+          .task-dialog-header {
+            padding: 20px 20px 16px;
+          }
+
+          .task-dialog-content {
+            padding: 20px;
           }
 
           .task-dialog-actions {
             flex-direction: column;
+            padding: 16px 20px 24px;
+            gap: 12px;
           }
 
           .task-dialog-btn {
             width: 100%;
+            min-width: unset;
+          }
+        }
+
+        @media (max-width: 400px) {
+          .task-dialog {
+            width: 98%;
+            margin: 8px;
+          }
+
+          .task-dialog-header h3 {
+            font-size: 1.1em;
+          }
+
+          .task-dialog-content p {
+            font-size: 14px;
+          }
+
+          .task-dialog-btn {
+            padding: 12px 20px;
+            font-size: 14px;
           }
         }
       </style>
@@ -298,7 +381,7 @@ class TaskDialog {
   bindEvents() {
     // Use event delegation since the dialog might not exist yet
     document.addEventListener('click', (e) => {
-      if (e.target.id === 'task-dialog-close' || e.target.id === 'task-dialog-cancel') {
+      if (e.target.id === 'task-dialog-close') {
         this.hideDialog();
         if (this.onCancel) this.onCancel();
       } else if (e.target.id === 'task-dialog-keep') {
@@ -332,12 +415,11 @@ class TaskDialog {
 
   showDialog(options = {}) {
     const {
-      title = 'You have tasks in progress',
-      message = 'What would you like to do with your current tasks?',
+      title = 'Switch Pomodoro Mode',
+      message = 'You have tasks in progress. Choose how to handle them:',
       tasks = [],
       keepButtonText = 'Keep Tasks',
-      deleteButtonText = 'Delete Tasks',
-      cancelButtonText = 'Cancel',
+      deleteButtonText = 'Switch Without Tasks',
       onKeep = null,
       onDelete = null,
       onCancel = null
@@ -351,9 +433,8 @@ class TaskDialog {
     // Update dialog content
     document.getElementById('task-dialog-title').textContent = title;
     document.getElementById('task-dialog-message').textContent = message;
-    document.getElementById('task-dialog-keep').innerHTML = `<span class="btn-icon">📋</span>${keepButtonText}`;
-    document.getElementById('task-dialog-delete').innerHTML = `<span class="btn-icon">🗑️</span>${deleteButtonText}`;
-    document.getElementById('task-dialog-cancel').innerHTML = `<span class="btn-icon">❌</span>${cancelButtonText}`;
+    document.getElementById('task-dialog-keep').textContent = keepButtonText;
+    document.getElementById('task-dialog-delete').textContent = deleteButtonText;
 
     // Update task preview
     this.updateTaskPreview(tasks);

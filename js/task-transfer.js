@@ -1,85 +1,102 @@
-// Task Transfer System
-// Handles safe transfer of tasks between Classic and Reverse Pomodoro modes
-
+/**
+ * Task Transfer System
+ * Simplified task transfer between Classic and Reverse Pomodoro modes
+ */
 class TaskTransfer {
   constructor() {
     this.TRANSFER_KEY = 'taskTransfer';
     this.CLASSIC_TASKS_KEY = 'tasks';
     this.REVERSE_TASKS_KEY = 'reverseTasks';
+    this.TRANSFER_TIMEOUT = 5 * 60 * 1000; // 5 minutes
   }
 
-  // Prepare tasks for transfer (called before switching modes)
+  /**
+   * Prepare tasks for transfer between modes
+   * @param {Array} tasks - Tasks to transfer
+   * @param {string} sourceMode - Source mode ('classic' or 'reverse')
+   */
   prepareTransfer(tasks, sourceMode) {
+    if (!tasks || !Array.isArray(tasks)) {
+      console.warn('Invalid tasks provided for transfer');
+      return;
+    }
+
     const transferData = {
-      tasks: tasks,
+      tasks: tasks.filter(task => task && task.title), // Only valid tasks
       sourceMode: sourceMode,
       targetMode: sourceMode === 'classic' ? 'reverse' : 'classic',
       timestamp: Date.now()
     };
     
-    localStorage.setItem(this.TRANSFER_KEY, JSON.stringify(transferData));
-    console.log('Tasks prepared for transfer:', transferData);
+    try {
+      localStorage.setItem(this.TRANSFER_KEY, JSON.stringify(transferData));
+      console.log(`Prepared ${transferData.tasks.length} tasks for transfer from ${sourceMode} to ${transferData.targetMode}`);
+    } catch (error) {
+      console.error('Failed to prepare task transfer:', error);
+    }
   }
 
-  // Get pending transfer data
+  /**
+   * Get pending transfer data if valid
+   * @returns {Object|null} Transfer data or null if invalid/expired
+   */
   getPendingTransfer() {
-    const transferData = localStorage.getItem(this.TRANSFER_KEY);
-    if (!transferData) return null;
-
     try {
+      const transferData = localStorage.getItem(this.TRANSFER_KEY);
+      if (!transferData) return null;
+
       const parsed = JSON.parse(transferData);
       
-      // Check if transfer is still valid (within 5 minutes)
-      const isValid = (Date.now() - parsed.timestamp) < (5 * 60 * 1000);
+      // Validate transfer data
+      if (!parsed.tasks || !parsed.sourceMode || !parsed.timestamp) {
+        this.clearTransfer();
+        return null;
+      }
       
-      if (!isValid) {
+      // Check if transfer is still valid
+      if ((Date.now() - parsed.timestamp) > this.TRANSFER_TIMEOUT) {
         this.clearTransfer();
         return null;
       }
       
       return parsed;
     } catch (error) {
-      console.error('Error parsing transfer data:', error);
+      console.error('Error retrieving transfer data:', error);
       this.clearTransfer();
       return null;
     }
   }
 
-  // Apply transferred tasks to the current mode
+  /**
+   * Apply transferred tasks to the current mode
+   * @param {string} currentMode - Current mode ('classic' or 'reverse')
+   * @returns {boolean} Success status
+   */
   applyTransfer(currentMode) {
     const transferData = this.getPendingTransfer();
     if (!transferData) return false;
 
-    // Verify we're in the expected target mode
+    // Verify mode compatibility
     if (transferData.targetMode !== currentMode) {
-      console.warn('Transfer target mode mismatch');
+      console.warn(`Transfer mode mismatch: expected ${currentMode}, got ${transferData.targetMode}`);
       this.clearTransfer();
       return false;
     }
 
     try {
-      // Apply tasks to the appropriate storage key
       const storageKey = currentMode === 'classic' ? this.CLASSIC_TASKS_KEY : this.REVERSE_TASKS_KEY;
-      
-      // Get existing tasks (if any) and merge with transferred tasks
-      const existingTasks = this.getTasksFromStorage(storageKey);
       const transferredTasks = transferData.tasks || [];
       
-      // Combine tasks (transferred tasks take priority)
-      const combinedTasks = [...transferredTasks, ...existingTasks];
+      // Save tasks to storage
+      localStorage.setItem(storageKey, JSON.stringify(transferredTasks));
       
-      // Remove duplicates based on title and description
-      const uniqueTasks = this.removeDuplicateTasks(combinedTasks);
-      
-      localStorage.setItem(storageKey, JSON.stringify(uniqueTasks));
-      
-      // Apply tasks to the DOM
-      this.applyTasksToDOM(uniqueTasks);
+      // Apply tasks to DOM
+      this.applyTasksToDOM(transferredTasks);
       
       // Clear the transfer
       this.clearTransfer();
       
-      console.log(`Successfully applied ${uniqueTasks.length} tasks to ${currentMode} mode`);
+      console.log(`Successfully applied ${transferredTasks.length} tasks to ${currentMode} mode`);
       return true;
     } catch (error) {
       console.error('Error applying task transfer:', error);
@@ -88,52 +105,62 @@ class TaskTransfer {
     }
   }
 
-  // Get tasks from localStorage
+  /**
+   * Get tasks from localStorage safely
+   * @param {string} key - Storage key
+   * @returns {Array} Tasks array or empty array
+   */
   getTasksFromStorage(key) {
     try {
       const stored = localStorage.getItem(key);
       return stored ? JSON.parse(stored) : [];
     } catch (error) {
-      console.error('Error loading tasks from storage:', error);
+      console.error(`Error loading tasks from ${key}:`, error);
       return [];
     }
   }
 
-  // Remove duplicate tasks
-  removeDuplicateTasks(tasks) {
-    const seen = new Set();
-    return tasks.filter(task => {
-      const key = `${task.title}|${task.description || ''}`;
-      if (seen.has(key)) {
-        return false;
-      }
-      seen.add(key);
-      return true;
-    });
-  }
-
-  // Apply tasks to the current DOM
+  /**
+   * Apply tasks to the DOM
+   * @param {Array} tasks - Tasks to apply
+   */
   applyTasksToDOM(tasks) {
     const taskList = document.getElementById('task-list');
-    if (!taskList) return;
+    if (!taskList) {
+      console.warn('Task list element not found');
+      return;
+    }
 
     // Clear existing tasks
     taskList.innerHTML = '';
 
+    if (!tasks || tasks.length === 0) {
+      console.log('No tasks to apply to DOM');
+      return;
+    }
+
     // Add each task to the DOM
-    tasks.forEach(taskData => {
-      if (typeof window.createTaskElement === 'function') {
-        // Use existing createTaskElement function if available
-        const taskElement = window.createTaskElement(
-          taskData.title, 
-          taskData.completed || false, 
-          taskData.description || ''
-        );
-        taskList.appendChild(taskElement);
-      } else {
-        // Fallback: create simple task element
-        const taskElement = this.createSimpleTaskElement(taskData);
-        taskList.appendChild(taskElement);
+    tasks.forEach((taskData, index) => {
+      try {
+        if (typeof window.createTaskElement === 'function') {
+          // Use existing createTaskElement function
+          const taskElement = window.createTaskElement(
+            taskData.title, 
+            taskData.completed || false, 
+            taskData.description || ''
+          );
+          if (taskElement) {
+            taskList.appendChild(taskElement);
+          }
+        } else {
+          // Fallback: create simple task element
+          const taskElement = this.createSimpleTaskElement(taskData);
+          if (taskElement) {
+            taskList.appendChild(taskElement);
+          }
+        }
+      } catch (error) {
+        console.error(`Error creating task element for task ${index}:`, error);
       }
     });
 
@@ -141,7 +168,11 @@ class TaskTransfer {
     this.updateTaskTrackingVariables();
   }
 
-  // Simple task element creation (fallback)
+  /**
+   * Create a simple task element as fallback
+   * @param {Object} taskData - Task data
+   * @returns {HTMLElement} Task element
+   */
   createSimpleTaskElement(taskData) {
     const taskItem = document.createElement('div');
     taskItem.className = `task-item ${taskData.completed ? 'task-completed' : ''}`;
@@ -149,162 +180,94 @@ class TaskTransfer {
     taskItem.innerHTML = `
       <input type="checkbox" class="task-checkbox" ${taskData.completed ? 'checked' : ''}>
       <div class="task-content">
-        <div class="task-text">${taskData.title}</div>
-        ${taskData.description ? `<div class="task-description">${taskData.description}</div>` : ''}
+        <div class="task-text">${this.escapeHtml(taskData.title)}</div>
+        ${taskData.description ? `<div class="task-description">${this.escapeHtml(taskData.description)}</div>` : ''}
       </div>
-      <button class="task-delete">×</button>
+      <button class="task-delete" title="Delete task">×</button>
     `;
 
     // Add event listeners
     const checkbox = taskItem.querySelector('.task-checkbox');
     const deleteBtn = taskItem.querySelector('.task-delete');
 
-    checkbox.addEventListener('change', () => {
-      taskItem.classList.toggle('task-completed', checkbox.checked);
-      this.saveCurrentTasks();
-      this.updateTaskTrackingVariables();
-    });
+    if (checkbox) {
+      checkbox.addEventListener('change', () => {
+        taskItem.classList.toggle('task-completed', checkbox.checked);
+        this.updateTaskState();
+      });
+    }
 
-    deleteBtn.addEventListener('click', () => {
-      taskItem.remove();
-      this.saveCurrentTasks();
-      this.updateTaskTrackingVariables();
-    });
+    if (deleteBtn) {
+      deleteBtn.addEventListener('click', () => {
+        taskItem.remove();
+        this.updateTaskState();
+      });
+    }
 
     return taskItem;
   }
 
-  // Update task tracking variables (hasUnfinishedTasks, etc.)
-  updateTaskTrackingVariables() {
-    const taskList = document.getElementById('task-list');
-    const taskInput = document.getElementById('task-input');
-    const taskDescInput = document.getElementById('task-description-input');
-    
-    // Update hasUnfinishedTasks
+  /**
+   * Update task state after changes
+   */
+  updateTaskState() {
+    // Trigger existing update functions if available
     if (typeof window.updateUnfinishedTasks === 'function') {
       window.updateUnfinishedTasks();
-    } else {
-      // Fallback
-      const unfinishedTasks = taskList ? 
-        Array.from(taskList.querySelectorAll('.task-item:not(.task-completed)')) : [];
-      if (window.hasUnfinishedTasks !== undefined) {
-        window.hasUnfinishedTasks = unfinishedTasks.length > 0;
-      }
     }
-
-    // Update hasUnsavedTasks
-    const hasUnsavedInput = (taskInput && taskInput.value.trim().length > 0) || 
-                            (taskDescInput && taskDescInput.value.trim().length > 0);
-    if (window.hasUnsavedTasks !== undefined) {
-      window.hasUnsavedTasks = hasUnsavedInput;
+    if (typeof window.saveTasks === 'function') {
+      window.saveTasks();
     }
   }
 
-  // Save current tasks to appropriate localStorage key
-  saveCurrentTasks() {
-    const currentMode = this.getCurrentMode();
-    const storageKey = currentMode === 'classic' ? this.CLASSIC_TASKS_KEY : this.REVERSE_TASKS_KEY;
-    const currentTasks = TaskDialog.getCurrentTasks();
-    
-    localStorage.setItem(storageKey, JSON.stringify(currentTasks));
+  /**
+   * Escape HTML to prevent XSS
+   * @param {string} text - Text to escape
+   * @returns {string} Escaped text
+   */
+  escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
   }
 
-  // Detect current mode based on page/body class
+  /**
+   * Detect current mode based on URL
+   * @returns {string} Current mode ('classic' or 'reverse')
+   */
   getCurrentMode() {
-    if (document.body.classList.contains('reverse-mode')) {
-      return 'reverse';
-    } else if (document.body.classList.contains('pomodoro-mode')) {
-      return 'classic';
-    }
-    
-    // Fallback: check current URL
-    if (window.location.pathname.includes('reverse')) {
-      return 'reverse';
-    }
-    
-    return 'classic';
+    return window.location.pathname.includes('reverse') ? 'reverse' : 'classic';
   }
 
-  // Clear transfer data
+  /**
+   * Clear transfer data from localStorage
+   */
   clearTransfer() {
-    localStorage.removeItem(this.TRANSFER_KEY);
+    try {
+      localStorage.removeItem(this.TRANSFER_KEY);
+      console.log('Transfer data cleared');
+    } catch (error) {
+      console.error('Error clearing transfer data:', error);
+    }
   }
 
-  // Check if there's a pending transfer on page load
+  /**
+   * Check if there's a pending transfer on page load
+   * @returns {boolean} Whether a transfer was found
+   */
   checkForPendingTransfer() {
     const transferData = this.getPendingTransfer();
     if (!transferData) return false;
 
     const currentMode = this.getCurrentMode();
     
-    // If we're in the target mode, show option to apply transfer
+    // Auto-apply if we're in the target mode
     if (transferData.targetMode === currentMode) {
-      const message = `You have ${transferData.tasks.length} task(s) from ${transferData.sourceMode === 'classic' ? 'Classic' : 'Reverse'} Pomodoro. Would you like to add them here?`;
-      
-      window.taskDialog.showDialog({
-        title: 'Tasks Available for Transfer',
-        message: message,
-        tasks: transferData.tasks,
-        keepButtonText: 'Add Tasks',
-        deleteButtonText: 'Ignore',
-        cancelButtonText: 'Decide Later',
-        onKeep: () => {
-          this.applyTransfer(currentMode);
-          window.showToast && window.showToast(`Successfully added ${transferData.tasks.length} task(s)!`);
-        },
-        onDelete: () => {
-          this.clearTransfer();
-          window.showToast && window.showToast('Transfer ignored.');
-        },
-        onCancel: () => {
-          // Keep transfer for later
-          window.showToast && window.showToast('You can transfer tasks later from the settings.');
-        }
-      });
-      
-      return true;
+      console.log(`Found pending transfer: ${transferData.tasks.length} tasks from ${transferData.sourceMode} to ${currentMode}`);
+      return this.applyTransfer(currentMode);
     }
     
     return false;
-  }
-
-  // Manual transfer method (can be called from settings or other UI)
-  manualTransfer() {
-    const currentMode = this.getCurrentMode();
-    const currentTasks = TaskDialog.getCurrentTasks();
-    const unsavedTasks = TaskDialog.getUnsavedTasks();
-    const allTasks = [...currentTasks, ...unsavedTasks];
-
-    if (allTasks.length === 0) {
-      window.showToast && window.showToast('No tasks to transfer.');
-      return;
-    }
-
-    const targetMode = currentMode === 'classic' ? 'reverse' : 'classic';
-    const targetModeName = targetMode === 'classic' ? 'Classic Pomodoro' : 'Reverse Pomodoro';
-
-    window.taskDialog.showDialog({
-      title: 'Transfer Tasks',
-      message: `Transfer ${allTasks.length} task(s) to ${targetModeName}?`,
-      tasks: allTasks,
-      keepButtonText: 'Transfer & Switch',
-      deleteButtonText: 'Switch Without Tasks',
-      cancelButtonText: 'Cancel',
-      onKeep: () => {
-        this.prepareTransfer(allTasks, currentMode);
-        // Navigate to target mode
-        const targetUrl = targetMode === 'classic' ? '/index.html' : '/reverse.html';
-        window.location.href = targetUrl;
-      },
-      onDelete: () => {
-        // Clear tasks and navigate
-        const targetUrl = targetMode === 'classic' ? '/index.html' : '/reverse.html';
-        window.location.href = targetUrl;
-      },
-      onCancel: () => {
-        // Do nothing
-      }
-    });
   }
 }
 
