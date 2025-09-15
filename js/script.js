@@ -933,67 +933,16 @@ function switchMode(mode, autoStart = false) {
   }
 }
 
-// Enhanced link handler for mode switching with task transfer options
+// Add link handler for mode switching
 document.querySelector('.switch-btn').addEventListener('click', (e) => {
-  e.preventDefault(); // Always prevent default, we'll handle navigation
-  
-  const currentTasks = TaskDialog.getCurrentTasks();
-  const unsavedTasks = TaskDialog.getUnsavedTasks();
-  const allTasks = [...currentTasks, ...unsavedTasks];
-  
-  // If timer is running, show warning
-  if (isRunning) {
-    window.taskDialog.showDialog({
-      title: 'Timer is Running',
-      message: 'The timer is currently running. Switching modes will reset your progress. What would you like to do?',
-      tasks: allTasks,
-      keepButtonText: allTasks.length > 0 ? 'Keep Tasks & Switch' : 'Switch Mode',
-      deleteButtonText: allTasks.length > 0 ? 'Delete Tasks & Switch' : 'Switch Mode',
-      cancelButtonText: 'Cancel',
-      onKeep: () => {
-        if (allTasks.length > 0) {
-          window.taskTransfer.prepareTransfer(allTasks, 'classic');
-        }
-        window.location.href = './reverse.html';
-      },
-      onDelete: () => {
-        // Clear tasks and switch
-        window.location.href = './reverse.html';
-      },
-      onCancel: () => {
-        // Do nothing, stay on current page
-      }
-    });
-    return;
-  }
-  
-  // If no tasks, switch directly
-  if (allTasks.length === 0) {
-    window.location.href = './reverse.html';
-    return;
-  }
-  
-  // Show enhanced dialog with task transfer options
-  window.taskDialog.showDialog({
-    title: 'Switch to Reverse Pomodoro',
-    message: `You have ${allTasks.length} task(s). What would you like to do with them?`,
-    tasks: allTasks,
-    keepButtonText: 'Keep Tasks',
-    deleteButtonText: 'Delete Tasks',
-    cancelButtonText: 'Cancel',
-    onKeep: () => {
-      // Prepare tasks for transfer and switch
-      window.taskTransfer.prepareTransfer(allTasks, 'classic');
-      window.location.href = './reverse.html';
-    },
-    onDelete: () => {
-      // Clear tasks and switch
-      window.location.href = './reverse.html';
-    },
-    onCancel: () => {
-      // Do nothing, stay on current page
+  // Only show confirmation when switching between major timer types (classic/reverse)
+  const hasTasks = taskList.children.length > 0;
+  if (hasTasks) {
+    const confirmed = confirm('Switching to a different timer type will delete all your tasks. Do you want to continue?');
+    if (!confirmed) {
+      e.preventDefault();
     }
-  });
+  }
 });
 
 // Update session dots display
@@ -1218,7 +1167,6 @@ function addDragAndDropListeners(taskItem) {
     draggedTask.classList.remove('dragging');
     draggedTask = null;
     updateUnfinishedTasks();
-    saveTasks();
   });
 }
 
@@ -1242,7 +1190,6 @@ function createTaskElement(text, completed = false, description = '') {
   checkbox.addEventListener('change', () => {
     taskItem.classList.toggle('task-completed', checkbox.checked);
     updateUnfinishedTasks();
-    saveTasks();
   });
 
   // Wrap text and description in a .task-content div for better styling
@@ -1275,7 +1222,6 @@ function createTaskElement(text, completed = false, description = '') {
       }
       taskList.removeChild(taskItem);
       updateUnfinishedTasks();
-      saveTasks();
     }
   });
 
@@ -1319,9 +1265,6 @@ function addTask() {
   if (taskText !== '') {
     createTaskElement(taskText, false, taskDesc);
 
-    // Save tasks after adding a new one
-    saveTasks();
-
     // Clear inputs
     taskInput.value = '';
     if (taskDescInput) taskDescInput.value = '';
@@ -1335,42 +1278,13 @@ function addTask() {
 
 // Add function to update unfinished tasks status
 function updateUnfinishedTasks() {
-    const unfinishedTasks = Array.from(taskList.children).filter(task => 
-        !task.querySelector('.task-checkbox').checked
-    );
-    hasUnfinishedTasks = unfinishedTasks.length > 0;
+  const unfinishedTasks = Array.from(taskList.children).filter(task => 
+    !task.querySelector('.task-checkbox').checked
+  );
+  hasUnfinishedTasks = unfinishedTasks.length > 0;
 }
 
-// Functions to save and load tasks from localStorage
-function saveTasks() {
-  const taskItems = Array.from(taskList.children).map(taskItem => {
-    const text = taskItem.querySelector('.task-text').textContent;
-    const completed = taskItem.querySelector('.task-checkbox').checked;
-    const descElem = taskItem.querySelector('.task-description');
-    const description = descElem ? descElem.textContent : '';
-    return { text, completed, description };
-  });
-  
-  localStorage.setItem('tasks', JSON.stringify(taskItems));
-  console.log('Classic tasks saved to localStorage:', taskItems);
-}
-
-function loadTasks() {
-  const savedTasks = localStorage.getItem('tasks');
-  if (savedTasks) {
-    try {
-      const taskItems = JSON.parse(savedTasks);
-      taskList.innerHTML = '';
-      taskItems.forEach(task => {
-        createTaskElement(task.text, task.completed, task.description);
-      });
-      updateUnfinishedTasks();
-      console.log('Classic tasks loaded from localStorage:', taskItems);
-    } catch (error) {
-      console.error('Error loading classic tasks from localStorage:', error);
-    }
-  }
-}// Functions to handle task focusing
+// Functions to handle task focusing
 function setCurrentFocusedTask(taskElement, taskTitle) {
   // Remove previous focus styling
   if (currentFocusedTaskElement) {
@@ -1439,32 +1353,14 @@ document.querySelectorAll('.secondary-btn, .tab').forEach(button => {
 // Make the playSound function available globally
 window.playSound = playSound;
 
-// Handle page leave/refresh with enhanced task preservation
+// Handle page leave/refresh
 window.addEventListener('beforeunload', (e) => {
   if (isRunning || hasUnsavedTasks || hasUnfinishedTasks) {
     e.preventDefault();
-    
-    // Save current tasks for potential recovery
-    const currentTasks = TaskDialog.getCurrentTasks();
-    const unsavedTasks = TaskDialog.getUnsavedTasks();
-    const allTasks = [...currentTasks, ...unsavedTasks];
-    
-    if (allTasks.length > 0) {
-      // Store tasks temporarily for recovery
-      const recoveryData = {
-        tasks: allTasks,
-        mode: 'classic',
-        timestamp: Date.now(),
-        reason: 'refresh'
-      };
-      localStorage.setItem('taskRecovery', JSON.stringify(recoveryData));
-    }
-    
     let message = '';
     if (isRunning) message = 'Timer is still running.';
-    else if (hasUnsavedTasks) message = 'You have unsaved tasks.';
-    else if (hasUnfinishedTasks) message = 'You have unfinished tasks.';
-    
+    if (hasUnsavedTasks) message = 'You have unsaved tasks.';
+    if (hasUnfinishedTasks) message = 'You have unfinished tasks.';
     e.returnValue = `${message} Are you sure you want to leave?`;
     return e.returnValue;
   }
@@ -1506,79 +1402,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 100); // Small delay to ensure DOM is fully ready
   }
   
-  // Load saved tasks
-  loadTasks();
-
-  // Load focused task after tasks are loaded
-  loadFocusedTask();
-  
-  // Check for pending task transfers
-  setTimeout(() => {
-    if (window.taskTransfer) {
-      window.taskTransfer.checkForPendingTransfer();
-    }
-    
-    // Check for task recovery after refresh
-    checkForTaskRecovery();
-  }, 500); // Delay to ensure all systems are initialized
-  
   console.log("Timer initialized with:", 
     {pomodoro: pomodoroTime, short: shortBreakTime, long: longBreakTime, sessions: maxSessions});
 });
-
-// Function to check for task recovery after page refresh
-function checkForTaskRecovery() {
-  const recoveryData = localStorage.getItem('taskRecovery');
-  if (!recoveryData) return;
-  
-  try {
-    const recovery = JSON.parse(recoveryData);
-    
-    // Check if recovery is still valid (within 2 minutes)
-    const isValid = (Date.now() - recovery.timestamp) < (2 * 60 * 1000);
-    
-    if (!isValid || recovery.mode !== 'classic') {
-      localStorage.removeItem('taskRecovery');
-      return;
-    }
-    
-    // Check if we already have tasks (avoid duplicate recovery)
-    const currentTasks = TaskDialog.getCurrentTasks();
-    if (currentTasks.length > 0) {
-      localStorage.removeItem('taskRecovery');
-      return;
-    }
-    
-    // Show recovery dialog
-    window.taskDialog.showDialog({
-      title: 'Recover Your Tasks',
-      message: `We found ${recovery.tasks.length} task(s) from before the page refreshed. Would you like to restore them?`,
-      tasks: recovery.tasks,
-      keepButtonText: 'Restore Tasks',
-      deleteButtonText: 'Start Fresh',
-      cancelButtonText: 'Decide Later',
-      onKeep: () => {
-        // Restore tasks
-        if (window.taskTransfer) {
-          window.taskTransfer.applyTasksToDOM(recovery.tasks);
-          window.showToast && window.showToast(`Restored ${recovery.tasks.length} task(s)!`);
-        }
-        localStorage.removeItem('taskRecovery');
-      },
-      onDelete: () => {
-        localStorage.removeItem('taskRecovery');
-        window.showToast && window.showToast('Started with a clean slate.');
-      },
-      onCancel: () => {
-        // Keep recovery data for later
-      }
-    });
-    
-  } catch (error) {
-    console.error('Error parsing task recovery data:', error);
-    localStorage.removeItem('taskRecovery');
-  }
-}
 
 // Lazy load images
 document.addEventListener('DOMContentLoaded', () => {
