@@ -66,9 +66,6 @@ const TASK_RETENTION_MODAL_CSS = `
   padding: 24px 24px 0;
   text-align: center;
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .task-retention-modal-title {
@@ -76,37 +73,31 @@ const TASK_RETENTION_MODAL_CSS = `
   font-size: 1.5rem;
   font-weight: 600;
   color: var(--text-primary, #333);
-  flex: 1;
 }
 
 .task-retention-modal-close {
   position: absolute;
-  top: 8px;
-  right: 16px;
-  background: none;
+  top: 20px;
+  right: 20px;
+  width: 32px;
+  height: 32px;
   border: none;
+  background: transparent;
   font-size: 24px;
+  font-weight: bold;
   color: var(--text-secondary, #666);
   cursor: pointer;
-  padding: 8px;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  line-height: 1;
 }
 
 .task-retention-modal-close:hover {
-  background: var(--close-hover-bg, rgba(0, 0, 0, 0.1));
+  background: var(--bg-secondary, #f8f9fa);
   color: var(--text-primary, #333);
   transform: scale(1.1);
-}
-
-.task-retention-modal-close:active {
-  transform: scale(0.95);
 }
 
 .task-retention-modal-content {
@@ -239,7 +230,11 @@ const TASK_RETENTION_MODAL_CSS = `
     --success-text: #30d158;
     --secondary-bg: #3a3a3c;
     --secondary-hover: #48484a;
-    --close-hover-bg: rgba(255, 255, 255, 0.1);
+  }
+  
+  .task-retention-modal-close:hover {
+    background: var(--bg-secondary, #1c1c1e);
+    color: var(--text-primary, #ffffff);
   }
 }
 </style>
@@ -287,11 +282,7 @@ class TaskRetentionManager {
     
     keepBtn.addEventListener('click', () => this.handleKeepTasks());
     discardBtn.addEventListener('click', () => this.handleDiscardTasks());
-    
-    // Close button (X)
-    if (closeBtn) {
-      closeBtn.addEventListener('click', () => this.handleDiscardTasks());
-    }
+    closeBtn.addEventListener('click', () => this.closeModal());
     
     // Close on overlay click
     this.modal.addEventListener('click', (e) => {
@@ -314,6 +305,11 @@ class TaskRetentionManager {
       existingModal.remove();
     }
     this.modal = null;
+  }
+
+  closeModal() {
+    // Simply close the modal without any action
+    this.removeModal();
   }
 
   getCurrentModeTasks() {
