@@ -1054,32 +1054,98 @@ document.querySelectorAll('.time-btn, .secondary-btn, .tab').forEach(button => {
 window.playSound = playSound;
 
 // Handle page leave/refresh
+// Handle page leave/refresh with enhanced task preservation
 window.addEventListener('beforeunload', (e) => {
   if (isRunning || hasUnsavedTasks || hasUnfinishedTasks) {
     e.preventDefault();
+    
+    // Save current tasks for potential recovery
+    const currentTasks = TaskDialog.getCurrentTasks();
+    const unsavedTasks = TaskDialog.getUnsavedTasks();
+    const allTasks = [...currentTasks, ...unsavedTasks];
+    
+    if (allTasks.length > 0) {
+      // Store tasks temporarily for recovery
+      const recoveryData = {
+        tasks: allTasks,
+        mode: 'reverse',
+        timestamp: Date.now(),
+        reason: 'refresh'
+      };
+      localStorage.setItem('taskRecovery', JSON.stringify(recoveryData));
+    }
+    
     let message = '';
     if (isRunning) message = 'Timer is still running.';
-    if (hasUnsavedTasks) message = 'You have unsaved tasks.';
-    if (hasUnfinishedTasks) message = 'You have unfinished tasks.';
+    else if (hasUnsavedTasks) message = 'You have unsaved tasks.';
+    else if (hasUnfinishedTasks) message = 'You have unfinished tasks.';
+    
     e.returnValue = `${message} Are you sure you want to leave?`;
     return e.returnValue;
   }
 });
 
-// Update the link handler for mode switching to only warn about tasks when switching between major timer types (reverse/classic)
+// Enhanced link handler for mode switching with task transfer options
 document.querySelector('.switch-btn').addEventListener('click', (e) => {
-  // Only show confirmation when switching between major timer types (reverse/classic)
+  e.preventDefault(); // Always prevent default, we'll handle navigation
+  
+  const currentTasks = TaskDialog.getCurrentTasks();
+  const unsavedTasks = TaskDialog.getUnsavedTasks();
+  const allTasks = [...currentTasks, ...unsavedTasks];
+  
+  // If timer is running, show warning
   if (isRunning) {
-    const confirmed = confirm('Timer is still running. Are you sure you want to switch to a different timer type? This will reset your progress.');
-    if (!confirmed) {
-      e.preventDefault();
-    }
-  } else if (hasUnfinishedTasks || taskList.children.length > 0) {
-    const confirmed = confirm('Switching to a different timer type will delete all your tasks. Do you want to continue?');
-    if (!confirmed) {
-      e.preventDefault();
-    }
+    window.taskDialog.showDialog({
+      title: 'Timer is Running',
+      message: 'The timer is currently running. Switching modes will reset your progress. What would you like to do?',
+      tasks: allTasks,
+      keepButtonText: allTasks.length > 0 ? 'Keep Tasks & Switch' : 'Switch Mode',
+      deleteButtonText: allTasks.length > 0 ? 'Delete Tasks & Switch' : 'Switch Mode',
+      cancelButtonText: 'Cancel',
+      onKeep: () => {
+        if (allTasks.length > 0) {
+          window.taskTransfer.prepareTransfer(allTasks, 'reverse');
+        }
+        window.location.href = './index.html';
+      },
+      onDelete: () => {
+        // Clear tasks and switch
+        window.location.href = './index.html';
+      },
+      onCancel: () => {
+        // Do nothing, stay on current page
+      }
+    });
+    return;
   }
+  
+  // If no tasks, switch directly
+  if (allTasks.length === 0) {
+    window.location.href = './index.html';
+    return;
+  }
+  
+  // Show enhanced dialog with task transfer options
+  window.taskDialog.showDialog({
+    title: 'Switch to Classic Pomodoro',
+    message: `You have ${allTasks.length} task(s). What would you like to do with them?`,
+    tasks: allTasks,
+    keepButtonText: 'Keep Tasks',
+    deleteButtonText: 'Delete Tasks',
+    cancelButtonText: 'Cancel',
+    onKeep: () => {
+      // Prepare tasks for transfer and switch
+      window.taskTransfer.prepareTransfer(allTasks, 'reverse');
+      window.location.href = './index.html';
+    },
+    onDelete: () => {
+      // Clear tasks and switch
+      window.location.href = './index.html';
+    },
+    onCancel: () => {
+      // Do nothing, stay on current page
+    }
+  });
 });
 
 // Update sound volumes based on shared settings
@@ -1241,11 +1307,75 @@ document.addEventListener('DOMContentLoaded', function() {
   // Load focused task after tasks are loaded
   loadFocusedTask();
   
+  // Check for pending task transfers
+  setTimeout(() => {
+    if (window.taskTransfer) {
+      window.taskTransfer.checkForPendingTransfer();
+    }
+    
+    // Check for task recovery after refresh
+    checkForTaskRecovery();
+  }, 500); // Delay to ensure all systems are initialized
+  
   console.log("Reverse timer initialized");
   
   // Initial UI sync on page load
   window.updateTimerAndUIFromSettings();
 });
+
+// Function to check for task recovery after page refresh
+function checkForTaskRecovery() {
+  const recoveryData = localStorage.getItem('taskRecovery');
+  if (!recoveryData) return;
+  
+  try {
+    const recovery = JSON.parse(recoveryData);
+    
+    // Check if recovery is still valid (within 2 minutes)
+    const isValid = (Date.now() - recovery.timestamp) < (2 * 60 * 1000);
+    
+    if (!isValid || recovery.mode !== 'reverse') {
+      localStorage.removeItem('taskRecovery');
+      return;
+    }
+    
+    // Check if we already have tasks (avoid duplicate recovery)
+    const currentTasks = TaskDialog.getCurrentTasks();
+    if (currentTasks.length > 0) {
+      localStorage.removeItem('taskRecovery');
+      return;
+    }
+    
+    // Show recovery dialog
+    window.taskDialog.showDialog({
+      title: 'Recover Your Tasks',
+      message: `We found ${recovery.tasks.length} task(s) from before the page refreshed. Would you like to restore them?`,
+      tasks: recovery.tasks,
+      keepButtonText: 'Restore Tasks',
+      deleteButtonText: 'Start Fresh',
+      cancelButtonText: 'Decide Later',
+      onKeep: () => {
+        // Restore tasks
+        if (window.taskTransfer) {
+          window.taskTransfer.applyTasksToDOM(recovery.tasks);
+          window.showToast && window.showToast(`Restored ${recovery.tasks.length} task(s)!`);
+        }
+        localStorage.removeItem('taskRecovery');
+      },
+      onDelete: () => {
+        localStorage.removeItem('taskRecovery');
+        window.showToast && window.showToast('Started with a clean slate.');
+      },
+      onCancel: () => {
+        // Keep recovery data for later
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error parsing task recovery data:', error);
+    localStorage.removeItem('taskRecovery');
+  }
+}
 
 // Add keyboard shortcuts
 document.addEventListener('keydown', (e) => {
