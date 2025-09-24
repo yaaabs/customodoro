@@ -1403,6 +1403,139 @@ body.theme-dark .mute-btn-secondary:hover {
   background-color: #444;
 }
 
+/* Motivational Alert Modal Styles */
+.motivational-alert-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2001; /* Higher than mute alert */
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.motivational-alert-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.motivational-alert {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  width: 90%;
+  max-width: 450px;
+  border-radius: 16px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  animation: motivationalPopIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  color: white;
+}
+
+@keyframes motivationalPopIn {
+  0% {
+    transform: scale(0.8) rotate(-2deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05) rotate(1deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.motivational-alert-header {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.motivational-alert-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.motivational-alert-title .icon {
+  font-size: 28px;
+  animation: bounce 1s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-5px);
+  }
+  60% {
+    transform: translateY(-3px);
+  }
+}
+
+.motivational-alert-content {
+  padding: 30px 25px;
+  text-align: center;
+}
+
+.motivational-alert-content p {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.motivational-alert-actions {
+  padding: 20px 25px 25px;
+  text-align: center;
+}
+
+.motivational-btn {
+  padding: 14px 30px;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-width: 180px;
+}
+
+.motivational-btn-primary {
+  background: rgba(255, 255, 255, 0.9);
+  color: #667eea;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  margin: 0 auto;
+  display: block;
+  max-width: 200px;
+}
+
+.motivational-btn-primary:hover {
+  background: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Dark theme support for motivational alert */
+body.theme-dark .motivational-alert {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+}
+
 /* Theme: Dark */
 body.theme-dark {
   background-color: #121212;
