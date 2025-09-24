@@ -733,8 +733,8 @@ function completeBreak() {
     // Play completion sound when break is done
     playSound('breakComplete');
     
-    // Show mute alert
-    showMuteAlert("Break time is over! Ready to work again?");
+    // Show break readiness confirmation instead of regular mute alert
+    showBreakReadinessConfirmation("Break time is over! Ready to work again?");
     
     showToast("Break time is over! Ready to work again? 💪");
     startButton.textContent = 'START';
@@ -1148,12 +1148,46 @@ const muteAlertBtn = document.getElementById('mute-alert-btn');
 const dismissAlertBtn = document.getElementById('dismiss-alert-btn');
 const muteAlertCloseBtn = document.getElementById('mute-alert-close'); // Add reference to close button
 
+// Motivational alert elements
+const motivationalAlertOverlay = document.getElementById('motivational-alert-overlay');
+const motivationalAlertMessage = document.getElementById('motivational-alert-message');
+const motivationalAlertBtn = document.getElementById('motivational-alert-btn');
+
 // Show mute alert modal
 function showMuteAlert(message) {
   if (muteAlertMessage) muteAlertMessage.textContent = message;
+  
+  // Reset button text and event listeners for normal mute alert
+  const dismissBtn = document.getElementById('dismiss-alert-btn');
+  const muteBtn = document.getElementById('mute-alert-btn');
+  const closeBtn = document.getElementById('mute-alert-close');
+  
+  if (dismissBtn) {
+    dismissBtn.textContent = 'Dismiss';
+    // Remove existing event listeners
+    dismissBtn.replaceWith(dismissBtn.cloneNode(true));
+    const newDismissBtn = document.getElementById('dismiss-alert-btn');
+    newDismissBtn.addEventListener('click', hideMuteAlert);
+  }
+  
+  if (muteBtn) {
+    muteBtn.textContent = 'Mute Sound';
+    // Remove existing event listeners
+    muteBtn.replaceWith(muteBtn.cloneNode(true));
+    const newMuteBtn = document.getElementById('mute-alert-btn');
+    newMuteBtn.addEventListener('click', muteAlarm);
+  }
+  
+  if (closeBtn) {
+    // Remove existing event listeners
+    closeBtn.replaceWith(closeBtn.cloneNode(true));
+    const newCloseBtn = document.getElementById('mute-alert-close');
+    newCloseBtn.addEventListener('click', hideMuteAlert);
+  }
+  
   if (muteAlertOverlay) muteAlertOverlay.classList.add('show');
   
-  // Auto-dismiss after 30 seconds
+  // Auto-dismiss after 15 seconds
   setTimeout(() => {
     hideMuteAlert();
   }, 15000);
@@ -1164,11 +1198,27 @@ function hideMuteAlert() {
   if (muteAlertOverlay) muteAlertOverlay.classList.remove('show');
 }
 
+// Show motivational alert modal
+function showMotivationalAlert(message) {
+  if (motivationalAlertMessage) motivationalAlertMessage.textContent = message;
+  if (motivationalAlertOverlay) motivationalAlertOverlay.classList.add('show');
+}
+
+// Hide motivational alert modal
+function hideMotivationalAlert() {
+  if (motivationalAlertOverlay) motivationalAlertOverlay.classList.remove('show');
+}
+
 // Mute the currently playing alarm
 function muteAlarm() {
-  if (sounds.complete) {
-    sounds.complete.pause();
-    sounds.complete.currentTime = 0;
+  // Stop both alarm sounds (same as Classic version)
+  if (sounds.pomodoroComplete) {
+    sounds.pomodoroComplete.pause();
+    sounds.pomodoroComplete.currentTime = 0;
+  }
+  if (sounds.breakComplete) {
+    sounds.breakComplete.pause();
+    sounds.breakComplete.currentTime = 0;
   }
   hideMuteAlert();
 }
@@ -1185,6 +1235,96 @@ if (dismissAlertBtn) {
 // Add event listener for the close (X) button
 if (muteAlertCloseBtn) {
   muteAlertCloseBtn.addEventListener('click', hideMuteAlert);
+}
+
+// Add event listener for motivational alert button
+if (motivationalAlertBtn) {
+  motivationalAlertBtn.addEventListener('click', () => {
+    hideMotivationalAlert();
+    // After motivational alert is dismissed, show the break readiness confirmation again
+    const currentMessage = "Break time is over! Ready to work again?";
+    setTimeout(() => {
+      showBreakReadinessConfirmation(currentMessage);
+    }, 300);
+  });
+}
+
+// Motivational messages for break readiness confirmation
+const motivationalMessages = [
+  "Time to focus! You've got this! 💪",
+  "Let's make this session count! 🎯",
+  "Your future self will thank you! ⭐",
+  "Stay focused, stay awesome! 🚀",
+  "Small steps, big results! 🌟",
+  "The deadlines won't wait for you! 📚⏰",
+  "Your future self is judging you right now 👀",
+  "Even your coffee is getting cold waiting for you ☕😤",
+  "Your textbooks are crying from neglect 📖😢",
+  "Procrastination is not a life strategy! 🚫⏰",
+  "Your goals are waiting... impatiently 🎯😤",
+  "Netflix will still be there after you study! 📺📚",
+  "Your brain needs this workout! 🧠💪",
+  "Time to turn those dreams into deadlines! ⏰✨",
+  "Your success story is waiting to be written! 📖🎯"
+];
+
+// New break readiness confirmation function
+function showBreakReadinessConfirmation(message) {
+  // Update the modal content
+  if (muteAlertMessage) muteAlertMessage.textContent = message;
+
+  // Change button text and functionality for break readiness
+  const dismissBtn = document.getElementById('dismiss-alert-btn');
+  const muteBtn = document.getElementById('mute-alert-btn');
+
+  if (dismissBtn) {
+    dismissBtn.textContent = 'No, not ready';
+    // Remove existing event listeners
+    dismissBtn.replaceWith(dismissBtn.cloneNode(true));
+    const newDismissBtn = document.getElementById('dismiss-alert-btn');
+    newDismissBtn.addEventListener('click', () => {
+      // Show random motivational message in dedicated modal, then show dialog again
+      const randomMessage = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
+      showMotivationalAlert(randomMessage);
+      // The motivational alert button will handle returning to confirmation
+    });
+  }
+
+  if (muteBtn) {
+    muteBtn.textContent = 'Mute Sound';
+    // Remove existing event listeners
+    muteBtn.replaceWith(muteBtn.cloneNode(true));
+    const newMuteBtn = document.getElementById('mute-alert-btn');
+    newMuteBtn.addEventListener('click', () => {
+      // Mute sound and close modal - DO NOT switch modes
+      muteAlarm();
+      // Mode switching happens automatically in completeBreak
+    });
+  }
+
+  // Update close button to proceed normally
+  if (muteAlertCloseBtn) {
+    muteAlertCloseBtn.replaceWith(muteAlertCloseBtn.cloneNode(true));
+    const newCloseBtn = document.getElementById('mute-alert-close');
+    newCloseBtn.addEventListener('click', () => {
+      hideMuteAlert();
+      // Continue with normal flow (switch to work mode)
+      if (currentMode !== 'reverse') {
+        switchMode('reverse');
+      }
+    });
+  }
+
+  // Show the modal
+  if (muteAlertOverlay) muteAlertOverlay.classList.add('show');
+
+  // Auto-dismiss after 30 seconds and proceed normally
+  setTimeout(() => {
+    hideMuteAlert();
+    if (currentMode !== 'reverse') {
+      switchMode('reverse');
+    }
+  }, 30000);
 }
 
 // Initialize display
