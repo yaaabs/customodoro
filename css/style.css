@@ -3568,7 +3568,7 @@ body.theme-rain #add-task-btn.secondary-btn:hover {
   box-shadow: 0 2px 16px rgba(0,0,0,0.18);
   padding: 28px 18px 18px 18px;
   max-width: 540px;
-  margin: 32px auto 0 auto;
+  margin: 24px auto 0 auto;
   color: #fff;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
@@ -3976,6 +3976,343 @@ body.theme-rain #add-task-btn.secondary-btn:hover {
   .streak-stats-value {
     font-size: 1.6em;
     margin-bottom: 4px;
+  }
+}
+
+/* User Stats Card - Matching Streak Stats Card Design */
+.user-stats-card {
+  background: #181a1b;
+  border-radius: 10px;
+  border: 1px solid #333;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.18);
+  padding: 28px 18px 18px 18px;
+  max-width: 540px;
+  margin: 16px auto 0 auto;
+  color: #fff;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+}
+
+.user-stats-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 1.3em;
+  font-weight: 700;
+  margin-bottom: 18px;
+  gap: 8px;
+}
+
+.user-stats-title-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-stats-title {
+  letter-spacing: 1px;
+  color: #fff;
+  font-size: 1.15em;
+  font-weight: 600;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+}
+
+.user-stats-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.user-stats-row {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  background: #23272b;
+  border-radius: 8px;
+  padding: 16px 12px;
+  margin-bottom: 12px;
+  min-height: 20px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.user-stats-row:last-child {
+  margin-bottom: 0;
+}
+
+.user-stats-label {
+  font-size: 0.85em;
+  color: #eee;
+  font-weight: var(--font-bold);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.3;
+  flex-shrink: 0;
+  min-width: fit-content;
+}
+
+.user-stats-value {
+  font-size: 0.9em;
+  color: #ffb300;
+  font-weight: var(--font-semibold);
+  text-align: left;
+  line-height: 1.3;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Theme overrides for User Stats Card - matching Streak Stats Card */
+
+/* Light Theme (Default) */
+body:not(.theme-dark):not(.theme-yourname):not(.theme-custom) .user-stats-card {
+  background: #181a1b;
+  border: 1px solid #333;
+  color: #fff;
+}
+
+body:not(.theme-dark):not(.theme-yourname):not(.theme-custom) .user-stats-title {
+  color: #fff;
+}
+
+body:not(.theme-dark):not(.theme-yourname):not(.theme-custom) .user-stats-row {
+  background: #23272b;
+}
+
+body:not(.theme-dark):not(.theme-yourname):not(.theme-custom) .user-stats-label {
+  color: #eee;
+}
+
+body:not(.theme-dark):not(.theme-yourname):not(.theme-custom) .user-stats-value {
+  color: #ffb300;
+}
+
+/* Dark Theme */
+.theme-dark .user-stats-card {
+  background: #181a1b;
+  border: 1px solid #333;
+  color: #fff;
+}
+
+.theme-dark .user-stats-title {
+  color: #fff;
+}
+
+.theme-dark .user-stats-row {
+  background: #23272b;
+}
+
+.theme-dark .user-stats-label {
+  color: #eee;
+}
+
+.theme-dark .user-stats-value {
+  color: #ffb300;
+}
+
+/* YourName Theme */
+.theme-yourname .user-stats-card {
+  background: #181a1b;
+  border: 1px solid #333;
+  color: #fff;
+}
+
+.theme-yourname .user-stats-title {
+  color: #fff;
+}
+
+.theme-yourname .user-stats-row {
+  background: #23272b;
+}
+
+.theme-yourname .user-stats-label {
+  color: #eee;
+}
+
+.theme-yourname .user-stats-value {
+  color: #ffb300;
+}
+
+/* Custom Theme */
+.theme-custom .user-stats-card {
+  background: #181a1b;
+  border: 1px solid #333;
+  color: #fff;
+}
+
+.theme-custom .user-stats-title {
+  color: #fff;
+}
+
+.theme-custom .user-stats-row {
+  background: #23272b;
+}
+
+.theme-custom .user-stats-label {
+  color: #eee;
+}
+
+.theme-custom .user-stats-value {
+  color: #ffb300;
+}
+
+/* Color Theme */
+body.theme-color .user-stats-card {
+  background: #181a1b;
+  border: 1px solid #333;
+  color: #fff;
+}
+
+body.theme-color .user-stats-title {
+  color: #fff;
+}
+
+body.theme-color .user-stats-row {
+  background: #23272b;
+}
+
+body.theme-color .user-stats-label {
+  color: #eee;
+}
+
+body.theme-color .user-stats-value {
+  color: #ffb300;
+}
+
+/* Enhanced responsive design for User Stats Card - matching Streak Stats Card */
+@media (max-width: 768px) {
+  .user-stats-label {
+    font-size: 0.8em;
+  }
+  .user-stats-value {
+    font-size: 0.85em;
+  }
+  .user-stats-row {
+    padding: 14px 10px;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 600px) {
+  .user-stats-row {
+    padding: 12px 8px;
+    margin-bottom: 10px;
+    gap: 6px;
+  }
+  .user-stats-label {
+    font-size: 0.75em;
+  }
+  .user-stats-value {
+    font-size: 0.8em;
+  }
+}
+
+/* Smart responsive layout - handle long content intelligently */
+@media (max-width: 480px) {
+  /* Allow text wrapping for long content rows */
+  .user-stats-row[data-stat="totalFocusTime"] .user-stats-value,
+  .user-stats-row[data-stat="mostProductiveDay"] .user-stats-value {
+    word-break: normal;
+    overflow-wrap: break-word;
+    white-space: normal;
+    line-height: 1.4;
+  }
+  
+
+}
+
+/* Smart responsive layout - handle long content intelligently */
+@media (max-width: 415px) {
+  /* Allow text wrapping for long content rows */
+  .user-stats-row[data-stat="totalFocusTime"] .user-stats-value,
+  .user-stats-row[data-stat="mostProductiveDay"] .user-stats-value {
+    word-break: normal;
+    overflow-wrap: break-word;
+    white-space: normal;
+    line-height: 1.4;
+  }
+  
+  /* Only stack Most Productive Day content - it's typically longer */
+  .user-stats-row[data-stat="mostProductiveDay"] {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .user-stats-row[data-stat="mostProductiveDay"] .user-stats-label {
+    margin-bottom: 2px;
+  }
+  .user-stats-row[data-stat="mostProductiveDay"] .user-stats-value {
+    padding-left: 0;
+  }
+}
+
+/* For very small screens, stack all content */
+@media (max-width: 360px) {
+  .user-stats-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .user-stats-label {
+    margin-bottom: 2px;
+  }
+  .user-stats-value {
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 400px) {
+  .user-stats-card {
+    padding: 24px 14px 14px 14px;
+  }
+  .user-stats-content {
+    gap: 0;
+  }
+  .user-stats-row {
+    padding: 12px 8px;
+    margin-bottom: 8px;
+    gap: 4px;
+  }
+  .user-stats-label {
+    font-size: 0.72em;
+    font-weight: var(--font-medium);
+    margin-bottom: 3px;
+  }
+  .user-stats-value {
+    font-size: 0.75em;
+    font-weight: var(--font-semibold);
+  }
+  .user-stats-header {
+    margin-bottom: 14px;
+  }
+  .user-stats-title {
+    font-size: 1.1em;
+  }
+}
+
+/* Extra small screens - for very long content */
+@media (max-width: 360px) {
+  .user-stats-card {
+    padding: 20px 12px 12px 12px;
+  }
+  .user-stats-row {
+    padding: 10px 6px;
+    margin-bottom: 6px;
+  }
+  .user-stats-label {
+    font-size: 0.68em;
+  }
+  .user-stats-value {
+    font-size: 0.72em;
+    line-height: 1.4;
+  }
+  .user-stats-title {
+    font-size: 1em;
+  }
+}
+
+/* Specific improvements for long content like "Most Productive Day" */
+@media (max-width: 600px) {
+  .user-stats-value {
+    max-width: 100%;
+    white-space: normal;
   }
 }
 

@@ -1373,14 +1373,20 @@ function createTaskElement(text, completed = false, description = '') {
   });
 
 
-  // Add click event to focus on this task
+  // Add click event to focus/unfocus this task
   taskItem.addEventListener('click', (e) => {
     // Don't trigger focus when clicking on checkbox or delete button
     if (e.target.type === 'checkbox' || e.target.classList.contains('task-delete')) {
-        return;
+      return;
     }
-    setCurrentFocusedTask(taskItem, taskText.textContent);
-});
+
+    // If the clicked task is already focused, clear the focus (toggle behavior)
+    if (taskItem.classList.contains('task-focused')) {
+      clearCurrentFocusedTask();
+    } else {
+      setCurrentFocusedTask(taskItem, taskText.textContent);
+    }
+  });
 
 // Add right-click context menu to clear focus
 taskItem.addEventListener('contextmenu', (e) => {
@@ -1762,7 +1768,7 @@ function getLongestStreakAndRange() {
   };
 }
 
-// Update the STREAK STATS CARD
+// Update the Streak Stats Card
 function updateStreakStatsCard() {
   const total = getTotalFocusPointsAndRange();
   const current = getCurrentStreakAndRange();
@@ -2351,6 +2357,11 @@ window.addCustomodoroSession = function(type, minutes) {
   console.log('Updated stats:', stats[key]); // Debug log
   renderContributionGraph();
   updateStreakStatsCard();
+  
+  // Update User Stats Card
+  if (typeof window.updateUserStats === 'function') {
+    window.updateUserStats();
+  }
   
   // Update streak display after adding session
   if (typeof renderStreakDisplay === 'function') {

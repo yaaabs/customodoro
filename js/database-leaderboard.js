@@ -5,6 +5,7 @@ class DatabaseLeaderboard {
   constructor() {
     this.supabase = null;
     this.currentUser = null;
+    this.cache = {}; // Cache for leaderboard data
     this.init();
   }
 
@@ -26,6 +27,185 @@ class DatabaseLeaderboard {
   getCurrentUser() {
     if (window.authService && window.authService.isLoggedIn()) {
       this.currentUser = window.authService.getCurrentUser();
+    }
+  }
+
+  // Get real leaderboard data from database with optimized approach
+  async getLeaderboard(category, period = 'all_time', maxUsers = 20) {
+    if (!this.supabase) {
+      console.error('Supabase not initialized');
+      return { rankings: [], highlightedUser: null, totalCount: 0 };
+    }
+
+    // Check cache first to avoid repeated processing
+    const cacheKey = `${category}_${period}_${maxUsers}`;
+    if (this.cache[cacheKey] && 
+        (Date.now() - this.cache[cacheKey].timestamp) < 60000) { // 1 minute cache
+      console.log(`📋 Using cached leaderboard data for ${cacheKey}`);
+      return this.cache[cacheKey].data;
+    }
+
+    try {
+      console.log(`📊 Fetching optimized leaderboard: ${category}/${period} (top ${maxUsers})`);
+      
+      // First try to use server-side optimized function (if available)
+      try {
+        const { data: optimizedData, error: optimizedError } = await this.supabase.rpc(
+          'get_leaderboard_optimized',
+          {
+            p_category: category,
+            p_period: period,
+            p_limit: maxUsers,
+            p_user_id: this.currentUser?.userId || null
+          }
+        );
+
+        if (!optimizedError && optimizedData) {
+          console.log(`✅ Successfully fetched optimized leaderboard: ${optimizedData.length} users`);
+          
+          // Format the data to match our expected structure
+          const formattedData = {
+            category,
+            period,
+            rankings: optimizedData,
+            highlightedUser: optimizedData.find(u => u.is_current_user && u.rank_position > maxUsers) || null,
+            totalCount: optimizedData.length,
+            generatedAt: new Date().toISOString()
+          };
+          
+          // Cache the results
+          this.cache[cacheKey] = {
+            data: formattedData,
+            timestamp: Date.now()
+          };
+          
+          return formattedData;
+        }
+      } catch (rpcError) {
+        console.log(`📋 RPC not available, falling back to client-side processing`);
+      }
+
+      // Fallback: Process leaderboard data on client side
+      return await this.getFallbackLeaderboard(category, period, maxUsers);
+      
+    } catch (error) {
+      console.error('Error fetching leaderboard:', error);
+      return { rankings: [], highlightedUser: null, totalCount: 0 };
+    }
+  }
+
+  // Client-side fallback when the optimized RPC is not available
+  async getFallbackLeaderboard(category, period, maxUsers) {
+    try {
+      // Fetch all users in batches to avoid timeout issues
+      const batchSize = 100;
+      let allUsers = [];
+      let startIndex = 0;
+      let hasMoreUsers = true;
+
+      while (hasMoreUsers) {
+        const { data: userBatch, error, count } = await this.supabase
+          .from('users')
+          .select('user_id, username, data')
+          .range(startIndex, startIndex + batchSize - 1);
+
+        if (error) {
+          console.error('Error fetching users batch:', error);
+          break;
+        }
+
+        if (!userBatch || userBatch.length === 0) {
+          hasMoreUsers = false;
+        } else {
+          allUsers = [...allUsers, ...userBatch];
+          startIndex += batchSize;
+          
+          // Break if we've fetched enough users for development/testing
+          if (allUsers.length >= 500) {
+            console.log('📋 Limiting to 500 users for performance');
+            hasMoreUsers = false;
+          }
+        }
+      }
+
+      // Filter users with productivity data
+      const users = allUsers.filter(user => {
+        if (!user.data) return false;
+        
+        // Check multiple possible locations for productivity data
+        return (
+          (user.data.streaks?.productivityStatsByDay && Object.keys(user.data.streaks.productivityStatsByDay).length > 0) ||
+          (user.data.productivityStatsByDay && Object.keys(user.data.productivityStatsByDay).length > 0) ||
+          (typeof user.data === 'object' && Object.keys(user.data).some(key => key.match(/^\d{4}-\d{2}-\d{2}$/)))
+        );
+      });
+
+      console.log(`📋 Processing ${users.length} users with productivity data`);
+      
+      if (users.length === 0) {
+        return { rankings: [], highlightedUser: null, totalCount: 0 };
+      }
+
+      // Process users in chunks to avoid blocking UI
+      const chunkSize = 20;
+      const chunks = [];
+      
+      for (let i = 0; i < users.length; i += chunkSize) {
+        chunks.push(users.slice(i, i + chunkSize));
+      }
+      
+      let allUserStats = [];
+      
+      // Process user stats in chunks with small delays to allow UI updates
+      for (const chunk of chunks) {
+        // Process this chunk
+        const chunkPromises = chunk.map(user => this.calculateUserStats(user.user_id, period));
+        const chunkResults = await Promise.all(chunkPromises);
+        allUserStats = [...allUserStats, ...chunkResults.filter(Boolean)];
+        
+        // Small delay to prevent browser freezing
+        if (chunks.length > 1) {
+          await new Promise(resolve => setTimeout(resolve, 10));
+        }
+      }
+      
+      // Sort by category
+      const sortField = category === 'total_focus' ? 'total_focus_minutes' : 
+                        category === 'total_sessions' ? 'total_sessions' :
+                        category === 'current_streak' ? 'current_streak' : 'longest_streak';
+
+      allUserStats.sort((a, b) => b[sortField] - a[sortField]);
+
+      // Add rank positions and scores
+      allUserStats.forEach((user, index) => {
+        user.rank_position = index + 1;
+        user.score = user[sortField];
+      });
+
+      // Find current user's position
+      const currentUserInList = allUserStats.find(user => user.is_current_user);
+      const highlightedUser = currentUserInList && currentUserInList.rank_position > maxUsers ? currentUserInList : null;
+
+      const result = {
+        category,
+        period,
+        rankings: allUserStats.slice(0, maxUsers),
+        highlightedUser,
+        totalCount: allUserStats.length,
+        generatedAt: new Date().toISOString()
+      };
+      
+      // Cache the results to avoid reprocessing
+      const cacheKey = `${category}_${period}_${maxUsers}`;
+      this.cache[cacheKey] = {
+        data: result,
+        timestamp: Date.now()
+      };
+      
+      return result;
+    } catch (error) {
+      console.error('Error in fallback leaderboard calculation:', error);
+      return { rankings: [], highlightedUser: null, totalCount: 0 };
     }
   }
 
@@ -230,113 +410,6 @@ class DatabaseLeaderboard {
       longest: longestStreak
     };
   }
-
-  // Get real leaderboard data from database
-  async getLeaderboard(category, period = 'all_time', maxUsers = 20) {
-    if (!this.supabase) {
-      console.error('Supabase not initialized');
-      return { rankings: [], highlightedUser: null, totalCount: 0 };
-    }
-
-    try {
-      console.log('🔍 Attempting to fetch users from database...');
-      
-      // First, try to get all users to see what's there
-      const { data: allUsers, error: allError } = await this.supabase
-        .from('users')
-        .select('user_id, username, data');
-
-      if (allError) {
-        console.error('❌ Error fetching all users:', allError);
-        throw allError;
-      }
-
-      console.log(`📋 Total users in database: ${allUsers ? allUsers.length : 0}`);
-      
-      if (allUsers && allUsers.length > 0) {
-        const sampleUser = allUsers[0];
-        console.log('👤 Sample user structure:', {
-          user_id: sampleUser.user_id,
-          username: sampleUser.username,
-          hasData: !!sampleUser.data,
-          dataKeys: sampleUser.data ? Object.keys(sampleUser.data) : 'No data',
-          fullDataStructure: sampleUser.data
-        });
-      }
-
-      // Filter users that have productivity data (more flexible approach)
-      const users = allUsers?.filter(user => {
-        if (!user.data) return false;
-        
-        // Check multiple possible locations for productivity data
-        const hasProductivityData = 
-          (user.data.streaks?.productivityStatsByDay && Object.keys(user.data.streaks.productivityStatsByDay).length > 0) ||
-          (user.data.productivityStatsByDay && Object.keys(user.data.productivityStatsByDay).length > 0) ||
-          (typeof user.data === 'object' && Object.keys(user.data).some(key => key.match(/^\d{4}-\d{2}-\d{2}$/)));
-        
-        if (hasProductivityData) {
-          console.log(`✅ User ${user.username} has productivity data`);
-        } else {
-          console.log(`❌ User ${user.username} missing productivity data`);
-        }
-        
-        return hasProductivityData;
-      }) || [];
-
-      console.log(`👥 Found ${users.length} users with productivity data out of ${allUsers?.length || 0} total users`);
-      
-      if (users.length === 0) {
-        console.log('❌ No users found with productivity data');
-        return { rankings: [], highlightedUser: null, totalCount: 0 };
-      }
-
-      // Calculate stats for all users with the specified period
-      const userStatsPromises = users.map(user => 
-        this.calculateUserStats(user.user_id, period)
-      );
-      
-      const allUserStats = await Promise.all(userStatsPromises);
-      const validStats = allUserStats.filter(stat => stat !== null);
-      
-      console.log(`📈 Calculated stats for ${allUserStats.length} users, ${validStats.length} valid for period: ${period}`);
-      validStats.forEach(stat => {
-        console.log(`👤 ${stat.username} (${period}): ${stat.total_focus_minutes}FP, ${stat.total_sessions}sessions, streak:${stat.current_streak}`);
-      });
-
-      // No need for additional time period filters - already handled in calculateUserStats
-      let filteredStats = validStats;
-
-      // Sort by category
-      const sortField = category === 'total_focus' ? 'total_focus_minutes' : 
-                       category === 'total_sessions' ? 'total_sessions' :
-                       category === 'current_streak' ? 'current_streak' : 'longest_streak';
-
-      filteredStats.sort((a, b) => b[sortField] - a[sortField]);
-
-      // Add rank positions and scores
-      filteredStats.forEach((user, index) => {
-        user.rank_position = index + 1;
-        user.score = user[sortField];
-      });
-
-      // Find current user's position
-      const currentUserInList = filteredStats.find(user => user.is_current_user);
-      const highlightedUser = currentUserInList && currentUserInList.rank_position > 10 ? currentUserInList : null;
-
-      return {
-        category,
-        period,
-        rankings: filteredStats.slice(0, maxUsers), // Use configurable number
-        highlightedUser,
-        totalCount: filteredStats.length,
-        generatedAt: new Date().toISOString()
-      };
-
-    } catch (error) {
-      console.error('Error fetching leaderboard:', error);
-      return { rankings: [], highlightedUser: null, totalCount: 0 };
-    }
-  }
 }
 
 // Database-connected leaderboard modal
@@ -365,17 +438,34 @@ class DatabaseLeaderboardModal {
       // Format: Will be populated by calculateDynamicBadges() method
     };
     
+    // Cache for dynamic badges
+    this.dynamicBadgesCache = null;
+    this.dynamicBadgesCacheTime = 0;
+    
     this.init();
   }
 
   // 🏆 Calculate and assign dynamic badges based on current leaderboard standings
   async calculateDynamicBadges() {
+    // Cache badges for 5 minutes to avoid repeated calculations
+    if (this.dynamicBadgesCache && 
+        (Date.now() - this.dynamicBadgesCacheTime) < 300000) {
+      return this.dynamicBadgesCache;
+    }
+    
     try {
-      // Get leaderboard data for all categories
-      const focusData = await this.leaderboard.getLeaderboard('total_focus', 'all_time', 100);
-      const sessionsData = await this.leaderboard.getLeaderboard('total_sessions', 'all_time', 100);
-      const currentStreakData = await this.leaderboard.getLeaderboard('current_streak', 'all_time', 100);
-      const longestStreakData = await this.leaderboard.getLeaderboard('longest_streak', 'all_time', 100);
+      // Show progress in the UI instead of freezing
+      this.updateLoadingMessage('Calculating top performers...');
+      
+      // Get leaderboard data for key categories - only need top 3 for badges
+      const focusData = await this.leaderboard.getLeaderboard('total_focus', 'all_time', 3);
+      this.updateLoadingMessage('Processing focus champions...');
+      
+      const currentStreakData = await this.leaderboard.getLeaderboard('current_streak', 'all_time', 3);
+      this.updateLoadingMessage('Processing streak leaders...');
+      
+      const longestStreakData = await this.leaderboard.getLeaderboard('longest_streak', 'all_time', 3);
+      this.updateLoadingMessage('Finalizing badges...');
 
       const dynamicBadges = {};
 
@@ -398,42 +488,6 @@ class DatabaseLeaderboardModal {
         dynamicBadges[streakLegend].push({ type: 'monthly-streak-champion', icon: '🔥', label: 'Streak Legend' });
       }
 
-      // 🏆 MAJOR AWARD - Champion (Best Average Ranking)
-      // Calculate average ranking across all categories for users who appear in all leaderboards
-      const allUsers = new Set([
-        ...focusData.rankings.map(u => u.username),
-        ...sessionsData.rankings.map(u => u.username),
-        ...currentStreakData.rankings.map(u => u.username),
-        ...longestStreakData.rankings.map(u => u.username)
-      ]);
-
-      let bestAverageRanking = Infinity;
-      let championUser = null;
-
-      allUsers.forEach(username => {
-        const focusRank = focusData.rankings.find(u => u.username === username)?.rank_position || 999;
-        const sessionsRank = sessionsData.rankings.find(u => u.username === username)?.rank_position || 999;
-        const currentStreakRank = currentStreakData.rankings.find(u => u.username === username)?.rank_position || 999;
-        const longestStreakRank = longestStreakData.rankings.find(u => u.username === username)?.rank_position || 999;
-
-        // Only consider users who have data in at least 3 categories
-        const validRanks = [focusRank, sessionsRank, currentStreakRank, longestStreakRank].filter(rank => rank < 999);
-        
-        if (validRanks.length >= 3) {
-          const averageRank = validRanks.reduce((sum, rank) => sum + rank, 0) / validRanks.length;
-          
-          if (averageRank < bestAverageRanking) {
-            bestAverageRanking = averageRank;
-            championUser = username;
-          }
-        }
-      });
-
-      if (championUser) {
-        if (!dynamicBadges[championUser]) dynamicBadges[championUser] = [];
-        dynamicBadges[championUser].push({ type: 'champion', icon: '🏆', label: 'Champion' });
-      }
-
       // 🎖️ Merge static badges with dynamic badges
       Object.keys(this.userBadges).forEach(username => {
         const staticBadges = this.userBadges[username] || [];
@@ -443,12 +497,25 @@ class DatabaseLeaderboardModal {
         dynamicBadges[username] = [...staticBadges, ...dynamicUserBadges];
       });
 
-      // Add any new dynamic users not in static list
+      // Cache the result
+      this.dynamicBadgesCache = dynamicBadges;
+      this.dynamicBadgesCacheTime = Date.now();
+      
       return dynamicBadges;
-
     } catch (error) {
       console.error('Error calculating dynamic badges:', error);
       return this.userBadges; // Fallback to static badges
+    }
+  }
+
+  // Helper method to update loading message
+  updateLoadingMessage(message) {
+    const loadingElement = document.querySelector('.leaderboard-loading');
+    if (loadingElement) {
+      const messageElement = loadingElement.querySelector('p');
+      if (messageElement) {
+        messageElement.textContent = message;
+      }
     }
   }
 
@@ -604,7 +671,7 @@ class DatabaseLeaderboardModal {
   loadLeaderboard() {
     const content = document.querySelector('.leaderboard-content');
     
-    // Show loading briefly for better UX
+    // Show detailed loading status
     content.innerHTML = `
       <div class="leaderboard-loading">
         <div class="loading-spinner"></div>
@@ -612,24 +679,54 @@ class DatabaseLeaderboardModal {
       </div>
     `;
 
-    // Load real data and calculate dynamic badges
+    // Load real data and calculate dynamic badges with better error handling
     Promise.all([
-      this.leaderboard.getLeaderboard(this.currentCategory, this.currentPeriod, this.MAX_LEADERBOARD_USERS),
+      this.leaderboard.getLeaderboard(this.currentCategory, this.currentPeriod, this.MAX_LEADERBOARD_USERS)
+        .catch(error => {
+          console.error('Leaderboard data fetch error:', error);
+          return { rankings: [], highlightedUser: null, totalCount: 0, error: true };
+        }),
       this.calculateDynamicBadges()
-    ]).then(([data, dynamicBadges]) => {
-        // Update badges with dynamic calculations
-        this.dynamicBadges = dynamicBadges;
-        this.renderLeaderboard(data);
-      })
-      .catch(error => {
-        console.error('Error loading leaderboard:', error);
+        .catch(error => {
+          console.error('Badge calculation error:', error);
+          return this.userBadges;
+        })
+    ])
+    .then(([data, dynamicBadges]) => {
+      // Handle potential errors in the data
+      if (data.error) {
         content.innerHTML = `
           <div class="leaderboard-error">
             <h3>Connection Error</h3>
             <p>Unable to load leaderboard data. Please check your connection and try again.</p>
+            <button class="leaderboard-retry-btn">Retry</button>
           </div>
         `;
+        
+        document.querySelector('.leaderboard-retry-btn')?.addEventListener('click', () => {
+          this.loadLeaderboard();
+        });
+        return;
+      }
+      
+      // Update badges with dynamic calculations
+      this.dynamicBadges = dynamicBadges;
+      this.renderLeaderboard(data);
+    })
+    .catch(error => {
+      console.error('Error loading leaderboard:', error);
+      content.innerHTML = `
+        <div class="leaderboard-error">
+          <h3>Connection Error</h3>
+          <p>Unable to load leaderboard data. Please check your connection and try again.</p>
+          <button class="leaderboard-retry-btn">Retry</button>
+        </div>
+      `;
+      
+      document.querySelector('.leaderboard-retry-btn')?.addEventListener('click', () => {
+        this.loadLeaderboard();
       });
+    });
   }
 
   renderLeaderboard(data) {
@@ -798,4 +895,5 @@ window.initDatabaseLeaderboard = function() {
   return window.databaseLeaderboardModal;
 };
 
+console.log('🏆 Database Leaderboard loaded successfully');
 console.log('🏆 Database Leaderboard loaded successfully');
