@@ -468,8 +468,40 @@
         </div>
       </div>
     </div>
+    <!-- Most Used Pomodoro Card -->
+    <div class="user-stats-card pomodoro-usage-card" id="pomodoro-usage-card">
+      <div class="user-stats-header">
+        <div class="user-stats-title-section">
+          <span class="user-stats-title">🍅 Most Used Pomodoro</span>
+        </div>
+      </div>
+      <div class="user-stats-content">
+        <!-- Segmented horizontal bar (visual split between Classic and Reverse usage) -->
+        <div class="pomodoro-segmented-container" style="margin-top:6px;margin-bottom:12px;">
+          <div class="pomodoro-segmented-bar" id="pomodoro-segmented-bar" aria-hidden="true">
+            <div class="pomodoro-segment classic" id="pomodoro-segment-classic" aria-hidden="true"></div>
+            <div class="pomodoro-segment reverse" id="pomodoro-segment-reverse" aria-hidden="true"></div>
+          </div>
+          <div id="pomodoro-segmented-desc" class="sr-only" aria-live="polite" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">Most used pomodoro breakdown</div>
+        </div>
+        <div class="pomodoro-usage-row">
+          <div class="pomodoro-usage-entry">
+            <span class="pomodoro-dot classic" aria-hidden="true"></span>
+            <span class="pomodoro-usage-label">Classic Pomodoro</span>
+            <span class="pomodoro-usage-value" id="pomodoro-classic-percent">0%</span>
+          </div>
+        </div>
+        <div class="pomodoro-usage-row">
+          <div class="pomodoro-usage-entry">
+            <span class="pomodoro-dot reverse" aria-hidden="true"></span>
+            <span class="pomodoro-usage-label">Reverse Pomodoro</span>
+            <span class="pomodoro-usage-value" id="pomodoro-reverse-percent">0%</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
-<!-- Data Recovery Notice -->
+  <!-- Data Recovery Notice -->
 <div class="data-recovery-notice">
   <div class="notice-icon">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1238,7 +1270,9 @@
       </div>
     </div>
   </div>
-  
+
+<!-- removed duplicate pomodoro card; single copy exists under User Stats -->
+
   <div class="toast" id="toast"></div>
   
   <!-- Mute Alert Modal -->
@@ -1535,6 +1569,7 @@
 <script src="js/leaderboard-integration.js?v=1.0.1"></script>
 <script src="js/database-leaderboard.js?v=2.1.2"></script>
 <script src="js/user-stats.js?v=1.0.0"></script>
+<script src="js/most-used-pomodoro.js?v=1.0.0"></script>
 
 
 

@@ -4008,6 +4008,117 @@ body.theme-rain #add-task-btn.secondary-btn:hover {
   gap: 8px;
 }
 
+/* Most Used Pomodoro Card - match User Stats / Streak card design */
+
+.pomodoro-usage-card .pomodoro-usage-label {
+  color: #ffffff;
+  font-weight: var(--font-medium);
+}
+
+.pomodoro-usage-card .pomodoro-usage-value {
+  color: #FFB300; /* gold accent */
+  font-weight: var(--font-semibold);
+}
+
+.pomodoro-usage-card .user-stats-header {
+  margin-bottom: 12px;
+}
+
+/* Pomodoro color tokens - keep legend dots and bar segments in sync */
+.pomodoro-usage-card {
+  --pom-classic-color: #FFD166; /* exact classic dot color */
+  --pom-reverse-color: #6A7FDB; /* exact reverse dot color */
+  --pom-empty-color: #23272B; /* fallback background when graph has no data */
+}
+
+/* Segmented horizontal bar for Most Used Pomodoro card */
+.pomodoro-segmented-container {
+  position: relative;
+}
+.pomodoro-segmented-bar {
+  width: 100%;
+  height: 18px; /* slightly thicker to match example */
+  background: var(--pom-empty-color, #333333);
+  border-radius: 999px; /* full pill */
+  overflow: hidden;
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.35);
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--pom-classic-width, 50%) var(--pom-reverse-width, 50%);
+}
+.pomodoro-segmented-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.pomodoro-segment {
+  height: 100%;
+  transition: width 420ms cubic-bezier(.2,.9,.2,1), opacity 280ms ease;
+  min-width: 0; /* allow 0 width */
+}
+.pomodoro-segment.classic {
+  background: var(--pom-classic-color, #FFD166);
+  width: var(--pom-classic-width, 0%);
+}
+.pomodoro-segment.reverse {
+  background: var(--pom-reverse-color, #6A7FDB);
+  width: var(--pom-reverse-width, 0%);
+}
+.pomodoro-segment.zero {
+  opacity: 0.0001; /* hide tiny zero width segments but keep layout */
+}
+
+/* Accessible text for screen readers helper */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Move inline row layout into CSS for maintainability */
+.pomodoro-usage-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* keep items together */
+  gap: 6px; /* overall small gap between items */
+  padding: 6px 0;
+}
+
+/* Inner entry used to control exact spacing between legend dot, label, and percent */
+.pomodoro-usage-entry {
+  display: flex;
+  align-items: center;
+  gap: 6px; /* tighten spacing so label and percent sit close */
+}
+
+.pomodoro-usage-row .pomodoro-usage-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px; /* smaller gap between dot and label */
+}
+.pomodoro-usage-row .pomodoro-usage-value {
+  margin-left: 0; /* rely on parent gap for spacing to achieve 'one space' look */
+  color: #FFB300; /* ensure accent color */
+  font-weight: var(--font-semibold);
+}
+
+/* Legend dot for Classic / Reverse */
+.pomodoro-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  flex: 0 0 12px;
+}
+.pomodoro-dot.classic { background: var(--pom-classic-color, #FFD166); }
+.pomodoro-dot.reverse { background: var(--pom-reverse-color, #6A7FDB); }
+
 .user-stats-title {
   letter-spacing: 1px;
   color: #fff;

@@ -254,6 +254,7 @@
           <span class="burnup-planned">Est: <span id="burnup-planned-time">01:00:00</span></span>
           <span class="burnup-percentage" id="burnup-percentage">0%</span>
         </div>
+        <!-- burnup-tracker content ends (Most Used Pomodoro placed later under User's Stats) -->
       </div>
     </div>
 
@@ -368,6 +369,31 @@
       <div class="user-stats-row">
         <span class="user-stats-label">🔄 Total Reverse Pomodoros:</span>
         <span class="user-stats-value" id="user-reverse-pomodoros">0</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Most Used Pomodoro Card -->
+  <div class="user-stats-card pomodoro-usage-card" id="pomodoro-usage-card">
+    <div class="user-stats-header">
+      <div class="user-stats-title-section">
+        <span class="user-stats-title">🍅 Most Used Pomodoro</span>
+      </div>
+    </div>
+    <div class="user-stats-content">
+      <div class="pomodoro-usage-row">
+        <div class="pomodoro-usage-entry">
+          <span class="pomodoro-dot classic" aria-hidden="true"></span>
+          <span class="pomodoro-usage-label">Classic Pomodoro</span>
+          <span class="pomodoro-usage-value" id="pomodoro-classic-percent">0%</span>
+        </div>
+      </div>
+      <div class="pomodoro-usage-row">
+        <div class="pomodoro-usage-entry">
+          <span class="pomodoro-dot reverse" aria-hidden="true"></span>
+          <span class="pomodoro-usage-label">Reverse Pomodoro</span>
+          <span class="pomodoro-usage-value" id="pomodoro-reverse-percent">0%</span>
+        </div>
       </div>
     </div>
   </div>
@@ -1404,6 +1430,7 @@
 <script src="js/leaderboard-integration.js?v=1.0.1"></script>
 <script src="js/database-leaderboard.js?v=2.1.2"></script>
 <script src="js/user-stats.js?v=1.0.0"></script>
+<script src="js/most-used-pomodoro.js?v=1.0.0"></script>
 
 <!-- Test utilities for sync development -->
 
