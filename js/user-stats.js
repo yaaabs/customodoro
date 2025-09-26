@@ -89,7 +89,10 @@ class UserStatsManager {
     if (this.elements.title) {
       // Show personalized title when logged in and we have a real username
       if (isLoggedIn && userName && userName !== 'User') {
-        const newTitle = `📊 ${userName}'s Stats`;
+        // Apply possessive grammar: names ending with 's' use Name' (e.g., Torres')
+        const endsWithS = /s$/i.test(userName);
+        const possessive = endsWithS ? `${userName}'` : `${userName}'s`;
+        const newTitle = `📊 ${possessive} Stats`;
         this.elements.title.textContent = newTitle;
         if (this.debugMode) console.log('User Stats: Updated title to personalized:', newTitle);
       } else {

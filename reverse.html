@@ -373,30 +373,38 @@
     </div>
   </div>
   
-  <!-- Most Used Pomodoro Card -->
-  <div class="user-stats-card pomodoro-usage-card" id="pomodoro-usage-card">
-    <div class="user-stats-header">
-      <div class="user-stats-title-section">
-        <span class="user-stats-title">🍅 Most Used Pomodoro</span>
-      </div>
-    </div>
-    <div class="user-stats-content">
-      <div class="pomodoro-usage-row">
-        <div class="pomodoro-usage-entry">
-          <span class="pomodoro-dot classic" aria-hidden="true"></span>
-          <span class="pomodoro-usage-label">Classic Pomodoro</span>
-          <span class="pomodoro-usage-value" id="pomodoro-classic-percent">0%</span>
+    <!-- Most Used Pomodoro Card -->
+    <div class="user-stats-card pomodoro-usage-card" id="pomodoro-usage-card">
+      <div class="user-stats-header">
+        <div class="user-stats-title-section">
+          <span class="user-stats-title">🍅 Most Used Pomodoro</span>
         </div>
       </div>
-      <div class="pomodoro-usage-row">
-        <div class="pomodoro-usage-entry">
-          <span class="pomodoro-dot reverse" aria-hidden="true"></span>
-          <span class="pomodoro-usage-label">Reverse Pomodoro</span>
-          <span class="pomodoro-usage-value" id="pomodoro-reverse-percent">0%</span>
+      <div class="user-stats-content">
+        <!-- Segmented horizontal bar (visual split between Classic and Reverse usage) -->
+        <div class="pomodoro-segmented-container" style="margin-top:6px;margin-bottom:12px;">
+          <div class="pomodoro-segmented-bar" id="pomodoro-segmented-bar" aria-hidden="true">
+            <div class="pomodoro-segment classic" id="pomodoro-segment-classic" aria-hidden="true"></div>
+            <div class="pomodoro-segment reverse" id="pomodoro-segment-reverse" aria-hidden="true"></div>
+          </div>
+          <div id="pomodoro-segmented-desc" class="sr-only" aria-live="polite" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">Most used pomodoro breakdown</div>
+        </div>
+        <div class="pomodoro-usage-row">
+          <div class="pomodoro-usage-entry">
+            <span class="pomodoro-dot classic" aria-hidden="true"></span>
+            <span class="pomodoro-usage-label">Classic Pomodoro</span>
+            <span class="pomodoro-usage-value" id="pomodoro-classic-percent">0%</span>
+          </div>
+        </div>
+        <div class="pomodoro-usage-row">
+          <div class="pomodoro-usage-entry">
+            <span class="pomodoro-dot reverse" aria-hidden="true"></span>
+            <span class="pomodoro-usage-label">Reverse Pomodoro</span>
+            <span class="pomodoro-usage-value" id="pomodoro-reverse-percent">0%</span>
+          </div>
         </div>
       </div>
     </div>
-  </div>
   
   <!-- Data Recovery Notice -->
 <div class="data-recovery-notice">
