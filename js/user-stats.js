@@ -181,13 +181,40 @@ class UserStatsManager {
     });
     
     if (maxDate && maxFocusTime > 0) {
-      const hours = (maxFocusTime / 60).toFixed(2);
-      const formattedDate = this.formatDateForDisplay(maxDate);
-      // Add a thin space before "on" to create a natural break point
-      return `${hours} hrs\u2009on ${formattedDate}`;
+      // Convert minutes into hours and minutes
+      const hours = Math.floor(maxFocusTime / 60);
+      const minutes = maxFocusTime % 60;
+
+      // Format date as "Month Day" (e.g., July 29)
+      const formattedDate = this.formatDateShort(maxDate);
+
+      // Build time string per rules:
+      // - >=1h with minutes: "Xh Ym"
+      // - >=1h without minutes: "Xh"
+      // - <1h: "Ym"
+      let timeStr;
+      if (hours >= 1) {
+        if (minutes > 0) timeStr = `${hours}h ${minutes}m`;
+        else timeStr = `${hours}h`;
+      } else {
+        timeStr = `${minutes}m`;
+      }
+
+      return `${timeStr} (${formattedDate})`;
     }
-    
-    return '0 hrs on Never';
+
+    // Friendly fallback when there's no data
+    return 'No data yet';
+  }
+
+  // Format a date string as "Month Day" without ordinals (e.g., "July 29")
+  formatDateShort(dateString) {
+    try {
+      const date = new Date(dateString + 'T00:00:00');
+      return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+    } catch (e) {
+      return dateString;
+    }
   }
 
   // Format date for display (e.g., "August 18th")
@@ -216,11 +243,27 @@ class UserStatsManager {
 
   // Format focus time as "X mins (Y hrs)" with intelligent breaking
   formatFocusTime(minutes) {
-    if (minutes === 0) return '0 mins (0 hrs)';
-    
-    const hours = (minutes / 60).toFixed(2);
-    // Add a thin space before opening parenthesis to create a natural break point
-    return `${minutes} mins\u2009(${hours} hrs)`;
+    // Ensure numeric
+    const minsTotal = Number(minutes) || 0;
+
+    // Zero case
+    if (minsTotal === 0) return '0m';
+
+    // 1 day = 1440 minutes
+    if (minsTotal >= 1440) {
+      const days = Math.floor(minsTotal / 1440);
+      const hours = Math.floor((minsTotal % 1440) / 60);
+      return `${days}d ${hours}h`;
+    }
+
+    const hours = Math.floor(minsTotal / 60);
+    const minutesOnly = minsTotal % 60;
+
+    if (hours === 0) {
+      return `${minutesOnly}m`;
+    }
+
+    return `${hours}h ${minutesOnly}m`;
   }
 
   // Update all stats in the UI
