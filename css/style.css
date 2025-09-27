@@ -4031,6 +4031,23 @@ body.theme-rain #add-task-btn.secondary-btn:hover {
   --pom-empty-color: #23272B; /* fallback background when graph has no data */
 }
 
+/* Ensure the Most Used Pomodoro card explicitly uses the same typography
+   as the User Stats card so sizes won't accidentally diverge. This is
+   intentionally minimal and safe — it mirrors the existing user-stats sizes. */
+.pomodoro-usage-card {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+}
+.pomodoro-usage-card .user-stats-title {
+  /* keep same size as .user-stats-title */
+  font-size: 1.15em;
+}
+.pomodoro-usage-card .pomodoro-usage-label {
+  font-size: 0.85em;
+}
+.pomodoro-usage-card .pomodoro-usage-value {
+  font-size: 0.9em;
+}
+
 /* Segmented horizontal bar for Most Used Pomodoro card */
 .pomodoro-segmented-container {
   position: relative;
@@ -4122,7 +4139,8 @@ body.theme-rain #add-task-btn.secondary-btn:hover {
 .user-stats-title {
   letter-spacing: 1px;
   color: #fff;
-  font-size: 1.15em;
+  /* match the streak header title size */
+  font-size: 1.3em;
   font-weight: 600;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
@@ -4331,46 +4349,15 @@ body.theme-color .user-stats-value {
 
 }
 
-/* Smart responsive layout - handle long content intelligently */
-@media (max-width: 415px) {
-  /* Allow text wrapping for long content rows */
-  .user-stats-row[data-stat="totalFocusTime"] .user-stats-value,
-  .user-stats-row[data-stat="mostProductiveDay"] .user-stats-value {
-    word-break: normal;
-    overflow-wrap: break-word;
-    white-space: normal;
-    line-height: 1.4;
-  }
-  
-  /* Only stack Most Productive Day content - it's typically longer */
-  .user-stats-row[data-stat="mostProductiveDay"] {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .user-stats-row[data-stat="mostProductiveDay"] .user-stats-label {
-    margin-bottom: 2px;
-  }
-  .user-stats-row[data-stat="mostProductiveDay"] .user-stats-value {
-    padding-left: 0;
-  }
-}
 
-/* For very small screens, stack all content */
-@media (max-width: 360px) {
-  .user-stats-row {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .user-stats-label {
-    margin-bottom: 2px;
-  }
-  .user-stats-value {
-    padding-left: 0;
-  }
-}
+
 
 @media (max-width: 400px) {
   .user-stats-card {
+    padding: 24px 14px 14px 14px;
+  }
+  /* Make Pomodoro card inherit the same compact padding on very small screens */
+  .pomodoro-usage-card {
     padding: 24px 14px 14px 14px;
   }
   .user-stats-content {
@@ -4390,10 +4377,24 @@ body.theme-color .user-stats-value {
     font-size: 0.75em;
     font-weight: var(--font-semibold);
   }
+  /* Pomodoro labels/values should match the User Stats responsive sizes */
+  .pomodoro-usage-card .pomodoro-usage-label {
+    font-size: 0.72em;
+    font-weight: var(--font-medium);
+    margin-bottom: 3px;
+  }
+  .pomodoro-usage-card .pomodoro-usage-value {
+    font-size: 0.75em;
+    font-weight: var(--font-semibold);
+  }
   .user-stats-header {
     margin-bottom: 14px;
   }
   .user-stats-title {
+    font-size: 1.1em;
+  }
+  /* Ensure Pomodoro card title matches User Stats title on small screens */
+  .pomodoro-usage-card .user-stats-title {
     font-size: 1.1em;
   }
 }
@@ -4401,6 +4402,9 @@ body.theme-color .user-stats-value {
 /* Extra small screens - for very long content */
 @media (max-width: 360px) {
   .user-stats-card {
+    padding: 20px 12px 12px 12px;
+  }
+  .pomodoro-usage-card {
     padding: 20px 12px 12px 12px;
   }
   .user-stats-row {
@@ -4416,6 +4420,18 @@ body.theme-color .user-stats-value {
   }
   .user-stats-title {
     font-size: 1em;
+  }
+  /* Ensure Pomodoro card title matches User Stats title on extra-small screens */
+  .pomodoro-usage-card .user-stats-title {
+    font-size: 1em;
+  }
+  /* Keep Pomodoro label/value aligned with the User Stats scaling on extra-small screens */
+  .pomodoro-usage-card .pomodoro-usage-label {
+    font-size: 0.68em;
+  }
+  .pomodoro-usage-card .pomodoro-usage-value {
+    font-size: 0.72em;
+    line-height: 1.4;
   }
 }
 
@@ -4514,4 +4530,32 @@ html, body {
     width: 100%;
     word-break: break-word;
   }
+}
+
+/* ---------------------------------------------------------------------------
+   Unified title style for main stats headers
+   Ensure 'My Stats :', 'User\'s Stats' and 'Most Used Pomodoro' always
+   use the exact same font family, size and weight across all breakpoints.
+   Placed at the end so it overrides earlier media-query adjustments safely.
+*/
+.streak-title,
+.user-stats-title,
+.pomodoro-usage-card .user-stats-title {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  font-size: 18px;       /* slightly smaller fixed size for balanced headers */
+  font-weight: 700;      /* match the prominent header weight */
+  letter-spacing: 1px;
+  line-height: 1;
+}
+
+/* Tweak the streak header icon + title alignment so 'My Stats :' matches visually */
+.streak-title {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 18px; /* explicit so it doesn't inherit different ems */
+  line-height: 1;
+}
+.streak-fire {
+  vertical-align: middle;
+  line-height: 1;
 }

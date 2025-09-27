@@ -96,7 +96,7 @@ class UserStatsManager {
         this.elements.title.textContent = newTitle;
         if (this.debugMode) console.log('User Stats: Updated title to personalized:', newTitle);
       } else {
-        const newTitle = `📊 User's Stats`;
+        const newTitle = `User's Stats`;
         this.elements.title.textContent = newTitle;
         if (this.debugMode) console.log('User Stats: Updated title to generic:', newTitle);
       }
