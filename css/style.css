@@ -4559,3 +4559,147 @@ html, body {
   vertical-align: middle;
   line-height: 1;
 }
+
+/* Achievements / Badges styles (minimal and safe) - scoped to .achievements-card */
+.achievements-card .achievements-section {
+  margin-top: 18px;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  padding-top: 12px;
+}
+.achievements-card .achievements-section h3 {
+  margin: 0 0 8px 0;
+  font-size: 0.95rem;
+  color: var(--text-primary, #fff);
+}
+.achievements-card .badges-row {
+  /* Use CSS Grid for predictable responsive columns */
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* desktop: 4 per row */
+  gap: 12px;
+  align-items: center;
+  justify-items: center;
+}
+
+.achievements-card .badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1 / 1; /* keep square, we'll round it */
+  max-width: 180px; /* prevent overly large badges on very wide containers */
+  padding: 0;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.achievements-card .badge-icon {
+  width: 72%;
+  height: 72%;
+  border-radius: 50%;
+  object-fit: cover;
+  background: rgba(255,255,255,0.02);
+  border: 4px solid rgba(255,255,255,0.06);
+  box-shadow: 0 6px 22px rgba(0,0,0,0.55);
+}
+
+/* Hide textual info for now; we'll show details in a modal later */
+.achievements-card .badge-info { display: none !important; }
+.achievements-card .badge-desc,
+.achievements-card .badge-info strong { display: none !important; }
+.achievements-card .no-badge { font-style: italic; color: var(--text-secondary, #9aa0a6); }
+
+/* Tablet: keep 4 per row but allow larger gaps */
+@media (max-width: 992px) {
+  .achievements-card .badges-row { grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .achievements-card .badge { max-width: 160px; }
+}
+
+/* Mobile: 2 badges per row */
+@media (max-width: 480px) {
+  .achievements-card .badges-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .achievements-card .badge { max-width: 120px; }
+  .achievements-card .badge-icon { width: 70%; height: 70%; border-width: 3px; }
+}
+
+/* Achievements card should visually match the other stats cards */
+.achievements-card {
+  /* reuse the same tokens as .user-stats-card */
+  background: #181a1b;
+  border-radius: 10px;
+  border: 1px solid #333;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.18);
+  padding: 20px 16px;
+  max-width: 540px;
+  margin: 18px auto 0 auto;
+  color: #fff;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+}
+.achievements-card .user-stats-header { margin-bottom: 12px; }
+.achievements-card #achievements-container { width: 100%; }
+.achievements-card .badges-row { margin-top: 6px; }
+
+/* Badge modal styles */
+.badge-modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.6);
+  z-index: 12000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+.badge-modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.badge-modal {
+  width: min(720px, 94%);
+  background: linear-gradient(180deg, #121212, #151515);
+  border-radius: 12px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+  overflow: hidden;
+  color: #fff;
+  transform: translateY(8px) scale(0.98);
+  transition: transform 200ms ease;
+}
+.badge-modal-overlay.open .badge-modal { transform: translateY(0) scale(1); }
+.badge-modal-close {
+  position: absolute;
+  right: 12px;
+  top: 8px;
+  background: none;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.2s ease;
+}
+
+.badge-modal-close:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+}
+.badge-modal-banner { background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding: 28px; display:flex; align-items:center; justify-content:center; }
+.badge-modal-icon { width: 140px; height: 140px; border-radius: 50%; box-shadow: 0 12px 36px rgba(0,0,0,0.6); border: 6px solid rgba(255,255,255,0.04); }
+.badge-modal-body { padding: 20px 28px 28px 28px; }
+.badge-modal-title { margin: 0 0 8px 0; font-size: 1.4rem; }
+.badge-modal-desc { margin: 0 0 10px 0; color: var(--text-secondary, #bfc6c9); }
+.badge-modal-date { margin: 0; font-size: 0.9rem; color: var(--text-secondary, #9aa0a6); }
+
+@media (max-width: 480px) {
+  .badge-modal { width: 96%; }
+  .badge-modal-icon { width: 110px; height: 110px; }
+  .badge-modal-body { padding: 14px; }
+}
+
+
+

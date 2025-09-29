@@ -341,7 +341,19 @@
       </div>
     </div>
   </div>
-
+  
+    <!-- Achievements Card -->
+    <div class="user-stats-card achievements-card">
+      <div class="user-stats-header">
+        <div class="user-stats-title-section">
+          <span class="user-stats-title">Achievements</span>
+        </div>
+      </div>
+      <div class="user-stats-content">
+        <div id="achievements-container"></div>
+      </div>
+    </div>
+  
   <!-- User Stats Card -->
   <div class="user-stats-card">
     <div class="user-stats-header">
@@ -1441,6 +1453,17 @@
 <script src="js/most-used-pomodoro.js?v=1.0.2"></script>
 
 <!-- Test utilities for sync development -->
+
+<!-- Achievements loader (manual) -->
+<script src="js/database-achievements.js"></script>
+<script>
+  try {
+    window.currentUser = window.currentUser || null;
+    loadAchievements('achievements-container');
+  } catch (e) {
+    console.warn('Achievements init failed', e);
+  }
+</script>
 
 
 <!-- UPDATE!) -->

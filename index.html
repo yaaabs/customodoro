@@ -502,7 +502,19 @@
       </div>
     </div>
 
-  <!-- Data Recovery Notice -->
+    <!-- Achievements Card (matches other stats cards) -->
+    <div class="user-stats-card achievements-card">
+      <div class="user-stats-header">
+        <div class="user-stats-title-section">
+          <span class="user-stats-title">Achievements</span>
+        </div>
+      </div>
+      <div class="user-stats-content">
+        <div id="achievements-container"></div>
+      </div>
+    </div>
+
+    <!-- Data Recovery Notice -->
 <div class="data-recovery-notice">
   <div class="notice-icon">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1571,6 +1583,19 @@
 <script src="js/database-leaderboard.js?v=2.1.2"></script>
 <script src="js/user-stats.js?v=1.0.0"></script>
 <script src="js/most-used-pomodoro.js?v=1.0.2"></script>
+
+<!-- Achievements loader (manual) -->
+<script src="js/database-achievements.js"></script>
+<script>
+  // Defensive init: set window.currentUser if your app already exposes it
+  // For now the loader will fall back to sign-in message if no user
+  try {
+    window.currentUser = window.currentUser || null;
+    loadAchievements('achievements-container');
+  } catch (e) {
+    console.warn('Achievements init failed', e);
+  }
+</script>
 
 
 

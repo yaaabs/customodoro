@@ -233,27 +233,27 @@ class DatabaseLeaderboard {
       // Option 1: data.streaks.productivityStatsByDay (your actual structure from sync-manager.js)
       if (data.streaks && data.streaks.productivityStatsByDay) {
         productivityStats = data.streaks.productivityStatsByDay;
-        console.log(`📊 Found productivity stats in streaks for ${userData.username}: ${Object.keys(productivityStats).length} days`);
+  console.log(`📊 Found productivity stats in streaks: ${Object.keys(productivityStats).length} days`);
       }
       // Option 2: data.productivityStatsByDay (direct structure - backup)
       else if (data.productivityStatsByDay) {
         productivityStats = data.productivityStatsByDay;
-        console.log(`📊 Found direct productivity stats for ${userData.username}: ${Object.keys(productivityStats).length} days`);
+  console.log(`📊 Found direct productivity stats: ${Object.keys(productivityStats).length} days`);
       }
       // Option 3: Check if data contains date keys directly (fallback)
       else if (typeof data === 'object' && Object.keys(data).some(key => key.match(/^\d{4}-\d{2}-\d{2}$/))) {
         productivityStats = data;
-        console.log(`📊 Found date keys directly in data for ${userData.username}: ${Object.keys(productivityStats).length} days`);
+  console.log(`📊 Found date-key productivity stats: ${Object.keys(productivityStats).length} days`);
       }
 
       // If no productivity data found, log the actual structure
       if (Object.keys(productivityStats).length === 0) {
-        console.log(`❌ No productivity stats found for ${userData.username}. Data structure:`, {
+        console.log(`❌ No productivity stats found. Data structure:`, {
           hasData: !!data,
           dataKeys: data ? Object.keys(data) : [],
           hasStreaks: !!(data.streaks),
           streakKeys: data.streaks ? Object.keys(data.streaks) : [],
-          fullData: data
+          // fullData intentionally omitted to avoid logging PII
         });
       }
 
@@ -457,23 +457,35 @@ class DatabaseLeaderboardModal {
       // Show progress in the UI instead of freezing
       this.updateLoadingMessage('Calculating top performers...');
       
-      // Get leaderboard data for key categories - only need top 3 for badges
-      const focusData = await this.leaderboard.getLeaderboard('total_focus', 'all_time', 3);
-      this.updateLoadingMessage('Processing focus champions...');
-      
-      const currentStreakData = await this.leaderboard.getLeaderboard('current_streak', 'all_time', 3);
-      this.updateLoadingMessage('Processing streak leaders...');
-      
-      const longestStreakData = await this.leaderboard.getLeaderboard('longest_streak', 'all_time', 3);
-      this.updateLoadingMessage('Finalizing badges...');
+  // Get leaderboard data for key categories - only need top 3 for badges
+  const focusData = await this.leaderboard.getLeaderboard('total_focus', 'all_time', 3);
+  this.updateLoadingMessage('Processing focus champions...');
 
-      const dynamicBadges = {};
+  // Include sessions leaderboard (was present in the old implementation)
+  const sessionsData = await this.leaderboard.getLeaderboard('total_sessions', 'all_time', 3);
+  this.updateLoadingMessage('Processing session champions...');
+
+  const currentStreakData = await this.leaderboard.getLeaderboard('current_streak', 'all_time', 3);
+  this.updateLoadingMessage('Processing streak leaders...');
+
+  const longestStreakData = await this.leaderboard.getLeaderboard('longest_streak', 'all_time', 3);
+  this.updateLoadingMessage('Finalizing badges...');
+
+  const dynamicBadges = {};
 
       // 🎯 CATEGORY AWARDS - #1 in each category
       if (focusData.rankings.length > 0) {
         const focusKing = focusData.rankings[0].username;
         if (!dynamicBadges[focusKing]) dynamicBadges[focusKing] = [];
         dynamicBadges[focusKing].push({ type: 'monthly-focus-champion', icon: '🎯', label: 'Focus King' });
+      }
+
+      // 📝 SESSIONS AWARD - #1 by total sessions
+      if (sessionsData && sessionsData.rankings && sessionsData.rankings.length > 0) {
+        const sessionMaster = sessionsData.rankings[0].username;
+        if (!dynamicBadges[sessionMaster]) dynamicBadges[sessionMaster] = [];
+        // use the existing CSS class name 'monthly-sessions-champion' so styles match
+        dynamicBadges[sessionMaster].push({ type: 'monthly-sessions-champion', icon: '📊', label: 'Session Master' });
       }
 
       if (currentStreakData.rankings.length > 0) {
@@ -486,6 +498,42 @@ class DatabaseLeaderboardModal {
         const streakLegend = longestStreakData.rankings[0].username;
         if (!dynamicBadges[streakLegend]) dynamicBadges[streakLegend] = [];
         dynamicBadges[streakLegend].push({ type: 'monthly-streak-champion', icon: '🔥', label: 'Streak Legend' });
+      }
+
+      // 🏆 MAJOR AWARD - Champion (Best Average Ranking)
+      // Calculate average ranking across all categories for users who appear in all leaderboards
+      const allUsers = new Set([
+        ...focusData.rankings.map(u => u.username),
+        ...sessionsData.rankings.map(u => u.username),
+        ...currentStreakData.rankings.map(u => u.username),
+        ...longestStreakData.rankings.map(u => u.username)
+      ]);
+
+      let bestAverageRanking = Infinity;
+      let championUser = null;
+
+      allUsers.forEach(username => {
+        const focusRank = focusData.rankings.find(u => u.username === username)?.rank_position || 999;
+        const sessionsRank = sessionsData.rankings.find(u => u.username === username)?.rank_position || 999;
+        const currentStreakRank = currentStreakData.rankings.find(u => u.username === username)?.rank_position || 999;
+        const longestStreakRank = longestStreakData.rankings.find(u => u.username === username)?.rank_position || 999;
+
+        // Only consider users who have data in at least 3 categories
+        const validRanks = [focusRank, sessionsRank, currentStreakRank, longestStreakRank].filter(rank => rank < 999);
+
+        if (validRanks.length >= 3) {
+          const averageRank = validRanks.reduce((sum, rank) => sum + rank, 0) / validRanks.length;
+
+          if (averageRank < bestAverageRanking) {
+            bestAverageRanking = averageRank;
+            championUser = username;
+          }
+        }
+      });
+
+      if (championUser) {
+        if (!dynamicBadges[championUser]) dynamicBadges[championUser] = [];
+        dynamicBadges[championUser].push({ type: 'champion', icon: '🏆', label: 'Champion' });
       }
 
       // 🎖️ Merge static badges with dynamic badges

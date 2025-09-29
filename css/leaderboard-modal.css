@@ -483,10 +483,11 @@
 }
 
 .user-badge.monthly-sessions-champion {
-  background: linear-gradient(135deg, #DC2626 0%, #F97316 100%);
+  /* Light-blue variant for Session Master */
+  background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%);
   color: white;
-  border: 1px solid #F97316;
-  box-shadow: 0 0 15px rgba(249, 115, 22, 0.4);
+  border: 1px solid #3B82F6;
+  box-shadow: 0 0 15px rgba(59,130,246,0.35);
   animation: energyGlow 2s ease-in-out infinite alternate;
 }
 
