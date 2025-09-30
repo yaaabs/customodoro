@@ -724,12 +724,20 @@
     // --- Focus Points Badge Logic (fully dynamic, accurate, with unlock date) ---
     // Supported FP badge levels (add more as needed)
     const supportedFPLevels = [100, 250, 500, 750, 1000, 1500, 2000, 3000, 5000, 10000];
-    // Compute cumulative FP by day and unlock dates for each badge
+    // Compute total FP and unlock dates for each badge (do NOT use cumulative sum for unlocks)
     let fpUnlocks = {};
     let totalFP = 0;
     if (stats && typeof stats === 'object') {
-      // Sort days chronologically
+      // Sum all days for totalFP
       const days = Object.keys(stats).map(k => toIsoDateKey(k)).filter(Boolean).sort();
+      let sumFP = 0;
+      days.forEach(day => {
+        const v = stats[day] || {};
+        if (typeof v.total_focus_points === 'number') sumFP += v.total_focus_points;
+        else if (typeof v.total_minutes === 'number') sumFP += v.total_minutes;
+      });
+      totalFP = sumFP;
+      // Find unlock date for each badge: the first day when totalFP >= badge level
       let runningFP = 0;
       let unlocks = {};
       supportedFPLevels.forEach(lvl => { unlocks[lvl] = null; });
@@ -738,7 +746,7 @@
         const v = stats[day] || {};
         let fp = 0;
         if (typeof v.total_focus_points === 'number') fp = v.total_focus_points;
-        else if (typeof v.total_minutes === 'number') fp = v.total_minutes; // fallback
+        else if (typeof v.total_minutes === 'number') fp = v.total_minutes;
         runningFP += fp;
         supportedFPLevels.forEach(lvl => {
           if (!unlocks[lvl] && runningFP >= lvl) {
@@ -746,7 +754,6 @@
           }
         });
       }
-      totalFP = runningFP;
       fpUnlocks = unlocks;
     }
     // Fallback: try window.userStatsManager if available
