@@ -432,6 +432,7 @@
     const body = el.querySelector('.badge-modal-body');
     const bannerColors = {
       'Focus King': '#FB2A1B',
+      'Focus Points': '#56D364',
       'Session Master': '#46648E',
       'Streak Legend': '#FEB713',
       'Overall Champion': '#18B4A0'
