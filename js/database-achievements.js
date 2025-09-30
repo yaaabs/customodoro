@@ -711,11 +711,8 @@
     }
 
     const rawBadges = hardcodedAchievements[identityKey] || [];
-
-    if (!rawBadges || !Array.isArray(rawBadges) || rawBadges.length === 0) {
-      showNoBadges(container);
-      return;
-    }
+    // Note: don't early-return when there are no hardcoded badges for this user.
+    // We will still compute streak badges from frontend productivity stats and render them.
 
     // Frontend stats (localStorage or embedded streaks) — compute streak info
     const stats = getFrontendProductivityStats();
@@ -763,6 +760,12 @@
     });
 
     const badges = monthly.concat(streaks);
+
+    // If after computation there are no badges, show fallback message
+    if (!badges || badges.length === 0) {
+      showNoBadges(container);
+      return;
+    }
 
     container.innerHTML = '';
     const row = document.createElement('div');
