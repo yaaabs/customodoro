@@ -32,21 +32,14 @@
     ]
   };
 
-  // Ensure username <-> email aliases exist for hardcoded entries
-  // If a key contains an '@', also create a local-part alias (e.g. 'yabs@gmail.com' -> 'yabs')
-  Object.keys(hardcodedAchievements).forEach((k) => {
-    try {
-      if (typeof k === 'string' && k.indexOf('@') !== -1) {
-        const local = k.split('@')[0].trim().toLowerCase();
-        if (local && !hardcodedAchievements[local]) {
-          // copy array shallowly to avoid shared mutation issues
-          hardcodedAchievements[local] = hardcodedAchievements[k].slice();
-        }
-      }
-    } catch (e) {
-      // ignore malformed keys
-    }
-  });
+  // Keep email mirror in sync
+  if (
+    hardcodedAchievements['yabs'] &&
+    hardcodedAchievements['yabs'].length &&
+    (!hardcodedAchievements['yabs@gmail.com'] || hardcodedAchievements['yabs@gmail.com'].length === 0)
+  ) {
+    hardcodedAchievements['yabs@gmail.com'] = hardcodedAchievements['yabs'].slice();
+  }
 
   function normalizeIdentity(u) {
     if (!u && u !== 0) return null;
@@ -587,6 +580,94 @@
     container.appendChild(p);
   }
 
+  // --- Frontend-only productivity helpers (safe, non-destructive) ---
+  function getFrontendProductivityStats() {
+    try {
+      if (window.userStatsManager && typeof window.userStatsManager.getAllProductivityData === 'function') {
+        return window.userStatsManager.getAllProductivityData() || {};
+      }
+    } catch (e) {}
+
+    try {
+      const raw = localStorage.getItem('customodoroStatsByDay');
+      if (raw) return JSON.parse(raw) || {};
+    } catch (e) {}
+
+    // Also support embedded productivity stats placed into streaks by sync-manager
+    try {
+      const streaks = JSON.parse(localStorage.getItem('customodoro-streaks') || '{}');
+      if (streaks && streaks.productivityStatsByDay) return streaks.productivityStatsByDay || {};
+    } catch (e) {}
+
+    return {};
+  }
+
+  function toIsoDateKey(k) {
+    if (!k) return null;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(k)) return k;
+    try {
+      const d = new Date(k);
+      if (isNaN(d.getTime())) return null;
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    } catch (e) { return null; }
+  }
+
+  // Returns { maxStreak: Number, unlocks: {dayCount: isoDate, ...} }
+  function computeStreakInfoFromStats(statsByDay, supportedSteps) {
+    const activeDates = [];
+    Object.entries(statsByDay || {}).forEach(([k, v]) => {
+      const iso = toIsoDateKey(k);
+      if (!iso) return;
+      const minutes = Number(v && (v.total_minutes || 0)) || 0;
+      const sessions = Number(v && ((v.classic || 0) + (v.reverse || 0))) || 0;
+      if (minutes > 0 || sessions > 0) activeDates.push(iso);
+    });
+
+    if (activeDates.length === 0) return { maxStreak: 0, unlocks: {} };
+
+    const uniq = Array.from(new Set(activeDates)).sort();
+    const dates = uniq.map(d => new Date(d + 'T00:00:00'));
+
+    const resultUnlocks = {};
+    supportedSteps = supportedSteps || [3,5,8,10,15,20,25,30,35,50,75,100];
+    const sortedTargets = Array.from(new Set(supportedSteps)).map(Number).sort((a,b)=>a-b);
+    sortedTargets.forEach(t => { resultUnlocks[t] = null; });
+
+    let maxRun = 1;
+    let runLen = 1;
+
+    for (let i = 0; i < dates.length; i++) {
+      if (i === 0) { runLen = 1; }
+      else {
+        const prev = dates[i-1];
+        const cur = dates[i];
+        const diff = Math.round((cur - prev) / (24 * 60 * 60 * 1000));
+        if (diff === 1) runLen += 1;
+        else if (diff === 0) {/* duplicate day */}
+        else runLen = 1;
+      }
+
+      if (runLen > maxRun) maxRun = runLen;
+
+      // Assign unlock dates for any targets reached at this index
+      for (let ti = 0; ti < sortedTargets.length; ti++) {
+        const t = sortedTargets[ti];
+        if (!resultUnlocks[t] && runLen >= t) {
+          const d = dates[i];
+          const y = d.getFullYear();
+          const m = String(d.getMonth() + 1).padStart(2, '0');
+          const day = String(d.getDate()).padStart(2, '0');
+          resultUnlocks[t] = `${y}-${m}-${day}`;
+        }
+      }
+    }
+
+    return { maxStreak: maxRun, unlocks: resultUnlocks };
+  }
+
   function loadAchievements(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
@@ -629,21 +710,67 @@
       return;
     }
 
-    const badges = hardcodedAchievements[identityKey] || [];
+    const rawBadges = hardcodedAchievements[identityKey] || [];
 
-    if (!badges || !Array.isArray(badges) || badges.length === 0) {
+    if (!rawBadges || !Array.isArray(rawBadges) || rawBadges.length === 0) {
       showNoBadges(container);
       return;
     }
 
-    // Render badges
+    // Frontend stats (localStorage or embedded streaks) — compute streak info
+    const stats = getFrontendProductivityStats();
+    const supportedSteps = [3,5,8,10,15,20,25,30,35,50,75,100];
+    const streakInfo = computeStreakInfoFromStats(stats, supportedSteps);
+
+    // Build final badge list: always include non-Streak badges; include Streak badges only if day <= maxStreak
+    const finalBadges = [];
+    const existingStreakDays = new Set();
+
+    rawBadges.forEach(b => {
+      if (!b || !b.title) return;
+      if (b.title !== 'Streak') {
+        finalBadges.push(b);
+        return;
+      }
+
+      // parse days from icon/description
+      const m = /([0-9]{1,3})\s*-?\s*Day/i.exec(b.icon || '') || /([0-9]{1,3})\s*-?\s*Day/i.exec(b.description || '');
+      const days = (m && m[1]) ? Number(m[1]) : null;
+      if (days && days <= streakInfo.maxStreak) {
+        // apply computed unlock date if available
+        if (streakInfo.unlocks && streakInfo.unlocks[days]) {
+          b.date = streakInfo.unlocks[days];
+        }
+        finalBadges.push(b);
+        existingStreakDays.add(days);
+      }
+    });
+
+    // Add any missing streak levels that user earned (but not hardcoded) up to maxStreak
+    supportedSteps.forEach(step => {
+      if (step <= streakInfo.maxStreak && !existingStreakDays.has(step)) {
+        const d = (streakInfo.unlocks && streakInfo.unlocks[step]) ? streakInfo.unlocks[step] : null;
+        finalBadges.push({ title: 'Streak', icon: `images/badges/Streak/${step}-Day Streak.png`, description: `Unlocked a ${step}-day streak!`, date: d });
+      }
+    });
+
+    // Render badges (monthly first, then streaks sorted ascending)
+    const monthly = finalBadges.filter(b => b.title !== 'Streak');
+    const streaks = finalBadges.filter(b => b.title === 'Streak').sort((a,b) => {
+      const ma = /([0-9]{1,3})/.exec(a.icon||'');
+      const mb = /([0-9]{1,3})/.exec(b.icon||'');
+      return (ma && ma[1] ? Number(ma[1]) : 0) - (mb && mb[1] ? Number(mb[1]) : 0);
+    });
+
+    const badges = monthly.concat(streaks);
+
     container.innerHTML = '';
     const row = document.createElement('div');
     row.className = 'badges-row';
 
     badges.forEach((badge, idx) => {
       const badgeEl = createBadgeEl(badge, idx);
-      
+
       // Click handler opens modal with all badges, starting at clicked index
       badgeEl.addEventListener('click', () => openModal(badges, idx));
       badgeEl.addEventListener('keydown', (e) => { 
@@ -652,7 +779,7 @@
           openModal(badges, idx);
         }
       });
-      
+
       row.appendChild(badgeEl);
     });
 
