@@ -9,15 +9,15 @@
   const hardcodedAchievements = {
 
     'yabs@gmail.com': [
-      { title: 'Streak Legend', icon: 'images/badges/sept_streak.png', description: 'Honored for holding the longest streak in September.', date: '2025-10-02' },
+      { title: 'Streak Legend', icon: 'images/badges/sept_streak.png', description: 'Honored for holding the longest streak in September.', date: '2025-10-01' },
     ], 
 
-    '17@gmail.com': [
-      { title: 'Streak Legend', icon: 'images/badges/sept_streak.png', description: 'Honored for holding the longest streak in September.', date: '2025-10-02' },
+    'hinaymyca31@gmail.com': [
+      { title: 'Streak Legend', icon: 'images/badges/sept_streak.png', description: 'Honored for holding the longest streak in September.', date: '2025-10-1' },
       { title: 'Overall Champion', icon: 'images/badges/sept_champion.png', description: 'Awarded for being the top overall performer with the highest average across all categories in September.', date: '2025-10-01' },
     ], 
     
-    'test6@example.com': [
+    'jnventic@gmail.com': [
       { title: 'Session Master', icon: 'images/badges/sept_session.png', description: 'Recognized for completing the most sessions in September.', date: '2025-10-01' }
     ],
   
@@ -418,7 +418,14 @@
     el.querySelector('.badge-modal-desc').textContent = badge.description || '';
     
     const dateText = badge.date ? formatDateLocal(badge.date) : 'Unlocked: Unknown';
-    el.querySelector('.badge-modal-date').textContent = badge.date ? `Unlocked on ${dateText}` : dateText;
+    const dateEl = el.querySelector('.badge-modal-date');
+    if (badge.date) {
+      dateEl.innerHTML = `<span style="font-weight:700;color:#FFD700;font-size:1.08em;">🏆 Unlocked on ${dateText}</span>`;
+      dateEl.style.textAlign = 'left';
+    } else {
+      dateEl.textContent = dateText;
+      dateEl.style.textAlign = 'left';
+    }
     
     // Apply banner color
     const banner = el.querySelector('.badge-modal-banner');
@@ -762,6 +769,17 @@
     }
 
     container.innerHTML = '';
+
+    // Add call-to-action description
+    const cta = document.createElement('div');
+    cta.className = 'achievements-cta';
+    cta.style.margin = '0 0 12px 0';
+    cta.style.fontSize = '15px';
+    cta.style.color = 'rgba(255,255,255,0.7)';
+    cta.style.letterSpacing = '0.01em';
+  cta.textContent = 'Tip: Click or tap a badge to view details and unlock info! You can also use arrow keys to navigate, or swipe on mobile.';
+    container.appendChild(cta);
+
     const row = document.createElement('div');
     row.className = 'badges-row';
 
