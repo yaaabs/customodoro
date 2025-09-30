@@ -7,36 +7,46 @@
 
   // Hard-coded achievements map
   const hardcodedAchievements = {
-    'yabs': [
-      { title: 'Streak Legend', icon: 'images/badges/sept_streak.png', description: 'Honored for holding the longest streak in September.', date: '2025-10-01' },
-      { title: 'Overall Champion', icon: 'images/badges/sept_champion.png', description: 'Awarded for being the top overall performer with the highest average across all categories in September.', date: '2025-10-01' }
-    ],
+
     'yabs@gmail.com': [
       { title: 'Streak Legend', icon: 'images/badges/sept_streak.png', description: 'Honored for holding the longest streak in September.', date: '2025-10-01' },
-      { title: 'Overall Champion', icon: 'images/badges/sept_champion.png', description: 'Awarded for being the top overall performer with the highest average across all categories in September.', date: '2025-10-01' }
-    ],
-    'Sza': [
-      { title: 'Session Master', icon: 'images/badges/sept_session.png', description: 'Recognized for completing the most sessions in September.', date: '2025-10-01' }
-    ],    
+      { title: 'Overall Champion', icon: 'images/badges/sept_champion.png', description: 'Awarded for being the top overall performer with the highest average across all categories in September.', date: '2025-10-01' },
+      { title: 'Streak', icon: 'images/badges/Streak/3-Day Streak.png', description: 'Unlocked a 3-day streak — keep the momentum going!', date: '2025-10-01' },
+      { title: 'Streak', icon: 'images/badges/Streak/5-Day Streak.png', description: 'Unlocked a 5-day streak — great consistency!', date: '2025-10-01' },
+      { title: 'Streak', icon: 'images/badges/Streak/8-Day Streak.png', description: 'Unlocked an 8-day streak — impressive dedication!', date: '2025-10-01' },
+      { title: 'Streak', icon: 'images/badges/Streak/10-Day Streak.png', description: 'Unlocked a 10-day streak — double digits achievement!', date: '2025-10-01' },
+      { title: 'Streak', icon: 'images/badges/Streak/15-Day Streak.png', description: 'Unlocked a 15-day streak — outstanding persistence!', date: '2025-10-01' },
+      { title: 'Streak', icon: 'images/badges/Streak/20-Day Streak.png', description: 'Unlocked a 20-day streak — consistency is paying off!', date: '2025-10-01' },
+      { title: 'Streak', icon: 'images/badges/Streak/25-Day Streak.png', description: 'Unlocked a 25-day streak — phenomenal focus!', date: '2025-10-01' },
+      { title: 'Streak', icon: 'images/badges/Streak/30-Day Streak.png', description: 'Unlocked a 30-day streak — a month of steady progress!', date: '2025-10-01' },
+      { title: 'Streak', icon: 'images/badges/Streak/35-Day Streak.png', description: 'Unlocked a 35-day streak — incredible dedication!', date: '2025-10-01' },
+      { title: 'Streak', icon: 'images/badges/Streak/50-Day Streak.png', description: 'Unlocked a 50-day streak — legendary commitment!', date: '2025-10-01' },      
+    ], 
+    
     'test6@example.com': [
       { title: 'Session Master', icon: 'images/badges/sept_session.png', description: 'Recognized for completing the most sessions in September.', date: '2025-10-01' }
     ],
-    'Clari': [
-      { title: 'Focus King', icon: 'images/badges/sept_focus_points.png', description: 'Crowned for earning the highest Focus Points in September.', date: '2025-10-01' }
-    ],    
+  
     'clarissuhpascual@gmail.com': [
       { title: 'Focus King', icon: 'images/badges/sept_focus_points.png', description: 'Crowned for earning the highest Focus Points in September.', date: '2025-10-01' }
     ]
   };
 
-  // Keep email mirror in sync
-  if (
-    hardcodedAchievements['yabs'] &&
-    hardcodedAchievements['yabs'].length &&
-    (!hardcodedAchievements['yabs@gmail.com'] || hardcodedAchievements['yabs@gmail.com'].length === 0)
-  ) {
-    hardcodedAchievements['yabs@gmail.com'] = hardcodedAchievements['yabs'].slice();
-  }
+  // Ensure username <-> email aliases exist for hardcoded entries
+  // If a key contains an '@', also create a local-part alias (e.g. 'yabs@gmail.com' -> 'yabs')
+  Object.keys(hardcodedAchievements).forEach((k) => {
+    try {
+      if (typeof k === 'string' && k.indexOf('@') !== -1) {
+        const local = k.split('@')[0].trim().toLowerCase();
+        if (local && !hardcodedAchievements[local]) {
+          // copy array shallowly to avoid shared mutation issues
+          hardcodedAchievements[local] = hardcodedAchievements[k].slice();
+        }
+      }
+    } catch (e) {
+      // ignore malformed keys
+    }
+  });
 
   function normalizeIdentity(u) {
     if (!u && u !== 0) return null;
@@ -436,7 +446,20 @@
     if (badge.title && bannerColors[badge.title]) {
       banner.style.background = bannerColors[badge.title];
     } else {
-      banner.style.background = '';
+      // For streak badges, compute a gold gradient based on day count
+      if (badge.title === 'Streak') {
+        // try to extract days from icon filename first, fallback to description
+        let days = null;
+        try {
+          const m = /([0-9]{1,3})\s*-?\s*Day/i.exec(badge.icon || '') || /([0-9]{1,3})\s*-?\s*Day/i.exec(badge.description || '');
+          if (m && m[1]) days = parseInt(m[1], 10);
+        } catch (e) { days = null; }
+        if (!days) days = 3; // default
+        const cols = streakGoldColorsFor(days);
+        banner.style.background = `linear-gradient(135deg, ${cols.base} 0%, ${cols.dark} 100%)`;
+      } else {
+        banner.style.background = '';
+      }
     }
 
     if (badge.title === 'Streak Legend') {
@@ -488,6 +511,66 @@
     }
   }
 
+  // Helpers to compute gold shades for streak badges
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function hexToRgb(hex) {
+    const h = hex.replace('#','');
+    return [parseInt(h.substring(0,2),16), parseInt(h.substring(2,4),16), parseInt(h.substring(4,6),16)];
+  }
+  function rgbToHex(r,g,b) {
+    const toHex = (n) => ('0' + Math.round(n).toString(16)).slice(-2);
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+  }
+  function interpHex(a, b, t) {
+    const ra = hexToRgb(a), rb = hexToRgb(b);
+    const r = ra[0] + (rb[0]-ra[0]) * t;
+    const g = ra[1] + (rb[1]-ra[1]) * t;
+    const bl = ra[2] + (rb[2]-ra[2]) * t;
+    return rgbToHex(r,g,bl);
+  }
+  // More perceptually-distinct gold steps for streak badges.
+  // Use a discrete mapping keyed to the common badge days so nearby badges are easier to distinguish.
+  function hslToRgb(h, s, l) {
+    // h: 0-360, s/l: 0-1
+    const c = (1 - Math.abs(2*l - 1)) * s;
+    const hh = h / 60;
+    const x = c * (1 - Math.abs((hh % 2) - 1));
+    let r = 0, g = 0, b = 0;
+    if (hh >= 0 && hh < 1) { r = c; g = x; b = 0; }
+    else if (hh >= 1 && hh < 2) { r = x; g = c; b = 0; }
+    else if (hh >= 2 && hh < 3) { r = 0; g = c; b = x; }
+    else if (hh >= 3 && hh < 4) { r = 0; g = x; b = c; }
+    else if (hh >= 4 && hh < 5) { r = x; g = 0; b = c; }
+    else { r = c; g = 0; b = x; }
+    const m = l - c/2;
+    return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)];
+  }
+
+  function streakGoldColorsFor(days) {
+    // Discrete badge days we support (keeps mapping stable):
+    const steps = [3,5,8,10,15,20,25,30,35,50,75,100];
+    // Find nearest step index
+    let idx = 0;
+    for (let i = 0; i < steps.length; i++) {
+      if (days <= steps[i]) { idx = i; break; }
+      if (i === steps.length - 1) idx = i;
+    }
+    // normalize index to t in [0,1]
+    const t = idx / Math.max(1, steps.length - 1);
+    // We'll vary saturation and lightness to make each step perceptually distinct
+    // base hue around 44-52 (gold-ish)
+    const hue = 48;
+    const satMin = 0.28, satMax = 0.95; // saturation
+    const lightMin = 0.92, lightMax = 0.45; // lightness (pale -> rich)
+    const s = satMin + (satMax - satMin) * t;
+    const l = lightMin + (lightMax - lightMin) * t;
+    const baseRgb = hslToRgb(hue, s, l);
+    const darkRgb = hslToRgb(hue, Math.max(0.2, s - 0.15), Math.max(0.35, l - 0.28));
+    const base = rgbToHex(baseRgb[0], baseRgb[1], baseRgb[2]);
+    const dark = rgbToHex(darkRgb[0], darkRgb[1], darkRgb[2]);
+    return { base, dark };
+  }
+
   function showNoLogin(container) {
     container.innerHTML = '';
     const p = document.createElement('p');
@@ -500,7 +583,7 @@
     container.innerHTML = '';
     const p = document.createElement('p');
     p.className = 'no-badge';
-    p.textContent = 'No badges collected yet 🏅. Aim for the monthly leaderboard to unlock one!';
+    p.textContent = 'No badges collected yet. 🏅 Aim for the monthly leaderboard to unlock one!';
     container.appendChild(p);
   }
 
