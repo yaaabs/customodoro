@@ -9,18 +9,12 @@
   const hardcodedAchievements = {
 
     'yabs@gmail.com': [
-      { title: 'Streak Legend', icon: 'images/badges/sept_streak.png', description: 'Honored for holding the longest streak in September.', date: '2025-10-01' },
+      { title: 'Streak Legend', icon: 'images/badges/sept_streak.png', description: 'Honored for holding the longest streak in September.', date: '2025-10-02' },
+    ], 
+
+    '17@gmail.com': [
+      { title: 'Streak Legend', icon: 'images/badges/sept_streak.png', description: 'Honored for holding the longest streak in September.', date: '2025-10-02' },
       { title: 'Overall Champion', icon: 'images/badges/sept_champion.png', description: 'Awarded for being the top overall performer with the highest average across all categories in September.', date: '2025-10-01' },
-      { title: 'Streak', icon: 'images/badges/Streak/3-Day Streak.png', description: 'Unlocked a 3-day streak — keep the momentum going!', date: '2025-10-01' },
-      { title: 'Streak', icon: 'images/badges/Streak/5-Day Streak.png', description: 'Unlocked a 5-day streak — great consistency!', date: '2025-10-01' },
-      { title: 'Streak', icon: 'images/badges/Streak/8-Day Streak.png', description: 'Unlocked an 8-day streak — impressive dedication!', date: '2025-10-01' },
-      { title: 'Streak', icon: 'images/badges/Streak/10-Day Streak.png', description: 'Unlocked a 10-day streak — double digits achievement!', date: '2025-10-01' },
-      { title: 'Streak', icon: 'images/badges/Streak/15-Day Streak.png', description: 'Unlocked a 15-day streak — outstanding persistence!', date: '2025-10-01' },
-      { title: 'Streak', icon: 'images/badges/Streak/20-Day Streak.png', description: 'Unlocked a 20-day streak — consistency is paying off!', date: '2025-10-01' },
-      { title: 'Streak', icon: 'images/badges/Streak/25-Day Streak.png', description: 'Unlocked a 25-day streak — phenomenal focus!', date: '2025-10-01' },
-      { title: 'Streak', icon: 'images/badges/Streak/30-Day Streak.png', description: 'Unlocked a 30-day streak — a month of steady progress!', date: '2025-10-01' },
-      { title: 'Streak', icon: 'images/badges/Streak/35-Day Streak.png', description: 'Unlocked a 35-day streak — incredible dedication!', date: '2025-10-01' },
-      { title: 'Streak', icon: 'images/badges/Streak/50-Day Streak.png', description: 'Unlocked a 50-day streak — legendary commitment!', date: '2025-10-01' },      
     ], 
     
     'test6@example.com': [
