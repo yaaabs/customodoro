@@ -641,7 +641,7 @@
     let runLen = 1;
 
     for (let i = 0; i < dates.length; i++) {
-      if (i === 0) { runLen = 1; }
+      if i === 0) { runLen = 1; }
       else {
         const prev = dates[i-1];
         const cur = dates[i];
@@ -808,8 +808,8 @@
       }
     });
 
-    // Add Focus Points badge (only the highest achieved, with unlock date)
-    if (highestFP > 0) {
+    // Add Focus Points badge (only the highest truly achieved, with unlock date)
+    if (highestFP > 0 && totalFP >= highestFP) {
       finalBadges.push({
         title: 'Focus Points',
         icon: `images/badges/Focus_Points/${highestFP} FP.png`,
