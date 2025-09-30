@@ -715,10 +715,59 @@
     // Note: don't early-return when there are no hardcoded badges for this user.
     // We will still compute streak badges from frontend productivity stats and render them.
 
+
     // Frontend stats (localStorage or embedded streaks) — compute streak info
     const stats = getFrontendProductivityStats();
-    const supportedSteps = [3,5,8,10,15,20,25,30,35,50,75,100];
-    const streakInfo = computeStreakInfoFromStats(stats, supportedSteps);
+    const supportedStreakSteps = [3,5,8,10,15,20,25,30,35,50,75,100];
+    const streakInfo = computeStreakInfoFromStats(stats, supportedStreakSteps);
+
+    // --- Focus Points Badge Logic (fully dynamic, accurate, with unlock date) ---
+    // Supported FP badge levels (add more as needed)
+    const supportedFPLevels = [100, 250, 500, 750, 1000, 1500, 2000, 3000, 5000, 10000];
+    // Compute cumulative FP by day and unlock dates for each badge
+    let fpUnlocks = {};
+    let totalFP = 0;
+    if (stats && typeof stats === 'object') {
+      // Sort days chronologically
+      const days = Object.keys(stats).map(k => toIsoDateKey(k)).filter(Boolean).sort();
+      let runningFP = 0;
+      let unlocks = {};
+      supportedFPLevels.forEach(lvl => { unlocks[lvl] = null; });
+      for (let i = 0; i < days.length; i++) {
+        const day = days[i];
+        const v = stats[day] || {};
+        let fp = 0;
+        if (typeof v.total_focus_points === 'number') fp = v.total_focus_points;
+        else if (typeof v.total_minutes === 'number') fp = v.total_minutes; // fallback
+        runningFP += fp;
+        supportedFPLevels.forEach(lvl => {
+          if (!unlocks[lvl] && runningFP >= lvl) {
+            unlocks[lvl] = day;
+          }
+        });
+      }
+      totalFP = runningFP;
+      fpUnlocks = unlocks;
+    }
+    // Fallback: try window.userStatsManager if available
+    if (!totalFP && window.userStatsManager && typeof window.userStatsManager.getTotalFocusPoints === 'function') {
+      try { totalFP = Number(window.userStatsManager.getTotalFocusPoints()) || 0; } catch (e) {}
+    }
+    // Fallback: try window.currentUserStats if available
+    if (!totalFP && window.currentUserStats && typeof window.currentUserStats.totalFocusPoints === 'number') {
+      totalFP = window.currentUserStats.totalFocusPoints;
+    }
+
+    // Find the highest FP badge achieved and its unlock date (fully dynamic)
+    let highestFP = 0;
+    let highestFPDate = null;
+    for (let i = 0; i < supportedFPLevels.length; i++) {
+      const lvl = supportedFPLevels[i];
+      if (totalFP >= lvl && fpUnlocks[lvl]) {
+        highestFP = lvl;
+        highestFPDate = fpUnlocks[lvl];
+      }
+    }
 
     // Build final badge list: always include non-Streak badges; include Streak badges only if day <= maxStreak
     const finalBadges = [];
@@ -745,22 +794,33 @@
     });
 
     // Add any missing streak levels that user earned (but not hardcoded) up to maxStreak
-    supportedSteps.forEach(step => {
+    supportedStreakSteps.forEach(step => {
       if (step <= streakInfo.maxStreak && !existingStreakDays.has(step)) {
         const d = (streakInfo.unlocks && streakInfo.unlocks[step]) ? streakInfo.unlocks[step] : null;
         finalBadges.push({ title: 'Streak', icon: `images/badges/Streak/${step}-Day Streak.png`, description: `Unlocked a ${step}-day streak!`, date: d });
       }
     });
 
-    // Render badges (monthly first, then streaks sorted ascending)
-    const monthly = finalBadges.filter(b => b.title !== 'Streak');
+    // Add Focus Points badge (only the highest achieved, with unlock date)
+    if (highestFP > 0) {
+      finalBadges.push({
+        title: 'Focus Points',
+        icon: `images/badges/Focus_Points/${highestFP} FP.png`,
+        description: `Earned ${highestFP} Focus Points!`,
+        date: highestFPDate
+      });
+    }
+
+    // Render badges (monthly first, then streaks sorted ascending, then FP badge last)
+    const monthly = finalBadges.filter(b => b.title !== 'Streak' && b.title !== 'Focus Points');
     const streaks = finalBadges.filter(b => b.title === 'Streak').sort((a,b) => {
       const ma = /([0-9]{1,3})/.exec(a.icon||'');
       const mb = /([0-9]{1,3})/.exec(b.icon||'');
       return (ma && ma[1] ? Number(ma[1]) : 0) - (mb && mb[1] ? Number(mb[1]) : 0);
     });
+    const fpBadge = finalBadges.filter(b => b.title === 'Focus Points');
 
-    const badges = monthly.concat(streaks);
+    const badges = monthly.concat(streaks).concat(fpBadge);
 
     // If after computation there are no badges, show fallback message
     if (!badges || badges.length === 0) {
