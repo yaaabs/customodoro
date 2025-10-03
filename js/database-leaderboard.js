@@ -45,43 +45,48 @@ class DatabaseLeaderboard {
     }
 
     try {
-      console.log(`📊 Fetching optimized leaderboard: ${category}/${period} (top ${maxUsers})`);
+      console.log(`📊 Fetching leaderboard: ${category}/${period} (top ${maxUsers})`);
       
-      // First try to use server-side optimized function (if available)
-      try {
-        const { data: optimizedData, error: optimizedError } = await this.supabase.rpc(
-          'get_leaderboard_optimized',
-          {
-            p_category: category,
-            p_period: period,
-            p_limit: maxUsers,
-            p_user_id: this.currentUser?.userId || null
-          }
-        );
+      // Use client-side processing (server-side RPC optimization disabled)
+      // Note: You can create 'get_leaderboard_optimized' RPC function in Supabase for better performance
+      const useOptimizedRPC = false; // Set to true if you create the RPC function
+      
+      if (useOptimizedRPC) {
+        try {
+          const { data: optimizedData, error: optimizedError } = await this.supabase.rpc(
+            'get_leaderboard_optimized',
+            {
+              p_category: category,
+              p_period: period,
+              p_limit: maxUsers,
+              p_user_id: this.currentUser?.userId || null
+            }
+          );
 
-        if (!optimizedError && optimizedData) {
-          console.log(`✅ Successfully fetched optimized leaderboard: ${optimizedData.length} users`);
-          
-          // Format the data to match our expected structure
-          const formattedData = {
-            category,
-            period,
-            rankings: optimizedData,
-            highlightedUser: optimizedData.find(u => u.is_current_user && u.rank_position > maxUsers) || null,
-            totalCount: optimizedData.length,
-            generatedAt: new Date().toISOString()
-          };
-          
-          // Cache the results
-          this.cache[cacheKey] = {
-            data: formattedData,
-            timestamp: Date.now()
-          };
-          
-          return formattedData;
+          if (!optimizedError && optimizedData) {
+            console.log(`✅ Successfully fetched optimized leaderboard: ${optimizedData.length} users`);
+            
+            // Format the data to match our expected structure
+            const formattedData = {
+              category,
+              period,
+              rankings: optimizedData,
+              highlightedUser: optimizedData.find(u => u.is_current_user && u.rank_position > maxUsers) || null,
+              totalCount: optimizedData.length,
+              generatedAt: new Date().toISOString()
+            };
+            
+            // Cache the results
+            this.cache[cacheKey] = {
+              data: formattedData,
+              timestamp: Date.now()
+            };
+            
+            return formattedData;
+          }
+        } catch (rpcError) {
+          console.log(`📋 RPC not available, falling back to client-side processing`);
         }
-      } catch (rpcError) {
-        console.log(`📋 RPC not available, falling back to client-side processing`);
       }
 
       // Fallback: Process leaderboard data on client side
