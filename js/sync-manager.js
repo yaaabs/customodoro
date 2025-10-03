@@ -280,7 +280,7 @@ class SyncManager {
     const user = window.authService.getCurrentUser();
     if (!user) throw new Error('User not logged in');
     
-    console.log('Pulling data from server for user:', user.userId);
+    console.log('Pulling data from server for user: [REDACTED]');
     
     const response = await fetch(`${this.baseURL}/api/user/${user.userId}/data`);
     
@@ -456,10 +456,9 @@ const cleanData = {
   streaks: streaksData
 };
     
-    console.log('Pushing data to server for user:', user.userId);
+    console.log('Pushing data to server for user: [REDACTED]');
     console.log('✅ Sending only backend-accepted fields: sessions, tasks, settings, streaks');
     console.log('✅ Productivity stats embedded in streaks.productivityStatsByDay');
-    console.log('Clean data structure:', JSON.stringify(cleanData, null, 2));
     
     const response = await fetch(`${this.baseURL}/api/user/${user.userId}/sync`, {
       method: 'POST',
@@ -472,7 +471,7 @@ const cleanData = {
     if (!response.ok) {
       const errorText = await response.text();
       console.error('Sync error response:', errorText);
-      console.error('Request data that failed:', JSON.stringify(cleanData, null, 2));
+      console.error('Request failed - data redacted for security');
       
       // Enhanced error analysis
       if (response.status === 400) {
@@ -1061,9 +1060,9 @@ window.debugSyncContamination = function() {
   // Check auth state
   const currentUser = window.authService?.getCurrentUser();
   console.log('🔍 SYNC CONTAMINATION DEBUG:');
-  console.log('Current User:', currentUser?.email || 'Not logged in');
-  console.log('User ID:', currentUser?.userId || 'N/A');
-  console.log('Login Time:', currentUser?.loginTime || 'N/A');
+  console.log('Current User:', currentUser ? '[LOGGED IN]' : 'Not logged in');
+  console.log('User ID:', currentUser?.userId ? '[REDACTED]' : 'N/A');
+  console.log('Login Time:', currentUser?.loginTime ? '[REDACTED]' : 'N/A');
   
   // Check all potential contamination keys
   const allUserDataKeys = [

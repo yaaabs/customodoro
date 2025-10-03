@@ -59,7 +59,7 @@ class HeaderProfile {
       try {
         if (window.authService) {
           const currentUser = window.authService.getCurrentUser();
-          console.log('HeaderProfile: Current user:', currentUser);
+          console.log('HeaderProfile: User authentication status:', currentUser ? 'Logged in' : 'Not logged in');
           if (currentUser) {
             this.updateDisplay({
               isLoggedIn: true,

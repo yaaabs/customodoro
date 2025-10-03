@@ -42,7 +42,7 @@ class AuthService {
       const storedAuth = localStorage.getItem('customodoro-auth');
       if (storedAuth) {
         this.currentUser = JSON.parse(storedAuth);
-        console.log('AuthService: Loaded stored auth:', this.currentUser);
+        console.log('AuthService: Loaded stored auth - User authenticated');
         
         // Validate stored auth data
         if (!this.currentUser.userId || !this.currentUser.email) {
@@ -209,7 +209,7 @@ class AuthService {
         requireVerification: true // Request email verification
       };
       
-      console.log('Registering user with email verification:', { email: requestBody.email, username: requestBody.username });
+      console.log('Registering user with email verification');
       console.log('Sending request to:', `${this.baseURL}/api/register`);
       
       const response = await fetch(`${this.baseURL}/api/register`, {
@@ -229,7 +229,7 @@ class AuthService {
       }
 
       const responseData = await response.json();
-      console.log('Registration successful:', responseData);
+      console.log('Registration successful - User created');
       
       // If verification is required, return verification info
       if (responseData.requiresVerification) {
@@ -277,7 +277,7 @@ class AuthService {
       }
 
       const responseData = await response.json();
-      console.log('Email verification successful:', responseData);
+      console.log('Email verification successful');
       
       // Save authentication data after successful verification
       this.saveAuth({
@@ -301,7 +301,7 @@ class AuthService {
         email: email.trim().toLowerCase()
       };
       
-      console.log('Logging in user:', requestBody.email);
+      console.log('Logging in user...');
       console.log('Sending request to:', `${this.baseURL}/api/login`);
       
       const response = await fetch(`${this.baseURL}/api/login`, {
@@ -321,7 +321,7 @@ class AuthService {
       }
 
       const responseData = await response.json();
-      console.log('Login successful:', responseData);
+      console.log('Login successful');
       
       // Save authentication data - Fix to use proper server response structure
       this.saveAuth({
