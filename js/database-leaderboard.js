@@ -5,7 +5,7 @@ class DatabaseLeaderboard {
   constructor() {
     this.supabase = null;
     this.currentUser = null;
-    this.cache = {}; // Cache for leaderboard data
+    this.cache = {}; 
     this.init();
   }
 
@@ -501,12 +501,11 @@ class DatabaseLeaderboardModal {
       }
 
       // 🏆 MAJOR AWARD - Champion (Best Average Ranking)
-      // Calculate average ranking across all categories for users who appear in all leaderboards
+      // Calculate average ranking across exactly 3 core categories: Focus Points, Sessions, Current Streak
       const allUsers = new Set([
         ...focusData.rankings.map(u => u.username),
         ...sessionsData.rankings.map(u => u.username),
-        ...currentStreakData.rankings.map(u => u.username),
-        ...longestStreakData.rankings.map(u => u.username)
+        ...currentStreakData.rankings.map(u => u.username)
       ]);
 
       let bestAverageRanking = Infinity;
@@ -516,13 +515,14 @@ class DatabaseLeaderboardModal {
         const focusRank = focusData.rankings.find(u => u.username === username)?.rank_position || 999;
         const sessionsRank = sessionsData.rankings.find(u => u.username === username)?.rank_position || 999;
         const currentStreakRank = currentStreakData.rankings.find(u => u.username === username)?.rank_position || 999;
-        const longestStreakRank = longestStreakData.rankings.find(u => u.username === username)?.rank_position || 999;
 
-        // Only consider users who have data in at least 3 categories
-        const validRanks = [focusRank, sessionsRank, currentStreakRank, longestStreakRank].filter(rank => rank < 999);
+        // Only consider users who have data in all 3 core categories (Focus, Sessions, Current Streak)
+        const coreRanks = [focusRank, sessionsRank, currentStreakRank];
+        const validCoreRanks = coreRanks.filter(rank => rank < 999);
 
-        if (validRanks.length >= 3) {
-          const averageRank = validRanks.reduce((sum, rank) => sum + rank, 0) / validRanks.length;
+        if (validCoreRanks.length === 3) {
+          // Calculate average using exactly 3 categories
+          const averageRank = validCoreRanks.reduce((sum, rank) => sum + rank, 0) / 3;
 
           if (averageRank < bestAverageRanking) {
             bestAverageRanking = averageRank;
