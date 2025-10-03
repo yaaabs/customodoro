@@ -28,8 +28,11 @@
 <title>Customodoro - Boost Productivity 70% with Smart Pomodoro Timer | Free Focus App</title>
 
 <!-- Enhanced Social Media Preview -->
-<meta property="og:title" content="Boost Your Productivity by 70% | Customodoro Timer">
+<meta property="og:title" content="The Ultimate Customizable Pomodoro Timer | Customodoro Timer">
 <meta property="og:description" content="Transform your work and study habits with Customodoro's scientifically-proven Pomodoro timer. Customize intervals, track progress, and achieve more with less mental fatigue.">
+<meta property="og:image" content="https://customodoro.vercel.app/images/customodoro_card.png">
+<meta property="og:url" content="https://customodoro.vercel.app/">
+<meta property="og:type" content="website"> 
 
 <!-- Article Schema Markup -->
 <script type="application/ld+json">
@@ -124,16 +127,12 @@
 <!-- Essential CSS (load immediately) -->
 <!-- UPDATE! FORCE CACHE BUST v7.2.12 -->
 <link rel="stylesheet" href="css/style.css?v=3.9.2">
-<link rel="stylesheet" href="css/article-styles.css?v=1.0.0">
-<link rel="stylesheet" href="css/mini-music-player.css?v=2.3.6">
-<link rel="stylesheet" href="css/focus-mode.css?v=2.3.7">
-<link rel="stylesheet" href="css/lockedin-mode.css?v=2.3.6">
-<link rel="stylesheet" href="css/bgm-player.css?v=2.3.6">
-<link rel="stylesheet" href="css/timer-sound.css?v=2.3.6">
-<link rel="stylesheet" href="css/about-modal.css?v=2.3.6">
-<link rel="stylesheet" href="css/radial-menu.css?v=2.6.4">
-<link rel="stylesheet" href="css/settings.css?v=3.1.4">
-<link rel="stylesheet" href="css/leaderboard-modal.css?v=1.2.7">
+
+<link rel="stylesheet" href="css/media-players.css?v=1.0.0">
+
+<link rel="stylesheet" href="css/features.css?v=1.0.0">
+
+<link rel="stylesheet" href="css/utilities.css?v=1.0.0">
 
 <!-- Supabase Client -->
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
@@ -245,7 +244,6 @@
   // Function to load deferred CSS files
   function loadDeferredCSS() {
     const deferredStyles = [
-      'settings',
       'theme-uploader',
       'burnup-tracker'
     ];
@@ -1525,46 +1523,15 @@
     </div>
   </div>
 </div>
-<!-- UPDATE! -->
-<!-- Update Modal -->
-<div class="update-modal-overlay" id="update-modal-overlay">
-  <div class="update-modal">
-    <div class="update-modal-header">
-      <span class="update-modal-title">What's New?</span>
-      <button class="update-modal-close" id="update-modal-close" aria-label="Close">&times;</button>
-    </div>
-    <div class="update-modal-content">
-      <div class="update-changelog-title">v3.1.1 <span class="update-date">(August 7, 2025)</span></div>
 
-      <div class="update-info-box">
-<ul>
-  <li><b>🚀 Major:</b> Sync Account – transfer stats and streaks across devices!</li>
-  <li><b>🎧 Added:</b> Gamma Waves playlist for deeper focus</li>
-  <li><b>🐞 Found a bug?</b> If you encounter any issues after the Sync Account update, please let us know. Thank you!</li>
-</ul>
-
-      </div>
-      <div class="update-info-box">
-        <b>We're still improving Customodoro!</b>
-        <ul>
-         
-          <li>Your feedback helps us make the app better for everyone.</li>
-        </ul>
-        <div style="margin-top: 0.7em;">
-          <b>💬 Want to help?</b> Tap the <a href="feedback.html" class="feedback-link"><b>Feedback</b></a> link in the footer to share your thoughts or report bugs!
-        </div>
-      </div>
-    </div>
-    <div class="update-modal-footer">
-      <button class="update-modal-btn" id="update-modal-gotit-btn">Got it</button>
-    </div>
-  </div>
-</div>
 <!-- UPDATE!) -->
 
-<script src="js/update-modal.js?v=2.3.6"></script>
-<script src="js/task-retention.js?v=1.0.0"></script>
 <script src="js/script.js?v=2.10.0"></script>
+
+
+<script src="js/task-retention.js?v=1.0.0"></script>
+
+
 <script src="js/settings.js?v=2.6.5"></script>
 <script src="js/auth-service.js?v=1.0.0"></script>
 <script src="js/sync-manager.js?v=1.2.0"></script>
@@ -1572,13 +1539,17 @@
 <script src="js/header-profile.js?v=1.0.0"></script>
 <script src="js/fullscreen.js?v=2.3.5"></script>
 <script src="js/lockedin-mode.js?v=2.3.5"></script>
-<script src="js/theme-manager.js?v=2.6.2"></script>
+
 <script src="js/locked-in-info-modal.js?v=2.3.5"></script>
 <script src="js/focus-mode.js?v=2.3.5"></script>
 <script src="js/radial-menu.js?v=2.3.6"></script>
+
 <script src="js/bgm-player.js?v=2.3.6"></script>
 <script src="js/mini-music-player.js?v=2.3.6"></script>
+
 <script src="js/about-modal.js?v=2.3.5"></script>
+<script src="js/theme-manager.js?v=2.6.2"></script>
+
 <script src="js/leaderboard-integration.js?v=1.0.1"></script>
 <script src="js/database-leaderboard.js?v=2.2.0"></script>
 <script src="js/user-stats.js?v=1.0.0"></script>

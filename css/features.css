@@ -1,3 +1,11 @@
+/* ═══════════════════════════════════════════════════════════════════════════════
+   FEATURES - Settings, Radial Menu, Focus Mode, LockedIn Mode, and Timer Sound
+   ═══════════════════════════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Settings Codes - 1
+   ───────────────────────────────────────────────────────────────────────────── */
+
 /* Settings Button */
 .settings-btn {
   position: fixed;
@@ -2915,3 +2923,797 @@
       gap: 12px;
     }
   }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Radial Menu Codes - 2
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Radial Menu Styles */
+.radial-menu-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+/* Main toggle button */
+.radial-menu-toggle {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  /* Glassmorphism style */
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  color: #8b5fbf;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.radial-menu-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(139, 95, 191, 0.18);
+  background: rgba(255,255,255,0.85);
+}
+
+.radial-menu-toggle svg {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.3s ease;
+  color: #000; /* Set plus sign color to black */
+}
+
+.radial-menu-toggle.active svg {
+  transform: rotate(45deg);
+}
+
+/* Menu items container */
+.radial-menu {
+  position: absolute;
+  bottom: 28px;
+  right: 28px;
+  width: 200px;
+  height: 200px;
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.radial-menu.active {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Individual menu items */
+.radial-menu-item {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: white; /* Keep as solid white */
+  border: 1px solid #e0e0e0; /* Adding a consistent border */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Lighter, more even shadow */
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  opacity: 0;
+  transform: scale(0.5);
+  /* Default center positioning, will be overridden by JS */
+  bottom: 76px;
+  right: 76px;
+}
+
+.radial-menu.active .radial-menu-item {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.radial-menu-item:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  background-color: #f5f5f5;
+}
+
+.radial-menu-item svg {
+  width: 20px;
+  height: 20px;
+  color: #333;
+}
+
+/* Tooltip styles */
+.radial-tooltip {
+  position: absolute;
+  left: 50%;
+  top: -54px; /* move tooltip higher above the button */
+  transform: translateX(-50%);
+  background: rgba(30, 30, 30, 0.97);
+  color: #fff;
+  padding: 10px 18px; /* more padding for rectangle shape */
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: normal; /* allow wrapping for long text */
+  min-width: 120px;
+  max-width: 340px; /* allow longer rectangle */
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.18s, visibility 0.18s;
+  pointer-events: none;
+  text-align: center;
+  z-index: 10;
+  word-break: break-word;
+}
+
+.radial-tooltip::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 100%; /* always below the tooltip box */
+  transform: translateX(-50%);
+  border-width: 7px 7px 0 7px;
+  border-style: solid;
+  border-color: rgba(30,30,30,0.97) transparent transparent transparent;
+  display: block;
+}
+
+.radial-menu-item:hover .radial-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Special styling for Settings button - Simple color enhancement */
+.radial-settings-special {
+  background: #8B5FBF !important;
+  border: 1px solid #7A4FA3 !important;
+  box-shadow: 0 2px 8px rgba(139, 95, 191, 0.25) !important;
+}
+
+.radial-settings-special svg {
+  color: white !important;
+}
+
+.radial-settings-special:hover {
+  background: #9966CC !important;
+  box-shadow: 0 4px 12px rgba(139, 95, 191, 0.35) !important;
+}
+
+/* For mobile devices */
+@media (max-width: 768px) {
+  .radial-menu-toggle {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .radial-menu-toggle svg {
+    width: 26px;
+    height: 26px;
+  }
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+  .radial-menu-container {
+    bottom: 15px;
+    right: 15px;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Focus Mode Codes - 3
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Focus Mode Styles */
+body.focus-mode-active .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  padding: 0;
+  transition: all 0.5s ease;
+}
+
+/* Hide non-essential elements and specifically the tab buttons */
+body.focus-mode-active header .app-title,
+body.focus-mode-active .info-section,
+body.focus-mode-active .tasks-section,
+body.focus-mode-active .footer,
+body.focus-mode-active .switch-mode,
+body.focus-mode-active .mode-tabs,
+body.focus-mode-active .pomodoro-preview,
+body.focus-mode-active .user-profile {
+  display: none !important;
+}
+
+/* Keep essential elements but style them for focus mode */
+body.focus-mode-active .timer-container {
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 30px;
+  max-width: 100%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+body.focus-mode-active .timer {
+  font-size: 120px;
+  margin-bottom: 20px;
+  text-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+body.focus-mode-active .progress-container {
+  width: 80%;
+  max-width: 500px;
+  margin: 20px auto;
+}
+
+/* Prevent scrolling in focus mode */
+body.focus-mode-active {
+  overflow: hidden;
+}
+
+html.focus-mode-active {
+  overflow: hidden;
+}
+
+/* Style for the focus mode button */
+.focus-mode-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 130px; /* Position it to the left of fullscreen button */
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  transition: all 0.3s ease;
+}
+
+.focus-mode-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.focus-mode-btn svg {
+  width: 24px;
+  height: 24px;
+  color: #333;
+}
+
+/* Add active state visual */
+.focus-mode-btn.active {
+  background-color: #8b5fbf; /* Match the app's purple theme */
+}
+
+.focus-mode-btn.active svg {
+  color: #fff;
+}
+
+/* Exit button that appears in focus mode - now in upper right corner */
+.focus-mode-exit {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.5s ease;
+  backdrop-filter: blur(5px);
+  z-index: 101;
+  font-size: 14px;
+}
+
+body.focus-mode-active .focus-mode-exit {
+  opacity: 1;
+  visibility: visible;
+}
+
+.focus-mode-exit:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Focus mode status indicator */
+.focus-mode-status {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(139, 95, 191, 0.2);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.5s ease;
+  z-index: 101;
+  backdrop-filter: blur(5px);
+}
+
+body.focus-mode-active .focus-mode-status {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  body.focus-mode-active .timer {
+    font-size: 90px;
+  }
+  
+  .focus-mode-btn {
+    right: 130px;
+  }
+}
+
+@media (max-width: 480px) {
+  body.focus-mode-active .timer {
+    font-size: 70px;
+  }
+  
+  .focus-mode-btn {
+    bottom: 140px;
+    right: 20px;
+  }
+  
+  body.focus-mode-active .focus-mode-exit {
+    top: 10px;
+    right: 10px;
+  }
+}
+
+
+/* Hide the Duolingo STREAK pill in focus mode */
+body.focus-mode-active #streak-display {
+  display: none !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Lockedin Mode Codes - 4
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Locked In Mode - Minimalist version */
+.lockedin-mode-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000000; /* Solid black instead of transparent black */
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+}
+
+.lockedin-mode-overlay.active {
+  opacity: 1;
+  visibility: visible;
+  background-color: #000000; /* Pure black */
+  backdrop-filter: none; /* Remove any backdrop filters */
+}
+
+.lockedin-mode-timer {
+  font-size: 120px;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 30px;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+.lockedin-mode-buttons {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.lockedin-mode-progress {
+  width: 80%;
+  max-width: 500px;
+  height: 8px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.lockedin-mode-progress-inner {
+  height: 100%;
+  background-color: #ffffff;
+  width: 0%;
+  transition: width 1s linear;
+}
+
+.lockedin-mode-session {
+  margin-top: 20px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 18px;
+}
+
+.lockedin-mode-exit {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+.lockedin-mode-exit:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+/* Additional styles to ensure complete darkness */
+body.lockedin-mode-active {
+  overflow: hidden; /* Prevent scrolling when locked in mode is active */
+}
+
+/* Make buttons pop more on the black background */
+.lockedin-mode-overlay .primary-btn {
+  background-color: #ffffff;
+  color: #000000;
+  border: none;
+  box-shadow: 0 2px 10px rgba(255, 255, 255, 0.2);
+}
+
+.lockedin-mode-overlay .secondary-btn {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.lockedin-mode-overlay .secondary-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .lockedin-mode-timer {
+    font-size: 90px;
+  }
+}
+
+@media (max-width: 480px) {
+  .lockedin-mode-timer {
+    font-size: 70px;
+  }
+  
+  .lockedin-mode-buttons {
+    flex-direction: column;
+  }
+}
+
+/* Info icon styles - Extracted from settings.css and enhanced for immediate loading */
+.info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 6px;
+    cursor: pointer;
+    color: var(--text-secondary, rgba(255, 255, 255, 0.7));
+    vertical-align: middle;
+    transition: transform 0.2s ease, color 0.2s ease;
+    position: relative;
+    top: -1px; /* Align with text baseline */
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(139, 95, 191, 0.2);
+    border: 1px solid rgba(139, 95, 191, 0.3);
+}
+
+.info-icon:hover {
+    color: var(--primary, #8b5fbf);
+    transform: scale(1.1);
+    background: rgba(139, 95, 191, 0.3);
+    border-color: rgba(139, 95, 191, 0.5);
+}
+
+.settings-label {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.theme-light .info-icon {
+    background: rgba(139, 95, 191, 0.1);
+    color: #8b5fbf;
+}
+
+.theme-light .info-icon:hover {
+    background: rgba(139, 95, 191, 0.2);
+}
+
+/* Focus Info Modal Styles - Modern Design */
+.lockedin-info-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s linear 0.25s, opacity 0.3s ease;
+    backdrop-filter: blur(3px);
+}
+
+.lockedin-info-modal-overlay.active {
+    visibility: visible;
+    opacity: 1;
+    transition-delay: 0s;
+}
+
+.lockedin-info-modal {
+    background: linear-gradient(145deg, rgb(45, 45, 55), rgb(25, 25, 35));
+    border-radius: 16px;
+    width: 90%;
+    max-width: 480px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25), 
+                0 1px 8px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    overflow: hidden;
+    transform: translateY(20px) scale(0.95);
+    transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.lockedin-info-modal-overlay.active .lockedin-info-modal {
+    transform: translateY(0) scale(1);
+}
+
+.lockedin-info-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    position: relative;
+}
+
+.lockedin-info-modal-header:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 4%;
+    right: 4%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2) 20%, rgba(255, 255, 255, 0.2) 80%, transparent);
+}
+
+.lockedin-info-modal-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+    letter-spacing: -0.01em;
+}
+
+.lockedin-info-modal-close {
+    background: none;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.7);
+    transition: all 0.2s ease;
+}
+
+.lockedin-info-modal-close:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+.lockedin-info-modal-content {
+    padding: 24px;
+    color: white;
+    line-height: 1.6;
+}
+
+.lockedin-info-modal-content p {
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.lockedin-info-modal-content strong {
+    font-weight: 600;
+    color: white;
+}
+
+.lockedin-info-modal-content ul {
+    margin-bottom: 16px;
+    padding-left: 24px;
+}
+
+.lockedin-info-modal-content li {
+    margin-bottom: 10px;
+    position: relative;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.lockedin-info-modal-content li::marker {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.lockedin-info-modal-footer {
+    padding: 16px 24px 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.lockedin-info-btn {
+    padding: 10px 20px;
+    background: linear-gradient(to bottom right, #4a7bff, #2e5cd8);
+    color: white;
+    border: none;
+    border-radius: 40px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.lockedin-info-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.lockedin-info-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Keep focus-info-modal-overlay for backward compatibility */
+.focus-info-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s linear 0.25s, opacity 0.3s ease;
+    backdrop-filter: blur(3px);
+}
+
+.focus-info-modal-overlay.active {
+    visibility: visible;
+    opacity: 1;
+    transition-delay: 0s;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   BGM Player - 5
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Timer Sound styles */
+
+.sound-test-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.sound-test-btn {
+  padding: 8px 15px;
+  border-radius: 5px;
+  border: none;
+  background-color: #7e57c2;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.sound-test-btn:hover {
+  background-color: #9575cd;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.sound-test-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* For light mode theme */
+.theme-light .sound-test-btn {
+  background-color: #7e57c2;
+  color: white;
+}
+
+.theme-light .sound-test-btn:hover {
+  background-color: #9575cd;
+}
+
+/* For dark mode theme */
+.theme-dark .sound-test-btn {
+  background-color: #7e57c2;
+  color: white;
+}
+
+.theme-dark .sound-test-btn:hover {
+  background-color: #9575cd;
+}
+
+/* For other themes */
+.theme-yourname .sound-test-btn,
+.theme-custom .sound-test-btn {
+  background-color: rgba(126, 87, 194, 0.8);
+  color: white;
+  backdrop-filter: blur(3px);
+}
+
+.theme-yourname .sound-test-btn:hover,
+.theme-custom .sound-test-btn:hover {
+  background-color: rgba(149, 117, 205, 0.8);
+}
+
+/* Timer sound section spacing */
+.timer-sound-divider {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  border-top: 1px solid #ddd;
+}
+
+.theme-dark .timer-sound-divider {
+  border-top: 1px solid #444;
+}
+
+/* Add this to ensure buttons appear in a consistent row */
+.settings-row .sound-test-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 5px;
+}
