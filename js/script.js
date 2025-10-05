@@ -54,6 +54,11 @@ let completedPomodoros = 0;
 let hasUnsavedTasks = false;
 let hasUnfinishedTasks = false;
 
+// New timestamp-based timer variables for accurate time tracking
+let timerStartTime = null;  // When timer started (timestamp)
+let timerEndTime = null;    // When timer should end (timestamp)
+let pausedTimeRemaining = null; // Time left when paused
+
 // Burn-Up Tracker variables
 let isBurnupTrackerEnabled = localStorage.getItem('burnupTrackerEnabled') !== 'false'; // Default to true
 let burnupStartTime = 0;
@@ -426,6 +431,14 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+// Add Page Visibility API for accurate timer tracking when tab becomes active
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && isRunning) {
+    // Tab became visible - recalculate immediately
+    updateTimerFromTimestamp();
+  }
+});
+
 // Session tracking
 let dailyStats = {
   completedPomodoros: 0,
@@ -661,11 +674,56 @@ function updateFavicon(status) {
   }
 }
 
+// New timestamp-based timer update function for accurate time tracking
+function updateTimerFromTimestamp() {
+  const now = Date.now();
+  
+  if (currentMode === 'pomodoro') {
+    // Countdown mode (classic pomodoro)
+    const remaining = (timerEndTime - now) / 1000;
+    currentSeconds = Math.max(Math.floor(remaining), 0);
+    
+    if (currentSeconds <= 0) {
+      handleTimerCompletion();
+      return;
+    }
+  } else {
+    // Break modes - also countdown
+    const remaining = (timerEndTime - now) / 1000;
+    currentSeconds = Math.max(Math.floor(remaining), 0);
+    
+    if (currentSeconds <= 0) {
+      handleTimerCompletion();
+      return;
+    }
+  }
+  
+  updateTimerDisplay();
+  
+  // Update locked-in mode if active
+  if (window.lockedInMode && window.lockedInMode.isActive()) {
+    updateLockedInMode();
+  }
+}
+
 // Toggle timer between start and pause
 function toggleTimer() {
   if (!isRunning) {
+    // Starting timer
     playSound('start'); // Play start/click sound
-    showToast(motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)]);    // Start timer
+    showToast(motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)]);
+    
+    const now = Date.now();
+    
+    if (pausedTimeRemaining !== null) {
+      // Resuming from pause
+      timerEndTime = now + (pausedTimeRemaining * 1000);
+    } else {
+      // Fresh start - all modes in classic pomodoro are countdown
+      timerEndTime = now + (currentSeconds * 1000);
+    }
+    
+    pausedTimeRemaining = null;
     isRunning = true;
     startButton.textContent = 'PAUSE';
     updateFavicon(currentMode);
@@ -682,25 +740,10 @@ function toggleTimer() {
       window.lockedInMode.enter(true); // true = with delay
     }
 
-    timerInterval = setInterval(() => {
-      if (currentSeconds > 0) {
-        currentSeconds--;
-        updateTimerDisplay();
-        
-        // Update locked in mode if active
-        if (window.lockedInMode && window.lockedInMode.isActive()) {
-          const minutes = Math.floor(currentSeconds / 60);
-          const seconds = currentSeconds % 60;
-          const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-          const progress = ((initialSeconds - currentSeconds) / initialSeconds) * 100;
-          window.lockedInMode.update(timeString, progress, startButton.textContent, sessionText.textContent);
-        }
-      } else {
-        // Timer completed - handle completion logic here
-        handleTimerCompletion();
-      }
-    }, 1000);
+    // Interval is now just for UI updates (100ms for smoother UI)
+    timerInterval = setInterval(updateTimerFromTimestamp, 100);
   } else {
+    // Pausing timer
     playSound('pause'); // Use function instead of direct play
     
     // Stop timer sound when pausing
@@ -709,8 +752,15 @@ function toggleTimer() {
     // Pause timer
     clearInterval(timerInterval);
     isRunning = false;
+    
+    // Calculate and store remaining time
+    const now = Date.now();
+    pausedTimeRemaining = Math.max((timerEndTime - now) / 1000, 0);
+    currentSeconds = Math.floor(pausedTimeRemaining);
+    
     startButton.textContent = 'START';
     updateFavicon('paused');
+    updateTimerDisplay();
     
     // Hide burn-up tracker when paused
     hideBurnupTracker();
@@ -722,9 +772,6 @@ function toggleTimer() {
       const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
       window.lockedInMode.update(timeString, null, 'START');
     }
-
-    // REMOVED: Auto-start next phase logic - this should only happen in handleTimerCompletion()
-    // This was causing the duplicate stats issue when user clicked pause at 00:00
   }
 }
 
@@ -809,6 +856,11 @@ function handleTimerCompletion() {
 // Reset the current timer - modified to be more robust
 function resetTimer() {
   clearInterval(timerInterval);
+  
+  // Clear timestamp variables
+  timerStartTime = null;
+  timerEndTime = null;
+  pausedTimeRemaining = null;
 
   // Reset to initial time based on current mode - use latest values
   if (currentMode === 'pomodoro') {

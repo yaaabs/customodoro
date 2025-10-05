@@ -352,6 +352,11 @@ let hasUnsavedTasks = false;
 let hasUnfinishedTasks = false;
 let tasks = []; // This will store our tasks
 
+// New timestamp-based timer variables for accurate time tracking
+let timerStartTime = null;  // When timer started (timestamp)
+let timerEndTime = null;    // When timer should end (timestamp)
+let pausedTimeRemaining = null; // Time left when paused
+
 // Burn-Up Tracker variables
 let isBurnupTrackerEnabled = localStorage.getItem('burnupTrackerEnabled') !== 'false'; // Default to true
 let burnupStartTime = 0;
@@ -571,6 +576,38 @@ window.setBurnupTrackerEnabled = setBurnupTrackerEnabled;
 window.resetBurnupTracker = resetBurnupTracker;
 window.updateBurnupTracker = updateBurnupTracker;
 
+// New timestamp-based timer update function for accurate time tracking
+function updateTimerFromTimestamp() {
+  const now = Date.now();
+  
+  if (currentMode === 'reverse') {
+    // Count-up mode
+    const elapsed = (now - timerStartTime) / 1000;
+    currentSeconds = Math.min(Math.floor(elapsed), MAX_TIME);
+    
+    if (currentSeconds >= MAX_TIME) {
+      completeSession();
+      return;
+    }
+  } else {
+    // Countdown mode (break)
+    const remaining = (timerEndTime - now) / 1000;
+    currentSeconds = Math.max(Math.floor(remaining), 0);
+    
+    if (currentSeconds <= 0) {
+      completeBreak();
+      return;
+    }
+  }
+  
+  updateDisplay();
+  
+  // Update locked-in mode if active
+  if (window.lockedInMode && window.lockedInMode.isActive()) {
+    updateLockedInMode();
+  }
+}
+
 // Toggle timer
 function toggleTimer() {
   if (!isRunning) {
@@ -589,7 +626,33 @@ function toggleTimer() {
     
     playSound('start');
     showToast(currentMode === 'break' ? "Enjoy your break! 😌" : "Time to focus! 💪");
-      isRunning = true;
+    
+    const now = Date.now();
+    
+    if (pausedTimeRemaining !== null) {
+      // Resuming from pause
+      if (currentMode === 'reverse') {
+        // For reverse: we stored elapsed time
+        timerStartTime = now - (pausedTimeRemaining * 1000);
+        timerEndTime = now + ((MAX_TIME - pausedTimeRemaining) * 1000);
+      } else {
+        // For break: we stored remaining time
+        timerEndTime = now + (pausedTimeRemaining * 1000);
+      }
+    } else {
+      // Fresh start
+      if (currentMode === 'reverse') {
+        // Count-up mode
+        timerStartTime = now;
+        timerEndTime = now + (MAX_TIME * 1000);
+      } else {
+        // Break mode - countdown
+        timerEndTime = now + (currentSeconds * 1000);
+      }
+    }
+    
+    pausedTimeRemaining = null;
+    isRunning = true;
     startButton.textContent = 'STOP';
     updateFavicon('running');
     
@@ -612,50 +675,30 @@ function toggleTimer() {
       }, 1000);
     }
     
-    timerInterval = setInterval(() => {
-      if (currentMode === 'break') {
-        if (currentSeconds > 0) {
-          currentSeconds--;
-          updateDisplay();
-          
-          // Update locked in mode if active
-          if (window.lockedInMode && window.lockedInMode.isActive()) {
-            const minutes = Math.floor(currentSeconds / 60);
-            const seconds = currentSeconds % 60;
-            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            const progress = ((initialSeconds - currentSeconds) / initialSeconds) * 100;
-            window.lockedInMode.update(timeString, progress, startButton.textContent);
-          }
-        } else {
-          completeBreak();
-        }
-      } else {
-        if (currentSeconds < MAX_TIME) {
-          currentSeconds++;
-          updateDisplay();
-          
-          // Update locked in mode if active
-          if (window.lockedInMode && window.lockedInMode.isActive()) {
-            const minutes = Math.floor(currentSeconds / 60);
-            const seconds = currentSeconds % 60;
-            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            const progress = (currentSeconds / MAX_TIME) * 100;
-            window.lockedInMode.update(timeString, progress, startButton.textContent);
-          }
-        } else {
-          completeSession();
-        }
-      }
-    }, 1000);
+    // Interval is now just for UI updates (100ms for smoother UI)
+    timerInterval = setInterval(updateTimerFromTimestamp, 100);
   } else {
     playSound('pause');
     
     // Stop timer sound when pausing
     stopTimerSound();
-      clearInterval(timerInterval);
+    clearInterval(timerInterval);
     isRunning = false;
+    
+    // Calculate and store remaining time
+    const now = Date.now();
+    if (currentMode === 'reverse') {
+      // For reverse: store elapsed time
+      pausedTimeRemaining = Math.min((now - timerStartTime) / 1000, MAX_TIME);
+    } else {
+      // For break: store remaining time
+      pausedTimeRemaining = Math.max((timerEndTime - now) / 1000, 0);
+    }
+    
+    currentSeconds = Math.floor(pausedTimeRemaining);
     startButton.textContent = 'START';
     updateFavicon('paused');
+    updateDisplay();
     
     // Hide burn-up tracker when paused
     hideBurnupTracker();
@@ -744,6 +787,12 @@ function completeBreak() {
 // Reset timer
 function resetTimer() {
     clearInterval(timerInterval);
+    
+    // Clear timestamp variables
+    timerStartTime = null;
+    timerEndTime = null;
+    pausedTimeRemaining = null;
+    
     isRunning = false;
     currentSeconds = 0;
     
@@ -1429,6 +1478,14 @@ document.addEventListener('keydown', (e) => {
     if (!isTypingInInput) {
       resetTimer();
     }
+  }
+});
+
+// Add Page Visibility API for accurate timer tracking when tab becomes active
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && isRunning) {
+    // Tab became visible - recalculate immediately
+    updateTimerFromTimestamp();
   }
 });
 
