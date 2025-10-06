@@ -297,6 +297,9 @@ function playSound(soundName) {
 const timerElement = document.getElementById('timer');
 const progressBar = document.getElementById('progress-bar');
 const startButton = document.getElementById('start-btn');
+const pauseButton = document.getElementById('pause-btn');
+const resumeButton = document.getElementById('resume-btn');
+const stopButton = document.getElementById('stop-btn');
 const resetButton = document.getElementById('reset-btn');
 const reverseTab = document.getElementById('reverse-tab');
 const breakTab = document.getElementById('break-tab');
@@ -356,6 +359,47 @@ let tasks = []; // This will store our tasks
 let timerStartTime = null;  // When timer started (timestamp)
 let timerEndTime = null;    // When timer should end (timestamp)
 let pausedTimeRemaining = null; // Time left when paused
+
+// Timer state management for pause/resume functionality
+let timerState = 'idle'; // 'idle', 'running', 'paused', 'stopped'
+
+// Button display management function
+function updateButtonDisplay() {
+  // Hide all buttons first
+  startButton.style.display = 'none';
+  pauseButton.style.display = 'none';
+  resumeButton.style.display = 'none';
+  stopButton.style.display = 'none';
+  resetButton.style.display = 'none';
+  
+  switch (timerState) {
+    case 'idle':
+      // State 1: [START] [Reset]
+      startButton.style.display = 'inline-block';
+      resetButton.style.display = 'inline-block';
+      break;
+      
+    case 'running':
+      // State 2: [STOP] [PAUSE] [Reset]
+      stopButton.style.display = 'inline-block';
+      pauseButton.style.display = 'inline-block';
+      resetButton.style.display = 'inline-block';
+      break;
+      
+    case 'paused':
+      // State 3: [STOP] [RESUME] [Reset]
+      stopButton.style.display = 'inline-block';
+      resumeButton.style.display = 'inline-block';
+      resetButton.style.display = 'inline-block';
+      break;
+      
+    case 'stopped':
+      // State 4: [START] [Reset] - Returns to break/idle
+      startButton.style.display = 'inline-block';
+      resetButton.style.display = 'inline-block';
+      break;
+  }
+}
 
 // Burn-Up Tracker variables
 let isBurnupTrackerEnabled = localStorage.getItem('burnupTrackerEnabled') !== 'false'; // Default to true
@@ -608,121 +652,185 @@ function updateTimerFromTimestamp() {
   }
 }
 
-// Toggle timer
-function toggleTimer() {
-  if (!isRunning) {
-    // Sync settings before starting, just in case
-    window.updateTimerAndUIFromSettings();
-    
-    if (currentMode === 'break') {
-      if (currentSeconds <= 0) {
-        showToast("Break time is over!");
-        return;
-      }
-    } else if (currentSeconds >= MAX_TIME) {
-      showToast("You've reached the maximum time!");
+// Individual timer control functions
+function handleStart() {
+  // Sync settings before starting
+  window.updateTimerAndUIFromSettings();
+  
+  if (currentMode === 'break') {
+    if (currentSeconds <= 0) {
+      showToast("Break time is over!");
       return;
     }
-    
-    playSound('start');
-    showToast(currentMode === 'break' ? "Enjoy your break! 😌" : "Time to focus! 💪");
-    
-    const now = Date.now();
-    
-    if (pausedTimeRemaining !== null) {
-      // Resuming from pause
-      if (currentMode === 'reverse') {
-        // For reverse: we stored elapsed time
-        timerStartTime = now - (pausedTimeRemaining * 1000);
-        timerEndTime = now + ((MAX_TIME - pausedTimeRemaining) * 1000);
-      } else {
-        // For break: we stored remaining time
-        timerEndTime = now + (pausedTimeRemaining * 1000);
-      }
-    } else {
-      // Fresh start
-      if (currentMode === 'reverse') {
-        // Count-up mode
-        timerStartTime = now;
-        timerEndTime = now + (MAX_TIME * 1000);
-      } else {
-        // Break mode - countdown
-        timerEndTime = now + (currentSeconds * 1000);
-      }
-    }
-    
-    pausedTimeRemaining = null;
-    isRunning = true;
-    startButton.textContent = 'STOP';
-    updateFavicon('running');
-    
-    // Show burn-up tracker when timer starts
-    showBurnupTracker();
-    
-    // Play the appropriate timer sound
-    playTimerSound();
-    
-    // Store reference to lockedInMode for delay implementation
-    const lockedInModeRef = window.lockedInMode;
-    
-    // Enter locked in mode if enabled, but with a 1-second delay
-    if (lockedInModeRef && lockedInModeRef.isEnabled()) {
-      // Start a timeout to enter locked in mode after 1 second
-      setTimeout(() => {
-        if (isRunning && lockedInModeRef) {  // Check if still running after delay
-          lockedInModeRef.enter();
-        }
-      }, 1000);
-    }
-    
-    // Interval is now just for UI updates (100ms for smoother UI)
-    timerInterval = setInterval(updateTimerFromTimestamp, 100);
+  } else if (currentSeconds >= MAX_TIME) {
+    showToast("You've reached the maximum time!");
+    return;
+  }
+  
+  playSound('start');
+  showToast(currentMode === 'break' ? "Enjoy your break! 😌" : "Time to focus! 💪");
+  
+  const now = Date.now();
+  
+  // Fresh start
+  if (currentMode === 'reverse') {
+    // Count-up mode
+    timerStartTime = now;
+    timerEndTime = now + (MAX_TIME * 1000);
   } else {
-    playSound('pause');
-    
-    // Stop timer sound when pausing
-    stopTimerSound();
-    clearInterval(timerInterval);
-    isRunning = false;
-    
-    // Calculate and store remaining time
-    const now = Date.now();
-    if (currentMode === 'reverse') {
-      // For reverse: store elapsed time
-      pausedTimeRemaining = Math.min((now - timerStartTime) / 1000, MAX_TIME);
-    } else {
-      // For break: store remaining time
-      pausedTimeRemaining = Math.max((timerEndTime - now) / 1000, 0);
-    }
-    
-    currentSeconds = Math.floor(pausedTimeRemaining);
-    startButton.textContent = 'START';
-    updateFavicon('paused');
-    updateDisplay();
-    
-    // Hide burn-up tracker when paused
-    hideBurnupTracker();
-    
-    // Also update locked in mode if active
-    if (window.lockedInMode && window.lockedInMode.isActive()) {
-      const minutes = Math.floor(currentSeconds / 60);
-      const seconds = currentSeconds % 60;
-      const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-      window.lockedInMode.update(timeString, null, 'START');
-    }
-    
-    if (currentMode === 'reverse') {
-      const breakLogicMode = localStorage.getItem('breakLogicMode') || 'default';
-      const minutes = Math.floor(currentSeconds / 60);
-      // The "less than 5 minutes" validation only applies to the default mode.
-      if (breakLogicMode === 'default' && minutes < 5) {
-        if (confirm('You worked less than 5 minutes. No break earned. Do you want to reset the timer?')) {
-          resetTimer();
-        }
-      } else {
-        completeSession(false); // For dynamic mode or if work is >= 5 mins in default.
+    // Break mode - countdown
+    timerEndTime = now + (currentSeconds * 1000);
+  }
+  
+  pausedTimeRemaining = null;
+  isRunning = true;
+  timerState = 'running';
+  updateFavicon('running');
+  updateButtonDisplay();
+  
+  // Show burn-up tracker when timer starts
+  showBurnupTracker();
+  
+  // Play the appropriate timer sound
+  playTimerSound();
+  
+  // Enter locked in mode if enabled
+  if (window.lockedInMode && window.lockedInMode.isEnabled()) {
+    setTimeout(() => {
+      if (isRunning && window.lockedInMode) {
+        window.lockedInMode.enter();
       }
+    }, 1000);
+  }
+  
+  // Start the interval
+  timerInterval = setInterval(updateTimerFromTimestamp, 100);
+}
+
+function handlePause() {
+  playSound('pause');
+  
+  // Stop timer sound when pausing
+  stopTimerSound();
+  clearInterval(timerInterval);
+  isRunning = false;
+  timerState = 'paused';
+  
+  // Calculate and store remaining/elapsed time
+  const now = Date.now();
+  if (currentMode === 'reverse') {
+    // For reverse: store elapsed time
+    pausedTimeRemaining = Math.min((now - timerStartTime) / 1000, MAX_TIME);
+  } else {
+    // For break: store remaining time
+    pausedTimeRemaining = Math.max((timerEndTime - now) / 1000, 0);
+  }
+  
+  currentSeconds = Math.floor(pausedTimeRemaining);
+  updateFavicon('paused');
+  updateDisplay();
+  updateButtonDisplay();
+  
+  // Hide burn-up tracker when paused
+  hideBurnupTracker();
+  
+  // Update locked in mode if active
+  if (window.lockedInMode && window.lockedInMode.isActive()) {
+    const minutes = Math.floor(currentSeconds / 60);
+    const seconds = currentSeconds % 60;
+    const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    window.lockedInMode.update(timeString, null, 'RESUME');
+  }
+  
+  showToast("Timer paused ⏸️");
+}
+
+function handleResume() {
+  playSound('start');
+  showToast("Resuming timer! 🔄");
+  
+  const now = Date.now();
+  
+  // Resume from paused state
+  if (currentMode === 'reverse') {
+    // For reverse: we stored elapsed time, calculate new start time
+    timerStartTime = now - (pausedTimeRemaining * 1000);
+    timerEndTime = now + ((MAX_TIME - pausedTimeRemaining) * 1000);
+  } else {
+    // For break: we stored remaining time
+    timerEndTime = now + (pausedTimeRemaining * 1000);
+  }
+  
+  pausedTimeRemaining = null;
+  isRunning = true;
+  timerState = 'running';
+  updateFavicon('running');
+  updateButtonDisplay();
+  
+  // Show burn-up tracker when resuming
+  showBurnupTracker();
+  
+  // Play the appropriate timer sound
+  playTimerSound();
+  
+  // Re-enter locked in mode if enabled
+  if (window.lockedInMode && window.lockedInMode.isEnabled()) {
+    window.lockedInMode.enter();
+  }
+  
+  // Restart the interval
+  timerInterval = setInterval(updateTimerFromTimestamp, 100);
+}
+
+function handleStop() {
+  playSound('pause');
+  
+  // Stop timer sound when stopping
+  stopTimerSound();
+  clearInterval(timerInterval);
+  isRunning = false;
+  timerState = 'stopped';
+  
+  updateFavicon('paused');
+  updateButtonDisplay();
+  
+  // Hide burn-up tracker when stopped
+  hideBurnupTracker();
+  
+  // Handle mode-specific logic
+  if (currentMode === 'reverse') {
+    const breakLogicMode = localStorage.getItem('breakLogicMode') || 'default';
+    const minutes = Math.floor(currentSeconds / 60);
+    
+    if (breakLogicMode === 'default' && minutes < 5) {
+      if (confirm('You worked less than 5 minutes. No break earned. Do you want to reset the timer?')) {
+        resetTimer(true); // User confirmed, show message
+      }
+    } else {
+      completeSession(false); // Complete but don't play sound
     }
+  } else {
+    // For break mode, just return to idle
+    timerState = 'idle';
+    updateButtonDisplay();
+  }
+  
+  showToast("Timer stopped ⏹️");
+}
+
+// Legacy toggle function - now routes to appropriate handlers
+function toggleTimer() {
+  switch (timerState) {
+    case 'idle':
+    case 'stopped':
+      handleStart();
+      break;
+    case 'running':
+      handleStop();
+      break;
+    case 'paused':
+      handleResume();
+      break;
   }
 }
 
@@ -730,6 +838,7 @@ function toggleTimer() {
 function completeSession(playSound = true) {
     clearInterval(timerInterval);
     isRunning = false;
+    timerState = 'idle';
     hideBurnupTracker();
     stopTimerSound();
 
@@ -750,7 +859,6 @@ function completeSession(playSound = true) {
     earnedBreakTime = calculateBreakTime(currentSeconds);
     showToast(`Great work! You worked for ${workMinutes} minutes and earned a ${earnedBreakTime}-minute break! 🎉`);
 
-    startButton.textContent = 'START';
     switchMode('break');
 
     // Auto-start the break if enabled in settings - Fixed logic
@@ -769,6 +877,7 @@ function completeSession(playSound = true) {
 function completeBreak() {
     clearInterval(timerInterval);
     isRunning = false;
+    timerState = 'idle';
     
     // Stop timer sound
     stopTimerSound();
@@ -780,12 +889,11 @@ function completeBreak() {
     showBreakReadinessConfirmation("Break time is over! Ready to work again?");
     
     showToast("Break time is over! Ready to work again? 💪");
-    startButton.textContent = 'START';
     switchMode('reverse'); // Also detected as automatic transition
 }
 
 // Reset timer
-function resetTimer() {
+function resetTimer(showMessage = false) {
     clearInterval(timerInterval);
     
     // Clear timestamp variables
@@ -795,12 +903,13 @@ function resetTimer() {
     
     isRunning = false;
     currentSeconds = 0;
+    timerState = 'idle';
     
     // Sync with settings and update UI
     window.updateTimerAndUIFromSettings();
     
     updateFavicon('paused');
-    startButton.textContent = 'START';
+    updateButtonDisplay();
     
     // Reset and hide burn-up tracker
     resetBurnupTracker();
@@ -813,6 +922,11 @@ function resetTimer() {
     if (window.lockedInMode && window.lockedInMode.isActive()) {
       window.lockedInMode.update('00:00', 0, 'START');
     }
+    
+    // Only show toast message when explicitly requested (user clicked reset)
+    if (showMessage) {
+        showToast("Timer reset 🔄");
+    }
 }
 
 // Switch between reverse and break modes with validation
@@ -824,8 +938,15 @@ function switchMode(mode) {
     // If we're coming from a completed break
     (currentMode === 'break' && mode === 'reverse' && currentSeconds <= 0);
   
-  if (isRunning && !isAutoSwitch) {
-    const confirmed = confirm('Timer is still running. Are you sure you want to switch modes? This will reset your current progress.');
+  // Show confirmation for both running and paused timers (unless it's an auto switch)
+  if ((isRunning || timerState === 'paused') && !isAutoSwitch) {
+    let message = '';
+    if (isRunning) {
+      message = 'Timer is still running. Are you sure you want to switch modes? This will reset your current progress.';
+    } else if (timerState === 'paused') {
+      message = 'Timer is paused with unsaved progress. Are you sure you want to switch modes? This will reset your current progress.';
+    }
+    const confirmed = confirm(message);
     if (!confirmed) return;
   }
 
@@ -840,6 +961,12 @@ function switchMode(mode) {
   // Reset timer state
   clearInterval(timerInterval);
   isRunning = false;
+  timerState = 'idle';
+  
+  // Clear timestamp variables
+  timerStartTime = null;
+  timerEndTime = null;
+  pausedTimeRemaining = null;
   
   // Reset and hide burn-up tracker when switching modes
   resetBurnupTracker();
@@ -857,6 +984,7 @@ function switchMode(mode) {
   }
   
   updateDisplay();
+  updateButtonDisplay();
   
   // Exit locked in mode when switching modes
   if (window.lockedInMode && window.lockedInMode.isActive()) {
@@ -1071,8 +1199,11 @@ function loadFocusedTask() {
 }
 
 // Event listeners
-startButton.addEventListener('click', toggleTimer);
-resetButton.addEventListener('click', resetTimer);
+startButton.addEventListener('click', handleStart);
+pauseButton.addEventListener('click', handlePause);
+resumeButton.addEventListener('click', handleResume);
+stopButton.addEventListener('click', handleStop);
+resetButton.addEventListener('click', () => resetTimer(true)); // Explicitly show message for button click
 reverseTab.addEventListener('click', () => switchMode('reverse'));
 breakTab.addEventListener('click', () => switchMode('break'));
 
@@ -1110,13 +1241,15 @@ window.playSound = playSound;
 
 // Handle page leave/refresh
 window.addEventListener('beforeunload', (e) => {
-  if (isRunning) {
+  // Show warning for both running and paused timers (user has unsaved progress)
+  if (isRunning || timerState === 'paused') {
     e.preventDefault();
     let message = '';
     if (isRunning) message = 'Timer is still running.';
+    else if (timerState === 'paused') message = 'Timer is paused with unsaved progress.';
     if (hasUnsavedTasks) message = 'You have unsaved tasks.';
     if (hasUnfinishedTasks) message = 'You have unfinished tasks.';
-    e.returnValue = `${message} Are you sure you want to leave?`;
+    e.returnValue = `${message} Changes you made may not be saved. Are you sure you want to leave?`;
     return e.returnValue;
   }
 });
@@ -1131,9 +1264,15 @@ document.addEventListener('DOMContentLoaded', function() {
       const targetUrl = switchBtn.href;
       const targetMode = switchBtn.textContent.includes('Classic') ? 'Classic Pomodoro' : 'Reverse Pomodoro';
       
-      // Check for running timer first
-      if (isRunning) {
-        const confirmed = confirm('Timer is still running. Are you sure you want to switch to a different timer type? This will reset your progress.');
+      // Check for running or paused timer first
+      if (isRunning || timerState === 'paused') {
+        let message = '';
+        if (isRunning) {
+          message = 'Timer is still running. Are you sure you want to switch to a different timer type? This will reset your progress.';
+        } else if (timerState === 'paused') {
+          message = 'Timer is paused with unsaved progress. Are you sure you want to switch to a different timer type? This will reset your progress.';
+        }
+        const confirmed = confirm(message);
         if (!confirmed) {
           return;
         }
@@ -1452,8 +1591,14 @@ document.addEventListener('DOMContentLoaded', function() {
   
   console.log("Reverse timer initialized");
   
+  // Clear any running timers from other pages
+  clearInterval(timerInterval);
+  isRunning = false;
+  timerState = 'idle';
+  
   // Initial UI sync on page load
   window.updateTimerAndUIFromSettings();
+  updateButtonDisplay();
 });
 
 // Add keyboard shortcuts
@@ -1476,7 +1621,7 @@ document.addEventListener('keydown', (e) => {
   } else if (e.code === 'KeyR') {
     // Only trigger reset if NOT typing in an input field
     if (!isTypingInInput) {
-      resetTimer();
+      resetTimer(true); // User pressed R key, show message
     }
   }
 });

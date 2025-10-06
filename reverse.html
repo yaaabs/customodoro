@@ -206,6 +206,9 @@
       <div class="max-time">Current Max Time: 01:00:00</div>
       <div class="timer-actions">
         <button class="primary-btn" id="start-btn">START</button>
+        <button class="primary-btn" id="pause-btn" style="display: none;">PAUSE</button>
+        <button class="primary-btn" id="resume-btn" style="display: none;">RESUME</button>
+        <button class="secondary-btn" id="stop-btn" style="display: none;">STOP</button>
         <button class="secondary-btn" id="reset-btn">Reset</button>
       </div>      <div class="progress-container">
         <div class="progress-bar" id="progress-bar"></div>
@@ -2253,6 +2256,35 @@ body.theme-rain .notice-link:hover {
 }
 .task-item.drop-below {
   border-bottom: 3px solid #8B5FBF;
+}
+
+/* PAUSE/RESUME BUTTON LAYOUT */
+.timer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.timer-actions button {
+  min-width: 80px;
+  flex: 0 0 auto;
+}
+
+/* Responsive layout for mobile */
+@media (max-width: 768px) {
+  .timer-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .timer-actions button {
+    min-width: 120px;
+    width: 100%;
+    max-width: 200px;
+  }
 }
 </style>
 </body>
