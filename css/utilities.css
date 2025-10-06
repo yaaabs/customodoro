@@ -3,6 +3,91 @@
    ═══════════════════════════════════════════════════════════════════════════════ */
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   Timer Action Buttons - Enhanced UI
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Timer actions container - improved responsive layout */
+.timer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+/* Shared button styles */
+.timer-actions button {
+  min-width: 120px;
+  font-family: var(--font-family);
+  letter-spacing: 0.5px;
+}
+
+/* Stop button styling */
+#stop-btn {
+  background: rgba(255, 59, 48, 0.15);
+  color: rgb(255, 89, 78);
+  border: 2px solid rgba(255, 59, 48, 0.7);
+  padding: 12px 28px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  position: relative;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+#stop-btn:hover {
+  background: rgba(255, 59, 48, 0.25);
+  border-color: rgb(255, 59, 48);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 59, 48, 0.25);
+}
+
+#stop-btn:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+/* Theme compatibility for stop button */
+body.theme-color #stop-btn {
+  background: rgba(var(--theme-color-rgb), 0.15);
+  border-color: rgba(var(--theme-color-rgb), 0.7);
+  color: rgb(var(--theme-color-rgb));
+}
+
+body.theme-color #stop-btn:hover {
+  background: rgba(var(--theme-color-rgb), 0.25);
+  border-color: rgb(var(--theme-color-rgb));
+  box-shadow: 0 4px 12px rgba(var(--theme-color-rgb), 0.25);
+}
+
+/* Enhanced responsive design */
+@media (max-width: 768px) {
+  .timer-actions {
+    padding: 0 15px;
+  }
+  
+  #stop-btn {
+    padding: 10px 24px;
+    font-size: 14px;
+    min-width: 110px;
+  }
+}
+
+@media (max-width: 480px) {
+  .timer-actions {
+    gap: 10px;
+    padding: 0 10px;
+  }
+
+  #stop-btn {
+    padding: 10px 20px;
+    min-width: 100px;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    About Modal Codes - 1
    ───────────────────────────────────────────────────────────────────────────── */
 
