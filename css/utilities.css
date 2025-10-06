@@ -1688,11 +1688,7 @@ body.theme-yourname .article-card {
 
 /* Enhanced Responsive Design */
 @media (max-width: 768px) {
-    .pomodoro-preview {
-        margin: 1.25rem;
-        padding: 1.75rem;
-    }
-    
+
     .preview-icon {
         font-size: 2rem;
     }
@@ -1727,10 +1723,7 @@ body.theme-yourname .article-card {
 }
 
 @media (max-width: 480px) {
-    .pomodoro-preview {
-        margin: 1rem;
-        padding: 1.5rem;
-    }
+
 
     .preview-content {
         gap: 1rem;
