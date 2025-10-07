@@ -1316,22 +1316,25 @@ body.theme-color .footer-divider {
 
 .mute-alert-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 12px;
   padding: 0 20px 20px;
 }
 
 .mute-btn {
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 12px 20px;
+  border-radius: 8px;
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
   border: none;
+  text-align: center;
+  min-height: 44px; /* Touch-friendly height for mobile */
 }
 
 .mute-btn-secondary {
+  flex: 0 0 30%; /* Dismiss button takes 30% width */
   background-color: #f1f1f1;
   color: #555;
 }
@@ -1341,12 +1344,39 @@ body.theme-color .footer-divider {
 }
 
 .mute-btn-primary {
+  flex: 0 0 70%; /* Mute Sound & Dismiss takes 70% width */
   background-color: var(--focus-color);
   color: white;
 }
 
 .mute-btn-primary:hover {
   filter: brightness(1.1);
+}
+
+/* Responsive design for mobile */
+@media (max-width: 768px) {
+  .mute-alert-actions {
+    gap: 8px;
+    padding: 0 16px 16px;
+  }
+  
+  .mute-btn {
+    font-size: 14px;
+    padding: 14px 16px;
+    min-height: 48px; /* Larger touch target on mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  .mute-alert-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .mute-btn {
+    flex: 1 1 100% !important; /* Force 100% width on mobile */
+    width: 100%;
+  }
 }
 
 /* Mute Alert Close Button styling */
@@ -1428,7 +1458,7 @@ body.theme-dark .mute-btn-secondary:hover {
 .motivational-alert {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   width: 90%;
-  max-width: 450px;
+  max-width: 500px;
   border-radius: 16px;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
   overflow: hidden;
@@ -1500,35 +1530,107 @@ body.theme-dark .mute-btn-secondary:hover {
 
 .motivational-alert-actions {
   padding: 20px 25px 25px;
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
 }
 
 .motivational-btn {
-  padding: 14px 30px;
+  padding: 14px 24px;
   border: none;
   border-radius: 25px;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  min-width: 180px;
+  letter-spacing: 0.4px;
+  min-height: 52px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.motivational-btn-secondary {
+  flex: 0 0 38%; /* "No, not ready" takes 38% width */
+  background: rgba(255, 255, 255, 0.7);
+  color: #667eea;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.motivational-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.85);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
 
 .motivational-btn-primary {
+  flex: 0 0 62%; /* "Mute Sound & Dismiss" takes 62% width */
   background: rgba(255, 255, 255, 0.9);
   color: #667eea;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  margin: 0 auto;
-  display: block;
-  max-width: 200px;
 }
 
 .motivational-btn-primary:hover {
   background: white;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Single button style - for "OK, LET ME TRY AGAIN" */
+.motivational-btn-single {
+  flex: 1 1 100%;
+  max-width: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  color: #667eea;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  padding: 16px 24px;
+  min-height: 56px;
+}
+
+.motivational-btn-single:hover {
+  background: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive design for mobile */
+@media (max-width: 768px) {
+  .motivational-alert-actions {
+    padding: 16px 20px 20px;
+    gap: 12px;
+  }
+  
+  .motivational-btn {
+    font-size: 13px;
+    padding: 14px 18px;
+    min-height: 52px;
+    letter-spacing: 0.3px;
+  }
+  
+  .motivational-btn-single {
+    padding: 16px 20px;
+    min-height: 54px;
+  }
+}
+
+@media (max-width: 480px) {
+  .motivational-alert-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .motivational-btn {
+    flex: 1 1 100% !important; /* Force 100% width on mobile */
+    width: 100%;
+    white-space: normal; /* Allow text wrap on mobile */
+  }
+  
+  .motivational-btn-single {
+    width: 100%;
+  }
 }
 
 /* Dark theme support for motivational alert */
