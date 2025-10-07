@@ -849,14 +849,15 @@ function completeSession(playSound = true) {
         window.addCustomodoroSession('reverse', workMinutes);
     }
 
+    // Calculate earned break BEFORE showing any messages
+    earnedBreakTime = calculateBreakTime(currentSeconds);
+
     // Only play completion sound if the timer reached max time or playSound is true
     if (currentSeconds >= MAX_TIME || playSound) {
         window.playSound('pomodoroComplete');
         showMuteAlert(`Great work! You worked for ${workMinutes} minutes and earned a ${earnedBreakTime}-minute break!`);
     }
 
-    // Calculate earned break
-    earnedBreakTime = calculateBreakTime(currentSeconds);
     showToast(`Great work! You worked for ${workMinutes} minutes and earned a ${earnedBreakTime}-minute break! 🎉`);
 
     switchMode('break');
@@ -1365,7 +1366,7 @@ function showMuteAlert(message) {
   }
   
   if (muteBtn) {
-    muteBtn.textContent = 'Mute Sound';
+    muteBtn.textContent = 'Mute Sound & Dismiss';
     // Remove existing event listeners
     muteBtn.replaceWith(muteBtn.cloneNode(true));
     const newMuteBtn = document.getElementById('mute-alert-btn');
@@ -1485,7 +1486,7 @@ function showBreakReadinessConfirmation(message) {
   }
 
   if (muteBtn) {
-    muteBtn.textContent = 'Mute Sound';
+    muteBtn.textContent = 'Mute Sound & Dismiss';
     // Remove existing event listeners
     muteBtn.replaceWith(muteBtn.cloneNode(true));
     const newMuteBtn = document.getElementById('mute-alert-btn');

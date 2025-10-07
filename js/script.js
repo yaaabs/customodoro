@@ -1073,7 +1073,7 @@ function showMuteAlert(message) {
   }
   
   if (muteBtn) {
-    muteBtn.textContent = 'Mute Sound';
+    muteBtn.textContent = 'Mute Sound & Dismiss';
     // Remove existing event listeners
     muteBtn.replaceWith(muteBtn.cloneNode(true));
     const newMuteBtn = document.getElementById('mute-alert-btn');
@@ -1174,7 +1174,7 @@ function showBreakReadinessConfirmation(message) {
   }
 
   if (muteBtn) {
-    muteBtn.textContent = 'Mute Sound';
+    muteBtn.textContent = 'Mute Sound & Dismiss';
     // Remove existing event listeners
     muteBtn.replaceWith(muteBtn.cloneNode(true));
     const newMuteBtn = document.getElementById('mute-alert-btn');
