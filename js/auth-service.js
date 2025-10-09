@@ -400,26 +400,10 @@ class AuthService {
     });
   }
   
-  // Test backend connection
-  async testConnection() {
-    try {
-      const response = await fetch(`${this.baseURL}/api/health`);
-      return response.ok;
-    } catch (error) {
-      console.error('Backend connection test failed:', error);
-      return false;
-    }
-  }
+
 }
 
 // Create global instance
 console.log('Creating AuthService instance...');
 window.authService = new AuthService();
 console.log('AuthService created successfully:', window.authService);
-
-// Test backend connection on load
-setTimeout(async () => {
-  console.log('Testing backend connection...');
-  const isConnected = await window.authService.testConnection();
-  console.log('Backend connection test result:', isConnected);
-}, 1000);
