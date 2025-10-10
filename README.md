@@ -265,8 +265,8 @@ Reverse keeps the same UI, themes, and analytics, but changes the timing model: 
 
 ✅ **Dual Timer Modes** - Only app with both Classic & Reverse Pomodoro techniques  
 ✅ **100% Free & Open Source** - No premium features locked behind paywall  
-✅ **No Registration Required** - Start using immediately, privacy-focused  
-✅ **Works Offline** - PWA technology ensures functionality without internet  
+✅ **Registration Optional** - Start using immediately; create an account only if you want cross-device sync (privacy-first)
+✅ **PWA: Add to Home Screen** - Mobile install supported; offline functionality is not enabled in this release
 ✅ **Cross-Platform Compatibility** - Works on any device with a modern browser  
 ✅ **Lightweight Performance** - Fast loading, minimal resource usage  
 ✅ **Regular Feature Updates** - Community-driven development and improvements  
