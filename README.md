@@ -45,9 +45,9 @@
 ### 🍅 **Classic Pomodoro Mode** 
 *Perfect for structured productivity and traditional Pomodoro technique*
 
-- **⏰ Pomodoro Sessions** - Customizable focus periods (1-60 minutes)
-- **☕ Short Breaks** - Quick recharge breaks (1-30 minutes) 
-- **🛋️ Long Breaks** - Extended rest periods (5-60 minutes)
+- **⏰ Pomodoro Sessions** - Customizable focus periods
+- **☕ Short Breaks** - Quick recharge breaks 
+- **🛋️ Long Breaks** - Extended rest periods
 - **📊 Session Tracking** - Visual progress with completion dots
 - **🎯 Task Management** - Built-in task list with completion tracking
 
@@ -83,9 +83,12 @@
   - Zen Bell Meditation Sound
   - Level Up Gaming Sound
   - Message Alert Notification
-- **🎶 Background Music (BETA)** - Ambient playlists for enhanced focus
+- **🎶 Background Music** - Focus and relax with curated ambient and mood playlists
   - Deep Focus Study Playlist
-  - Ambient Long-form Music
+  - Ambient Playist (Long)
+  - NIKI Playlist
+  - Happy Swing Jazz Piano
+  - Gamma Waves
 - **🔕 Smart Sound Effects** - Contextual audio feedback
 
 ### 🎭 **Beautiful Themes for Personalization**
@@ -94,11 +97,13 @@
 - **🌸 君の名は (Your Name)** - Anime-inspired aesthetic theme
 - **🖼️ Custom Theme** - Upload your own background image (JPG, PNG, GIF up to 2MB)
 - **🌧️ Man in Rain** – A reflective and cozy vibe featuring an aesthetic rainy GIF
+- **🎨 Color Theme** – Select from predefined color palettes or create your own using custom HEX codes for full personalization
 
 ## 🧘 Distraction-Free Modes
 
 - **🔒 Locked-In Mode** - When the timer starts, everything fades to black except the timer — no distractions, just pure focus.
 - **🎯 Focus Mode** - A cleaner interface that hides non-essential elements while keeping your current theme in the background.
+ - **⛶ Full Screen Mode** - Expand the timer into an immersive fullscreen view that hides browser chrome and peripheral UI for maximum focus; toggle via the toolbar or using the browser's fullscreen shortcut (usually F11) for a distraction-free experience.
 
 ### ⚡ **Smart Automation Features**
 - **🚀 Auto-start Breaks** - Seamless transitions to rest periods
@@ -114,6 +119,9 @@ Elegant floating action menu with quick access to:
 - **⚙️ Settings Panel** - Full customization options
 - **🎯 Focus Mode** - Minimal distraction interface  
 - **📺 Fullscreen Mode** - Immersive full-screen timer experience
+ - **🔁 Sync Account** - Sign in to sync your stats across devices (optional)
+ - **🧹 Clear Cache & Reload** - Quickly reset cached data and reload the app
+ - **🎵 Mini Music Player** - Compact background music controls for on-the-go focus
 
 ### 📋 **Smart Task Management System**
 - **✅ Add & Track Tasks** - Stay organized with built-in task lists
@@ -121,19 +129,39 @@ Elegant floating action menu with quick access to:
 - **🗑️ Easy Management** - Add, complete, or delete tasks effortlessly
 - **📊 Productivity Analytics** - Track completed sessions and tasks
 
+New: You can now focus on a task by clicking it, and drag & drop tasks to reorder! This makes shifting priorities and concentrating on a single task simple and tactile.
+
 ### 📈 **Productivity Graph (NEW!)**
-- **📅 GitHub-Inspired Visual Tracking** - Beautiful contribution calendar-style productivity visualization
-- **⚡ Focus Point System** - 1 Focus Point = 5 minutes of work completed
-- **🏆 Personal Peak Tracking** - Brightest shade marks your personal best day
-- **📊 Hover for Details** - Interactive tooltips show exact focus time and sessions
-- **📆 Long-term Progress** - View your productivity trends over weeks and months
-- **🎯 Motivation Boost** - Visual streaks encourage consistent daily focus
+We've expanded our analytics into a new "Stats & Analytics" suite that includes the original Productivity Graph plus several new stats cards to give you deeper insights into your habits.
+
+ **📅 Productivity Graph (Heatmap)** — The original calendar-style heatmap (contribution-graph inspired) showing focus density over time.
+  - My Stats: Total Focus Points, Current Streak, Longest Streak
+- **📊 User's Stats Card (Dynamic)** — Personalized stats that update when you sign in:
+  - Total Focus Time
+  - Completed Sessions
+  - Most Productive Day
+  - Total Classic Pomodoros
+  - Total Reverse Pomodoros
+- **🔁 Most Used Pomodoro Card** — A small chart showing which Pomodoro type you use most (classic vs reverse vs custom presets).
+
+These cards can be shown together on a dashboard or broken into their own section for advanced users.
 
 ### 💾 **Persistent Settings & Data Privacy**
 - **🔄 Auto-save Preferences** - Your settings are always remembered
 - **🔧 Granular Controls** - Customize every aspect of your timer experience
 - **⚡ Quick Reset Options** - Start fresh anytime with one click
 - **🔒 Privacy-First** - All data stored locally, no account required
+
+#### Sync Across Devices (Optional)
+We provide an opt-in sync feature so you can keep streaks and stats consistent across phones, tablets, and computers. Syncing is optional — the app remains fully functional without an account and stores data locally by default.
+
+How it works:
+
+1️⃣ Register your email on your PC/Laptop to upload your current stats
+2️⃣ Sign in with the same email on your iPad/Phone
+3️⃣ Your data automatically syncs after each session!
+
+We take safety seriously: synchronization is opt-in and secured (data is uploaded only when you register and sign in). By default data stays local; if you opt into sync, we keep your stats synchronized across devices while providing clear controls for disconnecting and removing synced data.
 
 ---
 
