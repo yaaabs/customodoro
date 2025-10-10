@@ -42,9 +42,13 @@ self.addEventListener("install", (event) => {
         console.warn("⚠️ Failed to cache core HTML", err);
       }
     }).then(() => {
-      // Force skip waiting to activate immediately - AGGRESSIVE UPDATE
-      console.log('⚡ Force skipping waiting...');
-      return self.skipWaiting();
+      // Only skip waiting if there were previous caches (i.e., this is an upgrade)
+      if (!isFirstInstall) {
+        console.log('⚡ Previous caches detected — skipping waiting to allow upgrade');
+        return self.skipWaiting();
+      }
+      console.log('ℹ️ First install detected — not skipping waiting to avoid forced reload');
+      return Promise.resolve();
     })
   );
 });
@@ -68,26 +72,29 @@ self.addEventListener("activate", (event) => {
           return caches.delete(key);
         })
       );
-    }).then(() => {
+    }).then((deletedResults) => {
       console.log("✅ Activated and old caches cleared");
-      
-      // Always notify about updates (removed isFirstInstall check for aggressive updates)
-      return self.clients.matchAll().then((clients) => {
-        console.log('👥 Found clients:', clients.length);
-        clients.forEach((client) => {
-          console.log('📤 Sending immediate update notification to client');
-          client.postMessage({
-            type: 'NEW_VERSION_AVAILABLE',
-            message: 'A new version is available',
-            forceUpdate: true // Add flag for immediate updates
+
+      // If we deleted any old caches, this is an upgrade — notify clients politely
+      const hadOldCaches = Array.isArray(deletedResults) && deletedResults.length > 0;
+      if (hadOldCaches) {
+        return self.clients.matchAll().then((clients) => {
+          console.log('👥 Found clients:', clients.length);
+          clients.forEach((client) => {
+            console.log('📤 Sending update-available notification to client');
+            client.postMessage({
+              type: 'NEW_VERSION_AVAILABLE',
+              message: 'A new version is available',
+              forceUpdate: false // suggest a soft update; allow client to decide
+            });
           });
+          console.log('ℹ️ Notified clients about available update');
         });
-        console.log('� Notified all clients about update');
-      });
-    }).then(() => {
-      // Force claim all clients immediately
-      console.log('🎯 Taking control of all clients');
-      return self.clients.claim();
+      }
+
+      // No old caches found — likely first install. Do not claim clients or force reloads.
+      console.log('ℹ️ No previous caches found — first install, skipping client notification and claim');
+      return Promise.resolve();
     })
   );
 });
