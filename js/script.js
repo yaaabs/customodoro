@@ -82,10 +82,13 @@ sounds.breakComplete.volume = 1.0;  // Full volume for break alarm
 
 // Add timer sound variables and functionality
 const timerSounds = {
-  ticking: new Audio('audio/Timer Sounds/WallClockTicking.mp3'),
-  whitenoise: new Audio('audio/Timer Sounds/UnderWaterWhiteNoise.mp3'),
-  brownnoise: new Audio('audio/Timer Sounds/SoftBrownNoise.mp3')
+  ticking: new Audio('audio/Timer Sounds/WallClockTicking.mp3')
 };
+
+// The whitenoise and brownnoise files were removed. Alias these keys to the
+// existing ticking sound so any remaining references won't throw errors.
+timerSounds.whitenoise = timerSounds.ticking;
+timerSounds.brownnoise = timerSounds.ticking;
 
 let currentTimerSound = null;
 

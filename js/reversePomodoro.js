@@ -14,10 +14,13 @@ const sounds = {
 
 // Add timer sound variables and functionality
 const timerSounds = {
-  ticking: new Audio('audio/Timer Sounds/WallClockTicking.mp3'),
-  whitenoise: new Audio('audio/Timer Sounds/UnderWaterWhiteNoise.mp3'),
-  brownnoise: new Audio('audio/Timer Sounds/SoftBrownNoise.mp3')
+  ticking: new Audio('audio/Timer Sounds/WallClockTicking.mp3')
 };
+
+// The whitenoise and brownnoise files were removed — alias to ticking so
+// existing code paths won't fail if the files are deleted.
+timerSounds.whitenoise = timerSounds.ticking;
+timerSounds.brownnoise = timerSounds.ticking;
 
 // Add the missing showToast function
 function showToast(message, duration = 3000) {

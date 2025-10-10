@@ -1293,15 +1293,15 @@ function testSound(type) {
     
     // Create and play the test sound based on selected timer sound
     let soundPath;
+    // If whitenoise/brownnoise files are removed, fall back to ticking sound
     switch (selectedSound) {
       case 'ticking':
         soundPath = 'audio/Timer Sounds/WallClockTicking.mp3';
         break;
       case 'whitenoise':
-        soundPath = 'audio/Timer Sounds/UnderWaterWhiteNoise.mp3';
-        break;
       case 'brownnoise':
-        soundPath = 'audio/Timer Sounds/SoftBrownNoise.mp3';
+        // fallback: use the ticking sound if these files are not present
+        soundPath = 'audio/Timer Sounds/WallClockTicking.mp3';
         break;
       default:
         return;
