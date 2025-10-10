@@ -157,9 +157,9 @@ We provide an opt-in sync feature so you can keep streaks and stats consistent a
 
 How it works:
 
-1️⃣ Register your email on your PC/Laptop to upload your current stats
-2️⃣ Sign in with the same email on your iPad/Phone
-3️⃣ Your data automatically syncs after each session!
+1. 1️⃣ Register your email on your PC/Laptop to upload your current stats
+2. 2️⃣ Sign in with the same email on your iPad/Phone
+3. 3️⃣ Your data automatically syncs after each session!
 
 We take safety seriously: synchronization is opt-in and secured (data is uploaded only when you register and sign in). By default data stays local; if you opt into sync, we keep your stats synchronized across devices while providing clear controls for disconnecting and removing synced data.
 
