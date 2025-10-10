@@ -1,5 +1,5 @@
-const CACHE_NAME = "customodoro-static-v7.3.16"; // Bump to v7.3.16  
-const ASSETS_CACHE = "customodoro-assets-v6.1.11"; // Bump to v6.1.11 
+const CACHE_NAME = "customodoro-static-v7.3.17"; // Bump to v7.3.17  
+const ASSETS_CACHE = "customodoro-assets-v6.1.12"; // Bump to v6.1.12 
 const urlsToCache = [
   "/", 
   "/index.html", 
@@ -26,7 +26,7 @@ let isFirstInstall = false;
 
 // Install: cache only the HTML essentials
 self.addEventListener("install", (event) => {
-  console.log('🔧 Service Worker v7.3.16 installing...');
+  console.log('🔧 Service Worker v7.3.17 installing...');
   
   // Check if this is a first install
   event.waitUntil(
@@ -42,20 +42,16 @@ self.addEventListener("install", (event) => {
         console.warn("⚠️ Failed to cache core HTML", err);
       }
     }).then(() => {
-      // Only skip waiting if there were previous caches (i.e., this is an upgrade)
-      if (!isFirstInstall) {
-        console.log('⚡ Previous caches detected — skipping waiting to allow upgrade');
-        return self.skipWaiting();
-      }
-      console.log('ℹ️ First install detected — not skipping waiting to avoid forced reload');
-      return Promise.resolve();
+      // Force skip waiting to activate immediately - AGGRESSIVE UPDATE
+      console.log('⚡ Force skipping waiting...');
+      return self.skipWaiting();
     })
   );
 });
 
 // Activate: clean up old caches and notify clients
 self.addEventListener("activate", (event) => {
-  console.log('🚀 Service Worker v7.3.16 activating...');
+  console.log('🚀 Service Worker v7.3.17 activating...');
   
   event.waitUntil(
     // Clean up old caches
@@ -72,29 +68,26 @@ self.addEventListener("activate", (event) => {
           return caches.delete(key);
         })
       );
-    }).then((deletedResults) => {
+    }).then(() => {
       console.log("✅ Activated and old caches cleared");
-
-      // If we deleted any old caches, this is an upgrade — notify clients politely
-      const hadOldCaches = Array.isArray(deletedResults) && deletedResults.length > 0;
-      if (hadOldCaches) {
-        return self.clients.matchAll().then((clients) => {
-          console.log('👥 Found clients:', clients.length);
-          clients.forEach((client) => {
-            console.log('📤 Sending update-available notification to client');
-            client.postMessage({
-              type: 'NEW_VERSION_AVAILABLE',
-              message: 'A new version is available',
-              forceUpdate: false // suggest a soft update; allow client to decide
-            });
+      
+      // Always notify about updates (removed isFirstInstall check for aggressive updates)
+      return self.clients.matchAll().then((clients) => {
+        console.log('👥 Found clients:', clients.length);
+        clients.forEach((client) => {
+          console.log('📤 Sending immediate update notification to client');
+          client.postMessage({
+            type: 'NEW_VERSION_AVAILABLE',
+            message: 'A new version is available',
+            forceUpdate: true // Add flag for immediate updates
           });
-          console.log('ℹ️ Notified clients about available update');
         });
-      }
-
-      // No old caches found — likely first install. Do not claim clients or force reloads.
-      console.log('ℹ️ No previous caches found — first install, skipping client notification and claim');
-      return Promise.resolve();
+        console.log('� Notified all clients about update');
+      });
+    }).then(() => {
+      // Force claim all clients immediately
+      console.log('🎯 Taking control of all clients');
+      return self.clients.claim();
     })
   );
 });
