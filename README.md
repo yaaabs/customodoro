@@ -142,7 +142,7 @@ We've expanded our analytics into a new "Stats & Analytics" suite that includes 
   - Most Productive Day
   - Total Classic Pomodoros
   - Total Reverse Pomodoros
-- **🔁 Most Used Pomodoro Card** — A small chart showing which Pomodoro type you use most (classic vs reverse vs custom presets).
+- **🔁 Most Used Pomodoro Card** — A small chart showing which Pomodoro type you use most (Classic vs Reverse).
 
 These cards can be shown together on a dashboard or broken into their own section for advanced users.
 
@@ -196,13 +196,13 @@ python -m http.server 8000
 ## 🛠️ **Technical Stack & Performance**
 
 ```
-🌐 Frontend: Pure HTML5, CSS3, Vanilla JavaScript
-🎨 UI/UX: Modern responsive design with mobile-first approach
-📱 PWA: Service Worker, offline functionality, installable
-🔧 Dependencies: Zero external dependencies for maximum performance
-💾 Storage: Local Storage API for privacy-focused data handling
-⚡ Performance: Lighthouse score 90+ across all metrics
-🔒 Security: HTTPS, CSP headers, secure by design
+ - 🌐 Frontend: Pure HTML5, CSS3, Vanilla JavaScript
+ - 🖥️ Backend: Node.js server with Express, Supabase for database and auth
+ - 📱 PWA: Add to Home Screen support for mobile install; offline functionality is not enabled
+ - 🔧 Dependencies: Minimal frontend dependencies; backend uses Node.js and Supabase client libraries
+ - 💾 Storage: Local Storage for client-side settings and quick persistence, plus Supabase Postgres for cross-device stats and sync
+ - ⚡ Performance: Lighthouse scores 93+ for Accessibility, SEO, and Best Practices
+ - 🔒 Security: HTTPS, CSP headers, secure by design; Supabase Row Level Security (RLS) enabled for user data isolation
 ```
 
 ---
@@ -223,25 +223,27 @@ python -m http.server 8000
 <details>
 <summary><strong>🍅 Classic Pomodoro Timer Features</strong></summary>
 
-- ⏰ **Fully Customizable Timer Lengths** (1-60 minutes for work, 1-30 for breaks)
-- 📊 **Visual Session Tracking** with progress dots and completion statistics
-- 🔄 **Intelligent Auto-transitions** between work and break periods
-- 📋 **Integrated Task Management System** with real-time progress tracking
-- 🎵 **Rich Audio Experience** with multiple premium alert sounds
-- ⚡ **Smart Auto-start Options** for seamless productivity workflow
-- 📈 **Productivity Analytics** to track your focus improvement over time
+Classic is the traditional Pomodoro experience reimagined with full customization. It’s perfect when you want strict timeboxing, predictable transitions, and repeatable short work sprints.
+
+- Strengths: predictable flow, great for tasks that benefit from strict timeboxing (coding sprints, study blocks, focused editing).
+- Mode behavior: Fixed-length countdown sessions (work, short break, long break).
+- Full customization: You can set the Pomodoro, Short Break, and Long Break durations anywhere from 1 minute up to 999 minutes — and save the values as presets.
+- Session automation: Auto-start between sessions, configurable session count before a long break, and visual progress indicators.
+- Best for: users who prefer regimented sessions, quick resets, and measurable, repeatable progress.
 
 </details>
 
 <details>
 <summary><strong>⏱️ Reverse Pomodoro Timer Features</strong></summary>
 
-- 🕐 **Flexible Work Duration** (up to 6 hours in Dynamic Mode)
-- 📈 **Progressive Break Rewards** automatically calculated based on work time
-- 🎯 **Perfect for Deep Work Sessions** and creative flow states
-- 🔧 **Fully Customizable Break Tiers** with intelligent scaling
-- 📋 **Long Session Task Tracking** for extended productivity periods
-- 🏆 **Achievement System** for milestone work sessions
+Reverse keeps the same UI, themes, and analytics, but changes the timing model: instead of starting with a preset countdown, it counts your focus time and rewards you with breaks.
+
+- Strengths: excellent for open-ended deep work, creative flow, and for users who resist fixed session lengths.
+- Two sub-modes:
+  - Standard Mode — default behavior with a 1-hour maximum session cap. You can still customize how breaks are awarded (break-tier mapping) and other reward settings; the max cap itself remains fixed in Standard.
+  - Dynamic Mode — unlocks full flexibility: you can configure the maximum work session up to 6 hours and customize break tiers, making this ideal for longer, uninterrupted deep-work sessions.
+- Mode behavior: Stopwatch-style (counts up); breaks are earned based on accumulated time tiers instead of preset countdowns.
+- Best for: deep-focus sessions, creative work, and anyone who wants to earn rest based on effort rather than being forced to stop by a timer.
 
 </details>
 
