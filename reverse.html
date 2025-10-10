@@ -110,6 +110,43 @@
 
 <!-- Supabase Client -->
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<!-- Critical CSS: hide modals/overlays by default to prevent flash before CSS/JS loads -->
+<style id="critical-modal-fix">
+  .settings-modal,
+  .modal,
+  .lockedin-info-modal-overlay,
+  .about-info-modal-overlay,
+  .lockedin-info-modal,
+  .info-modal,
+  #mute-alert-modal,
+  #motivational-alert-modal,
+  #timer-complete-modal,
+  #stay-focused-modal {
+    visibility: hidden !important;
+    opacity: 0 !important;
+    display: none !important;
+    pointer-events: none !important;
+  }
+
+  .settings-modal.show,
+  .modal.show,
+  .lockedin-info-modal-overlay.active,
+  .about-info-modal-overlay.active {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: flex !important;
+    pointer-events: auto !important;
+  }
+
+  .settings-modal.show .settings-content,
+  .lockedin-info-modal-overlay.active .lockedin-info-modal,
+  .about-info-modal-overlay.active .about-info-modal,
+  .modal.show .modal-content {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
+  }
+</style>
 
   <script>
     // Function to load deferred CSS files

@@ -107,6 +107,47 @@
 
 <link rel="stylesheet" href="css/utilities.css?v=1.0.1">
 
+<!-- Critical CSS: hide modals and overlays by default to avoid flash before CSS/JS loads -->
+<style id="critical-modal-fix">
+  /* Keep overlays and modal containers invisible until JS/CSS explicitly shows them */
+  .settings-modal,
+  .modal,
+  .lockedin-info-modal-overlay,
+  .about-info-modal-overlay,
+  .lockedin-info-modal,
+  .info-modal,
+  #mute-alert-modal,
+  #motivational-alert-modal,
+  #timer-complete-modal,
+  #stay-focused-modal {
+    visibility: hidden !important;
+    opacity: 0 !important;
+    display: none !important;
+    pointer-events: none !important;
+  }
+
+  /* When JS/CSS shows the modal, restore display to flex for proper centering/layout */
+  .settings-modal.show,
+  .modal.show,
+  .lockedin-info-modal-overlay.active,
+  .about-info-modal-overlay.active {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: flex !important;
+    pointer-events: auto !important;
+  }
+
+  /* Ensure internal modal content is visible when its container is shown */
+  .settings-modal.show .settings-content,
+  .lockedin-info-modal-overlay.active .lockedin-info-modal,
+  .about-info-modal-overlay.active .about-info-modal,
+  .modal.show .modal-content {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
+  }
+</style>
+
 <!-- Supabase Client -->
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
