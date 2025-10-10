@@ -109,7 +109,7 @@
 
 
 <!-- Supabase Client -->
-<script src="https://unpkg.com/@supabase/supabase-js@2" defer></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
   <script>
     // Function to load deferred CSS files
@@ -1398,14 +1398,53 @@
 <script src="js/most-used-pomodoro.js?v=1.0.2" defer></script>
 
 <!-- Achievements loader (manual) -->
-<script src="js/database-achievements.js"></script>
+<script src="js/database-achievements.js" defer></script>
 <script>
-  try {
-    window.currentUser = window.currentUser || null;
-    loadAchievements('achievements-container');
-  } catch (e) {
-    console.warn('Achievements init failed', e);
-  }
+  (function initAchievementsModule() {
+    function initAchievementsWhenReady() {
+      try {
+        window.currentUser = window.currentUser || null;
+
+        if (typeof loadAchievements === 'function') {
+          loadAchievements('achievements-container');
+          return;
+        }
+
+        // Poll briefly for the loader to become available (handles deferred script ordering)
+        let attempts = 0;
+        const maxAttempts = 30; // ~3s
+        const poll = setInterval(() => {
+          attempts++;
+          if (typeof loadAchievements === 'function') {
+            clearInterval(poll);
+            try { loadAchievements('achievements-container'); } catch (err) { console.warn('Achievements init failed', err); }
+          } else if (attempts >= maxAttempts) {
+            clearInterval(poll);
+            console.warn('Achievements init: loader not available (timed out)');
+          }
+        }, 100);
+      } catch (e) {
+        console.warn('Achievements init failed', e);
+      }
+    }
+
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      initAchievementsWhenReady();
+    } else {
+      document.addEventListener('DOMContentLoaded', initAchievementsWhenReady);
+    }
+
+    // Re-run on auth restore/login if authService exposes the listener API
+    try {
+      if (window.authService && typeof window.authService.addEventListener === 'function') {
+        window.authService.addEventListener((event) => {
+          if (event === 'restore' || event === 'login') {
+            try { initAchievementsWhenReady(); } catch (e) { console.warn(e); }
+          }
+        });
+      }
+    } catch (e) { /* ignore */ }
+  })();
 </script>
 
 

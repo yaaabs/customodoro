@@ -578,7 +578,7 @@
     container.innerHTML = '';
     const p = document.createElement('p');
     p.className = 'no-badge';
-    p.textContent = 'No badges collected yet. 🏅 Aim for the monthly leaderboard to unlock one!';
+    p.textContent = '🏅 No badges collected yet. Keep it up to build your streaks and climb the Monthly Leaderboard!';
     container.appendChild(p);
   }
 
