@@ -15,8 +15,9 @@ const sounds = {
 // Add timer sound variables and functionality
 const timerSounds = {
   ticking: new Audio('audio/Timer Sounds/WallClockTicking.mp3'),
-  whitenoise: new Audio('audio/Timer Sounds/UnderWaterWhiteNoise.mp3'),
-  brownnoise: new Audio('audio/Timer Sounds/SoftBrownNoise.mp3')
+  // White/Brown noise temporarily disabled due to performance/bug issues
+  whitenoise: null,
+  brownnoise: null
 };
 
 // Add the missing showToast function
@@ -96,8 +97,10 @@ function initializeTimerSoundSettings() {
   
   // Set up initial volume for all timer sounds
   Object.values(timerSounds).forEach(sound => {
-    sound.volume = volume;
-    sound.loop = true;
+    if (sound) {
+      sound.volume = volume;
+      sound.loop = true;
+    }
   });
   
   console.log(`Timer sound settings initialized:`, {
@@ -146,7 +149,9 @@ function updateTimerSound() {
   
   // Set volume for all timer sounds
   Object.values(timerSounds).forEach(sound => {
-    sound.volume = volume;
+    if (sound) {
+      sound.volume = volume;
+    }
   });
   
   // If timer is running, start the appropriate timer sound
@@ -172,7 +177,9 @@ function updateTimerSoundVolume() {
   
   // Update volume for all timer sounds
   Object.values(timerSounds).forEach(sound => {
-    sound.volume = volume;
+    if (sound) {
+      sound.volume = volume;
+    }
   });
   
   console.log(`Timer sound volume updated: ${volume}`);
@@ -209,27 +216,43 @@ function playTimerSound() {
   
   // Set as current timer sound
   currentTimerSound = sound;
-  
+
+  // Guard: if the selected timer sound isn't available (disabled), abort gracefully
+  if (!currentTimerSound || typeof currentTimerSound.play !== 'function') {
+    console.warn('Timer sound not available or disabled:', timerSoundType);
+    currentTimerSound = null;
+    return;
+  }
+
   // Make sure volume is set correctly
   const volume = localStorage.getItem('timerSoundVolume') ? 
                 parseInt(localStorage.getItem('timerSoundVolume')) / 100 : 0.6;
   currentTimerSound.volume = volume;
-  
+
   // Start playing sound with error handling
-  currentTimerSound.currentTime = 0;
-  currentTimerSound.play().catch(err => {
+  try {
+    currentTimerSound.currentTime = 0;
+    currentTimerSound.play().catch(err => {
+      console.log('Timer sound playback error:', err);
+      currentTimerSound = null;
+    });
+  } catch (err) {
     console.log('Timer sound playback error:', err);
     currentTimerSound = null;
-  });
-  
+  }
+
   console.log(`Timer sound started: ${timerSoundType} at volume ${volume}`);
 }
 
 // Stop the currently playing timer sound
 function stopTimerSound() {
   if (currentTimerSound) {
-    currentTimerSound.pause();
-    currentTimerSound.currentTime = 0;
+    if (typeof currentTimerSound.pause === 'function') {
+      currentTimerSound.pause();
+    }
+    if (typeof currentTimerSound.currentTime === 'number') {
+      currentTimerSound.currentTime = 0;
+    }
     currentTimerSound = null;
   }
 }

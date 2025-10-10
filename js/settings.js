@@ -1298,10 +1298,10 @@ function testSound(type) {
         soundPath = 'audio/Timer Sounds/WallClockTicking.mp3';
         break;
       case 'whitenoise':
-        soundPath = 'audio/Timer Sounds/UnderWaterWhiteNoise.mp3';
-        break;
       case 'brownnoise':
-        soundPath = 'audio/Timer Sounds/SoftBrownNoise.mp3';
+        // These sounds are temporarily disabled due to known issues. Do not attempt to play.
+        console.warn('Selected timer sound is disabled:', selectedSound);
+        return;
         break;
       default:
         return;
