@@ -1085,7 +1085,7 @@
       'Brain Waves': 'images/album-art/GM_Brain Waves.jpg',
 
       'Brain Boost': 'images/album-art/GM_Theta Waves.jpg',
-      'Mind Hack': 'images/album-art/GM_Intense Focus.PNG',
+      'Mind Hack': 'images/album-art/GM_Intense Focus.jpg',
       'Clear Mind': 'images/album-art/GM_Deep Work.jpg',
       'Active Recall': 'images/album-art/GM_Memorization.jpg',
       'Neural Spark': 'images/album-art/GM_Gamma Waves.jpg',
@@ -1173,14 +1173,14 @@
     const TRACK_ALBUM_ART_MAP = {
       
       // Gamma Waves 40hz
-      '40 Hz Brain Waves': 'images/album-art/GM_Intense Focus.png',
+      '40 Hz Brain Waves': 'images/album-art/GM_40 Hz Gamma.jpg',
       'Awakened Mind': 'images/album-art/GM_Gamma Waves.jpg',
       'Headspace': 'images/album-art/GM_40 Hz Gamma.jpg',
       '12 Hz High Level Cognition': 'images/album-art/GM_Alpha Waves.jpg',
       'Brain Waves': 'images/album-art/GM_Brain Waves.jpg',
 
       'Brain Boost': 'images/album-art/GM_Theta Waves.jpg',
-      'Mind Hack': 'images/album-art/GM_Intense Focus.png',
+      'Mind Hack': 'images/album-art/GM_Intense Focus.jpg',
       'Clear Mind': 'images/album-art/GM_Deep Work.jpg',
       'Active Recall': 'images/album-art/GM_Memorization.jpg',
       'Neural Spark': 'images/album-art/GM_Gamma Waves.jpg',
