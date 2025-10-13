@@ -1626,20 +1626,16 @@ document.addEventListener('DOMContentLoaded', () => {
 // === CENTRALIZED DATE HANDLING ===
 // All date operations go through these functions to ensure consistency
 
-// Get current PH date as a Date object
+// Get current date in user's local timezone (replaces getPHToday)
+// Now uses TimezoneManager instead of hardcoded Asia/Manila
 function getPHToday() {
-  const now = new Date();
-  const phTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Manila" }));
-  // Create a clean date object in local timezone but with PH date values
-  return new Date(phTime.getFullYear(), phTime.getMonth(), phTime.getDate());
+  return window.timezoneManager.getUserToday();
 }
 
 // Convert any date to YYYY-MM-DD string
+// Now uses TimezoneManager for consistent formatting
 function formatDateKey(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  return window.timezoneManager.formatDateKey(date);
 }
 
 // Convert YYYY-MM-DD string back to Date object (always in local timezone)
@@ -1683,8 +1679,9 @@ function getDatesForHeatmap() {
   return dates;
 }
 // STREAK!
+// Now uses TimezoneManager for consistent data retrieval
 function getStats() {
-  return JSON.parse(localStorage.getItem('customodoroStatsByDay') || '{}');
+  return window.timezoneManager.getStats();
 }
 
 // Calculate total focus points and date range
@@ -2392,53 +2389,10 @@ document.addEventListener('DOMContentLoaded', function() {
 // Expose update function for other scripts
 window.renderContributionGraph = renderContributionGraph;
 
-// Session management using centralized date functions
+// Session management using TimezoneManager for user's local timezone
+// This ensures sessions are recorded in the user's actual timezone, not GMT+8
 window.addCustomodoroSession = function(type, minutes) {
-  const key = formatDateKey(getPHToday()); // Use centralized date handling
-  console.log('Adding session for date:', key); // Debug log
-  
-  const stats = getStats();
-  if (!stats[key]) stats[key] = { classic: 0, reverse: 0, break: 0, total_minutes: 0 };
-  
-  if (type === 'classic') stats[key].classic++;
-  if (type === 'reverse') stats[key].reverse++;
-  if (type === 'break') stats[key].break++;
-  stats[key].total_minutes += minutes;
-
-  // Add timestamp for sync purposes
-  stats[key].lastUpdate = new Date().toISOString();
-  
-  localStorage.setItem('customodoroStatsByDay', JSON.stringify(stats));
-  console.log('Updated stats:', stats[key]); // Debug log
-  renderContributionGraph();
-  updateStreakStatsCard();
-  
-  // Update User Stats Card
-  if (typeof window.updateUserStats === 'function') {
-    window.updateUserStats();
-  }
-  
-  // Update streak display after adding session
-  if (typeof renderStreakDisplay === 'function') {
-    renderStreakDisplay();
-  }
-
-  // Trigger automatic sync if user is logged in
-  if (window.syncManager && window.authService?.isLoggedIn()) {
-    console.log('🔄 Triggering automatic sync after session...');
-    try {
-      // Use queueSync with current data - this method exists and handles online/offline
-      window.syncManager.queueSync(window.syncManager.getCurrentLocalData());
-      console.log('✅ Auto-sync queued after session');
-      
-      // Update sync UI stats
-      if (window.syncUI) {
-        window.syncUI.updateStats();
-      }
-    } catch (error) {
-      console.warn('⚠️ Auto-sync failed after session:', error);
-    }
-  }
+  return window.timezoneManager.addCustomodoroSession(type, minutes);
 };
 
 // TESTING FUNCTION: Add test data for today
