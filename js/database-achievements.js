@@ -214,7 +214,7 @@
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        background: rgba(0,0,0,0.35);
+        background: rgba(255, 255, 255, 0.3);
         color: #fff;
         border: none;
         width: 48px;
