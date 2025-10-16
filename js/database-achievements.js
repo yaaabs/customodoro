@@ -93,8 +93,8 @@
     modalEl.innerHTML = `
       <div class="badge-modal-fullscreen" role="dialog" aria-modal="true" aria-label="Badge details">
   <button class="badge-modal-close" aria-label="Close badge dialog">\u00d7</button>
-        <button class="badge-modal-prev" aria-label="Previous badge" tabindex="0">\u25C0</button>
-        <button class="badge-modal-next" aria-label="Next badge" tabindex="0">\u25B6</button>
+  <button class="badge-modal-prev" aria-label="Previous badge" tabindex="0">&lt;</button>
+  <button class="badge-modal-next" aria-label="Next badge" tabindex="0">&gt;</button>
         <div class="badge-modal-container">
           <div class="badge-modal-content">
             <div class="badge-modal-banner">
