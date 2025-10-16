@@ -92,7 +92,9 @@
     modalEl.setAttribute('aria-hidden', 'true');
     modalEl.innerHTML = `
       <div class="badge-modal-fullscreen" role="dialog" aria-modal="true" aria-label="Badge details">
-        <button class="badge-modal-close" aria-label="Close badge dialog">×</button>
+  <button class="badge-modal-close" aria-label="Close badge dialog">\u00d7</button>
+        <button class="badge-modal-prev" aria-label="Previous badge" tabindex="0">\u25C0</button>
+        <button class="badge-modal-next" aria-label="Next badge" tabindex="0">\u25B6</button>
         <div class="badge-modal-container">
           <div class="badge-modal-content">
             <div class="badge-modal-banner">
@@ -129,6 +131,20 @@
     container.addEventListener('touchstart', handleTouchStart, { passive: true });
     container.addEventListener('touchmove', handleTouchMove, { passive: false });
     container.addEventListener('touchend', handleTouchEnd);
+    
+    // Prev / Next buttons (for users who don't swipe or use arrow keys)
+    const prevBtn = modalEl.querySelector('.badge-modal-prev');
+    const nextBtn = modalEl.querySelector('.badge-modal-next');
+    if (prevBtn) {
+      prevBtn.addEventListener('click', function () {
+        if (currentIndex > 0) showBadgeAtIndex(currentIndex - 1);
+      });
+    }
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function () {
+        if (currentIndex < currentBadges.length - 1) showBadgeAtIndex(currentIndex + 1);
+      });
+    }
     
     return modalEl;
   }
@@ -190,6 +206,36 @@
       
       .badge-modal-close:hover {
         background: rgba(255, 255, 255, 0.3);
+      }
+      
+      /* Prev/Next buttons for non-swipe users */
+      .badge-modal-prev,
+      .badge-modal-next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0,0,0,0.35);
+        color: #fff;
+        border: none;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10002;
+        font-size: 18px;
+        transition: background 0.15s ease, opacity 0.15s ease;
+      }
+      
+      .badge-modal-prev { left: 14px; }
+      .badge-modal-next { right: 14px; }
+      
+      .badge-modal-prev:hover, .badge-modal-next:hover { background: rgba(0,0,0,0.5); }
+      .badge-modal-prev.disabled, .badge-modal-next.disabled {
+        opacity: 0.35;
+        pointer-events: none;
       }
       
       .badge-modal-container {
@@ -464,6 +510,34 @@
     }
     
     updateDots();
+    
+    // Update Prev/Next button states for accessibility
+    try {
+      const prevBtn = modalEl.querySelector('.badge-modal-prev');
+      const nextBtn = modalEl.querySelector('.badge-modal-next');
+      if (prevBtn) {
+        const disabled = currentIndex <= 0;
+        prevBtn.classList.toggle('disabled', disabled);
+        if (disabled) {
+          prevBtn.setAttribute('aria-disabled', 'true');
+          prevBtn.setAttribute('tabindex', '-1');
+        } else {
+          prevBtn.setAttribute('aria-disabled', 'false');
+          prevBtn.setAttribute('tabindex', '0');
+        }
+      }
+      if (nextBtn) {
+        const disabled = currentIndex >= currentBadges.length - 1;
+        nextBtn.classList.toggle('disabled', disabled);
+        if (disabled) {
+          nextBtn.setAttribute('aria-disabled', 'true');
+          nextBtn.setAttribute('tabindex', '-1');
+        } else {
+          nextBtn.setAttribute('aria-disabled', 'false');
+          nextBtn.setAttribute('tabindex', '0');
+        }
+      }
+    } catch (e) { /* ignore safely */ }
   }
 
   function updateDots() {
