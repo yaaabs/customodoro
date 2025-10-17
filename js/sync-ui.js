@@ -489,9 +489,7 @@ async handleLogin() {
       
       console.log('Local data check - total sessions:', totalSessions);
       
-      // Consider it significant if user has completed sessions (data worth protecting)
-      // 🚨 CRITICAL FIX: Lower threshold to prevent data loss
-      const hasSignificantData = totalSessions >= 1; // Fixed: Any session is significant
+      const hasSignificantData = totalSessions >= 1; 
       console.log('Has significant local data:', hasSignificantData);
       return hasSignificantData;
     } catch (error) {
@@ -668,10 +666,9 @@ async handleLogin() {
     // Get current data for display
     const currentData = this.getCurrentDataSummary();
     
-    // 🚨 CRITICAL: Check if user has significant data that could be lost
+  
     const hasSignificantData = currentData.totalSessions > 0 || currentData.currentStreak > 0 || currentData.totalPoints > 0;
     
-    // 🚨 ENHANCED WARNING: More specific warnings based on data type
     let warningLevel = 'info';
     let warningMessage = '';
     
@@ -711,7 +708,7 @@ async handleLogin() {
           margin: 20px 0 !important;
           font-size: 14px !important;
         ">
-          <strong>✅ Data Protection:</strong> Your existing progress will be preserved and uploaded to your account. This is a SAFE operation.
+          <strong>✅ Data Protection:</strong> Your existing progress will be preserved and uploaded to your account. Please review the current data summary first.
         </div>
       `;
     } else if (hasSignificantData) {
@@ -725,7 +722,7 @@ async handleLogin() {
           margin: 20px 0 !important;
           font-size: 14px !important;
         ">
-          <strong>⚠️ Important:</strong> ${warningMessage} ${action === 'register' ? 'Creating' : 'Signing into'} this account will sync your data to the cloud.
+          <strong>⚠️ Important:</strong> ${warningMessage} ${action === 'register' ? 'Creating' : 'Signing into'} this account will sync your data to the cloud. If this is not your first time using sync, please review the current data summary below if it matches your current data.
         </div>
         
         <div style="

@@ -84,7 +84,7 @@ class AuthService {
     this.currentUser = null;
     localStorage.removeItem('customodoro-auth');
     
-    // 🚨 CRITICAL FIX: Clear user session data to prevent cross-account contamination
+
     if (wasLoggedIn) {
       this.clearUserSessionData();
       this.notifyListeners('logout', null);
@@ -190,7 +190,7 @@ class AuthService {
   async register(email, username = '', userData = null) {
     console.log('AuthService.register called with:', { email, username, hasUserData: !!userData });
     try {
-      // 🛡️ CRITICAL: Ensure we preserve local data if not explicitly provided
+
       let dataToSend = userData;
       if (!dataToSend && window.syncManager) {
         console.log('🛡️ Getting local data to prevent data loss during registration');
