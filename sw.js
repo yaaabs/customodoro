@@ -49,6 +49,29 @@ self.addEventListener("install", (event) => {
   );
 });
 
+// Handle notification click - open app when notification is tapped
+self.addEventListener('notificationclick', (event) => {
+  console.log('🔔 Notification clicked:', event.notification.tag);
+  
+  event.notification.close();
+  
+  // Open or focus the app
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      // Check if app is already open
+      for (let client of clientList) {
+        if (client.url.includes(self.registration.scope) && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      // If not open, open a new window
+      if (clients.openWindow) {
+        return clients.openWindow('/');
+      }
+    })
+  );
+});
+
 // Activate: clean up old caches and notify clients
 self.addEventListener("activate", (event) => {
   console.log('🚀 Service Worker v7.3.22 activating...');
