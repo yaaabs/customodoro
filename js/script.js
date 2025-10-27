@@ -3,60 +3,6 @@ console.log('=== DEBUGGING CONTRIBUTION GRAPH CONNECTION ===');
 console.log('addCustomodoroSession function exists:', typeof window.addCustomodoroSession === 'function');
 console.log('renderContributionGraph function exists:', typeof window.renderContributionGraph === 'function');
 
-// Helper function to send notifications via Service Worker
-async function sendNotification(title, body, icon, tag) {
-  try {
-    // Check if service worker is available
-    if ('serviceWorker' in navigator && 'Notification' in window) {
-      const registration = await navigator.serviceWorker.ready;
-      
-      // Use Service Worker notification for better mobile support
-      if (registration.showNotification) {
-        await registration.showNotification(title, {
-          body: body,
-          icon: icon,
-          tag: tag,
-          vibrate: [200, 100, 200],
-          requireInteraction: false,
-          silent: false,
-          data: {
-            url: window.location.origin,
-            timestamp: Date.now()
-          }
-        });
-        console.log('📱 Service Worker notification sent:', tag);
-      } else {
-        // Fallback to regular notification
-        new Notification(title, {
-          body: body,
-          icon: icon,
-          vibrate: [200, 100, 200]
-        });
-        console.log('🔔 Regular notification sent (fallback)');
-      }
-    } else {
-      // Fallback for browsers without service worker
-      new Notification(title, {
-        body: body,
-        icon: icon,
-        vibrate: [200, 100, 200]
-      });
-      console.log('🔔 Regular notification sent (no SW support)');
-    }
-  } catch (error) {
-    console.error('❌ Notification error:', error);
-    // Last resort fallback
-    try {
-      new Notification(title, {
-        body: body,
-        icon: icon
-      });
-    } catch (e) {
-      console.error('❌ All notification methods failed:', e);
-    }
-  }
-}
-
 // DOM Elements
 const timerElement = document.getElementById('timer');
 const progressBar = document.getElementById('progress-bar');
@@ -1318,7 +1264,7 @@ function playNotification() {
 
   // Also update the notification
   if ('Notification' in window && Notification.permission === 'granted') {
-    let title, body, icon, tag;
+    let title, body, icon;
 
     if (currentMode === 'pomodoro') {
       // Determine if we're heading to a long break
@@ -1326,17 +1272,19 @@ function playNotification() {
       title = '🎉 Great Work!';
       body = `You've completed ${completedPomodoros} pomodoros today! Time for a ${isLongBreak ? 'long ' : ''}break.`;
       icon = '/images/badges/1.webp';
-      tag = 'pomodoro-complete';
     } else {
       title = '⏰ Break Complete!';
       body = 'Ready to crush another focused session?';
       icon = '/images/badges/2.webp';
-      tag = 'break-complete';
     }
 
     // Only create notification if alarm is enabled
     if (alarmEnabled) {
-      sendNotification(title, body, icon, tag);
+      new Notification(title, {
+        body: body,
+        icon: icon,
+        vibrate: [100, 50, 100]
+      });
     }
   } else if ('Notification' in window && Notification.permission !== 'denied') {
     Notification.requestPermission();

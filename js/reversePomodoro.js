@@ -3,60 +3,6 @@ if ('Notification' in window) {
   Notification.requestPermission();
 }
 
-// Helper function to send notifications via Service Worker
-async function sendNotification(title, body, icon, tag) {
-  try {
-    // Check if service worker is available
-    if ('serviceWorker' in navigator && 'Notification' in window) {
-      const registration = await navigator.serviceWorker.ready;
-      
-      // Use Service Worker notification for better mobile support
-      if (registration.showNotification) {
-        await registration.showNotification(title, {
-          body: body,
-          icon: icon,
-          tag: tag,
-          vibrate: [200, 100, 200],
-          requireInteraction: false,
-          silent: false,
-          data: {
-            url: window.location.origin,
-            timestamp: Date.now()
-          }
-        });
-        console.log('📱 Service Worker notification sent:', tag);
-      } else {
-        // Fallback to regular notification
-        new Notification(title, {
-          body: body,
-          icon: icon,
-          vibrate: [200, 100, 200]
-        });
-        console.log('🔔 Regular notification sent (fallback)');
-      }
-    } else {
-      // Fallback for browsers without service worker
-      new Notification(title, {
-        body: body,
-        icon: icon,
-        vibrate: [200, 100, 200]
-      });
-      console.log('🔔 Regular notification sent (no SW support)');
-    }
-  } catch (error) {
-    console.error('❌ Notification error:', error);
-    // Last resort fallback
-    try {
-      new Notification(title, {
-        body: body,
-        icon: icon
-      });
-    } catch (e) {
-      console.error('❌ All notification methods failed:', e);
-    }
-  }
-}
-
 // Audio setup
 const sounds = {
     click: new Audio('audio/SFX/start.wav'),
@@ -948,16 +894,15 @@ function completeSession(playSound = true) {
         window.playSound('pomodoroComplete');
         showMuteAlert(`Great work! You worked for ${workMinutes} minutes and earned a ${earnedBreakTime}-minute break!`);
         
-        // Send notification via Service Worker for better mobile support
+        // Desktop notification for max time reached
         if ('Notification' in window && Notification.permission === 'granted') {
             const alarmEnabled = localStorage.getItem('alarm') !== 'false';
             if (alarmEnabled) {
-                sendNotification(
-                    '🎉 Max Time Reached!',
-                    `You worked for ${workMinutes} minutes! Time for a ${earnedBreakTime}-minute break.`,
-                    '/images/badges/1.webp',
-                    'work-complete'
-                );
+                new Notification('🎉 Max Time Reached!', {
+                    body: `You worked for ${workMinutes} minutes! Time for a ${earnedBreakTime}-minute break.`,
+                    icon: '/images/badges/1.webp',
+                    vibrate: [100, 50, 100]
+                });
             }
         }
     }
@@ -998,16 +943,15 @@ function completeBreak() {
     // Show break readiness confirmation instead of regular mute alert
     showBreakReadinessConfirmation("Break time is over! Ready to work again?");
     
-    // Send notification via Service Worker for better mobile support
+    // Desktop notification for break completion
     if ('Notification' in window && Notification.permission === 'granted') {
         const alarmEnabled = localStorage.getItem('alarm') !== 'false';
         if (alarmEnabled) {
-            sendNotification(
-                '⏰ Break Complete!',
-                'Ready to start another work session?',
-                '/images/badges/2.webp',
-                'break-complete'
-            );
+            new Notification('⏰ Break Complete!', {
+                body: 'Ready to start another work session?',
+                icon: '/images/badges/2.webp',
+                vibrate: [100, 50, 100]
+            });
         }
     }
     
