@@ -699,6 +699,11 @@ function handleStart() {
   
   const now = Date.now();
   
+  // MIDNIGHT: Start midnight tracking
+  if (typeof window.startMidnightTracking === 'function') {
+    window.startMidnightTracking(currentMode === 'break' ? 'break' : 'reverse');
+  }
+  
   // Fresh start
   if (currentMode === 'reverse') {
     // Count-up mode
@@ -873,7 +878,12 @@ function completeSession(playSound = true) {
 
     // Always record the session for the graph
     if (typeof window.addCustomodoroSession === 'function') {
-        window.addCustomodoroSession('reverse', workMinutes);
+        // MIDNIGHT: Use midnight splitter if available
+        if (typeof window.recordSessionWithMidnightSplit === 'function') {
+          window.recordSessionWithMidnightSplit('reverse', workMinutes);
+        } else {
+          window.addCustomodoroSession('reverse', workMinutes);
+        }
     }
 
     // Calculate earned break BEFORE showing any messages
@@ -910,6 +920,11 @@ function completeBreak() {
     // Stop timer sound
     stopTimerSound();
     
+    // MIDNIGHT: Reset midnight tracking
+    if (typeof window.resetMidnightTracking === 'function') {
+      window.resetMidnightTracking();
+    }
+    
     // Play completion sound when break is done
     playSound('breakComplete');
     
@@ -928,6 +943,11 @@ function resetTimer(showMessage = false) {
     timerStartTime = null;
     timerEndTime = null;
     pausedTimeRemaining = null;
+    
+    // MIDNIGHT: Reset midnight tracking
+    if (typeof window.resetMidnightTracking === 'function') {
+      window.resetMidnightTracking();
+    }
     
     isRunning = false;
     currentSeconds = 0;

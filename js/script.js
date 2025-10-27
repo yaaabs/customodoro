@@ -718,6 +718,11 @@ function toggleTimer() {
     
     const now = Date.now();
     
+    // MIDNIGHT: Start midnight tracking (falls back gracefully if script not loaded)
+    if (typeof window.startMidnightTracking === 'function') {
+      window.startMidnightTracking('classic');
+    }
+    
     if (pausedTimeRemaining !== null) {
       // Resuming from pause
       timerEndTime = now + (pausedTimeRemaining * 1000);
@@ -803,7 +808,14 @@ function handleTimerCompletion() {
     
     if (typeof window.addCustomodoroSession === 'function') {
         console.log('✅ Adding session to contribution graph...');
-        window.addCustomodoroSession('classic', sessionMinutes);
+        
+        // MIDNIGHT: Use midnight splitter if available, otherwise fall back to standard
+        if (typeof window.recordSessionWithMidnightSplit === 'function') {
+          window.recordSessionWithMidnightSplit('classic', sessionMinutes);
+        } else {
+          window.addCustomodoroSession('classic', sessionMinutes);
+        }
+        
         console.log('✅ Session added successfully!');
         
         // Also manually trigger a re-render
@@ -864,6 +876,11 @@ function resetTimer() {
   timerStartTime = null;
   timerEndTime = null;
   pausedTimeRemaining = null;
+
+  // MIDNIGHT: Reset midnight tracking (silent if script not loaded)
+  if (typeof window.resetMidnightTracking === 'function') {
+    window.resetMidnightTracking();
+  }
 
   // Reset to initial time based on current mode - use latest values
   if (currentMode === 'pomodoro') {
