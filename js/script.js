@@ -1271,11 +1271,11 @@ function playNotification() {
       const isLongBreak = completedPomodoros % maxSessions === 0;
       title = '🎉 Great Work!';
       body = `You've completed ${completedPomodoros} pomodoros today! Time for a ${isLongBreak ? 'long ' : ''}break.`;
-      icon = '/images/break-icon.png';
+      icon = '/images/badges/1.webp';
     } else {
       title = '⏰ Break Complete!';
       body = 'Ready to crush another focused session?';
-      icon = '/images/album-art/moonchild.jpg';
+      icon = '/images/badges/2.webp';
     }
 
     // Only create notification if alarm is enabled
