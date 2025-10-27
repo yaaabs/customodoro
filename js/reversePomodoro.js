@@ -15,10 +15,14 @@ const sounds = {
 // Add timer sound variables and functionality
 const timerSounds = {
   ticking: new Audio('audio/Timer Sounds/WallClockTicking.mp3'),
-  // White/Brown noise temporarily disabled due to performance/bug issues
-  whitenoise: null,
-  brownnoise: null
+  whitenoise: new Audio('audio/Timer Sounds/UnderWaterWhiteNoise.mp3'),
+  brownnoise: new Audio('audio/Timer Sounds/SoftBrownNoise.mp3')
 };
+
+// The whitenoise and brownnoise files were removed — alias to ticking so
+// existing code paths won't fail if the files are deleted.
+timerSounds.whitenoise = timerSounds.ticking;
+timerSounds.brownnoise = timerSounds.ticking;
 
 // Add the missing showToast function
 function showToast(message, duration = 3000) {
@@ -1743,20 +1747,16 @@ document.addEventListener('DOMContentLoaded', function () {
 // === CENTRALIZED DATE HANDLING ===
 // All date operations go through these functions to ensure consistency
 
-// Get current PH date as a Date object
+// Get current date in user's local timezone (replaces getPHToday)
+// Now uses TimezoneManager instead of hardcoded Asia/Manila
 function getPHToday() {
-  const now = new Date();
-  const phTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Manila" }));
-  // Create a clean date object in local timezone but with PH date values
-  return new Date(phTime.getFullYear(), phTime.getMonth(), phTime.getDate());
+  return window.timezoneManager.getUserToday();
 }
 
 // Convert any date to YYYY-MM-DD string
+// Now uses TimezoneManager for consistent formatting
 function formatDateKey(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  return window.timezoneManager.formatDateKey(date);
 }
 
 // Convert YYYY-MM-DD string back to Date object (always in local timezone)
@@ -1799,9 +1799,9 @@ function getDatesForHeatmap() {
   return dates;
 }
 
-// Get stats from localStorage
+// Get stats from localStorage using TimezoneManager
 function getStats() {
-  return JSON.parse(localStorage.getItem('customodoroStatsByDay') || '{}');
+  return window.timezoneManager.getStats();
 }
 
 // Calculate total focus points and date range
@@ -2494,54 +2494,10 @@ document.addEventListener('DOMContentLoaded', function() {
 // Expose update function for other scripts
 window.renderContributionGraph = renderContributionGraph;
 
-// Session management using centralized date functions
+// Session management using TimezoneManager for user's local timezone
+// This ensures sessions are recorded in the user's actual timezone, not GMT+8
 window.addCustomodoroSession = function(type, minutes) {
-  const key = formatDateKey(getPHToday()); // Use centralized date handling
-  console.log('Adding session for date:', key); // Debug log
-  
-  const stats = getStats();
-  if (!stats[key]) stats[key] = { classic: 0, reverse: 0, break: 0, total_minutes: 0 };
-  
-  if (type === 'classic') stats[key].classic++;
-  if (type === 'reverse') stats[key].reverse++;
-  if (type === 'break') stats[key].break++;
-  stats[key].total_minutes += minutes;
-
-  // Add timestamp for sync purposes
-  stats[key].lastUpdate = new Date().toISOString();
-  
-  localStorage.setItem('customodoroStatsByDay', JSON.stringify(stats));
-  console.log('Updated stats:', stats[key]); // Debug log
-  renderContributionGraph();
-  updateStreakStatsCard();
-  
-  // Update User Stats Card
-  if (typeof window.updateUserStats === 'function') {
-    window.updateUserStats();
-  }
-  
-  // Update streak display after adding session
-  if (typeof renderStreakDisplay === 'function') {
-    renderStreakDisplay();
-  }
-
-  // Trigger automatic sync if user is logged in
-  if (window.syncManager && window.authService?.isLoggedIn()) {
-    console.log('🔄 Triggering automatic sync after session...');
-    window.syncManager.manualSync()
-      .then(() => {
-        console.log('✅ Auto-sync completed after session');
-        // Update sync UI stats
-        if (window.syncUI) {
-          window.syncUI.updateStats();
-        }
-      })
-      .catch(error => {
-        console.warn('⚠️ Auto-sync failed after session:', error);
-        // Queue for later sync if failed
-        window.syncManager.queueSync(window.syncManager.getCurrentLocalData());
-      });
-  }
+  return window.timezoneManager.addCustomodoroSession(type, minutes);
 };
 
 // TESTING FUNCTION: Add test data for today

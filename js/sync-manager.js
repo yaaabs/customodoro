@@ -207,7 +207,7 @@ class SyncManager {
     this.notifyListeners('sync-start', { type: 'initial' });
     
     try {
-      // 🛡️ CRITICAL: Check for existing local data before sync
+
       const localData = this.getCurrentLocalData();
       const hasSignificantLocalData = this.hasSignificantLocalData(localData);
       
@@ -290,7 +290,7 @@ class SyncManager {
     
     const serverData = await response.json();
     
-    // 🚨 CRITICAL FIX: Check if server data is meaningful before overwriting local data
+
     if (serverData.data && this.hasSignificantServerData(serverData.data)) {
       console.log('📥 Server has significant data, merging with local data');
       this.mergeServerData(serverData.data);
@@ -322,7 +322,7 @@ class SyncManager {
     return serverData;
   }
   
-  // 🛡️ CRITICAL: Check if server data contains meaningful content
+
   hasSignificantServerData(serverData) {
     if (!serverData || typeof serverData !== 'object') {
       return false;
@@ -376,7 +376,7 @@ class SyncManager {
     return false;
   }
   
-  // 🛡️ CRITICAL: Check if local data contains meaningful content
+
   hasSignificantLocalData(localData) {
     if (!localData || typeof localData !== 'object') {
       console.log('📭 No local data structure');
@@ -445,7 +445,7 @@ class SyncManager {
     // Backend schema ONLY accepts: sessions, tasks, settings, streaks
     const streaksData = {
       ...(localData.streaks || {}),
-      // CRITICAL: Embed productivity stats in streaks field as workaround
+
       productivityStatsByDay: localData.productivityStats || {}
     };
     
@@ -615,12 +615,12 @@ const cleanData = {
           const serverProductivityStats = serverData.streaks.productivityStatsByDay;
           const localProductivityStats = JSON.parse(localStorage.getItem('customodoroStatsByDay') || '{}');
           
-          // 🛡️ CRITICAL PROTECTION: Enhanced safety check for productivity stats
+
           if (serverProductivityStats && typeof serverProductivityStats === 'object') {
             const serverDayCount = Object.keys(serverProductivityStats).length;
             const localDayCount = Object.keys(localProductivityStats).length;
             
-            // 🚨 CRITICAL FIX: Never overwrite local stats with empty server stats
+
             if (serverDayCount > 0) {
               // Server has meaningful data - safe to merge
               const mergedProductivityStats = this.mergeProductivityStats(localProductivityStats, serverProductivityStats);

@@ -263,16 +263,26 @@ Reverse keeps the same UI, themes, and analytics, but changes the timing model: 
 
 ## 🏆 **Why Choose Customodoro Over Other Pomodoro Apps?**
 
-✅ **Dual Timer Modes** - Only app with both Classic & Reverse Pomodoro techniques  
-✅ **100% Free & Open Source** - No premium features locked behind paywall  
+
+✅ **Dual Timer Modes** - Only app with both Classic & Reverse Pomodoro techniques
+
+✅ **100% Free & Open Source** - No premium features locked behind paywall
+
 ✅ **Registration Optional** - Start using immediately; create an account only if you want cross-device sync (privacy-first)
+
 ✅ **PWA: Add to Home Screen** - Mobile install supported; offline functionality is not enabled in this release
-✅ **Cross-Platform Compatibility** - Works on any device with a modern browser  
-✅ **Lightweight Performance** - Fast loading, minimal resource usage  
-✅ **Regular Feature Updates** - Community-driven development and improvements  
-✅ **Extensive Customization** - Make it truly yours with themes and settings  
-✅ **Smart Task Integration** - Built-in task management, no need for separate apps  
-✅ **Professional Design** - Modern UI that's both beautiful and functional  
+
+✅ **Cross-Platform Compatibility** - Works on any device with a modern browser
+
+✅ **Lightweight Performance** - Fast loading, minimal resource usage
+
+✅ **Regular Feature Updates** - Community-driven development and improvements
+
+✅ **Extensive Customization** - Make it truly yours with themes and settings
+
+✅ **Smart Task Integration** - Built-in task management, no need for separate apps
+
+✅ **Professional Design** - Modern UI that's both beautiful and functional
 
 ---
 

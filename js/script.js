@@ -82,11 +82,13 @@ sounds.breakComplete.volume = 1.0;  // Full volume for break alarm
 
 // Add timer sound variables and functionality
 const timerSounds = {
-  ticking: new Audio('audio/Timer Sounds/WallClockTicking.mp3'),
-  // White/Brown noise cause issues for now - do not preload. Leave null until replacement audio added.
-  whitenoise: null,
-  brownnoise: null
+  ticking: new Audio('audio/Timer Sounds/WallClockTicking.mp3')
 };
+
+// The whitenoise and brownnoise files were removed. Alias these keys to the
+// existing ticking sound so any remaining references won't throw errors.
+timerSounds.whitenoise = timerSounds.ticking;
+timerSounds.brownnoise = timerSounds.ticking;
 
 let currentTimerSound = null;
 
@@ -268,10 +270,8 @@ function initializeTimerSoundSettings() {
   
   // Set up initial volume for all timer sounds
   Object.values(timerSounds).forEach(sound => {
-    if (sound) {
-      sound.volume = volume;
-      sound.loop = true;
-    }
+    sound.volume = volume;
+    sound.loop = true;
   });
   
   console.log(`Timer sound settings initialized:`, {
@@ -292,9 +292,7 @@ function updateTimerSound() {
   
   // Set volume for all timer sounds
   Object.values(timerSounds).forEach(sound => {
-    if (sound) {
-      sound.volume = volume;
-    }
+    sound.volume = volume;
   });
   
   // If timer is running, start the appropriate timer sound
@@ -320,9 +318,7 @@ function updateTimerSoundVolume() {
   
   // Update volume for all timer sounds
   Object.values(timerSounds).forEach(sound => {
-    if (sound) {
-      sound.volume = volume;
-    }
+    sound.volume = volume;
   });
   
   console.log(`Timer sound volume updated: ${volume}`);
@@ -359,43 +355,27 @@ function playTimerSound() {
   
   // Set as current timer sound
   currentTimerSound = sound;
-
-  // Guard: if the selected timer sound isn't available (disabled), abort gracefully
-  if (!currentTimerSound || typeof currentTimerSound.play !== 'function') {
-    console.warn('Timer sound not available or disabled:', timerSoundType);
-    currentTimerSound = null;
-    return;
-  }
-
+  
   // Make sure volume is set correctly
   const volume = localStorage.getItem('timerSoundVolume') ? 
                 parseInt(localStorage.getItem('timerSoundVolume')) / 100 : 0.6;
   currentTimerSound.volume = volume;
-
+  
   // Start playing sound with error handling
-  try {
-    currentTimerSound.currentTime = 0;
-    currentTimerSound.play().catch(err => {
-      console.log('Timer sound playback error:', err);
-      currentTimerSound = null;
-    });
-  } catch (err) {
+  currentTimerSound.currentTime = 0;
+  currentTimerSound.play().catch(err => {
     console.log('Timer sound playback error:', err);
     currentTimerSound = null;
-  }
-
+  });
+  
   console.log(`Timer sound started: ${timerSoundType} at volume ${volume}`);
 }
 
 // Stop the currently playing timer sound
 function stopTimerSound() {
   if (currentTimerSound) {
-    if (typeof currentTimerSound.pause === 'function') {
-      currentTimerSound.pause();
-    }
-    if (typeof currentTimerSound.currentTime === 'number') {
-      currentTimerSound.currentTime = 0;
-    }
+    currentTimerSound.pause();
+    currentTimerSound.currentTime = 0;
     currentTimerSound = null;
   }
 }
@@ -1646,20 +1626,16 @@ document.addEventListener('DOMContentLoaded', () => {
 // === CENTRALIZED DATE HANDLING ===
 // All date operations go through these functions to ensure consistency
 
-// Get current PH date as a Date object
+// Get current date in user's local timezone (replaces getPHToday)
+// Now uses TimezoneManager instead of hardcoded Asia/Manila
 function getPHToday() {
-  const now = new Date();
-  const phTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Manila" }));
-  // Create a clean date object in local timezone but with PH date values
-  return new Date(phTime.getFullYear(), phTime.getMonth(), phTime.getDate());
+  return window.timezoneManager.getUserToday();
 }
 
 // Convert any date to YYYY-MM-DD string
+// Now uses TimezoneManager for consistent formatting
 function formatDateKey(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  return window.timezoneManager.formatDateKey(date);
 }
 
 // Convert YYYY-MM-DD string back to Date object (always in local timezone)
@@ -1703,8 +1679,9 @@ function getDatesForHeatmap() {
   return dates;
 }
 // STREAK!
+// Now uses TimezoneManager for consistent data retrieval
 function getStats() {
-  return JSON.parse(localStorage.getItem('customodoroStatsByDay') || '{}');
+  return window.timezoneManager.getStats();
 }
 
 // Calculate total focus points and date range
@@ -2412,53 +2389,10 @@ document.addEventListener('DOMContentLoaded', function() {
 // Expose update function for other scripts
 window.renderContributionGraph = renderContributionGraph;
 
-// Session management using centralized date functions
+// Session management using TimezoneManager for user's local timezone
+// This ensures sessions are recorded in the user's actual timezone, not GMT+8
 window.addCustomodoroSession = function(type, minutes) {
-  const key = formatDateKey(getPHToday()); // Use centralized date handling
-  console.log('Adding session for date:', key); // Debug log
-  
-  const stats = getStats();
-  if (!stats[key]) stats[key] = { classic: 0, reverse: 0, break: 0, total_minutes: 0 };
-  
-  if (type === 'classic') stats[key].classic++;
-  if (type === 'reverse') stats[key].reverse++;
-  if (type === 'break') stats[key].break++;
-  stats[key].total_minutes += minutes;
-
-  // Add timestamp for sync purposes
-  stats[key].lastUpdate = new Date().toISOString();
-  
-  localStorage.setItem('customodoroStatsByDay', JSON.stringify(stats));
-  console.log('Updated stats:', stats[key]); // Debug log
-  renderContributionGraph();
-  updateStreakStatsCard();
-  
-  // Update User Stats Card
-  if (typeof window.updateUserStats === 'function') {
-    window.updateUserStats();
-  }
-  
-  // Update streak display after adding session
-  if (typeof renderStreakDisplay === 'function') {
-    renderStreakDisplay();
-  }
-
-  // Trigger automatic sync if user is logged in
-  if (window.syncManager && window.authService?.isLoggedIn()) {
-    console.log('🔄 Triggering automatic sync after session...');
-    try {
-      // Use queueSync with current data - this method exists and handles online/offline
-      window.syncManager.queueSync(window.syncManager.getCurrentLocalData());
-      console.log('✅ Auto-sync queued after session');
-      
-      // Update sync UI stats
-      if (window.syncUI) {
-        window.syncUI.updateStats();
-      }
-    } catch (error) {
-      console.warn('⚠️ Auto-sync failed after session:', error);
-    }
-  }
+  return window.timezoneManager.addCustomodoroSession(type, minutes);
 };
 
 // TESTING FUNCTION: Add test data for today
