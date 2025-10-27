@@ -604,6 +604,25 @@
             <h3 class="settings-section-title">Sound Settings</h3>
 
             <div class="settings-row">
+              <div class="settings-label">Select Session Alert Sound:</div>
+              <div class="select-wrapper">
+                <select class="sound-selector" id="pomodoro-sound-selector">
+                  <option value="bell.mp3">Bell (Default)</option>
+                  <option value="alarm.mp3">iPhone Alarm Bell</option>
+                  <option value="level_up.mp3">Level Up</option>
+                  <option value="message_alert.mp3">Message Alert</option>
+                </select>
+              </div>
+            </div>
+            <div class="settings-row">
+              <div class="settings-label">Session Sound Volume</div>
+              <div class="volume-container">
+                <input type="range" class="volume-slider" id="pomodoro-volume-slider" min="0" max="100" value="60">
+                <div class="volume-percentage" id="pomodoro-volume-percentage">60%</div>
+              </div>
+            </div>
+            
+            <div class="settings-row">
               <div class="settings-label">Select Break Alert Sound:</div>
               <div class="select-wrapper">
                 <select class="sound-selector" id="break-sound-selector">
@@ -657,6 +676,7 @@
               <div class="settings-label">Test Sounds</div>
               <div class="sound-test-buttons">
                 <button class="sound-test-btn" id="test-click-sound">UI Sound 🔊</button>
+                <button class="sound-test-btn" id="test-pomodoro-sound">Session Alert 🔊</button>
                 <button class="sound-test-btn" id="test-break-sound">Break Alert 🔊</button>
                 <button class="sound-test-btn" id="test-timer-sound">Timer Sound 🔊</button>
               </div>
