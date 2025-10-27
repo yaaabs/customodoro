@@ -893,6 +893,19 @@ function completeSession(playSound = true) {
     if (currentSeconds >= MAX_TIME || playSound) {
         window.playSound('pomodoroComplete');
         showMuteAlert(`Great work! You worked for ${workMinutes} minutes and earned a ${earnedBreakTime}-minute break!`);
+        
+        // Desktop notification for max time reached
+        if ('Notification' in window && Notification.permission === 'granted') {
+            const alarmEnabled = localStorage.getItem('alarm') !== 'false';
+            if (alarmEnabled) {
+                new Notification('🎉 Max Time Reached!', {
+                    body: `You worked for ${workMinutes} minutes! Time for a ${earnedBreakTime}-minute break.`,
+                    icon: '/images/badges/1.webp',
+                    badge: '/images/badge.png',
+                    vibrate: [100, 50, 100]
+                });
+            }
+        }
     }
 
     showToast(`Great work! You worked for ${workMinutes} minutes and earned a ${earnedBreakTime}-minute break! 🎉`);
@@ -930,6 +943,19 @@ function completeBreak() {
     
     // Show break readiness confirmation instead of regular mute alert
     showBreakReadinessConfirmation("Break time is over! Ready to work again?");
+    
+    // Desktop notification for break completion
+    if ('Notification' in window && Notification.permission === 'granted') {
+        const alarmEnabled = localStorage.getItem('alarm') !== 'false';
+        if (alarmEnabled) {
+            new Notification('⏰ Break Complete!', {
+                body: 'Ready to start another work session?',
+                icon: '/images/badges/2.webp',
+                badge: '/images/badge.png',
+                vibrate: [100, 50, 100]
+            });
+        }
+    }
     
     showToast("Break time is over! Ready to work again? 💪");
     switchMode('reverse'); // Also detected as automatic transition
