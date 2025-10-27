@@ -1275,7 +1275,7 @@ function playNotification() {
     } else {
       title = '⏰ Break Complete!';
       body = 'Ready to crush another focused session?';
-      icon = '/images/focus-icon.png';
+      icon = '/images/album-art/moonchild.jpg';
     }
 
     // Only create notification if alarm is enabled
