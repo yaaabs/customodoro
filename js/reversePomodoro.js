@@ -901,7 +901,6 @@ function completeSession(playSound = true) {
                 new Notification('🎉 Max Time Reached!', {
                     body: `You worked for ${workMinutes} minutes! Time for a ${earnedBreakTime}-minute break.`,
                     icon: '/images/badges/1.webp',
-                    badge: '/images/badge.png',
                     vibrate: [100, 50, 100]
                 });
             }
@@ -951,7 +950,6 @@ function completeBreak() {
             new Notification('⏰ Break Complete!', {
                 body: 'Ready to start another work session?',
                 icon: '/images/badges/2.webp',
-                badge: '/images/badge.png',
                 vibrate: [100, 50, 100]
             });
         }

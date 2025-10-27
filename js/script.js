@@ -1283,7 +1283,6 @@ function playNotification() {
       new Notification(title, {
         body: body,
         icon: icon,
-        badge: '/images/album-art/moonchild.jpg',
         vibrate: [100, 50, 100]
       });
     }
