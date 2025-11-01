@@ -663,6 +663,238 @@
     container.appendChild(p);
   }
 
+  /* ========== PAGINATION SYSTEM FOR BADGES ========== */
+  let currentPage = 0;
+  const BADGES_PER_PAGE = 8;
+  
+  function paginateBadges(badges) {
+    const pages = [];
+    for (let i = 0; i < badges.length; i += BADGES_PER_PAGE) {
+      pages.push(badges.slice(i, i + BADGES_PER_PAGE));
+    }
+    return pages;
+  }
+  
+  function renderBadgesPage(container, badges, pageIndex) {
+    const pages = paginateBadges(badges);
+    const totalPages = pages.length;
+    
+    if (pageIndex < 0 || pageIndex >= totalPages) pageIndex = 0;
+    currentPage = pageIndex;
+    
+    // Clear existing badges and pagination
+    const existingRow = container.querySelector('.badges-row');
+    const existingPagination = container.querySelector('.badges-pagination');
+    const existingPageInfo = container.querySelector('.badges-page-info');
+    if (existingRow) existingRow.remove();
+    if (existingPagination) existingPagination.remove();
+    if (existingPageInfo) existingPageInfo.remove();
+    
+    // Create badges row for current page
+    const row = document.createElement('div');
+    row.className = 'badges-row';
+    
+    const currentPageBadges = pages[currentPage];
+    currentPageBadges.forEach((badge, idx) => {
+      const globalIdx = currentPage * BADGES_PER_PAGE + idx;
+      const badgeEl = createBadgeEl(badge, globalIdx);
+      
+      // Add fade-in animation
+      badgeEl.style.cssText = `
+        animation: fadeInBadge 0.3s ease forwards;
+        animation-delay: ${idx * 0.05}s;
+        opacity: 0;
+      `;
+      
+      // Click handler to open modal
+      badgeEl.addEventListener('click', () => openModal(badges, globalIdx));
+      badgeEl.addEventListener('keydown', (e) => { 
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openModal(badges, globalIdx);
+        }
+      });
+      
+      row.appendChild(badgeEl);
+    });
+    
+    container.appendChild(row);
+    
+    // Add pagination controls if more than 8 badges
+    if (totalPages > 1) {
+      const pagination = document.createElement('div');
+      pagination.className = 'badges-pagination';
+      pagination.style.cssText = `
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 20px 10px;
+        margin-top: 10px;
+      `;
+      
+      // Previous button
+      const prevBtn = document.createElement('button');
+      prevBtn.innerHTML = '&lt;';
+      prevBtn.className = 'pagination-btn pagination-prev';
+      prevBtn.setAttribute('aria-label', 'Previous page');
+      prevBtn.style.cssText = `
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 18px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        ${currentPage === 0 ? 'opacity: 0.3; cursor: not-allowed;' : ''}
+      `;
+      prevBtn.disabled = currentPage === 0;
+      prevBtn.addEventListener('click', () => {
+        if (currentPage > 0) {
+          renderBadgesPage(container, badges, currentPage - 1);
+        }
+      });
+      
+      if (!prevBtn.disabled) {
+        prevBtn.addEventListener('mouseenter', () => {
+          prevBtn.style.background = 'rgba(255, 255, 255, 0.2)';
+          prevBtn.style.transform = 'scale(1.1)';
+        });
+        prevBtn.addEventListener('mouseleave', () => {
+          prevBtn.style.background = 'rgba(255, 255, 255, 0.1)';
+          prevBtn.style.transform = 'scale(1)';
+        });
+      }
+      
+      pagination.appendChild(prevBtn);
+      
+      // Page dots
+      const dotsContainer = document.createElement('div');
+      dotsContainer.style.cssText = `
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: center;
+      `;
+      
+      for (let i = 0; i < totalPages; i++) {
+        const dot = document.createElement('button');
+        dot.className = 'pagination-dot';
+        dot.setAttribute('aria-label', `Go to page ${i + 1}`);
+        dot.setAttribute('aria-current', i === currentPage ? 'true' : 'false');
+        dot.style.cssText = `
+          width: ${i === currentPage ? '24px' : '8px'};
+          height: 8px;
+          border-radius: ${i === currentPage ? '4px' : '50%'};
+          background: ${i === currentPage ? 'white' : 'rgba(255, 255, 255, 0.3)'};
+          border: none;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          padding: 0;
+        `;
+        
+        dot.addEventListener('click', () => {
+          renderBadgesPage(container, badges, i);
+        });
+        
+        if (i !== currentPage) {
+          dot.addEventListener('mouseenter', () => {
+            dot.style.background = 'rgba(255, 255, 255, 0.5)';
+            dot.style.transform = 'scale(1.2)';
+          });
+          dot.addEventListener('mouseleave', () => {
+            dot.style.background = 'rgba(255, 255, 255, 0.3)';
+            dot.style.transform = 'scale(1)';
+          });
+        }
+        
+        dotsContainer.appendChild(dot);
+      }
+      pagination.appendChild(dotsContainer);
+      
+      // Next button
+      const nextBtn = document.createElement('button');
+      nextBtn.innerHTML = '&gt;';
+      nextBtn.className = 'pagination-btn pagination-next';
+      nextBtn.setAttribute('aria-label', 'Next page');
+      nextBtn.style.cssText = `
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 18px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        ${currentPage === totalPages - 1 ? 'opacity: 0.3; cursor: not-allowed;' : ''}
+      `;
+      nextBtn.disabled = currentPage === totalPages - 1;
+      nextBtn.addEventListener('click', () => {
+        if (currentPage < totalPages - 1) {
+          renderBadgesPage(container, badges, currentPage + 1);
+        }
+      });
+      
+      if (!nextBtn.disabled) {
+        nextBtn.addEventListener('mouseenter', () => {
+          nextBtn.style.background = 'rgba(255, 255, 255, 0.2)';
+          nextBtn.style.transform = 'scale(1.1)';
+        });
+        nextBtn.addEventListener('mouseleave', () => {
+          nextBtn.style.background = 'rgba(255, 255, 255, 0.1)';
+          nextBtn.style.transform = 'scale(1)';
+        });
+      }
+      
+      pagination.appendChild(nextBtn);
+      container.appendChild(pagination);
+      
+      // Add page info text
+      const pageInfo = document.createElement('div');
+      pageInfo.className = 'badges-page-info';
+      pageInfo.style.cssText = `
+        text-align: center;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 13px;
+        padding: 8px 10px;
+        margin-top: 5px;
+      `;
+      pageInfo.textContent = `Page ${currentPage + 1} of ${totalPages} • ${badges.length} badge${badges.length !== 1 ? 's' : ''}`;
+      container.appendChild(pageInfo);
+    }
+    
+    // Add fade in animation keyframes if not already present
+    if (!document.getElementById('badge-fade-animation')) {
+      const style = document.createElement('style');
+      style.id = 'badge-fade-animation';
+      style.textContent = `
+        @keyframes fadeInBadge {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }
+
   // --- Frontend-only productivity helpers (safe, non-destructive) ---
   function getFrontendProductivityStats() {
     try {
@@ -902,25 +1134,8 @@
   cta.textContent = 'Tip: Click or tap a badge to view details and unlock info! You can also use arrow keys to navigate, or swipe on mobile.';
     container.appendChild(cta);
 
-    const row = document.createElement('div');
-    row.className = 'badges-row';
-
-    badges.forEach((badge, idx) => {
-      const badgeEl = createBadgeEl(badge, idx);
-
-      // Click handler opens modal with all badges, starting at clicked index
-      badgeEl.addEventListener('click', () => openModal(badges, idx));
-      badgeEl.addEventListener('keydown', (e) => { 
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          openModal(badges, idx);
-        }
-      });
-
-      row.appendChild(badgeEl);
-    });
-
-    container.appendChild(row);
+    // Use pagination system to render badges
+    renderBadgesPage(container, badges, 0);
   }
 
   window.addAchievementForUser = function (identity, badge) {
