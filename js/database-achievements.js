@@ -806,7 +806,7 @@
       const dotsContainer = document.createElement('div');
       dotsContainer.style.cssText = `
         display: flex;
-        gap: 6px;
+        gap: 4px;
         align-items: center;
         flex-wrap: wrap;
         justify-content: center;
@@ -818,14 +818,15 @@
         dot.setAttribute('aria-label', `Go to page ${i + 1}`);
         dot.setAttribute('aria-current', i === currentPage ? 'true' : 'false');
         dot.style.cssText = `
-          width: ${i === currentPage ? '18px' : '6px'};
-          height: 6px;
-          border-radius: ${i === currentPage ? '3px' : '50%'};
+          width: ${i === currentPage ? '12px' : '5px'};
+          height: 5px;
+          border-radius: ${i === currentPage ? '2.5px' : '50%'};
           background: ${i === currentPage ? 'white' : 'rgba(255, 255, 255, 0.3)'};
           border: none;
           cursor: pointer;
           transition: all 0.3s ease;
           padding: 0;
+          min-width: ${i === currentPage ? '12px' : '5px'};
         `;
         
         dot.addEventListener('click', () => {
