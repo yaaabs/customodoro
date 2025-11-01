@@ -806,7 +806,7 @@
       const dotsContainer = document.createElement('div');
       dotsContainer.style.cssText = `
         display: flex;
-        gap: 4px;
+        gap: 6px;
         align-items: center;
         flex-wrap: wrap;
         justify-content: center;
@@ -817,29 +817,32 @@
         dot.className = 'pagination-dot';
         dot.setAttribute('aria-label', `Go to page ${i + 1}`);
         dot.setAttribute('aria-current', i === currentPage ? 'true' : 'false');
+        
+        // Modern pagination: active dot is slightly larger, all are circular
+        const isActive = i === currentPage;
         dot.style.cssText = `
-          width: ${i === currentPage ? '12px' : '5px'};
-          height: 5px;
-          border-radius: ${i === currentPage ? '2.5px' : '50%'};
-          background: ${i === currentPage ? 'white' : 'rgba(255, 255, 255, 0.3)'};
+          width: ${isActive ? '10px' : '7px'};
+          height: ${isActive ? '10px' : '7px'};
+          border-radius: 50%;
+          background: ${isActive ? 'white' : 'rgba(255, 255, 255, 0.35)'};
           border: none;
           cursor: pointer;
-          transition: all 0.3s ease;
+          transition: all 0.25s ease;
           padding: 0;
-          min-width: ${i === currentPage ? '12px' : '5px'};
+          box-shadow: ${isActive ? '0 2px 6px rgba(255, 255, 255, 0.3)' : 'none'};
         `;
         
         dot.addEventListener('click', () => {
           renderBadgesPage(container, badges, i);
         });
         
-        if (i !== currentPage) {
+        if (!isActive) {
           dot.addEventListener('mouseenter', () => {
-            dot.style.background = 'rgba(255, 255, 255, 0.5)';
-            dot.style.transform = 'scale(1.2)';
+            dot.style.background = 'rgba(255, 255, 255, 0.6)';
+            dot.style.transform = 'scale(1.15)';
           });
           dot.addEventListener('mouseleave', () => {
-            dot.style.background = 'rgba(255, 255, 255, 0.3)';
+            dot.style.background = 'rgba(255, 255, 255, 0.35)';
             dot.style.transform = 'scale(1)';
           });
         }
