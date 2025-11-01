@@ -821,8 +821,8 @@
         // Modern pagination: active dot is slightly larger, all are circular
         const isActive = i === currentPage;
         dot.style.cssText = `
-          width: ${isActive ? '10px' : '7px'};
-          height: ${isActive ? '10px' : '7px'};
+          width: ${isActive ? '6px' : '4px'};
+          height: ${isActive ? '6px' : '4px'};
           border-radius: 50%;
           background: ${isActive ? 'white' : 'rgba(255, 255, 255, 0.35)'};
           border: none;
