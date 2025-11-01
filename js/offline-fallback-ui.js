@@ -110,6 +110,13 @@ showOfflineFeatureModal(featureName) {
   modal.innerHTML = `
     <div class="offline-modal-overlay"></div>
     <div class="offline-modal-content">
+      <button class="offline-modal-close-x" onclick="this.closest('.offline-modal').remove()" aria-label="Close">
+        ×
+      </button>
+      <div class="offline-modal-header">
+        <div class="offline-modal-logo">🍅</div>
+        <div class="offline-modal-brand">Customodoro</div>
+      </div>
       <div class="offline-modal-icon">📵</div>
       <h2>${featureName} Unavailable</h2>
       <p class="offline-modal-message">
@@ -174,51 +181,99 @@ addOfflineModalStyles() {
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(4px);
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
     }
 
     .offline-modal-content {
       position: relative;
-      background: #1a1a1a;
-      border: 2px solid #333;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d1b2e 100%);
+      border: 2px solid rgba(229, 57, 53, 0.3);
       border-radius: 16px;
-      padding: 32px;
-      max-width: 400px;
+      padding: 40px 32px 32px;
+      max-width: 440px;
       width: 90%;
       text-align: center;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
       animation: slideIn 0.3s ease-out;
     }
 
+    /* Close X button */
+    .offline-modal-close-x {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: transparent;
+      border: none;
+      color: #888;
+      font-size: 32px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 4px 8px;
+      transition: all 0.2s ease;
+      z-index: 10;
+    }
+
+    .offline-modal-close-x:hover {
+      color: #fff;
+      transform: scale(1.1);
+    }
+
+    /* Brand Header */
+    .offline-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .offline-modal-logo {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
+    }
+
+    .offline-modal-brand {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+
     .offline-modal-icon {
-      font-size: 48px;
+      font-size: 64px;
       margin-bottom: 16px;
       animation: pulse 2s ease-in-out infinite;
     }
 
     .offline-modal-content h2 {
       color: #fff;
-      margin: 0 0 12px 0;
-      font-size: 24px;
+      margin: 0 0 16px 0;
+      font-size: 26px;
       font-weight: 600;
     }
 
     .offline-modal-message {
       color: #ccc;
-      margin: 0 0 8px 0;
+      margin: 0 0 12px 0;
       font-size: 16px;
-      line-height: 1.5;
+      line-height: 1.6;
     }
 
     .offline-modal-submessage {
-      color: #888;
-      margin: 0 0 24px 0;
+      color: #999;
+      margin: 0 0 28px 0;
       font-size: 14px;
-      line-height: 1.4;
+      line-height: 1.5;
     }
 
-    /* ✨ NEW: Button container for centering */
     .offline-modal-button-container {
       display: flex;
       justify-content: center;
@@ -230,18 +285,19 @@ addOfflineModalStyles() {
       background: #e53935;
       color: white;
       border: none;
-      padding: 12px 32px;
-      border-radius: 8px;
+      padding: 14px 40px;
+      border-radius: 10px;
       font-size: 16px;
-      font-weight: 500;
+      font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
     }
 
     .offline-modal-close-btn:hover {
       background: #ff5252;
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(229, 57, 53, 0.4);
+      box-shadow: 0 6px 20px rgba(229, 57, 53, 0.5);
     }
 
     .offline-modal-close-btn:active {
@@ -259,11 +315,11 @@ addOfflineModalStyles() {
 
     @keyframes slideIn {
       from {
-        transform: translateY(-20px);
+        transform: translateY(-30px) scale(0.95);
         opacity: 0;
       }
       to {
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
         opacity: 1;
       }
     }
@@ -271,9 +327,11 @@ addOfflineModalStyles() {
     @keyframes pulse {
       0%, 100% {
         opacity: 1;
+        transform: scale(1);
       }
       50% {
-        opacity: 0.6;
+        opacity: 0.7;
+        transform: scale(0.95);
       }
     }
   `;

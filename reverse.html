@@ -1508,6 +1508,16 @@ if ('serviceWorker' in navigator) {
     .then((registration) => {
       console.log('✅ Service Worker registered:', registration);
       
+      // 🔥 Warm cache when app loads online
+      if (navigator.onLine) {
+        navigator.serviceWorker.ready.then((reg) => {
+          if (reg.active) {
+            reg.active.postMessage({ type: 'WARM_CACHE' });
+            console.log('🔥 Cache warming initiated');
+          }
+        });
+      }
+      
       // Check for updates immediately and every 30 seconds
       const checkForUpdates = () => {
         registration.update().then(() => {

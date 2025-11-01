@@ -1517,6 +1517,25 @@ if ('serviceWorker' in navigator) {
     .then((registration) => {
       console.log('✅ Service Worker registered:', registration);
       
+      // 🔥 Warm cache when app loads online
+      if (navigator.onLine) {
+        navigator.serviceWorker.ready.then((reg) => {
+          if (reg.active) {
+            reg.active.postMessage({ type: 'WARM_CACHE' });
+            console.log('🔥 Cache warming initiated');
+          }
+        });
+      }
+      
+      // Listen for cache warming completion
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data && event.data.type === 'CACHE_WARMED') {
+          console.log('✅ Cache warming complete - offline ready!');
+          // Optional: Show brief toast notification
+          // showToast('📦 Offline mode ready!');
+        }
+      });
+      
       // Check for updates immediately and every 30 seconds
       const checkForUpdates = () => {
         registration.update().then(() => {
