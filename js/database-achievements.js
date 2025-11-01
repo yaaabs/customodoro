@@ -821,15 +821,15 @@
         // Modern pagination: active dot is slightly larger, all are circular
         const isActive = i === currentPage;
         dot.style.cssText = `
-          width: ${isActive ? '6px' : '4px'};
-          height: ${isActive ? '6px' : '4px'};
+          width: ${isActive ? '4px' : '3px'};
+          height: ${isActive ? '4px' : '3px'};
           border-radius: 50%;
-          background: ${isActive ? 'white' : 'rgba(255, 255, 255, 0.35)'};
+          background: ${isActive ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.25)'};
           border: none;
           cursor: pointer;
           transition: all 0.25s ease;
           padding: 0;
-          box-shadow: ${isActive ? '0 2px 6px rgba(255, 255, 255, 0.3)' : 'none'};
+          box-shadow: none;
         `;
         
         dot.addEventListener('click', () => {
