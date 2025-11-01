@@ -1,5 +1,6 @@
-const CACHE_NAME = "customodoro-static-v7.3.23"; // Bump to v7.3.23  
-const ASSETS_CACHE = "customodoro-assets-v6.1.14"; // Bump to v6.1.14 
+const CACHE_NAME = "customodoro-static-v7.3.23"; // Keep same version for soft update
+const ASSETS_CACHE = "customodoro-assets-v6.1.14"; // Keep same version for soft update
+const RUNTIME_CACHE = "customodoro-runtime-v1.0.0"; // New: Runtime cache for dynamic resources (passive) 
 const urlsToCache = [
   "/", 
   "/index.html", 
@@ -15,7 +16,7 @@ const urlsToCache = [
   "/css/style.css",
   "/js/script.js",
   "/js/reversePomodoro.js",
-  // Add critical audio files to main cache for version control
+
   "/audio/Alert Sounds/alarm.mp3",
   "/audio/Alert Sounds/bell.mp3",
   "/audio/Alert Sounds/level_up.mp3",
@@ -57,7 +58,7 @@ self.addEventListener("activate", (event) => {
     // Clean up old caches
     caches.keys().then((keys) => {
       const oldCaches = keys.filter((key) => 
-        key !== CACHE_NAME && key !== ASSETS_CACHE
+        key !== CACHE_NAME && key !== ASSETS_CACHE && key !== RUNTIME_CACHE
       );
       
       console.log('🗑️ Old caches to delete:', oldCaches);
@@ -82,7 +83,7 @@ self.addEventListener("activate", (event) => {
             forceUpdate: true // Add flag for immediate updates
           });
         });
-        console.log('� Notified all clients about update');
+        console.log('📢 Notified all clients about update');
       });
     }).then(() => {
       // Force claim all clients immediately
@@ -161,27 +162,97 @@ self.addEventListener('message', (event) => {
   }
 });
 
-// Combined fetch handler
+// Combined fetch handler with improved offline support
 self.addEventListener("fetch", (event) => {
   const { request } = event;
+  const url = new URL(request.url);
   
-  // Handle navigation requests (HTML pages)
+  // ═══════════════════════════════════════════════════════════════════
+  // CRITICAL FIX: Handle navigation requests with CACHE-FIRST strategy
+  // ═══════════════════════════════════════════════════════════════════
   if (request.mode === "navigate") {
     event.respondWith(
-      fetch(request)
-        .then(response => response)
-        .catch(() => caches.match(request))
+      caches.match(request).then(cachedResponse => {
+        if (cachedResponse) {
+          console.log('📄 Serving from cache:', request.url);
+          return cachedResponse;
+        }
+        
+        // Try network if not in cache
+        return fetch(request).then(networkResponse => {
+          // Cache successful HTML responses for future offline use
+          if (networkResponse.ok) {
+            return caches.open(CACHE_NAME).then(cache => {
+              cache.put(request, networkResponse.clone());
+              console.log('📥 Cached new page:', request.url);
+              return networkResponse;
+            });
+          }
+          return networkResponse;
+        }).catch(() => {
+          // Fallback: Try to serve index.html if specific page not cached
+          console.warn('⚠️ Network failed, attempting fallback to index');
+          return caches.match('/index.html').then(fallback => {
+            if (fallback) {
+              return fallback;
+            }
+            // Ultimate fallback: Return a basic offline page
+            return new Response(
+              '<html><body><h1>Offline</h1><p>You are offline and this page is not cached.</p></body></html>',
+              { headers: { 'Content-Type': 'text/html' } }
+            );
+          });
+        });
+      })
     );
     return;
   }
   
-  // Handle images and audio with caching
+  // ═══════════════════════════════════════════════════════════════════
+  // Handle CSS and JavaScript files (Cache-First with Network Fallback)
+  // ═══════════════════════════════════════════════════════════════════
+  if (request.destination === 'style' || request.destination === 'script') {
+    event.respondWith(
+      caches.open(RUNTIME_CACHE).then(cache =>
+        cache.match(request).then(cachedResponse => {
+          if (cachedResponse) {
+            // Serve from cache, but update cache in background
+            fetch(request).then(networkResponse => {
+              if (networkResponse.ok) {
+                cache.put(request, networkResponse.clone());
+              }
+            }).catch(() => {}); // Silent fail for background update
+            
+            return cachedResponse;
+          }
+          
+          // Not in cache, fetch from network
+          return fetch(request).then(networkResponse => {
+            if (networkResponse.ok) {
+              cache.put(request, networkResponse.clone());
+            }
+            return networkResponse;
+          }).catch(() => {
+            return new Response('/* Offline - Resource unavailable */', { 
+              status: 503,
+              headers: { 'Content-Type': request.destination === 'style' ? 'text/css' : 'application/javascript' }
+            });
+          });
+        })
+      )
+    );
+    return;
+  }
+  
+  // ═══════════════════════════════════════════════════════════════════
+  // Handle images and audio with caching (existing strategy improved)
+  // ═══════════════════════════════════════════════════════════════════
   if (request.destination === 'image' || request.destination === 'audio') {
     event.respondWith(
       caches.open(ASSETS_CACHE).then(cache =>
-        cache.match(request).then(response => {
-          if (response) {
-            return response;
+        cache.match(request).then(cachedResponse => {
+          if (cachedResponse) {
+            return cachedResponse;
           }
           
           return fetch(request).then(networkResponse => {
@@ -192,6 +263,7 @@ self.addEventListener("fetch", (event) => {
             return networkResponse;
           }).catch(() => {
             // Return a fallback if needed
+            console.warn('⚠️ Failed to load asset:', request.url);
             return new Response('Asset not available', { status: 404 });
           });
         })
@@ -200,5 +272,43 @@ self.addEventListener("fetch", (event) => {
     return;
   }
   
-  // Let other requests pass through normally
+  // ═══════════════════════════════════════════════════════════════════
+  // Handle API requests (Network-First with Cache Fallback for GET)
+  // ═══════════════════════════════════════════════════════════════════
+  if (url.pathname.startsWith('/api/') && request.method === 'GET') {
+    event.respondWith(
+      fetch(request).then(networkResponse => {
+        // Cache successful API responses
+        if (networkResponse.ok) {
+          const responseClone = networkResponse.clone();
+          caches.open(RUNTIME_CACHE).then(cache => {
+            cache.put(request, responseClone);
+          });
+        }
+        return networkResponse;
+      }).catch(() => {
+        // Return cached response if network fails
+        return caches.match(request).then(cachedResponse => {
+          if (cachedResponse) {
+            console.log('📦 Serving cached API response (offline)');
+            return cachedResponse;
+          }
+          // Return offline indicator
+          return new Response(JSON.stringify({ 
+            error: 'Offline',
+            message: 'You are offline and this data is not cached'
+          }), {
+            status: 503,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        });
+      })
+    );
+    return;
+  }
+  
+  // ═══════════════════════════════════════════════════════════════════
+  // Let other requests (POST, PUT, DELETE) pass through normally
+  // ═══════════════════════════════════════════════════════════════════
+  event.respondWith(fetch(request));
 });
