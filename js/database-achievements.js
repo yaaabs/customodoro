@@ -807,10 +807,11 @@
       const dotsContainer = document.createElement('div');
       dotsContainer.style.cssText = `
         display: flex;
-        gap: 6px;
+        gap: 3px;
         align-items: center;
         flex-wrap: wrap;
         justify-content: center;
+        transform: scale(0.6);
       `;
       
       for (let i = 0; i < totalPages; i++) {
@@ -822,10 +823,10 @@
         // Modern pagination: active dot is slightly larger, all are circular
         const isActive = i === currentPage;
         dot.style.cssText = `
-          width: ${isActive ? '4px' : '3px'};
-          height: ${isActive ? '4px' : '3px'};
+          width: ${isActive ? '3px' : '2px'};
+          height: ${isActive ? '3px' : '2px'};
           border-radius: 50%;
-          background: ${isActive ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.25)'};
+          background: ${isActive ? 'rgba(255, 255, 255, 0.7)' : 'rgba(255, 255, 255, 0.2)'};
           border: none;
           cursor: pointer;
           transition: all 0.25s ease;
