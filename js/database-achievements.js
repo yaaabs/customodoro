@@ -756,9 +756,10 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-        padding: 12px 8px 10px;
-        margin-top: 6px;
+        gap: 4px;
+        padding: 8px 4px 6px;
+        margin-top: 4px;
+        transform: scale(0.8);
       `;
       
       // Previous button
@@ -770,11 +771,11 @@
         background: rgba(255, 255, 255, 0.1);
         border: 1px solid rgba(255, 255, 255, 0.2);
         color: white;
-        width: 28px;
-        height: 28px;
+        width: 20px;
+        height: 20px;
         border-radius: 50%;
         cursor: pointer;
-        font-size: 14px;
+        font-size: 10px;
         font-weight: bold;
         display: flex;
         align-items: center;
@@ -860,11 +861,11 @@
         background: rgba(255, 255, 255, 0.1);
         border: 1px solid rgba(255, 255, 255, 0.2);
         color: white;
-        width: 28px;
-        height: 28px;
+        width: 20px;
+        height: 20px;
         border-radius: 50%;
         cursor: pointer;
-        font-size: 14px;
+        font-size: 10px;
         font-weight: bold;
         display: flex;
         align-items: center;
