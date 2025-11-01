@@ -1,9 +1,18 @@
 const CACHE_NAME = "customodoro-static-v7.3.23"; // Bump to v7.3.23  
 const ASSETS_CACHE = "customodoro-assets-v6.1.14"; // Bump to v6.1.14 
 const urlsToCache = [
+  // ═══════════════════════════════════════════════════════════════════
+  // HTML Pages
+  // ═══════════════════════════════════════════════════════════════════
   "/", 
   "/index.html", 
   "/reverse.html",
+  "/pomodoro.html",
+  "/feedback.html",
+
+  // ═══════════════════════════════════════════════════════════════════
+  // Favicons & Manifests
+  // ═══════════════════════════════════════════════════════════════════
   "/favicon/favicon.ico",
   "/favicon/favicon-32x32.png",
   "/favicon/favicon-16x16.png",
@@ -12,10 +21,50 @@ const urlsToCache = [
   "/favicon/android-chrome-512x512.png",
   "/images/customodoro_card.png",
   "/manifest.json",
+
+  // ═══════════════════════════════════════════════════════════════════
+  // CSS Files (All stylesheets for offline use)
+  // ═══════════════════════════════════════════════════════════════════
   "/css/style.css",
+  "/css/burnup-tracker.css",
+  "/css/features.css",
+  "/css/media-players.css",
+  "/css/theme-uploader.css",
+  "/css/utilities.css",
+  
+  // ═══════════════════════════════════════════════════════════════════
+  // JavaScript Files (All core functionality)
+  // ═══════════════════════════════════════════════════════════════════
   "/js/script.js",
   "/js/reversePomodoro.js",
+  "/js/offline-sync.js",
+  "/js/offline-fallback-ui.js",
+  "/js/about-modal.js",
+  "/js/auth-service.js",
+  "/js/bgm-player.js",
+  "/js/database-achievements.js",
+  "/js/database-leaderboard.js",
+  "/js/focus-mode.js",
+  "/js/fullscreen.js",
+  "/js/header-profile.js",
+  "/js/leaderboard-integration.js",
+  "/js/locked-in-info-modal.js",
+  "/js/lockedin-mode.js",
+  "/js/midnight-splitter.js",
+  "/js/mini-music-player.js",
+  "/js/most-used-pomodoro.js",
+  "/js/radial-menu.js",
+  "/js/settings.js",
+  "/js/sync-manager.js",
+  "/js/sync-ui.js",
+  "/js/task-retention.js",
+  "/js/theme-manager.js",
+  "/js/timezone-manager.js",
+  "/js/user-stats.js",
 
+  // ═══════════════════════════════════════════════════════════════════
+  // Audio Files (Critical alert sounds)
+  // ═══════════════════════════════════════════════════════════════════
   "/audio/Alert Sounds/alarm.mp3",
   "/audio/Alert Sounds/bell.mp3",
   "/audio/Alert Sounds/level_up.mp3",
