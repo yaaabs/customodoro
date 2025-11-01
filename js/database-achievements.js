@@ -9,11 +9,12 @@
   const hardcodedAchievements = {
 
     'yabs@gmail.com': [
-      { title: 'Streak Legend', icon: 'images/badges/sept_streak.png', description: 'Honored for holding the longest streak in September.', date: '2025-10-01' },
+      { title: 'Streak Legend', icon: 'images/badges/oct_streak.png', description: 'Honored for holding the longest streak in October.', date: '2025-11-01' },
     ], 
 
     'hinaymyca31@gmail.com': [
-      { title: 'Streak Legend', icon: 'images/badges/sept_streak.png', description: 'Honored for holding the longest streak in September.', date: '2025-10-1' },
+      { title: 'Streak Legend', icon: 'images/badges/oct_streak.png', description: 'Honored for holding the longest streak in October.', date: '2025-11-01' },
+      { title: 'Streak Legend', icon: 'images/badges/sept_streak.png', description: 'Honored for holding the longest streak in September.', date: '2025-10-01' },
       { title: 'Overall Champion', icon: 'images/badges/sept_champion.png', description: 'Awarded for being the top overall performer with the highest average across all categories in September.', date: '2025-10-01' },
     ], 
     
@@ -22,7 +23,13 @@
     ],
   
     'clarissuhpascual@gmail.com': [
+      { title: 'Overall Champion', icon: 'images/badges/oct_champion.png', description: 'Awarded for being the top overall performer with the highest average across all categories in October.', date: '2025-11-01' },
+      { title: 'Focus King', icon: 'images/badges/oct_focus_points.png', description: 'Crowned for earning the highest Focus Points in October.', date: '2025-11-01' },
       { title: 'Focus King', icon: 'images/badges/sept_focus_points.png', description: 'Crowned for earning the highest Focus Points in September.', date: '2025-10-01' }
+    ],
+
+    'tilen@europe.com': [
+      { title: 'Session Master', icon: 'images/badges/oct_session.png', description: 'Recognized for completing the most sessions in October.', date: '2025-11-01' }
     ]
   };
 
