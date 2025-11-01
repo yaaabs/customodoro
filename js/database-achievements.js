@@ -757,8 +757,8 @@
         align-items: center;
         justify-content: center;
         gap: 8px;
-        padding: 16px 10px 12px;
-        margin-top: 8px;
+        padding: 12px 8px 10px;
+        margin-top: 6px;
       `;
       
       // Previous button
