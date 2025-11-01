@@ -665,15 +665,38 @@
 
   /* ========== PAGINATION SYSTEM FOR BADGES ========== */
   let currentPage = 0;
-  const BADGES_PER_PAGE = 8;
+  let lastBadgesPerPage = null;
+  let currentContainer = null;
+  let currentBadgesArray = null;
+  
+  function getBadgesPerPage() {
+    // 4 badges per page on mobile (≤768px), 8 on desktop
+    return window.innerWidth <= 768 ? 4 : 8;
+  }
   
   function paginateBadges(badges) {
     const pages = [];
-    for (let i = 0; i < badges.length; i += BADGES_PER_PAGE) {
-      pages.push(badges.slice(i, i + BADGES_PER_PAGE));
+    const perPage = getBadgesPerPage();
+    for (let i = 0; i < badges.length; i += perPage) {
+      pages.push(badges.slice(i, i + perPage));
     }
     return pages;
   }
+  
+  // Handle window resize to adjust pagination
+  let resizeTimeout;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(function() {
+      const newPerPage = getBadgesPerPage();
+      if (lastBadgesPerPage !== null && lastBadgesPerPage !== newPerPage && currentContainer && currentBadgesArray) {
+        // Recalculate current page to keep similar position
+        const oldFirstBadgeIndex = currentPage * lastBadgesPerPage;
+        currentPage = Math.floor(oldFirstBadgeIndex / newPerPage);
+        renderBadgesPage(currentContainer, currentBadgesArray, currentPage);
+      }
+    }, 250);
+  });
   
   function renderBadgesPage(container, badges, pageIndex) {
     const pages = paginateBadges(badges);
@@ -681,6 +704,11 @@
     
     if (pageIndex < 0 || pageIndex >= totalPages) pageIndex = 0;
     currentPage = pageIndex;
+    
+    // Store for resize handler
+    currentContainer = container;
+    currentBadgesArray = badges;
+    lastBadgesPerPage = getBadgesPerPage();
     
     // Clear existing badges and pagination
     const existingRow = container.querySelector('.badges-row');
@@ -696,7 +724,7 @@
     
     const currentPageBadges = pages[currentPage];
     currentPageBadges.forEach((badge, idx) => {
-      const globalIdx = currentPage * BADGES_PER_PAGE + idx;
+      const globalIdx = currentPage * getBadgesPerPage() + idx;
       const badgeEl = createBadgeEl(badge, globalIdx);
       
       // Add fade-in animation
@@ -720,7 +748,7 @@
     
     container.appendChild(row);
     
-    // Add pagination controls if more than 8 badges
+    // Add pagination controls if more than one page
     if (totalPages > 1) {
       const pagination = document.createElement('div');
       pagination.className = 'badges-pagination';
@@ -728,9 +756,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 12px;
-        padding: 20px 10px;
-        margin-top: 10px;
+        gap: 8px;
+        padding: 16px 10px 12px;
+        margin-top: 8px;
       `;
       
       // Previous button
@@ -742,11 +770,11 @@
         background: rgba(255, 255, 255, 0.1);
         border: 1px solid rgba(255, 255, 255, 0.2);
         color: white;
-        width: 38px;
-        height: 38px;
+        width: 28px;
+        height: 28px;
         border-radius: 50%;
         cursor: pointer;
-        font-size: 18px;
+        font-size: 14px;
         font-weight: bold;
         display: flex;
         align-items: center;
@@ -778,7 +806,7 @@
       const dotsContainer = document.createElement('div');
       dotsContainer.style.cssText = `
         display: flex;
-        gap: 8px;
+        gap: 6px;
         align-items: center;
         flex-wrap: wrap;
         justify-content: center;
@@ -790,9 +818,9 @@
         dot.setAttribute('aria-label', `Go to page ${i + 1}`);
         dot.setAttribute('aria-current', i === currentPage ? 'true' : 'false');
         dot.style.cssText = `
-          width: ${i === currentPage ? '24px' : '8px'};
-          height: 8px;
-          border-radius: ${i === currentPage ? '4px' : '50%'};
+          width: ${i === currentPage ? '18px' : '6px'};
+          height: 6px;
+          border-radius: ${i === currentPage ? '3px' : '50%'};
           background: ${i === currentPage ? 'white' : 'rgba(255, 255, 255, 0.3)'};
           border: none;
           cursor: pointer;
@@ -828,11 +856,11 @@
         background: rgba(255, 255, 255, 0.1);
         border: 1px solid rgba(255, 255, 255, 0.2);
         color: white;
-        width: 38px;
-        height: 38px;
+        width: 28px;
+        height: 28px;
         border-radius: 50%;
         cursor: pointer;
-        font-size: 18px;
+        font-size: 14px;
         font-weight: bold;
         display: flex;
         align-items: center;
@@ -867,9 +895,9 @@
       pageInfo.style.cssText = `
         text-align: center;
         color: rgba(255, 255, 255, 0.6);
-        font-size: 13px;
-        padding: 8px 10px;
-        margin-top: 5px;
+        font-size: 12px;
+        padding: 6px 10px 8px;
+        margin-top: 2px;
       `;
       pageInfo.textContent = `Page ${currentPage + 1} of ${totalPages} • ${badges.length} badge${badges.length !== 1 ? 's' : ''}`;
       container.appendChild(pageInfo);
