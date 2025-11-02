@@ -1133,7 +1133,7 @@
           if (cumFP >= achieved) { unlockIso = e.iso; break; }
         }
 
-        const iconPath = `images/badges/Focus_Points/${achieved} FP.png`;
+        const iconPath = `images/badges/Focus_Points/${achieved} FP.webp`;
         finalBadges.push({ title: 'Focus Points', icon: iconPath, description: `Earned ${achieved} Focus Points`, date: unlockIso });
       }
     } catch (focusErr) {
