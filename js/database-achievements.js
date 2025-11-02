@@ -9,27 +9,27 @@
   const hardcodedAchievements = {
 
     'Yabs': [
-      { title: 'Customodoro Founder', icon: 'images/badges/Custom_Badges/Founder.webp', description: 'Awarded to the awesome dev who co-founded and built Customodoro from the ground up! 🚀', date: '2023-01-01' },
+      { title: 'Customodoro Founder', icon: 'images/badges/custom-badges/founder.webp', description: 'Awarded to the awesome dev who co-founded and built Customodoro from the ground up! 🚀', date: '2025-11-01' },
     ], 
 
     'maceyslw': [
-      { title: 'Streak Legend', icon: 'images/badges/oct_streak.webp', description: 'Honored for holding the longest streak in October.', date: '2025-11-01' },
-      { title: 'Streak Legend', icon: 'images/badges/sept_streak.webp', description: 'Honored for holding the longest streak in September.', date: '2025-10-01' },
-      { title: 'Overall Champion', icon: 'images/badges/sept_champion.webp', description: 'Awarded for being the top overall performer with the highest average across all categories in September.', date: '2025-10-01' },
+      { title: 'Streak Legend', icon: 'images/badges/custom-badges/2025-10/oct_streak.webp', description: 'Honored for holding the longest streak in October.', date: '2025-11-01' },
+      { title: 'Streak Legend', icon: 'images/badges/custom-badges/2025-09/sept_streak.webp', description: 'Honored for holding the longest streak in September.', date: '2025-10-01' },
+      { title: 'Overall Champion', icon: 'images/badges/custom-badges/2025-09/sept_champion.webp', description: 'Awarded for being the top overall performer with the highest average across all categories in September.', date: '2025-10-01' },
     ], 
     
     'bananasaurus': [
-      { title: 'Session Master', icon: 'images/badges/sept_session.webp', description: 'Recognized for completing the most sessions in September.', date: '2025-10-01' }
+      { title: 'Session Master', icon: 'images/badges/custom-badges/2025-09/sept_session.webp', description: 'Recognized for completing the most sessions in September.', date: '2025-10-01' }
     ],
   
     'Clari': [
-      { title: 'Overall Champion', icon: 'images/badges/oct_champion.webp', description: 'Awarded for being the top overall performer with the highest average across all categories in October.', date: '2025-11-01' },
-      { title: 'Focus King', icon: 'images/badges/oct_focus_points.webp', description: 'Crowned for earning the highest Focus Points in October.', date: '2025-11-01' },
-      { title: 'Focus King', icon: 'images/badges/sept_focus_points.webp', description: 'Crowned for earning the highest Focus Points in September.', date: '2025-10-01' }
+      { title: 'Overall Champion', icon: 'images/badges/custom-badges/2025-10/oct_champion.webp', description: 'Awarded for being the top overall performer with the highest average across all categories in October.', date: '2025-11-01' },
+      { title: 'Focus King', icon: 'images/badges/custom-badges/2025-10/oct_focus_points.webp', description: 'Crowned for earning the highest Focus Points in October.', date: '2025-11-01' },
+      { title: 'Focus King', icon: 'images/badges/custom-badges/2025-09/sept_focus_points.webp', description: 'Crowned for earning the highest Focus Points in September.', date: '2025-10-01' }
     ],
 
     'Tilen': [
-      { title: 'Session Master', icon: 'images/badges/oct_session.webp', description: 'Recognized for completing the most sessions in October.', date: '2025-11-01' }
+      { title: 'Session Master', icon: 'images/badges/custom-badges/2025-10/oct_session.webp', description: 'Recognized for completing the most sessions in October.', date: '2025-11-01' }
     ]
   };
 
@@ -1127,7 +1127,7 @@
     supportedSteps.forEach(step => {
       if (step <= streakInfo.maxStreak && !existingStreakDays.has(step)) {
         const d = (streakInfo.unlocks && streakInfo.unlocks[step]) ? streakInfo.unlocks[step] : null;
-        finalBadges.push({ title: 'Streak', icon: `images/badges/Streak/${step}-Day Streak.webp`, description: `Unlocked a ${step}-day streak!`, date: d });
+        finalBadges.push({ title: 'Streak', icon: `images/badges/streak/${step}-day-streak.webp`, description: `Unlocked a ${step}-day streak!`, date: d });
       }
     });
 
@@ -1164,7 +1164,7 @@
           if (cumFP >= achieved) { unlockIso = e.iso; break; }
         }
 
-        const iconPath = `images/badges/Focus_Points/${achieved} FP.webp`;
+        const iconPath = `images/badges/focus-points/${achieved}-fp.webp`;
         finalBadges.push({ title: 'Focus Points', icon: iconPath, description: `Earned ${achieved} Focus Points`, date: unlockIso });
       }
     } catch (focusErr) {
