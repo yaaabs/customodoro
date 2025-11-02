@@ -423,7 +423,7 @@
     } else if (themeName === 'yourname') {
       // For yourname theme, preload the image first
       const preloadImg = new Image();
-      preloadImg.src = 'images/Theme/Kimi no Na Wa.jpg';
+      preloadImg.src = 'images/theme/kimi-no-na-wa.jpg';
       
       // Show loading indicator
       const toast = document.getElementById('toast');
@@ -459,7 +459,7 @@
     } else if (themeName === 'rain') {
       // For rain theme, preload the image first
       const preloadImg = new Image();
-      preloadImg.src = 'images/Theme/ManInRain.gif';
+      preloadImg.src = 'images/theme/man-in-rain.gif';
       
       // Show loading indicator
       const toast = document.getElementById('toast');
