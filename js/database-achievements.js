@@ -9,7 +9,7 @@
   const hardcodedAchievements = {
 
     'Yabs': [
-      { title: 'Streak Legend', icon: 'images/badges/oct_streak.webp', description: 'Honored for holding the longest streak in October.', date: '2025-11-01' },
+      { title: 'Customodoro Founder', icon: 'images/badges/Custom_Badges/Founder.webp', description: 'Awarded to the awesome dev who co-founded and built Customodoro from the ground up! 🚀', date: '2023-01-01' },
     ], 
 
     'maceyslw': [
