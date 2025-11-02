@@ -437,13 +437,13 @@
         document.body.classList.add('theme-yourname');
         // Hide loading indicator
         if (toast) toast.classList.remove('show');
-        console.log('Nature theme image loaded successfully');
+        console.log('Your Name theme image loaded successfully:', preloadImg.src);
       };
       
       // If image fails to load, fall back to light theme and show error
-      preloadImg.onerror = function() {
+      preloadImg.onerror = function(error) {
         document.body.classList.add('theme-light');
-        console.error('Failed to load yourname theme image');
+        console.error('Failed to load yourname theme image:', preloadImg.src, error);
         // Show error message
         if (toast) {
           toast.textContent = 'Failed to load theme image. Using light theme instead.';
