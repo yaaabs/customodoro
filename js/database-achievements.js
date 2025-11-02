@@ -8,47 +8,44 @@
   // Hard-coded achievements map
   const hardcodedAchievements = {
 
-    'yabs@gmail.com': [
+    'Yabs': [
       { title: 'Streak Legend', icon: 'images/badges/oct_streak.webp', description: 'Honored for holding the longest streak in October.', date: '2025-11-01' },
     ], 
 
-    'hinaymyca31@gmail.com': [
+    'maceyslw': [
       { title: 'Streak Legend', icon: 'images/badges/oct_streak.webp', description: 'Honored for holding the longest streak in October.', date: '2025-11-01' },
       { title: 'Streak Legend', icon: 'images/badges/sept_streak.webp', description: 'Honored for holding the longest streak in September.', date: '2025-10-01' },
       { title: 'Overall Champion', icon: 'images/badges/sept_champion.webp', description: 'Awarded for being the top overall performer with the highest average across all categories in September.', date: '2025-10-01' },
     ], 
     
-    'jnventic@gmail.com': [
+    'bananasaurus': [
       { title: 'Session Master', icon: 'images/badges/sept_session.webp', description: 'Recognized for completing the most sessions in September.', date: '2025-10-01' }
     ],
   
-    'clarissuhpascual@gmail.com': [
+    'Clari': [
       { title: 'Overall Champion', icon: 'images/badges/oct_champion.webp', description: 'Awarded for being the top overall performer with the highest average across all categories in October.', date: '2025-11-01' },
       { title: 'Focus King', icon: 'images/badges/oct_focus_points.webp', description: 'Crowned for earning the highest Focus Points in October.', date: '2025-11-01' },
       { title: 'Focus King', icon: 'images/badges/sept_focus_points.webp', description: 'Crowned for earning the highest Focus Points in September.', date: '2025-10-01' }
     ],
 
-    'tilen@europe.com': [
+    'Tilen': [
       { title: 'Session Master', icon: 'images/badges/oct_session.webp', description: 'Recognized for completing the most sessions in October.', date: '2025-11-01' }
     ]
   };
 
-  // Keep email mirror in sync
-  if (
-    hardcodedAchievements['yabs'] &&
-    hardcodedAchievements['yabs'].length &&
-    (!hardcodedAchievements['yabs@gmail.com'] || hardcodedAchievements['yabs@gmail.com'].length === 0)
-  ) {
-    hardcodedAchievements['yabs@gmail.com'] = hardcodedAchievements['yabs'].slice();
+  // Convert username to proper case for lookup
+  function findUserAchievements(username) {
+    if (!username) return [];
+    return hardcodedAchievements[username] || [];
   }
 
   function normalizeIdentity(u) {
     if (!u && u !== 0) return null;
     if (typeof u === 'string') {
       const s = u.trim();
-      return s ? s.toLowerCase() : null;
+      return s ? s : null;
     }
-    const candidates = ['email', 'username', 'user', 'name', 'displayName', 'fullName'];
+    const candidates = ['username', 'displayName', 'name', 'user'];
     for (let i = 0; i < candidates.length; i++) {
       const k = candidates[i];
       if (u[k]) {
@@ -1059,7 +1056,7 @@
       return;
     }
 
-    const rawBadges = hardcodedAchievements[identityKey] || [];
+    const rawBadges = findUserAchievements(identityKey);
     // Note: don't early-return when there are no hardcoded badges for this user.
     // We will still compute streak badges from frontend productivity stats and render them.
 
