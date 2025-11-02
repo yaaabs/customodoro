@@ -1096,7 +1096,7 @@
     supportedSteps.forEach(step => {
       if (step <= streakInfo.maxStreak && !existingStreakDays.has(step)) {
         const d = (streakInfo.unlocks && streakInfo.unlocks[step]) ? streakInfo.unlocks[step] : null;
-        finalBadges.push({ title: 'Streak', icon: `images/badges/Streak/${step}-Day Streak.png`, description: `Unlocked a ${step}-day streak!`, date: d });
+        finalBadges.push({ title: 'Streak', icon: `images/badges/Streak/${step}-Day Streak.webp`, description: `Unlocked a ${step}-day streak!`, date: d });
       }
     });
 
