@@ -423,7 +423,7 @@
     } else if (themeName === 'yourname') {
       // For yourname theme, preload the image first
       const preloadImg = new Image();
-      preloadImg.src = 'images/theme/kimi-no-na-wa.jpg';
+      preloadImg.src = 'images/Theme/Kimi no Na Wa.jpg';
       
       // Show loading indicator
       const toast = document.getElementById('toast');
@@ -437,13 +437,13 @@
         document.body.classList.add('theme-yourname');
         // Hide loading indicator
         if (toast) toast.classList.remove('show');
-        console.log('Your Name theme image loaded successfully:', preloadImg.src);
+        console.log('Nature theme image loaded successfully');
       };
       
       // If image fails to load, fall back to light theme and show error
-      preloadImg.onerror = function(error) {
+      preloadImg.onerror = function() {
         document.body.classList.add('theme-light');
-        console.error('Failed to load yourname theme image:', preloadImg.src, error);
+        console.error('Failed to load yourname theme image');
         // Show error message
         if (toast) {
           toast.textContent = 'Failed to load theme image. Using light theme instead.';
@@ -459,7 +459,7 @@
     } else if (themeName === 'rain') {
       // For rain theme, preload the image first
       const preloadImg = new Image();
-      preloadImg.src = 'images/theme/man-in-rain.gif';
+      preloadImg.src = 'images/Theme/ManInRain.gif';
       
       // Show loading indicator
       const toast = document.getElementById('toast');
