@@ -40,22 +40,56 @@
   }
 
   function normalizeIdentity(u) {
-    if (!u && u !== 0) return null;
+    // If it's already a string (email or username), use it directly
     if (typeof u === 'string') {
       const s = u.trim();
-      return s ? s : null;
+      return s || null;
     }
-    const candidates = ['username', 'displayName', 'name', 'user'];
-    for (let i = 0; i < candidates.length; i++) {
-      const k = candidates[i];
-      if (u[k]) {
-        try {
-          const v = String(u[k]).trim().toLowerCase();
-          if (v) return v;
-        } catch (e) {}
+
+    if (!u || typeof u !== 'object') return null;
+
+    // First try to get the email (for backward compatibility)
+    if (u.email) {
+      const email = String(u.email).trim();
+      // Check if this email exists in hardcodedAchievements
+      if (hardcodedAchievements[email]) {
+        return email;
       }
     }
-    if (u.id) try { return String(u.id).trim().toLowerCase(); } catch (e) {}
+
+    // Then try username
+    if (u.username) {
+      const username = String(u.username).trim();
+      // Check if this username exists in hardcodedAchievements
+      if (hardcodedAchievements[username]) {
+        return username;
+      }
+    }
+
+    // Try other possible identifiers
+    const candidates = ['displayName', 'name', 'user'];
+    for (const k of candidates) {
+      if (u[k]) {
+        const value = String(u[k]).trim();
+        if (value && hardcodedAchievements[value]) {
+          return value;
+        }
+      }
+    }
+
+    // If we still haven't found a match, try case-insensitive matching
+    const userIdentifier = u.username || u.email || u.displayName || u.name || u.user;
+    if (userIdentifier) {
+      const normalizedIdentifier = String(userIdentifier).trim();
+      // Find a case-insensitive match in hardcodedAchievements
+      const achievementKey = Object.keys(hardcodedAchievements).find(
+        key => key.toLowerCase() === normalizedIdentifier.toLowerCase()
+      );
+      if (achievementKey) {
+        return achievementKey;
+      }
+    }
+
     return null;
   }
 
