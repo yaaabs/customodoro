@@ -1,5 +1,5 @@
-const CACHE_NAME = "customodoro-static-v7.3.24"; // Bump to v7.3.24  
-const ASSETS_CACHE = "customodoro-assets-v6.1.15"; // Bump to v6.1.15 
+const CACHE_NAME = "customodoro-static-v7.3.25"; // Bump to v7.3.25  
+const ASSETS_CACHE = "customodoro-assets-v6.1.16"; // Bump to v6.1.16 
 const urlsToCache = [
   // ═══════════════════════════════════════════════════════════════════
   // HTML Pages
@@ -75,7 +75,7 @@ let isFirstInstall = false;
 
 // Install: cache only the HTML essentials
 self.addEventListener("install", (event) => {
-  console.log('🔧 Service Worker v7.3.24 installing...');
+  console.log('🔧 Service Worker v7.3.25 installing...');
   
   // Check if this is a first install
   event.waitUntil(
@@ -100,7 +100,7 @@ self.addEventListener("install", (event) => {
 
 // Activate: clean up old caches and notify clients
 self.addEventListener("activate", (event) => {
-  console.log('🚀 Service Worker v7.3.24 activating...');
+  console.log('🚀 Service Worker v7.3.25 activating...');
   
   event.waitUntil(
     // Clean up old caches
