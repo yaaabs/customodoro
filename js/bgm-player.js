@@ -1101,9 +1101,9 @@
       'Brain Power': 'images/album-art/GM_13-16 Hz Brain Power.jpg',
 // End of Gamma Waves Playlist
 
-      'Clear Skies': 'images/album-art/clear skies.jpg',
-      'Gentle Ocean': 'images/album-art/gentle ocean.jpg',
-      'Venusian Vespers': 'images/album-art/venusian vespers.jpg',
+      'Clear Skies': 'images/album-art/clear-skies.jpg',
+      'Gentle Ocean': 'images/album-art/gentle-ocean.jpg',
+      'Venusian Vespers': 'images/album-art/venusian-vespers.jpg',
 
       // Nicole Playlist tracks
       'Anaheim': 'images/album-art/nicole.jpg',
@@ -1116,24 +1116,24 @@
       'Take A Chance With Me': 'images/album-art/nicole.jpg',
 
       'Chilly': 'images/album-art/chilly.jpg',
-      'Every Summertime': 'images/album-art/every summertime.jpg',
-      'Hallway Weather': 'images/album-art/hallway weather.jpg',
+      'Every Summertime': 'images/album-art/every-summertime.jpg',
+      'Hallway Weather': 'images/album-art/hallway-weather.jpg',
       'Indigo': 'images/album-art/hitc2.jpg',
-      'La La Lost You - Acoustic': 'images/album-art/nas_hitc2.jpg',
+      'La La Lost You - Acoustic': 'images/album-art/nas-hitc2.jpg',
       'La La Lost You': 'images/album-art/hitc2.jpg',
       'Split': 'images/album-art/split.jpg',
       'Vintage': 'images/album-art/zephyr.jpg',
-      'I Like U': 'images/album-art/i like u.jpg',
+      'I Like U': 'images/album-art/i-like-u.jpg',
       'Lose': 'images/album-art/moonchild.jpg',
       'lowkey': 'images/album-art/lowkey.jpg',
       'Newsflash!': 'images/album-art/zephyr.jpg',
       'Plot Twist': 'images/album-art/moonchild.jpg',
-      'See U Never': 'images/album-art/see u never.jpg',
+      'See U Never': 'images/album-art/see-u-never.jpg',
       'Selene': 'images/album-art/moonchild.jpg',    
       'urs': 'images/album-art/wttd.jpg',
 
-      // Happy Jazz tracks
-      'Happy Swing Jazz Piano': 'images/album-art/Happy Jazz.jpg'
+      // happy-jazz tracks
+      'Happy Swing Jazz Piano': 'images/album-art/happy-jazz.jpg'
     };
     
     // Playlist-based album art mapping (fallback)
@@ -1165,7 +1165,7 @@
       // 'deep-focus': 'images/album-art/focus.png', // Remove or replace
       'ambient-long': 'images/album-art/ambient.jpg',
       'smile-demons': 'images/album-art/niki.png',
-      'happy-jazz': 'images/album-art/Happy Jazz.jpg',
+      'happy-jazz': 'images/album-art/happy-jazz.jpg',
       'gamma-waves': 'images/album-art/headspace.png',
     };
 
@@ -1197,9 +1197,9 @@
 // End of Gamma Waves Playlist
 
       // Deep Focus tracks
-      'Clear Skies': 'images/album-art/clear skies.jpg',
-      'Gentle Ocean': 'images/album-art/gentle ocean.jpg',
-      'Venusian Vespers': 'images/album-art/venusian vespers.jpg',
+      'Clear Skies': 'images/album-art/clear-skies.jpg',
+      'Gentle Ocean': 'images/album-art/gentle-ocean.jpg',
+      'Venusian Vespers': 'images/album-art/venusian-vespers.jpg',
 
       // Nicole Playlist tracks
       'Anaheim': 'images/album-art/nicole.jpg',
@@ -1212,24 +1212,24 @@
       'Take A Chance With Me': 'images/album-art/nicole.jpg',
 
       'Chilly': 'images/album-art/chilly.jpg',
-      'Every Summertime': 'images/album-art/every summertime.jpg',
-      'Hallway Weather': 'images/album-art/hallway weather.jpg',
+      'Every Summertime': 'images/album-art/every-summertime.jpg',
+      'Hallway Weather': 'images/album-art/hallway-weather.jpg',
       'Indigo': 'images/album-art/hitc2.jpg',
-      'La La Lost You - Acoustic': 'images/album-art/nas_hitc2.jpg',
+      'La La Lost You - Acoustic': 'images/album-art/nas-hitc2.jpg',
       'La La Lost You': 'images/album-art/hitc2.jpg',
       'Split': 'images/album-art/split.jpg',
       'Vintage': 'images/album-art/zephyr.jpg',
-      'I Like U': 'images/album-art/i like u.jpg',
+      'I Like U': 'images/album-art/i-like-u.jpg',
       'Lose': 'images/album-art/moonchild.jpg',
       'lowkey': 'images/album-art/lowkey.jpg',
       'Newsflash!': 'images/album-art/zephyr.jpg',
       'Plot Twist': 'images/album-art/moonchild.jpg',
-      'See U Never': 'images/album-art/see u never.jpg',
+      'See U Never': 'images/album-art/see-u-never.jpg',
       'Selene': 'images/album-art/moonchild.jpg',    
       'urs': 'images/album-art/wttd.jpg',
 
-      // Happy Jazz tracks
-      'Happy Swing Jazz Piano': 'images/album-art/Happy Jazz.jpg'
+      // happy-jazz tracks
+      'Happy Swing Jazz Piano': 'images/album-art/happy-jazz.jpg'
     };
 
     // Get album art path based on current track or playlist
