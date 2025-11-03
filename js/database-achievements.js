@@ -13,23 +13,23 @@
     ], 
 
     'maceyslw': [
-      { title: 'Streak Legend', icon: 'images/badges/custom-badges/2025-10/oct_streak.webp', description: 'Honored for holding the longest streak in October.', date: '2025-11-01' },
-      { title: 'Streak Legend', icon: 'images/badges/custom-badges/2025-09/sept_streak.webp', description: 'Honored for holding the longest streak in September.', date: '2025-10-01' },
-      { title: 'Overall Champion', icon: 'images/badges/custom-badges/2025-09/sept_champion.webp', description: 'Awarded for being the top overall performer with the highest average across all categories in September.', date: '2025-10-01' },
+      { title: 'Streak Legend', icon: 'images/badges/custom-badges/2025-10/oct-streak.webp', description: 'Honored for holding the longest streak in October.', date: '2025-11-01' },
+      { title: 'Streak Legend', icon: 'images/badges/custom-badges/2025-09/sept-streak.webp', description: 'Honored for holding the longest streak in September.', date: '2025-10-01' },
+      { title: 'Overall Champion', icon: 'images/badges/custom-badges/2025-09/sept-champion.webp', description: 'Awarded for being the top overall performer with the highest average across all categories in September.', date: '2025-10-01' },
     ], 
     
     'bananasaurus': [
-      { title: 'Session Master', icon: 'images/badges/custom-badges/2025-09/sept_session.webp', description: 'Recognized for completing the most sessions in September.', date: '2025-10-01' }
+      { title: 'Session Master', icon: 'images/badges/custom-badges/2025-09/sept-session.webp', description: 'Recognized for completing the most sessions in September.', date: '2025-10-01' }
     ],
   
     'Clari': [
-      { title: 'Overall Champion', icon: 'images/badges/custom-badges/2025-10/oct_champion.webp', description: 'Awarded for being the top overall performer with the highest average across all categories in October.', date: '2025-11-01' },
-      { title: 'Focus King', icon: 'images/badges/custom-badges/2025-10/oct_focus_points.webp', description: 'Crowned for earning the highest Focus Points in October.', date: '2025-11-01' },
-      { title: 'Focus King', icon: 'images/badges/custom-badges/2025-09/sept_focus_points.webp', description: 'Crowned for earning the highest Focus Points in September.', date: '2025-10-01' }
+      { title: 'Overall Champion', icon: 'images/badges/custom-badges/2025-10/oct-champion.webp', description: 'Awarded for being the top overall performer with the highest average across all categories in October.', date: '2025-11-01' },
+      { title: 'Focus King', icon: 'images/badges/custom-badges/2025-10/oct-focus_points.webp', description: 'Crowned for earning the highest Focus Points in October.', date: '2025-11-01' },
+      { title: 'Focus King', icon: 'images/badges/custom-badges/2025-09/sept-focus_points.webp', description: 'Crowned for earning the highest Focus Points in September.', date: '2025-10-01' }
     ],
 
     'Tilen': [
-      { title: 'Session Master', icon: 'images/badges/custom-badges/2025-10/oct_session.webp', description: 'Recognized for completing the most sessions in October.', date: '2025-11-01' }
+      { title: 'Session Master', icon: 'images/badges/custom-badges/2025-10/oct-session.webp', description: 'Recognized for completing the most sessions in October.', date: '2025-11-01' }
     ]
   };
 
