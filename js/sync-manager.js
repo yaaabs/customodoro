@@ -658,15 +658,20 @@ const cleanData = {
           console.log('🛡️ Protecting local streaks from empty server data');
         }
         
-        // Update UI to reflect new streak data
+        // Update UI to reflect new streak data (debounced to prevent blocking)
         if (typeof window.updateStreakStatsCard === 'function') {
-          setTimeout(() => window.updateStreakStatsCard(), 100);
+          setTimeout(() => window.updateStreakStatsCard(), 50);
         }
         if (typeof window.renderStreakDisplay === 'function') {
           setTimeout(() => window.renderStreakDisplay(), 100);
         }
         if (typeof window.renderContributionGraph === 'function') {
-          setTimeout(() => window.renderContributionGraph(), 100);
+          // Defer expensive contribution graph rendering to prevent blocking sync
+          setTimeout(() => {
+            requestIdleCallback(() => {
+              window.renderContributionGraph();
+            }, { timeout: 2000 });
+          }, 150);
         }
         
       } catch (error) {

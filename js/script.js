@@ -1913,6 +1913,9 @@ function getThemeMode() {
 let showAllData = false;
 
 function renderContributionGraph() {
+  const startTime = performance.now();
+  console.log('🎨 Starting contribution graph render...');
+  
   const stats = getStats();
   console.log('Current stats:', stats); // Debug log
   
@@ -1922,6 +1925,15 @@ function renderContributionGraph() {
     if (dates.length === 0) dates = getDatesForHeatmap();
   } else {
     dates = getDatesForHeatmap();
+  }
+  
+  // Performance warning for large datasets
+  const statsCount = Object.keys(stats).length;
+  const datesCount = dates.length;
+  
+  if (statsCount > 100 || datesCount > 365) {
+    console.warn(`⚠️ Large dataset detected: ${statsCount} stat days, ${datesCount} graph days`);
+    console.warn('This may cause performance issues - consider optimizing');
   }
 
 // STREAK! Duolingo-style streak calculation
@@ -2117,19 +2129,19 @@ document.addEventListener('DOMContentLoaded', () => {
   // Month labels (top, left to right, latest month rightmost)
   const monthLabels = getMonthLabels(weeks.map(w => w[0]));
 
-  // SVG
-  let svg = `<svg width="${width}" height="${height}" style="font-family:sans-serif;background:${bgColor};min-width:${minGraphWidth}px;display:block;">`;
+  // SVG - Use array for better performance with large datasets
+  const svgParts = [`<svg width="${width}" height="${height}" style="font-family:sans-serif;background:${bgColor};min-width:${minGraphWidth}px;display:block;">`];
 
   // Month labels (top)
   monthLabels.forEach(label => {
     const x = leftPad + label.x * (cellSize + cellGap);
-    svg += `<text x="${x}" y="15" fill="${labelColor}" font-size="11" font-weight="500">${label.month}</text>`;
+    svgParts.push(`<text x="${x}" y="15" fill="${labelColor}" font-size="11" font-weight="500">${label.month}</text>`);
   });
 
   // Day labels (left, accurate)
   dayLabelIndexes.forEach(idx => {
     const y = topPad + idx * (cellSize + cellGap) + cellSize / 2 + 3;
-    svg += `<text x="4" y="${y}" fill="${labelColor}" font-size="11" font-weight="500" text-anchor="start">${dayLabelsAccurate[idx]}</text>`;
+    svgParts.push(`<text x="4" y="${y}" fill="${labelColor}" font-size="11" font-weight="500" text-anchor="start">${dayLabelsAccurate[idx]}</text>`);
   });
 
   // Store date objects for tooltip use
@@ -2163,11 +2175,23 @@ weeks.forEach((week, x) => {
       
       const cellX = leftPad + x * (cellSize + cellGap);
       const cellY = topPad + y * (cellSize + cellGap);
-      svg += `<rect x="${cellX}" y="${cellY}" width="${cellSize}" height="${cellSize}" rx="3" fill="${color}" stroke="${cellBorder}" stroke-width="1" data-date="${key}" data-classic="${dayStats.classic}" data-reverse="${dayStats.reverse}" data-break="${dayStats.break}" data-minutes="${minutes}" data-points="${points}" style="cursor:pointer;"/>`;
+      svgParts.push(`<rect x="${cellX}" y="${cellY}" width="${cellSize}" height="${cellSize}" rx="3" fill="${color}" stroke="${cellBorder}" stroke-width="1" data-date="${key}" data-classic="${dayStats.classic}" data-reverse="${dayStats.reverse}" data-break="${dayStats.break}" data-minutes="${minutes}" data-points="${points}" style="cursor:pointer;"/>`);
     });
   });
 
-  svg += `</svg>`;
+  svgParts.push(`</svg>`);
+  
+  // Join array once at the end for better performance
+  const svg = svgParts.join('');
+
+  // Performance logging
+  const endTime = performance.now();
+  const duration = endTime - startTime;
+  console.log(`🎨 Contribution graph rendered in ${duration.toFixed(2)}ms`);
+  
+  if (duration > 50) {
+    console.warn(`⚠️ Slow rendering detected: ${duration.toFixed(2)}ms (threshold: 50ms)`);
+  }
 
   // Legend (GitHub style with theme-appropriate empty color)
   const legend = `
@@ -2262,10 +2286,18 @@ weeks.forEach((week, x) => {
     `;
     container.appendChild(style);
 
-    // NEW APPROACH: Tooltip logic with better positioning
+    // NEW APPROACH: Tooltip logic with better positioning using event delegation
     const tooltip = container.querySelector('#contribution-tooltip');
-    container.querySelectorAll('rect').forEach(rect => {
-      rect.addEventListener('mouseenter', e => {
+    const graphContainer = container.querySelector('.contribution-graph-scroll');
+    
+    // Remove any existing event listeners
+    graphContainer.replaceWith(graphContainer.cloneNode(true));
+    const newGraphContainer = container.querySelector('.contribution-graph-scroll');
+    
+    // Use event delegation for better performance with large datasets
+    newGraphContainer.addEventListener('mouseenter', e => {
+      if (e.target.tagName === 'rect' && e.target.dataset.date) {
+        const rect = e.target;
         const d = rect.dataset;
         const dateKey = d.date;
         
@@ -2364,11 +2396,14 @@ if (tooltipY < 0) tooltipY = 8;
 
 tooltip.style.left = tooltipX + 'px';
 tooltip.style.top = tooltipY + 'px';
-});
-      rect.addEventListener('mouseleave', () => {
+      }
+    }, true);
+    
+    newGraphContainer.addEventListener('mouseleave', e => {
+      if (e.target.tagName === 'rect' && e.target.dataset.date) {
         tooltip.style.display = 'none';
-      });
-    });
+      }
+    }, true);
 
     // Add toggle event
     const toggleBtn = container.querySelector('#toggle-graph-range');
