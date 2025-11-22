@@ -702,6 +702,13 @@ body.theme-color #stop-btn:hover {
   border: 1px solid #FF6B6B;
 }
 
+.user-badge.rph {
+  background: linear-gradient(135deg, #FF6B6B 0%, #EE5A5A 100%);
+  color: white;
+  border: 1px solid #FF6B6B;
+  text-transform: none;
+}
+
 .user-badge.champion {
   background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
   color: white;
