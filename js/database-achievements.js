@@ -24,8 +24,8 @@
   
     'Clari': [
       { title: 'Overall Champion', icon: 'images/badges/custom-badges/2025-10/oct-champion.webp', description: 'Awarded for being the top overall performer with the highest average across all categories in October.', date: '2025-11-01' },
-      { title: 'Focus King', icon: 'images/badges/custom-badges/2025-10/oct-focus_points.webp', description: 'Crowned for earning the highest Focus Points in October.', date: '2025-11-01' },
-      { title: 'Focus King', icon: 'images/badges/custom-badges/2025-09/sept-focus_points.webp', description: 'Crowned for earning the highest Focus Points in September.', date: '2025-10-01' }
+      { title: 'Focus King', icon: 'images/badges/custom-badges/2025-10/oct-focus-points.webp', description: 'Crowned for earning the highest Focus Points in October.', date: '2025-11-01' },
+      { title: 'Focus King', icon: 'images/badges/custom-badges/2025-09/sept-focus-points.webp', description: 'Crowned for earning the highest Focus Points in September.', date: '2025-10-01' }
     ],
 
     'Tilen': [
@@ -51,7 +51,7 @@
     // First try to get the email (for backward compatibility)
     if (u.email) {
       const email = String(u.email).trim();
-      // Check if this email exists in hardcodedAchievements
+      // Check if this email exists in hardcodedAchievements (for exact key match)
       if (hardcodedAchievements[email]) {
         return email;
       }
@@ -77,7 +77,7 @@
       }
     }
 
-    // If we still haven't found a match, try case-insensitive matching
+    // If we still haven't found a match in hardcodedAchievements, try case-insensitive matching
     const userIdentifier = u.username || u.email || u.displayName || u.name || u.user;
     if (userIdentifier) {
       const normalizedIdentifier = String(userIdentifier).trim();
@@ -88,6 +88,9 @@
       if (achievementKey) {
         return achievementKey;
       }
+      // Even if user has no hardcoded achievements, return their identifier
+      // so they can still see computed badges (streaks, focus points)
+      return normalizedIdentifier;
     }
 
     return null;
