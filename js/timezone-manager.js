@@ -184,8 +184,12 @@ class TimezoneManager {
   /**
    * Add session using user's timezone
    * This replaces window.addCustomodoroSession
+   * 
+   * Includes validation to cap daily minutes at 1440 (24 hours)
+   * to prevent impossible time values
    */
   addCustomodoroSession(type, minutes) {
+    const MAX_DAILY_MINUTES = 1440; // 24 hours = 1440 minutes
     const key = this.formatDateKey(this.getUserToday());
     console.log('📝 Adding session:', { type, minutes, dateKey: key, timezone: this.userTimezone });
     
@@ -194,13 +198,37 @@ class TimezoneManager {
       stats[key] = { classic: 0, reverse: 0, break: 0, total_minutes: 0 };
     }
     
+    // Validate and cap minutes to prevent exceeding 24 hours per day
+    const currentMinutes = stats[key].total_minutes || 0;
+    const remainingCapacity = MAX_DAILY_MINUTES - currentMinutes;
+    
+    let minutesToAdd = minutes;
+    if (remainingCapacity <= 0) {
+      console.warn(`⚠️ Daily cap reached (${MAX_DAILY_MINUTES} mins). Session not recorded.`);
+      return { 
+        success: false, 
+        reason: 'daily_cap_reached', 
+        dateKey: key, 
+        stats: stats[key],
+        message: 'You\'ve reached the maximum 24 hours for today!'
+      };
+    }
+    
+    if (minutes > remainingCapacity) {
+      console.warn(`⚠️ Capping session from ${minutes} to ${remainingCapacity} mins to stay within daily limit.`);
+      minutesToAdd = remainingCapacity;
+    }
+    
     // Increment appropriate type
     if (type === 'classic') stats[key].classic++;
     if (type === 'reverse') stats[key].reverse++;
     if (type === 'break') stats[key].break++;
     
-    stats[key].total_minutes += minutes;
+    stats[key].total_minutes += minutesToAdd;
     stats[key].lastUpdate = new Date().toISOString();
+    
+    // Log if minutes were capped
+    const wasCapped = minutesToAdd < minutes;
     
     localStorage.setItem('customodoroStatsByDay', JSON.stringify(stats));
     console.log('✅ Session added:', stats[key]);
@@ -238,7 +266,15 @@ class TimezoneManager {
       }
     }
     
-    return { success: true, dateKey: key, stats: stats[key] };
+    return { 
+      success: true, 
+      dateKey: key, 
+      stats: stats[key],
+      wasCapped: wasCapped,
+      minutesRequested: minutes,
+      minutesAdded: minutesToAdd,
+      remainingCapacity: MAX_DAILY_MINUTES - stats[key].total_minutes
+    };
   }
 }
 

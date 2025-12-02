@@ -682,41 +682,57 @@ const cleanData = {
     // NOTE: Productivity stats now included in streaks field for backend compatibility
     console.log('✅ Merged data from server including productivity stats via streaks field');
   }  // Merge productivity stats intelligently (newer timestamps win)
+  // Cap at 1440 minutes (24 hours) per day to prevent impossible values
   mergeProductivityStats(localStats, serverStats) {
-    const merged = { ...localStats };
+    const MAX_DAILY_MINUTES = 1440;
+    const merged = {};
     
-    // Merge day-by-day stats with proper conflict resolution
-    Object.keys(serverStats).forEach(dateKey => {
+    // Helper to cap a day's stats
+    const capDayStats = (dayStats) => {
+      if (!dayStats) return null;
+      return {
+        ...dayStats,
+        total_minutes: Math.min(dayStats.total_minutes || 0, MAX_DAILY_MINUTES)
+      };
+    };
+    
+    // First, add all local stats (capped)
+    Object.keys(localStats || {}).forEach(dateKey => {
+      merged[dateKey] = capDayStats(localStats[dateKey]);
+    });
+    
+    // Then merge server stats with conflict resolution
+    Object.keys(serverStats || {}).forEach(dateKey => {
       const serverDayStats = serverStats[dateKey];
       const localDayStats = merged[dateKey];
       
       if (!localDayStats) {
-        // No local data for this date, use server data
-        merged[dateKey] = serverDayStats;
-      } else if (!serverDayStats) {
-        // Keep local data as is
-        return;
+        // No local data for this date, use server data (capped)
+        merged[dateKey] = capDayStats(serverDayStats);
       } else {
         // Both exist - implement "newer timestamp wins" strategy
         const localTimestamp = new Date(localDayStats.lastUpdate || 0).getTime();
         const serverTimestamp = new Date(serverDayStats.lastUpdate || 0).getTime();
         
         if (serverTimestamp > localTimestamp) {
-          // Server data is newer, use it
+          // Server data is newer, use it (capped)
           console.log(`📊 Server data newer for ${dateKey}: using server data`);
-          merged[dateKey] = serverDayStats;
+          merged[dateKey] = capDayStats(serverDayStats);
         } else if (localTimestamp > serverTimestamp) {
-          // Local data is newer, keep it
+          // Local data is newer, keep it (already capped from first pass)
           console.log(`📊 Local data newer for ${dateKey}: keeping local data`);
-          // merged[dateKey] already has local data
+          // merged[dateKey] already has capped local data
         } else {
-          // Same timestamp or no timestamps - merge by taking higher values
+          // Same timestamp or no timestamps - merge by taking higher values (capped)
           console.log(`📊 Same timestamp for ${dateKey}: merging by max values`);
           merged[dateKey] = {
             classic: Math.max(localDayStats.classic || 0, serverDayStats.classic || 0),
             reverse: Math.max(localDayStats.reverse || 0, serverDayStats.reverse || 0),
             break: Math.max(localDayStats.break || 0, serverDayStats.break || 0),
-            total_minutes: Math.max(localDayStats.total_minutes || 0, serverDayStats.total_minutes || 0),
+            total_minutes: Math.min(
+              Math.max(localDayStats.total_minutes || 0, serverDayStats.total_minutes || 0),
+              MAX_DAILY_MINUTES
+            ),
             // Take the most recent timestamp
             lastUpdate: new Date(Math.max(localTimestamp, serverTimestamp)).toISOString()
           };

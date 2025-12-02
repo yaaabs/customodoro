@@ -214,6 +214,8 @@ class MidnightSessionSplitter {
       });
       
       // Record each segment
+      const MAX_DAILY_MINUTES = 1440; // 24 hours cap
+      
       segments.forEach((segment) => {
         try {
           const stats = JSON.parse(localStorage.getItem('customodoroStatsByDay') || '{}');
@@ -223,12 +225,27 @@ class MidnightSessionSplitter {
             stats[dateKey] = { classic: 0, reverse: 0, break: 0, total_minutes: 0 };
           }
           
+          // Validate and cap minutes to prevent exceeding 24 hours per day
+          const currentMinutes = stats[dateKey].total_minutes || 0;
+          const remainingCapacity = MAX_DAILY_MINUTES - currentMinutes;
+          
+          if (remainingCapacity <= 0) {
+            console.warn(`⚠️ Daily cap reached for ${dateKey}. Segment skipped.`);
+            return; // Skip this segment
+          }
+          
+          let minutesToAdd = segment.minutes;
+          if (segment.minutes > remainingCapacity) {
+            console.warn(`⚠️ Capping segment from ${segment.minutes} to ${remainingCapacity} mins for ${dateKey}.`);
+            minutesToAdd = remainingCapacity;
+          }
+          
           // Increment appropriate type
           if (mode === 'classic') stats[dateKey].classic++;
           if (mode === 'reverse') stats[dateKey].reverse++;
           if (mode === 'break') stats[dateKey].break++;
           
-          stats[dateKey].total_minutes += segment.minutes;
+          stats[dateKey].total_minutes += minutesToAdd;
           stats[dateKey].lastUpdate = new Date().toISOString();
           
           // Mark as split session
@@ -238,14 +255,14 @@ class MidnightSessionSplitter {
             }
             stats[dateKey].splitSessions.push({
               mode,
-              minutes: segment.minutes,
+              minutes: minutesToAdd,
               segmentIndex: segment.segmentIndex,
               timestamp: new Date().toISOString()
             });
           }
           
           localStorage.setItem('customodoroStatsByDay', JSON.stringify(stats));
-          console.log(`  ✅ Recorded ${segment.minutes} mins to ${segment.date}`);
+          console.log(`  ✅ Recorded ${minutesToAdd} mins to ${segment.date}`);
         } catch (segmentError) {
           console.error('❌ Error recording segment:', segmentError);
         }
