@@ -57,11 +57,27 @@
     'Cyd': [
       // Streak Legend Badges
       { title: 'Streak Legend', icon: 'images/badges/custom-badges/2025-11/nov-streak.webp', description: 'Honored for holding the longest streak in November.', date: '2025-12-01' },
+      { title: 'Streak Legend', icon: 'images/badges/custom-badges/2025-12/dec-streak.webp', description: 'Honored for holding the longest streak in December.', date: '2026-01-01' },
 
       // Focus King Badges
       { title: 'Focus King', icon: 'images/badges/custom-badges/2025-11/nov-focus-points.webp', description: 'Crowned for earning the highest Focus Points in November.', date: '2025-12-01' },      
-    ]
+    ],
 //================================================================//
+
+//================================================================//
+    'landosaurus': [
+      // Focus King Badges
+      { title: 'Focus King', icon: 'images/badges/custom-badges/2025-12/dec-focus-points.webp', description: 'Crowned for earning the highest Focus Points in December.', date: '2026-01-01' },      
+    ],
+//================================================================//
+
+//================================================================//
+    'Mahek': [
+      // Session Master Badges
+      { title: 'Session Master', icon: 'images/badges/custom-badges/2025-12/dec-session.webp', description: 'Recognized for completing the most sessions in December.', date: '2026-01-01' }, 
+    ],
+//================================================================//
+
   };
 
   // Convert username to proper case for lookup
