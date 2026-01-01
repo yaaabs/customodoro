@@ -15,28 +15,34 @@
 
 //================================================================//
     'Clari': [
-      // Overall Champion Badges
+
+      // Focus King Badge for September
+      { title: 'Focus King', icon: 'images/badges/custom-badges/2025-09/sept-focus-points.webp', description: 'Crowned for earning the highest Focus Points in September.', date: '2025-10-01' },
+
+      // Focus King Badge for October
+      { title: 'Focus King', icon: 'images/badges/custom-badges/2025-10/oct-focus-points.webp', description: 'Crowned for earning the highest Focus Points in October.', date: '2025-11-01' },
+
+      // Overall Champion Badge for October
       { title: 'Overall Champion', icon: 'images/badges/custom-badges/2025-10/oct-champion.webp', description: 'Awarded for being the top overall performer with the highest average across all categories in October.', date: '2025-11-01' },
 
-      // Focus King Badges
-      { title: 'Focus King', icon: 'images/badges/custom-badges/2025-09/sept-focus-points.webp', description: 'Crowned for earning the highest Focus Points in September.', date: '2025-10-01' },
-      { title: 'Focus King', icon: 'images/badges/custom-badges/2025-10/oct-focus-points.webp', description: 'Crowned for earning the highest Focus Points in October.', date: '2025-11-01' },
     ],
 //================================================================//
 
 //================================================================//
     'maceyslw': [
-      // Streak Legend Badges
+      // Streak Legend Badge for September
       { title: 'Streak Legend', icon: 'images/badges/custom-badges/2025-09/sept-streak.webp', description: 'Honored for holding the longest streak in September.', date: '2025-10-01' },
-      { title: 'Streak Legend', icon: 'images/badges/custom-badges/2025-10/oct-streak.webp', description: 'Honored for holding the longest streak in October.', date: '2025-11-01' },
 
-      // Overall Champion Badges
+      // Overall Champion Badge for September
       { title: 'Overall Champion', icon: 'images/badges/custom-badges/2025-09/sept-champion.webp', description: 'Awarded for being the top overall performer with the highest average across all categories in September.', date: '2025-10-01' },
+
+      // Streak Legend Badge for October
+      { title: 'Streak Legend', icon: 'images/badges/custom-badges/2025-10/oct-streak.webp', description: 'Honored for holding the longest streak in October.', date: '2025-11-01' },
     ], 
 //================================================================//
 
     'bananasaurus': [
-      // Session Master Badges
+      // Session Master Badge for September
       { title: 'Session Master', icon: 'images/badges/custom-badges/2025-09/sept-session.webp', description: 'Recognized for completing the most sessions in September.', date: '2025-10-01' }
     ],
   
@@ -44,29 +50,33 @@
 
 //================================================================//
     'Tilen': [
-      // Session Master Badges
+      // Session Master Badge for October
       { title: 'Session Master', icon: 'images/badges/custom-badges/2025-10/oct-session.webp', description: 'Recognized for completing the most sessions in October.', date: '2025-11-01' },
-      { title: 'Session Master', icon: 'images/badges/custom-badges/2025-11/nov-session.webp', description: 'Recognized for completing the most sessions in November.', date: '2025-12-01' },
 
-      // Overall Champion Badges
-      { title: 'Overall Champion', icon: 'images/badges/custom-badges/2025-11/nov-champion.webp', description: 'Awarded for being the top overall performer with the highest average across all categories in November.', date: '2025-12-01' },      
+      // Overall Champion Badge for November
+      { title: 'Overall Champion', icon: 'images/badges/custom-badges/2025-11/nov-champion.webp', description: 'Awarded for being the top overall performer with the highest average across all categories in November.', date: '2025-12-01' },
+      
+      // Session Master Badge for November
+      { title: 'Session Master', icon: 'images/badges/custom-badges/2025-11/nov-session.webp', description: 'Recognized for completing the most sessions in November.', date: '2025-12-01' },
     ],
 //================================================================//
 
 //================================================================//
     'Cyd': [
-      // Streak Legend Badges
+      // Streak Legend Badge for November
       { title: 'Streak Legend', icon: 'images/badges/custom-badges/2025-11/nov-streak.webp', description: 'Honored for holding the longest streak in November.', date: '2025-12-01' },
-      { title: 'Streak Legend', icon: 'images/badges/custom-badges/2025-12/dec-streak.webp', description: 'Honored for holding the longest streak in December.', date: '2026-01-01' },
 
-      // Focus King Badges
-      { title: 'Focus King', icon: 'images/badges/custom-badges/2025-11/nov-focus-points.webp', description: 'Crowned for earning the highest Focus Points in November.', date: '2025-12-01' },      
+      // Focus King Badge for November
+      { title: 'Focus King', icon: 'images/badges/custom-badges/2025-11/nov-focus-points.webp', description: 'Crowned for earning the highest Focus Points in November.', date: '2025-12-01' },     
+      
+      // Streak Legend Badge for December
+      { title: 'Streak Legend', icon: 'images/badges/custom-badges/2025-12/dec-streak.webp', description: 'Honored for holding the longest streak in December.', date: '2026-01-01' },
     ],
 //================================================================//
 
 //================================================================//
     'landosaurus': [
-      // Focus King Badges
+      // Focus King Badge for December
       { title: 'Focus King', icon: 'images/badges/custom-badges/2025-12/dec-focus-points.webp', description: 'Crowned for earning the highest Focus Points in December.', date: '2026-01-01' },      
     ],
 //================================================================//
