@@ -1843,6 +1843,31 @@ function getDatesForHeatmap() {
   return dates;
 }
 
+// Get all dates for a specific year (Jan 1 -> Dec 31)
+function getDatesForYear(year) {
+  const start = new Date(year, 0, 1);
+  const end = new Date(year, 11, 31);
+  const dates = [];
+  let d = new Date(start);
+  while (d <= end) {
+    dates.push(new Date(d));
+    d.setDate(d.getDate() + 1);
+  }
+  return dates;
+}
+
+function getDatesForMonth(year, monthIdx) {
+  const start = new Date(year, monthIdx, 1);
+  const end = new Date(year, monthIdx + 1, 0);
+  const dates = [];
+  let d = new Date(start);
+  while (d <= end) {
+    dates.push(new Date(d));
+    d.setDate(d.getDate() + 1);
+  }
+  return dates;
+}
+
 // Get stats from localStorage using TimezoneManager
 function getStats() {
   return window.timezoneManager.getStats();
@@ -2051,19 +2076,30 @@ function getThemeMode() {
 
 // --- Add toggle logic ---
 let showAllData = false;
+let selectedRange = showAllData ? 'all' : 'last12';
 
 function renderContributionGraph() {
   const startTime = performance.now();
-  console.log('🎨 Starting contribution graph render...');
+  console.debug('🎨 Starting contribution graph render...');
+  const container = document.getElementById('contribution-graph');
   
   const stats = getStats();
-  console.log('Current stats:', stats); // Debug log
+  console.debug('Current stats:', stats); // Debug log
   
   let dates;
-  if (showAllData) {
+  if (selectedRange === 'all') {
     dates = getAllAvailableDates();
     if (dates.length === 0) dates = getDatesForHeatmap();
+  } else if (selectedRange && selectedRange.startsWith('month-')) {
+    const parts = selectedRange.split('-');
+    const year = parseInt(parts[1], 10);
+    const monthIdx = parseInt(parts[2], 10) - 1;
+    dates = getDatesForMonth(year, monthIdx);
+  } else if (selectedRange && selectedRange.startsWith('year-')) {
+    const year = parseInt(selectedRange.split('-')[1], 10);
+    dates = getDatesForYear(year);
   } else {
+    // default: last 12 months
     dates = getDatesForHeatmap();
   }
   
@@ -2190,7 +2226,10 @@ document.addEventListener('DOMContentLoaded', () => {
     maxMinutes = Math.max(maxMinutes, dayStats.total_minutes || 0);
   });
   
-  console.log('Max minutes for scaling:', maxMinutes); // Debug log
+  console.debug('Max minutes for scaling:', maxMinutes); // Debug log
+  // Convert max minutes to Focus Points for color scaling (ensure at least 1 to show small activity)
+  const maxPoints = Math.max(1, Math.ceil(maxMinutes / 5));
+  console.debug('Max focus points for scaling:', maxPoints);
 
   // Arrange dates into weeks (columns, oldest to newest, left to right)
   const weeks = [];
@@ -2199,7 +2238,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Reverse weeks so latest week is on the right (GitHub style)
-  weeks.reverse();
+  // For a single-year view (year-YYYY) show January → December left-to-right like GitHub
+  if (!(selectedRange && selectedRange.startsWith('year-'))) {
+    weeks.reverse();
+  }
 
   // Day labels: get weekday for first date in each row
   const firstDayOfWeek = weeks[0][0].getDay(); // 0=Sun, 1=Mon, ...
@@ -2216,11 +2258,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Sizing
+  // Sizing - fixed cell size with horizontal scrollbar for overflow
   const cellSize = 12, cellGap = 4;
   const leftPad = 36, topPad = 22, bottomPad = 22;
-  const minGraphWidth = 420;
-  const width = Math.max(leftPad + weeks.length * (cellSize + cellGap) + 8, minGraphWidth);
+  const width = leftPad + weeks.length * (cellSize + cellGap) + 8;
+  const minGraphWidth = Math.max(width, 420);
   const height = topPad + 7 * (cellSize + cellGap) + bottomPad;
 
   // Detect theme
@@ -2298,12 +2340,13 @@ weeks.forEach((week, x) => {
       
       // For color calculation, treat any activity as at least 1 for visual purposes
       const colorPoints = minutes > 0 ? Math.max(1, Math.floor(minutes / 5)) : 0;
-      const color = getColor(colorPoints, Math.floor(maxMinutes / 5), emptyCell);
+      // Use maxPoints (in Focus Points) so small minutes (<5) still show color when they're the peak
+      const color = getColor(colorPoints, maxPoints, emptyCell);
       
       // Store the original date object for tooltip
       dateMap.set(key, date);
       
-      console.log(`Date: ${key}, Minutes: ${minutes}, Points: ${points}, Color: ${color}`);
+      console.debug(`Date: ${key}, Minutes: ${minutes}, Points: ${points}, Color: ${color}`);
       
       const cellX = leftPad + x * (cellSize + cellGap);
       const cellY = topPad + y * (cellSize + cellGap);
@@ -2318,7 +2361,7 @@ weeks.forEach((week, x) => {
 
   // Legend (GitHub style with theme-appropriate empty color)
   const legend = `
-    <div style="display:flex;align-items:center;gap:6px;margin-top:-25px;font-size:12px;color:${labelColor};">
+    <div style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;color:${labelColor};">
       Less
       <span style="display:inline-block;width:12px;height:12px;background:${emptyCell};border-radius:2px;border:1px solid ${cellBorder};"></span>
       <span style="display:inline-block;width:12px;height:12px;background:#196C2E;border-radius:2px;border:1px solid ${cellBorder};"></span>
@@ -2331,19 +2374,40 @@ weeks.forEach((week, x) => {
 
 
   // Place toggle above graph
-  const container = document.getElementById('contribution-graph');
   if (container) {
     container.innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-        <div style="font-weight:600;color:${titleColor};font-size:20px;">Productivity Graph</div>
-        <button id="toggle-graph-range" style="font-size:12px;padding:4px 10px;border-radius:6px;border:1px solid #d0d7de;background:#f6f8fa;cursor:pointer;">
-          ${showAllData ? 'Show Last 12 Months' : 'Show All'}
-        </button>
+      <div class="tasks-title" style="color:${titleColor};margin-bottom:6px;">Productivity Graph</div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:12px;">
+      <div id="contrib-current-range" style="font-size:13px;color:${labelColor};min-width:120px;">Last 12 Months</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <label for="contribution-range-select" style="font-size:12px;color:${labelColor};margin-right:6px;">View:</label>
+        <select id="contribution-range-select" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid ${cellBorder};background:${bgColor};color:${labelColor};cursor:pointer;">
+          <option value="last12">Last 12 Months</option>
+          <option value="all">All Time</option>
+          <!-- Year options populated dynamically -->
+        </select>
+        <select id="contribution-month-select" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid ${cellBorder};background:${bgColor};color:${labelColor};cursor:pointer;display:none;margin-left:6px;">
+          <option value="0">All months</option>
+          <option value="01">Jan</option>
+          <option value="02">Feb</option>
+          <option value="03">Mar</option>
+          <option value="04">Apr</option>
+          <option value="05">May</option>
+          <option value="06">Jun</option>
+          <option value="07">Jul</option>
+          <option value="08">Aug</option>
+          <option value="09">Sep</option>
+          <option value="10">Oct</option>
+          <option value="11">Nov</option>
+          <option value="12">Dec</option>
+        </select>
       </div>
+    </div>
 
-      <div style="font-size:12px;color:${labelColor};margin-bottom:8px;"><b>1 Focus Point = 5 minutes of work.</b> The brightest shade marks your personal peak.</div>
+    <div style="font-size:12px;color:${labelColor};margin-top:10px;margin-bottom:8px;"> <b>1 Focus Point = 5 minutes of work.</b> The brightest shade marks your personal peak.</div>
 
-      <div style="font-size:12px;color:${labelColor};margin-bottom:8px;">Example: If your best day is 21 Focus Points - 105 mins (1.75 hrs):</div>
+    <div style="font-size:12px;color:${labelColor};margin-bottom:8px;">Example: If your best day is 21 Focus Points - 105 mins (1.75 hrs):</div>
 
 <div style="font-size:12px;color:#222;">
   
@@ -2383,30 +2447,36 @@ weeks.forEach((week, x) => {
 <div style="font-size:12px;color:${labelColor};margin-bottom:8px;">Hover for details.
 (This Productivity Graph is inspired by GitHub's contribution calendar.)</div><br>
       
-      <div class="contribution-graph-scroll" style="overflow-x:auto;overflow-y:hidden;position:relative;padding:0 0 32px 0;">
-        <div style="background:${bgColor};border-radius:6px;border:1px solid ${borderColor};box-shadow:0 1px 4px rgba(27,31,35,0.04);padding:8px 0 0 0;display:inline-block;min-width:${minGraphWidth}px;">
-          ${svg}
+      <div class="contribution-graph-scroll-wrapper" style="position:relative;">
+        <div class="contribution-graph-scroll" style="overflow-x:auto;overflow-y:hidden;position:relative;padding:0 0 8px 0;">
+          <div style="background:${bgColor};border-radius:6px;border:1px solid ${borderColor};box-shadow:0 1px 4px rgba(27,31,35,0.04);padding:6px 8px 36px 8px;display:inline-block;min-width:${minGraphWidth}px;position:relative;">
+            ${svg}
+            <!-- Custom scrollbar moved INSIDE the heatmap box so it's visually inside the container -->
+            <div class="contribution-custom-scrollbar" aria-hidden="true" style="height:8px;margin-top:10px;position:relative;padding:0 8px 6px 8px;">
+              <div class="contribution-custom-scrollbar-thumb" style="position:absolute;left:0;top:0;height:100%;width:64px;border-radius:4px;">
+              </div>
+            </div>
+          </div>
+          <div id="contribution-tooltip" style="position:absolute;pointer-events:none;z-index:10000;display:none;background:${tooltipBg};color:${tooltipText};border-radius:8px;padding:10px 14px;font-size:13px;box-shadow:0 6px 24px rgba(0,0,0,0.24);border:1px solid ${cellBorder};max-width:360px;min-width:160px;white-space:normal;word-break:break-word;"></div>
         </div>
-        <div id="contribution-tooltip" style="position:fixed;pointer-events:none;z-index:10000;display:none;background:${tooltipBg};color:${tooltipText};border-radius:6px;padding:7px 12px;font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,0.18);border:1px solid #1b1f23;"></div>
       </div>
       ${legend}
     `;
     
-    // Add clean scrollbar style
+    // Add clean scrollbar style and a custom muted scrollbar under the heatmap
     const style = document.createElement('style');
+    const scrollThumbColor = mode === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)';
+    const scrollThumbHover = mode === 'dark' ? 'rgba(255,255,255,0.24)' : 'rgba(0,0,0,0.22)';
     style.textContent = `
-      .contribution-graph-scroll::-webkit-scrollbar {
-        height: 8px;
-        background: transparent;
-      }
-      .contribution-graph-scroll::-webkit-scrollbar-thumb {
-        background: #e1e4e8;
-        border-radius: 4px;
-      }
-      .contribution-graph-scroll {
-        scrollbar-width: thin;
-        scrollbar-color: #e1e4e8 #fff;
-      }
+      /* Hide native horizontal scrollbar while keeping scroll behaviour */
+      .contribution-graph-scroll::-webkit-scrollbar { height: 0; }
+      .contribution-graph-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+      /* Custom small muted scrollbar track & thumb (placed under the heatmap) */
+      .contribution-custom-scrollbar { height: 8px; margin-top: 10px; position:relative; background: transparent; }
+      .contribution-custom-scrollbar-thumb { position:absolute; left:0; top:0; height:100%; width:64px; border-radius:4px; background: ${scrollThumbColor}; transition: background .12s ease, transform .08s ease; }
+      .contribution-custom-scrollbar-thumb:hover { background: ${scrollThumbHover}; }
+      .contribution-custom-scrollbar[hidden] { display:none !important; }
     `;
     container.appendChild(style);
 
@@ -2417,6 +2487,74 @@ weeks.forEach((week, x) => {
     // Remove any existing event listeners
     graphContainer.replaceWith(graphContainer.cloneNode(true));
     const newGraphContainer = container.querySelector('.contribution-graph-scroll');
+
+    // Setup custom scrollbar (thumb under heatmap) and sync with scroll position
+    const scrollTrack = container.querySelector('.contribution-custom-scrollbar');
+    const scrollThumb = scrollTrack ? scrollTrack.querySelector('.contribution-custom-scrollbar-thumb') : null;
+
+    function updateCustomScrollbar() {
+      if (!scrollTrack || !scrollThumb || !newGraphContainer) return;
+      const trackW = scrollTrack.clientWidth;
+      const visible = newGraphContainer.clientWidth;
+      const total = newGraphContainer.scrollWidth;
+      if (total <= visible) { scrollTrack.setAttribute('hidden',''); return; }
+      scrollTrack.removeAttribute('hidden');
+      const ratio = visible / total;
+      const thumbW = Math.max(32, Math.round(trackW * ratio));
+      const maxThumbLeft = trackW - thumbW;
+      const maxScrollLeft = total - visible;
+      const thumbLeft = maxScrollLeft > 0 ? Math.round((newGraphContainer.scrollLeft / maxScrollLeft) * maxThumbLeft) : 0;
+      scrollThumb.style.width = thumbW + 'px';
+      scrollThumb.style.transform = 'translateX(' + thumbLeft + 'px)';
+    }
+
+    newGraphContainer.addEventListener('scroll', updateCustomScrollbar);
+    window.addEventListener('resize', updateCustomScrollbar);
+    setTimeout(updateCustomScrollbar, 50);
+
+    // Drag handling for scrollbar thumb
+    let isThumbDragging = false;
+    let dragStartX = 0;
+    let startScrollLeft = 0;
+    if (scrollThumb) {
+      scrollThumb.addEventListener('pointerdown', function(e) {
+        isThumbDragging = true;
+        scrollThumb.setPointerCapture(e.pointerId);
+        dragStartX = e.clientX;
+        startScrollLeft = newGraphContainer.scrollLeft;
+        e.preventDefault();
+      });
+
+      document.addEventListener('pointermove', function(e) {
+        if (!isThumbDragging) return;
+        const dx = e.clientX - dragStartX;
+        const trackW = scrollTrack.clientWidth;
+        const thumbW = scrollThumb.clientWidth;
+        const maxThumbLeft = trackW - thumbW;
+        const maxScrollLeft = newGraphContainer.scrollWidth - newGraphContainer.clientWidth;
+        const deltaScroll = Math.round(dx * (maxScrollLeft / maxThumbLeft));
+        newGraphContainer.scrollLeft = Math.min(Math.max(0, startScrollLeft + deltaScroll), maxScrollLeft);
+      });
+
+      document.addEventListener('pointerup', function(e) {
+        if (isThumbDragging) {
+          isThumbDragging = false;
+        }
+      });
+
+      // Click on track to jump
+      scrollTrack.addEventListener('click', function(e) {
+        if (e.target === scrollThumb) return;
+        const rect = scrollTrack.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const trackW = rect.width;
+        const thumbW = scrollThumb.clientWidth;
+        const maxThumbLeft = trackW - thumbW;
+        const targetLeft = Math.min(Math.max(0, clickX - thumbW / 2), maxThumbLeft);
+        const maxScrollLeft = newGraphContainer.scrollWidth - newGraphContainer.clientWidth;
+        newGraphContainer.scrollLeft = Math.round((targetLeft / maxThumbLeft) * maxScrollLeft);
+      });
+    }
     
     // Use event delegation for better performance with large datasets
     newGraphContainer.addEventListener('mouseenter', e => {
@@ -2431,7 +2569,7 @@ weeks.forEach((week, x) => {
         const month = dateObj.toLocaleString('en-US', { month: 'long' });
         const dateStrWithSuffix = `${month} ${day}${getOrdinalSuffix(day)}`;
         
-        console.log(`Tooltip: Key=${dateKey}, Date=${dateObj}, Display=${dateStrWithSuffix}`); // Debug
+        console.debug(`Tooltip: Key=${dateKey}, Date=${dateObj}, Display=${dateStrWithSuffix}`); // Debug
         
 const classicSessions = parseInt(d.classic) || 0;
 const reverseSessions = parseInt(d.reverse) || 0;
@@ -2466,59 +2604,107 @@ function formatMinutes(mins) {
 
 let tip = '';
 if (totalPoints === 0) {
-  tip = `No contributions on ${dateStrWithSuffix}.`;
+  // Single-line non-wrapping heading for empty days
+  tip = `<div style="white-space:normal;"><b>No contributions on ${dateStrWithSuffix}.</b></div>`;
 } else {
   // Format points display - show "2" instead of "2.0" but keep "0.4" as is
   const pointsDisplay = totalPoints % 1 === 0 ? 
     totalPoints.toString() : // Show "2" instead of "2.0"
     totalPoints.toString();   // Show "0.4" as is
-    
-  tip = `<b>${totalPoints} ${pluralize(totalPoints, 'Focus Point', 'Focus Points')}</b> on ${dateStrWithSuffix}<br>`;
-  if (classicSessions > 0) tip += `${classicSessions} ${pluralize(classicSessions, 'Classic Pomodoro', 'Classic Pomodoros')}<br>`;
-  if (reverseSessions > 0) tip += `${reverseSessions} ${pluralize(reverseSessions, 'Reverse Pomodoro', 'Reverse Pomodoros')}<br>`;
-  if (breakSessions > 0) tip += `${breakSessions} ${pluralize(breakSessions, 'Break', 'Breaks')}<br>`;
-  tip += `<br><b>⏱ ${formatMinutes(totalMinutes)}</b><br>`;
-  tip = tip.replace(/<br>$/, '');
+
+  // First row: single non-wrapping heading (no ellipsis) — allow width to expand to fit
+  tip = `<div style="white-space:nowrap;"><b>${totalPoints} ${pluralize(totalPoints, 'Focus Point', 'Focus Points')} on ${dateStrWithSuffix}</b></div>`;
+
+  // Session lines (each on its own row)
+  if (classicSessions > 0) tip += `<div>${classicSessions} ${pluralize(classicSessions, 'Classic Pomodoro', 'Classic Pomodoros')}</div>`;
+  if (reverseSessions > 0) tip += `<div>${reverseSessions} ${pluralize(reverseSessions, 'Reverse Pomodoro', 'Reverse Pomodoros')}</div>`;
+  if (breakSessions > 0) tip += `<div>${breakSessions} ${pluralize(breakSessions, 'Break', 'Breaks')}</div>`;
+
+  // Spacer row
+  tip += `<div style="height:8px;line-height:8px;">&nbsp;</div>`;
+
+  // Final row: duration
+  tip += `<div style="font-weight:700;">⏱ ${formatMinutes(totalMinutes)}</div>`;
 }
 tooltip.innerHTML = tip;
 tooltip.style.display = 'block';
         
-        // Better positioning - avoid bottom rows being cut off
+        // Better positioning - prefer horizontal layout and avoid overlap
         const rectBox = rect.getBoundingClientRect();
-        const containerBox = container.getBoundingClientRect();
         const scrollContainer = container.querySelector('.contribution-graph-scroll');
         const scrollBox = scrollContainer.getBoundingClientRect();
-        
-// Calculate position relative to the scroll container
-let tooltipX = rectBox.right - scrollBox.left + scrollContainer.scrollLeft + 16;
-let tooltipY = rectBox.top - scrollBox.top + scrollContainer.scrollTop - 8;
 
-// Set tooltip to absolute and append to scrollContainer if not already
-tooltip.style.position = 'absolute';
-if (tooltip.parentElement !== scrollContainer) {
-  scrollContainer.appendChild(tooltip);
-}
+        // Append tooltip into scroll container (absolute positioning)
+        tooltip.style.position = 'absolute';
+        if (tooltip.parentElement !== scrollContainer) {
+          scrollContainer.appendChild(tooltip);
+        }
 
-// Get actual tooltip size after setting content
-tooltip.style.display = 'block';
-tooltip.style.left = '0px';
-tooltip.style.top = '0px';
-const tooltipRect = tooltip.getBoundingClientRect();
-const tooltipWidth = tooltipRect.width || 200;
-const tooltipHeight = tooltipRect.height || 60;
+        // Show to measure size
+        tooltip.style.display = 'block';
+        tooltip.style.left = '0px';
+        tooltip.style.top = '0px';
+        // First, try to size the tooltip to fit the first (heading) row on one line
+        const heading = tooltip.querySelector('div');
+        const maxAvailableW = Math.max(160, scrollContainer.clientWidth - 16);
+        let headingWidth = 0;
+        if (heading) {
+          heading.style.whiteSpace = 'nowrap';
+          heading.style.display = 'inline-block';
+          const hRect = heading.getBoundingClientRect();
+          headingWidth = Math.ceil(hRect.width);
+        }
+        let tW = Math.min(maxAvailableW, Math.max(160, headingWidth + 28 || 160));
+        tooltip.style.width = tW + 'px';
 
-// Adjust if off right edge of scroll container
-if (tooltipX + tooltipWidth > scrollContainer.scrollWidth) {
-  tooltipX = rectBox.left - scrollBox.left - tooltipWidth - 16 + scrollContainer.scrollLeft;
-}
-// Adjust if off bottom edge of scroll container
-if (tooltipY + tooltipHeight > scrollContainer.scrollHeight) {
-  tooltipY = scrollContainer.scrollHeight - tooltipHeight - 16;
-}
-if (tooltipY < 0) tooltipY = 8;
+        if (headingWidth > maxAvailableW) {
+          if (heading) heading.style.whiteSpace = 'normal';
+          tW = maxAvailableW;
+          tooltip.style.width = tW + 'px';
+        }
 
-tooltip.style.left = tooltipX + 'px';
-tooltip.style.top = tooltipY + 'px';
+        // Re-measure height after forcing width
+        let tooltipRect = tooltip.getBoundingClientRect();
+        let tH = tooltipRect.height || 60;
+
+        // If still taller than wide, expand width proportionally (but stay within available width)
+        if (tH >= tW || tH > tW * 0.9) {
+          let desiredW = Math.min(maxAvailableW, Math.max(tW, Math.ceil(tH * 1.4)));
+          if (desiredW > tW) {
+            tW = desiredW;
+            tooltip.style.width = tW + 'px';
+            tooltipRect = tooltip.getBoundingClientRect();
+            tH = tooltipRect.height || 60;
+          }
+        }
+
+        // Relative positions within scroll container
+        const relLeft = rectBox.left - scrollBox.left;
+        const relRight = rectBox.right - scrollBox.left;
+        const relTop = rectBox.top - scrollBox.top;
+        const relBottom = rectBox.bottom - scrollBox.top;
+
+        // Center horizontally on the cell
+        const desiredX = Math.round(relLeft + (rectBox.width / 2) + scrollContainer.scrollLeft - tW / 2);
+        const minX = scrollContainer.scrollLeft + 8;
+        const maxX = scrollContainer.scrollLeft + scrollContainer.clientWidth - tW - 8;
+        let tooltipX = Math.min(Math.max(desiredX, minX), Math.max(minX, maxX));
+
+        // Prefer placing above; if not enough space, place below
+        const spaceAbove = relTop - 8;
+        const spaceBelow = scrollContainer.clientHeight - relBottom - 8;
+        let tooltipY;
+        if (spaceAbove >= tH + 10) {
+          tooltipY = relTop + scrollContainer.scrollTop - tH - 10;
+        } else if (spaceBelow >= tH + 10) {
+          tooltipY = relBottom + scrollContainer.scrollTop + 10;
+        } else {
+          // fallback: place above but clamp to container
+          tooltipY = Math.max(scrollContainer.scrollTop + 8, Math.min(relTop + scrollContainer.scrollTop - tH - 8, scrollContainer.scrollHeight - tH - 8));
+        }
+
+        tooltip.style.left = tooltipX + 'px';
+        tooltip.style.top = tooltipY + 'px';
       }
     }, true);
     
@@ -2528,20 +2714,115 @@ tooltip.style.top = tooltipY + 'px';
       }
     }, true);
 
-    // Add toggle event
-    const toggleBtn = container.querySelector('#toggle-graph-range');
-    if (toggleBtn) {
-      toggleBtn.onclick = function() {
-        showAllData = !showAllData;
+    // Setup range select (last12, all, year-YYYY)
+    const rangeSelect = container.querySelector('#contribution-range-select');
+    if (rangeSelect) {
+      // build years from stats
+      const years = Array.from(new Set(Object.keys(stats).map(k => parseInt(k.split('-')[0], 10)).filter(Boolean))).sort((a,b)=>b-a);
+      // populate options
+      let optionsHtml = '<option value="last12">Last 12 Months</option><option value="all">All Time</option>';
+      if (years.length) {
+        optionsHtml += years.map(y => `<option value="year-${y}">${y}</option>`).join('');
+      }
+      rangeSelect.innerHTML = optionsHtml;
+      // set current value (support year- and month- states)
+      if (selectedRange && (selectedRange === 'last12' || selectedRange === 'all' || selectedRange.startsWith('year-') || selectedRange.startsWith('month-'))) {
+        // If the UI-range select only supports year values, map month-YYYY-MM to year-YYYY for display
+        if (selectedRange.startsWith('month-')) {
+          const parts = selectedRange.split('-');
+          rangeSelect.value = `year-${parts[1]}`;
+        } else {
+          rangeSelect.value = selectedRange;
+        }
+      } else {
+        rangeSelect.value = 'last12';
+        selectedRange = 'last12';
+      }
+      // set label in title
+      const rangeLabel = container.querySelector('#contrib-current-range');
+      const monthSelect = container.querySelector('#contribution-month-select');
+      let currentYearForMonth = null;
+
+      function updateMonthVisibility() {
+        if (!monthSelect) return;
+        if (selectedRange.startsWith('year-')) {
+          monthSelect.style.display = 'inline-block';
+          currentYearForMonth = selectedRange.split('-')[1];
+          monthSelect.value = '0';
+        } else if (selectedRange.startsWith('month-')) {
+          monthSelect.style.display = 'inline-block';
+          const parts = selectedRange.split('-');
+          currentYearForMonth = parts[1];
+          monthSelect.value = parts[2];
+        } else {
+          monthSelect.style.display = 'none';
+          currentYearForMonth = null;
+          monthSelect.value = '0';
+        }
+      }
+
+      if (rangeLabel) {
+        if (selectedRange.startsWith('year-')) {
+          rangeLabel.textContent = selectedRange.split('-')[1];
+        } else if (selectedRange === 'all') {
+          rangeLabel.textContent = 'All Time';
+        } else if (selectedRange.startsWith('month-')) {
+          const parts = selectedRange.split('-');
+          rangeLabel.textContent = `${parts[1]}-${parts[2]}`;
+        } else {
+          rangeLabel.textContent = 'Last 12 Months';
+        }
+      }
+
+      updateMonthVisibility();
+
+      if (monthSelect) {
+        monthSelect.addEventListener('change', function() {
+          if (!currentYearForMonth) return;
+          if (this.value === '0') {
+            selectedRange = `year-${currentYearForMonth}`;
+          } else {
+            selectedRange = `month-${currentYearForMonth}-${this.value}`;
+          }
+          showAllData = (selectedRange === 'all');
+          if (rangeLabel) {
+            if (selectedRange.startsWith('month-')) {
+              const parts = selectedRange.split('-');
+              rangeLabel.textContent = `${parts[1]}-${parts[2]}`;
+            } else if (selectedRange.startsWith('year-')) {
+              rangeLabel.textContent = selectedRange.split('-')[1];
+            } else if (selectedRange === 'all') {
+              rangeLabel.textContent = 'All Time';
+            } else {
+              rangeLabel.textContent = 'Last 12 Months';
+            }
+          }
+          renderContributionGraph();
+        });
+      }
+      rangeSelect.addEventListener('change', function() {
+        selectedRange = this.value;
+        showAllData = (selectedRange === 'all');
+        const rangeLabel = container.querySelector('#contrib-current-range');
+        if (rangeLabel) {
+          if (selectedRange.startsWith('year-')) {
+            rangeLabel.textContent = selectedRange.split('-')[1];
+          } else if (selectedRange === 'all') {
+            rangeLabel.textContent = 'All Time';
+          } else {
+            rangeLabel.textContent = 'Last 12 Months';
+          }
+        }
+        updateMonthVisibility();
         renderContributionGraph();
-      };
+      });
     }
   }
   
   // Performance logging
   const endTime = performance.now();
   const renderTime = endTime - startTime;
-  console.log(`🎨 Contribution graph rendered in ${renderTime.toFixed(2)}ms`);
+  console.debug(`🎨 Contribution graph rendered in ${renderTime.toFixed(2)}ms`);
   
   if (renderTime > 50) {
     console.warn('⚠️ Slow rendering detected:', {

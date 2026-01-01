@@ -1133,6 +1133,27 @@ body.theme-color .footer-divider {
   color: var(--text-dark);
 }
 
+/* Ensure contribution graph header spacing matches tasks header */
+#contribution-graph {
+  margin-top: 0 !important;
+  margin-bottom: 16px !important;
+}
+
+#contribution-graph .tasks-header {
+  margin-top: 0; /* avoid extra spacing inside the section */
+}
+
+/* Subheader layout for contribution graph (left=range, center=info, right=controls) */
+#contribution-graph .contrib-subheader > div:first-child {
+  text-align: left;
+}
+#contribution-graph .contrib-subheader > div:nth-child(2) {
+  text-align: center;
+}
+#contribution-graph .contrib-subheader > div:last-child {
+  text-align: right;
+}
+
 .tasks-helper-text {
   font-size: 12px;
   color: #888;
