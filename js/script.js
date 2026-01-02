@@ -59,6 +59,9 @@ let timerStartTime = null;  // When timer started (timestamp)
 let timerEndTime = null;    // When timer should end (timestamp)
 let pausedTimeRemaining = null; // Time left when paused
 
+// Session completion guard - prevents multiple completions/alarms per session
+let sessionCompleted = false;
+
 // Burn-Up Tracker variables
 let isBurnupTrackerEnabled = localStorage.getItem('burnupTrackerEnabled') !== 'false'; // Default to true
 let burnupStartTime = 0;
@@ -436,8 +439,9 @@ document.addEventListener('keydown', (e) => {
 
 // Add Page Visibility API for accurate timer tracking when tab becomes active
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && isRunning) {
+  if (!document.hidden && isRunning && !sessionCompleted) {
     // Tab became visible - recalculate immediately
+    // The updateTimerFromTimestamp will handle completion if time has elapsed
     updateTimerFromTimestamp();
   }
 });
@@ -679,6 +683,11 @@ function updateFavicon(status) {
 
 // New timestamp-based timer update function for accurate time tracking
 function updateTimerFromTimestamp() {
+  // Guard: Don't process if session already completed or not running
+  if (sessionCompleted || !isRunning) {
+    return;
+  }
+  
   const now = Date.now();
   
   if (currentMode === 'pomodoro') {
@@ -687,6 +696,8 @@ function updateTimerFromTimestamp() {
     currentSeconds = Math.max(Math.floor(remaining), 0);
     
     if (currentSeconds <= 0) {
+      // Set guard immediately to prevent duplicate calls
+      sessionCompleted = true;
       handleTimerCompletion();
       return;
     }
@@ -696,6 +707,8 @@ function updateTimerFromTimestamp() {
     currentSeconds = Math.max(Math.floor(remaining), 0);
     
     if (currentSeconds <= 0) {
+      // Set guard immediately to prevent duplicate calls
+      sessionCompleted = true;
       handleTimerCompletion();
       return;
     }
@@ -712,6 +725,15 @@ function updateTimerFromTimestamp() {
 // Toggle timer between start and pause
 function toggleTimer() {
   if (!isRunning) {
+    // CRITICAL: Clear any existing interval first to prevent multiple intervals
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+    
+    // Reset session completion guard for new/resumed session
+    sessionCompleted = false;
+    
     // Starting timer
     playSound('start'); // Play start/click sound
     showToast(motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)]);
@@ -757,8 +779,11 @@ function toggleTimer() {
     // Stop timer sound when pausing
     stopTimerSound();
     
-    // Pause timer
-    clearInterval(timerInterval);
+    // CRITICAL: Clear interval and set to null
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
     isRunning = false;
     
     // Calculate and store remaining time
@@ -785,8 +810,18 @@ function toggleTimer() {
 
 // Handle timer completion - centralized logic to prevent duplication
 function handleTimerCompletion() {
-  // Stop the timer
-  clearInterval(timerInterval);
+  // CRITICAL: Prevent duplicate completion
+  if (sessionCompleted && timerInterval === null && !isRunning) {
+    // Already completed, just ensure cleanup
+    return;
+  }
+  sessionCompleted = true;
+  
+  // CRITICAL: Clear interval and set to null
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
   isRunning = false;
   startButton.textContent = 'START';
   updateFavicon('paused');
@@ -870,7 +905,14 @@ function handleTimerCompletion() {
 
 // Reset the current timer - modified to be more robust
 function resetTimer() {
-  clearInterval(timerInterval);
+  // CRITICAL: Clear interval and set to null
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  
+  // Reset session completion guard
+  sessionCompleted = false;
   
   // Clear timestamp variables
   timerStartTime = null;
@@ -981,7 +1023,9 @@ function switchMode(mode, autoStart = false) {
   initialSeconds = currentSeconds;
   // Reset timer state
   clearInterval(timerInterval);
+  timerInterval = null;
   isRunning = false;
+  sessionCompleted = false;
   startButton.textContent = 'START';
   
   // Reset and hide burn-up tracker when switching modes

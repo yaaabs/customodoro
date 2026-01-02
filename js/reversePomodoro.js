@@ -390,6 +390,9 @@ let pausedTimeRemaining = null; // Time left when paused
 // Timer state management for pause/resume functionality
 let timerState = 'idle'; // 'idle', 'running', 'paused', 'stopped'
 
+// Session completion guard - prevents multiple completions/alarms per session
+let sessionCompleted = false;
+
 // Button display management function
 function updateButtonDisplay() {
   // Hide all buttons first
@@ -649,6 +652,11 @@ window.updateBurnupTracker = updateBurnupTracker;
 
 // New timestamp-based timer update function for accurate time tracking
 function updateTimerFromTimestamp() {
+  // Guard: Don't process if session already completed or not running
+  if (sessionCompleted || !isRunning) {
+    return;
+  }
+  
   const now = Date.now();
   
   if (currentMode === 'reverse') {
@@ -657,6 +665,8 @@ function updateTimerFromTimestamp() {
     currentSeconds = Math.min(Math.floor(elapsed), MAX_TIME);
     
     if (currentSeconds >= MAX_TIME) {
+      // Set guard immediately to prevent duplicate calls
+      sessionCompleted = true;
       completeSession();
       return;
     }
@@ -666,6 +676,8 @@ function updateTimerFromTimestamp() {
     currentSeconds = Math.max(Math.floor(remaining), 0);
     
     if (currentSeconds <= 0) {
+      // Set guard immediately to prevent duplicate calls
+      sessionCompleted = true;
       completeBreak();
       return;
     }
@@ -693,6 +705,15 @@ function handleStart() {
     showToast("You've reached the maximum time!");
     return;
   }
+  
+  // CRITICAL: Clear any existing interval first to prevent multiple intervals
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  
+  // Reset session completion guard for new session
+  sessionCompleted = false;
   
   playSound('start');
   showToast(currentMode === 'break' ? "Enjoy your break! 😌" : "Time to focus! 💪");
@@ -744,7 +765,12 @@ function handlePause() {
   
   // Stop timer sound when pausing
   stopTimerSound();
-  clearInterval(timerInterval);
+  
+  // CRITICAL: Clear interval and set to null
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
   isRunning = false;
   timerState = 'paused';
   
@@ -778,6 +804,12 @@ function handlePause() {
 }
 
 function handleResume() {
+  // CRITICAL: Clear any existing interval first
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  
   playSound('start');
   showToast("Resuming timer! 🔄");
   
@@ -819,7 +851,12 @@ function handleStop() {
   
   // Stop timer sound when stopping
   stopTimerSound();
-  clearInterval(timerInterval);
+  
+  // CRITICAL: Clear interval and set to null
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
   isRunning = false;
   timerState = 'stopped';
   
@@ -867,8 +904,19 @@ function toggleTimer() {
 }
 
 // Complete session
-function completeSession(playSound = true) {
-    clearInterval(timerInterval);
+function completeSession(playSoundArg = true) {
+    // CRITICAL: Prevent duplicate completion
+    if (sessionCompleted && timerInterval === null) {
+      // Already completed, just ensure cleanup
+      return;
+    }
+    sessionCompleted = true;
+    
+    // CRITICAL: Clear interval and set to null
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
     isRunning = false;
     timerState = 'idle';
     hideBurnupTracker();
@@ -889,8 +937,8 @@ function completeSession(playSound = true) {
     // Calculate earned break BEFORE showing any messages
     earnedBreakTime = calculateBreakTime(currentSeconds);
 
-    // Only play completion sound if the timer reached max time or playSound is true
-    if (currentSeconds >= MAX_TIME || playSound) {
+    // Only play completion sound if the timer reached max time or playSoundArg is true
+    if (currentSeconds >= MAX_TIME || playSoundArg) {
         window.playSound('pomodoroComplete');
         showMuteAlert(`Great work! You worked for ${workMinutes} minutes and earned a ${earnedBreakTime}-minute break!`);
         
@@ -925,7 +973,18 @@ function completeSession(playSound = true) {
 
 // Complete break
 function completeBreak() {
-    clearInterval(timerInterval);
+    // CRITICAL: Prevent duplicate completion
+    if (sessionCompleted && timerInterval === null) {
+      // Already completed, just ensure cleanup
+      return;
+    }
+    sessionCompleted = true;
+    
+    // CRITICAL: Clear interval and set to null
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
     isRunning = false;
     timerState = 'idle';
     
@@ -961,7 +1020,14 @@ function completeBreak() {
 
 // Reset timer
 function resetTimer(showMessage = false) {
-    clearInterval(timerInterval);
+    // CRITICAL: Clear interval and set to null
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+    
+    // Reset session completion guard
+    sessionCompleted = false;
     
     // Clear timestamp variables
     timerStartTime = null;
@@ -1032,8 +1098,10 @@ function switchMode(mode) {
   
   // Reset timer state
   clearInterval(timerInterval);
+  timerInterval = null;
   isRunning = false;
   timerState = 'idle';
+  sessionCompleted = false;
   
   // Clear timestamp variables
   timerStartTime = null;
@@ -1700,8 +1768,9 @@ document.addEventListener('keydown', (e) => {
 
 // Add Page Visibility API for accurate timer tracking when tab becomes active
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && isRunning) {
+  if (!document.hidden && isRunning && !sessionCompleted) {
     // Tab became visible - recalculate immediately
+    // The updateTimerFromTimestamp will handle completion if time has elapsed
     updateTimerFromTimestamp();
   }
 });
