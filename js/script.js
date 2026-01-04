@@ -2300,16 +2300,16 @@ weeks.forEach((week, x) => {
     container.innerHTML = `
       <div class="tasks-title" style="color:${titleColor};margin-bottom:6px;">Productivity Graph</div>
 
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:12px;">
-      <div id="contrib-current-range" style="font-size:13px;color:${labelColor};min-width:120px;">Last 12 Months</div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <label for="contribution-range-select" style="font-size:12px;color:${labelColor};margin-right:6px;">View:</label>
-        <select id="contribution-range-select" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid ${cellBorder};background:${bgColor};color:${labelColor};cursor:pointer;">
+    <div class="contrib-subheader" style="margin-bottom:6px;">
+      <div id="contrib-current-range" class="contrib-range" style="font-size:13px;color:${labelColor};">Last 12 Months</div>
+      <div class="contrib-controls" style="display:flex;gap:8px;align-items:center;">
+        <label for="contribution-range-select" class="contrib-label" style="font-size:12px;color:${labelColor};margin-right:6px;">View:</label>
+        <select id="contribution-range-select" class="contrib-select" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid ${cellBorder};background:${bgColor};color:${labelColor};cursor:pointer;max-width:160px;">
           <option value="last12">Last 12 Months</option>
           <option value="all">All Time</option>
           <!-- Year options populated dynamically -->
         </select>
-        <select id="contribution-month-select" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid ${cellBorder};background:${bgColor};color:${labelColor};cursor:pointer;display:none;margin-left:6px;">
+        <select id="contribution-month-select" class="contrib-select month-select" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid ${cellBorder};background:${bgColor};color:${labelColor};cursor:pointer;display:none;max-width:120px;">
           <option value="0">All months</option>
           <option value="01">Jan</option>
           <option value="02">Feb</option>

@@ -1154,6 +1154,48 @@ body.theme-color .footer-divider {
   text-align: right;
 }
 
+/* ✅ Responsive controls for Contribution Graph */
+#contribution-graph .contrib-subheader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap; /* allow controls to wrap on narrow screens */
+}
+#contribution-graph .contrib-range {
+  font-size: 13px;
+  min-width: 0; /* allow shrinking on small screens */
+}
+#contribution-graph .contrib-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+#contribution-graph .contrib-controls .contrib-select {
+  max-width: 160px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#contribution-graph .contrib-controls .month-select {
+  margin-left: 0;
+}
+
+/* Smaller screen adjustments: stack and better spacing */
+@media (max-width: 420px) {
+  #contribution-graph .contrib-subheader { align-items: flex-start; }
+  #contribution-graph .contrib-range { width: 100%; margin-bottom: 6px; }
+  #contribution-graph .contrib-controls { width: 100%; justify-content: flex-start; }
+  #contribution-graph .contrib-controls .contrib-select { flex: 0 1 auto; }
+  #contribution-graph .contrib-controls .month-select { order: 3; }
+}
+
+@media (max-width: 360px) {
+  #contribution-graph .contrib-controls .contrib-select { max-width: 120px; font-size: 11px; }
+}
+
+
 .tasks-helper-text {
   font-size: 12px;
   color: #888;
