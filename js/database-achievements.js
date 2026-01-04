@@ -77,8 +77,13 @@
 //================================================================//
     'landosaurus': [
       // Focus King Badge for December
-      { title: 'Focus King', icon: 'images/badges/custom-badges/2025-12/dec-focus-points.webp', description: 'Crowned for earning the highest Focus Points in December.', date: '2026-01-01' },      
+      { title: 'Focus King', icon: 'images/badges/custom-badges/2025-12/dec-focus-points.webp', description: 'Crowned for earning the highest Focus Points in December.', date: '2026-01-01' },
+      
+      { title: 'Overall Champion', icon: 'images/badges/custom-badges/2025-12/dec-champion.webp', description: 'Awarded for being the top overall performer with the highest average across all categories in December.', date: '2026-01-01' },
+
     ],
+
+
 //================================================================//
 
 //================================================================//
