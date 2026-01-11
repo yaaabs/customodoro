@@ -1161,7 +1161,7 @@
 
     // Frontend stats (localStorage or embedded streaks) — compute streak info
     const stats = getFrontendProductivityStats();
-    const supportedSteps = [3,5,8,10,15,20,25,30,35,50,75,100];
+    const supportedSteps = [3,5,8,10,15,20,25,30,35,50,75,100,150,200];
     const streakInfo = computeStreakInfoFromStats(stats, supportedSteps);
 
     // Build final badge list: always include non-Streak badges; include Streak badges only if day <= maxStreak
