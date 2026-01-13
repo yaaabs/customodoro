@@ -1212,7 +1212,7 @@
       const totalFocusPoints = Math.floor(cumulativeMinutes / 5);
 
       // Available focus badge steps (match filenames under images/badges/Focus_Points)
-      const focusSteps = [100,500,750,1000,1500,2000,3000,4000,5000,7500,10000];
+      const focusSteps = [100,500,750,1000,1500,2000,3000,4000,5000,7500,10000,10500,11000];
       // Find highest achieved step (single badge)
       let achieved = null;
       for (let i = focusSteps.length - 1; i >= 0; i--) {
