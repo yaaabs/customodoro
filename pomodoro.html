@@ -1,262 +1,522 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Preconnect to Google Fonts for faster loading -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  
-  <!-- Inter Font - Expanded Weight Range -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Preconnect to Google Fonts for faster loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-  <!-- PWA for iOS -->
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Customodoro" />
+    <!-- Inter Font - Expanded Weight Range -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
 
-  <!-- Primary Meta Tags -->
-  <meta name="description" content="Master the Pomodoro Technique with our comprehensive guide. Learn how this scientifically-proven method uses 25-minute focus sessions and strategic breaks to boost productivity by up to 70%. Discover tips, research, and best practices for work, study, and personal projects.">
-  <meta name="keywords" content="Pomodoro Technique, time management, productivity method, focus timer, study timer, work intervals, 25-minute timer, productivity tools, work-break balance, focus enhancement, mental fatigue reduction, time blocking, deep work, flow state, Customodoro">
-  
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="The Ultimate Guide to the Pomodoro Technique | Boost Productivity by 70%">
-  <meta property="og:description" content="Discover how the Pomodoro Technique transforms productivity through strategic work-break intervals. Learn implementation tips, scientific benefits, and how to customize it for your needs.">
-  <meta property="og:image" content="https://customodoro.vercel.app/images/pomodoro-guide-preview.jpg">
-  <meta property="og:url" content="https://customodoro.vercel.app/pomodoro.html">
-  
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="The Ultimate Guide to the Pomodoro Technique | Boost Productivity by 70%">
-  <meta name="twitter:description" content="Transform your productivity with the Pomodoro Technique. Scientific insights, implementation strategies, and customization tips for maximum efficiency.">
-  <meta name="twitter:image" content="https://customodoro.vercel.app/images/pomodoro-guide-preview.jpg">
-  
-  <!-- Schema.org markup for Google -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    "mainEntityOfPage": {
-      "@type": "WebPage",
-      "@id": "https://customodoro.vercel.app/pomodoro.html"
-    },
-    "headline": "The Ultimate Guide to the Pomodoro Technique",
-    "description": "Comprehensive guide to mastering the Pomodoro Technique for enhanced productivity and focus",
-    "image": "https://customodoro.vercel.app/favicon/android-chrome-512x512.png",
-    "author": {
-      "@type": "Person",
-      "name": "YabuTech"
-    },
-    "publisher": {
-      "@type": "Organization",
-      "name": "Customodoro",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://customodoro.vercel.app/favicon/android-chrome-512x512.png"
+    <!-- PWA for iOS -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Customodoro" />
+
+    <!-- Primary Meta Tags -->
+    <meta
+      name="description"
+      content="Master the Pomodoro Technique with our comprehensive guide. Learn how this scientifically-proven method uses 25-minute focus sessions and strategic breaks to boost productivity by up to 70%. Discover tips, research, and best practices for work, study, and personal projects."
+    />
+    <meta
+      name="keywords"
+      content="Pomodoro Technique, time management, productivity method, focus timer, study timer, work intervals, 25-minute timer, productivity tools, work-break balance, focus enhancement, mental fatigue reduction, time blocking, deep work, flow state, Customodoro"
+    />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article" />
+    <meta
+      property="og:title"
+      content="The Ultimate Guide to the Pomodoro Technique | Boost Productivity by 70%"
+    />
+    <meta
+      property="og:description"
+      content="Discover how the Pomodoro Technique transforms productivity through strategic work-break intervals. Learn implementation tips, scientific benefits, and how to customize it for your needs."
+    />
+    <meta
+      property="og:image"
+      content="https://customodoro.vercel.app/images/pomodoro-guide-preview.jpg"
+    />
+    <meta
+      property="og:url"
+      content="https://customodoro.vercel.app/pomodoro.html"
+    />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="The Ultimate Guide to the Pomodoro Technique | Boost Productivity by 70%"
+    />
+    <meta
+      name="twitter:description"
+      content="Transform your productivity with the Pomodoro Technique. Scientific insights, implementation strategies, and customization tips for maximum efficiency."
+    />
+    <meta
+      name="twitter:image"
+      content="https://customodoro.vercel.app/images/pomodoro-guide-preview.jpg"
+    />
+
+    <!-- Schema.org markup for Google -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": "https://customodoro.vercel.app/pomodoro.html"
+        },
+        "headline": "The Ultimate Guide to the Pomodoro Technique",
+        "description": "Comprehensive guide to mastering the Pomodoro Technique for enhanced productivity and focus",
+        "image": "https://customodoro.vercel.app/favicon/android-chrome-512x512.png",
+        "author": {
+          "@type": "Person",
+          "name": "YabuTech"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Customodoro",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://customodoro.vercel.app/favicon/android-chrome-512x512.png"
+          }
+        },
+        "datePublished": "2025-08-02",
+        "dateModified": "2025-08-02"
       }
-    },
-    "datePublished": "2025-08-02",
-    "dateModified": "2025-08-02"
-  }
-  </script>
+    </script>
 
-  <title>The Ultimate Guide to the Pomodoro Technique | Boost Productivity by 70% | Customodoro</title>
+    <title>
+      The Ultimate Guide to the Pomodoro Technique | Boost Productivity by 70% |
+      Customodoro
+    </title>
 
-  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png?v=1.1" />
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png?v=1.1" id="favicon" />
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png?v=1.1" />
-  <link rel="shortcut icon" href="favicon/favicon.ico?v=1.1" />
-  <link rel="manifest" href="manifest.json" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="favicon/apple-touch-icon.png?v=1.1"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="favicon/favicon-32x32.png?v=1.1"
+      id="favicon"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="favicon/favicon-16x16.png?v=1.1"
+    />
+    <link rel="shortcut icon" href="favicon/favicon.ico?v=1.1" />
+    <link rel="manifest" href="manifest.json" />
 
-  <!-- Essential CSS -->
-  <link rel="stylesheet" href="css/style.css?v=2.3.6" />
-  <link rel="stylesheet" href="css/features.css?v=1.0.0">
-  <link rel="stylesheet" href="css/utilities.css?v=1.0.0">
-</head>
-<body class="pomodoro-mode">
-  <script>
-    // Apply saved theme before the page renders to prevent flashing
-    (function () {
-      const savedTheme = localStorage.getItem('siteTheme') || 'light';
-      document.body.classList.remove(
-        'theme-default',
-        'theme-dark',
-        'theme-light',
-        'theme-yourname',
-        'theme-rain',
-        'theme-custom'
-      );
+    <!-- Essential CSS -->
+    <link rel="stylesheet" href="css/style.css?v=2.3.6" />
+    <link rel="stylesheet" href="css/features.css?v=1.0.0" />
+    <link rel="stylesheet" href="css/utilities.css?v=1.0.0" />
+  </head>
+  <body class="pomodoro-mode">
+    <script>
+      // Apply saved theme before the page renders to prevent flashing
+      (function () {
+        const savedTheme = localStorage.getItem("siteTheme") || "light";
+        document.body.classList.remove(
+          "theme-default",
+          "theme-dark",
+          "theme-light",
+          "theme-yourname",
+          "theme-rain",
+          "theme-custom",
+        );
 
-      if (savedTheme === 'custom') {
-        const customBg = localStorage.getItem('customThemeBackground');
-        if (customBg) {
-          document.body.classList.add('theme-custom');
-          document.body.style.backgroundImage = `url(${customBg})`;
+        if (savedTheme === "custom") {
+          const customBg = localStorage.getItem("customThemeBackground");
+          if (customBg) {
+            document.body.classList.add("theme-custom");
+            document.body.style.backgroundImage = `url(${customBg})`;
+          } else {
+            document.body.classList.add("theme-light");
+          }
+        } else if (savedTheme === "rain") {
+          document.body.classList.add("theme-rain");
         } else {
-          document.body.classList.add('theme-light');
+          document.body.classList.add("theme-" + savedTheme);
         }
-      } else if (savedTheme === 'rain') {
-        document.body.classList.add('theme-rain');
-      } else {
-        document.body.classList.add('theme-' + savedTheme);
-      }
-    })();
-  </script>
+      })();
+    </script>
 
-  <div class="container">
-    <header>
-      <h1 class="app-title">Customodoro Timer</h1>
-      <br />
-      <div class="switch-mode">
-        <a href="./" class="switch-btn">Switch to Classic Pomodoro ⏱️</a>
-        <a href="reverse.html" class="switch-btn">Try Reverse Pomodoro ⏱️</a>
-      </div>
-      <style>
-        .switch-mode {
-          display: flex;
-          gap: 1rem;
-          justify-content: center;
-          flex-wrap: wrap;
-        }
-        @media (max-width: 600px) {
+    <div class="container">
+      <header>
+        <h1 class="app-title">Customodoro Timer</h1>
+        <br />
+        <div class="switch-mode">
+          <a href="./" class="switch-btn">Switch to Classic Pomodoro ⏱️</a>
+          <a href="reverse.html" class="switch-btn">Try Reverse Pomodoro ⏱️</a>
+        </div>
+        <style>
           .switch-mode {
-            flex-direction: column;
-            align-items: stretch;
-            gap: 0.5rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
           }
-          .switch-mode .switch-btn {
-            width: 100%;
-            text-align: center;
+          @media (max-width: 600px) {
+            .switch-mode {
+              flex-direction: column;
+              align-items: stretch;
+              gap: 0.5rem;
+            }
+            .switch-mode .switch-btn {
+              width: 100%;
+              text-align: center;
+            }
           }
-        }
-      </style>
-    </header>
+        </style>
+      </header>
 
-    <main class="pomodoro-article" style="max-width: 720px; margin: 2rem auto; padding: 1.5rem; color: white;">
-      <h2 class="article-title">🍅 What is the Pomodoro Technique?</h2>
-      <blockquote class="featured-quote">
-        "The secret to effective time management is thinking in tomatoes rather than hours. It may seem silly initially, but millions of people swear by the life-changing power of the Pomodoro Technique. (Pomodoro is Italian for tomato. 🍅)"
-      </blockquote>
-      <p class="article-text">
-        This revolutionary time management method alternates focused work sessions (called "pomodoros") with frequent short breaks. 
-        By breaking your workday into strategic 25-minute focus blocks, you can maintain high concentration and prevent mental fatigue.
-      </p>
-      <p class="article-text">
-        The technique is beautifully simple yet powerful: work for 25 minutes, then take a 5-minute break. After completing four pomodoros, 
-        reward yourself with a longer 15-30 minute break. This rhythm helps your brain stay fresh and motivated throughout the day.
-      </p>
-      <h3 class="section-title">✨ How Customodoro Enhances Your Focus</h3>
-      <p class="article-text">
-        Customodoro takes the classic Pomodoro Technique to the next level. We understand that everyone works differently, so we've made every aspect customizable:
-      </p>
-      <ul class="feature-list">
-        <li>Adjust session lengths to match your natural focus rhythm</li>
-        <li>Customize break durations for optimal recovery</li>
-        <li>Track your progress with beautiful visualizations</li>
-        <li>Try Reverse Pomodoro for a gentler approach to productivity</li>
-      </ul>
-      <br>
-      <a href="./" class="back-to-timer-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-        Back to Timer
-      </a>
+      <main
+        class="pomodoro-article"
+        style="
+          max-width: 720px;
+          margin: 2rem auto;
+          padding: 1.5rem;
+          color: white;
+        "
+      >
+        <h2 class="article-title">🍅 What is the Pomodoro Technique?</h2>
+        <blockquote class="featured-quote">
+          "The secret to effective time management is thinking in tomatoes
+          rather than hours. It may seem silly initially, but millions of people
+          swear by the life-changing power of the Pomodoro Technique. (Pomodoro
+          is Italian for tomato. 🍅)"
+        </blockquote>
+        <p class="article-text">
+          This revolutionary time management method alternates focused work
+          sessions (called "pomodoros") with frequent short breaks. By breaking
+          your workday into strategic 25-minute focus blocks, you can maintain
+          high concentration and prevent mental fatigue.
+        </p>
+        <p class="article-text">
+          The technique is beautifully simple yet powerful: work for 25 minutes,
+          then take a 5-minute break. After completing four pomodoros, reward
+          yourself with a longer 15-30 minute break. This rhythm helps your
+          brain stay fresh and motivated throughout the day.
+        </p>
+        <h3 class="section-title">✨ How Customodoro Enhances Your Focus</h3>
+        <p class="article-text">
+          Customodoro takes the classic Pomodoro Technique to the next level. We
+          understand that everyone works differently, so we've made every aspect
+          customizable:
+        </p>
+        <ul class="feature-list">
+          <li>Adjust session lengths to match your natural focus rhythm</li>
+          <li>Customize break durations for optimal recovery</li>
+          <li>Track your progress with beautiful visualizations</li>
+          <li>Try Reverse Pomodoro for a gentler approach to productivity</li>
+        </ul>
+        <br />
+        <a href="./" class="back-to-timer-btn">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Back to Timer
+        </a>
 
-      <section class="articles-section" role="complementary" aria-label="Additional Pomodoro Technique Resources">
-        <h2 style="font-size: 1.8rem; margin: 3rem 0 2rem;">📚 Explore More Resources</h2>
-        <div class="articles-grid">
-          <div class="article-card">
-            <h3>✅ Pomodoro Overview by Todoist</h3>
-            <p>Discover how Todoist breaks down the Pomodoro Technique into actionable steps for modern productivity enhancement.</p>
-            <a href="https://www.todoist.com/productivity-methods/pomodoro-technique" target="_blank" rel="noopener" class="visit-article-btn">
-              Visit Article
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            </a>
+        <section
+          class="articles-section"
+          role="complementary"
+          aria-label="Additional Pomodoro Technique Resources"
+        >
+          <h2 style="font-size: 1.8rem; margin: 3rem 0 2rem">
+            📚 Explore More Resources
+          </h2>
+          <div class="articles-grid">
+            <div class="article-card">
+              <h3>✅ Pomodoro Overview by Todoist</h3>
+              <p>
+                Discover how Todoist breaks down the Pomodoro Technique into
+                actionable steps for modern productivity enhancement.
+              </p>
+              <a
+                href="https://www.todoist.com/productivity-methods/pomodoro-technique"
+                target="_blank"
+                rel="noopener"
+                class="visit-article-btn"
+              >
+                Visit Article
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+            </div>
+
+            <div class="article-card">
+              <h3>🧠 Scientific Analysis by VeryWellMind</h3>
+              <p>
+                Explore the psychological benefits and scientific research
+                behind the Pomodoro Technique's effectiveness.
+              </p>
+              <a
+                href="https://www.verywellmind.com/pomodoro-technique-history-steps-benefits-and-drawbacks-6892111"
+                target="_blank"
+                rel="noopener"
+                class="visit-article-btn"
+              >
+                Visit Article
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+            </div>
+
+            <div class="article-card">
+              <h3>📖 Pomodoro History on Wikipedia</h3>
+              <p>
+                Learn about the origins, development, and global impact of the
+                Pomodoro Technique since its creation.
+              </p>
+              <a
+                href="https://en.wikipedia.org/wiki/Pomodoro_Technique"
+                target="_blank"
+                rel="noopener"
+                class="visit-article-btn"
+              >
+                Visit Article
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+            </div>
           </div>
-          
-          <div class="article-card">
-            <h3>🧠 Scientific Analysis by VeryWellMind</h3>
-            <p>Explore the psychological benefits and scientific research behind the Pomodoro Technique's effectiveness.</p>
-            <a href="https://www.verywellmind.com/pomodoro-technique-history-steps-benefits-and-drawbacks-6892111" target="_blank" rel="noopener" class="visit-article-btn">
-              Visit Article
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-            </a>
+        </section>
+      </main>
+      <!-- UPDATE!) -->
+      <footer class="footer">
+        <div class="footer-content">
+          <div class="footer-brand">
+            © 2025 <strong>Customodoro</strong>
+            <span class="footer-version">v3.7.2</span>
+            • Handcrafted by <strong><em>YabuTech</em></strong>
           </div>
-          
-          <div class="article-card">
-            <h3>📖 Pomodoro History on Wikipedia</h3>
-            <p>Learn about the origins, development, and global impact of the Pomodoro Technique since its creation.</p>
-            <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique" target="_blank" rel="noopener" class="visit-article-btn">
-              Visit Article
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          <nav class="footer-links">
+            <a href="#" id="about-link-footer">
+              <svg
+                class="footer-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+              <span>About</span>
             </a>
+            <span class="footer-divider">•</span>
+            <a href="mailto:yabutech@gmail.com">
+              <svg
+                class="footer-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                ></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              <span>Contact</span>
+            </a>
+            <span class="footer-divider">•</span>
+            <a
+              href="https://wakey2x.vercel.app/"
+              target="_blank"
+              rel="noopener"
+            >
+              <svg
+                class="footer-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                ></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+              <span>Try Other App</span>
+            </a>
+            <span class="footer-divider">•</span>
+            <a
+              href="https://www.linkedin.com/in/brian-yabut/"
+              target="_blank"
+              rel="noopener"
+            >
+              <svg
+                class="footer-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
+                ></path>
+                <rect x="2" y="9" width="4" height="12"></rect>
+                <circle cx="4" cy="4" r="2"></circle>
+              </svg>
+              <span>Connect</span>
+            </a>
+            <span class="footer-divider">•</span>
+            <a href="feedback.html">
+              <svg
+                class="footer-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                ></path>
+              </svg>
+              <span>Feedback</span>
+            </a>
+          </nav>
+        </div>
+      </footer>
+
+      <!-- About Modal -->
+      <div class="about-info-modal-overlay" id="about-info-modal-overlay">
+        <div class="about-info-modal">
+          <div class="about-info-modal-header">
+            <h3 class="about-info-modal-title">About Customodoro</h3>
+            <button class="about-info-modal-close" id="about-info-modal-close">
+              &times;
+            </button>
+          </div>
+          <div class="about-info-modal-content">
+            <p>
+              <strong>Customodoro</strong> is a handcrafted productivity timer
+              built to help you focus better, manage your time, and maintain
+              balance.
+            </p>
+
+            <p>
+              <strong>Why I made this?</strong> I built this for someone special
+              — my girlfriend — because she told me the traditional Pomodoro
+              style wasn't working well for her study sessions. So, I designed
+              Reverse Pomodoro just for her — something more gentle and
+              flexible, the way she needed it.
+            </p>
+
+            <p>
+              This app is for anyone who wants to focus with intention, rest
+              with clarity, and make every session feel like progress.
+            </p>
+
+            <p class="settings-note">
+              <strong
+                >Handcrafted by YabuTech — born from feedback, built to
+                empower.</strong
+              >
+            </p>
+          </div>
+          <div class="about-info-modal-footer">
+            <button class="about-info-btn" id="about-info-close-btn">
+              Got it
+            </button>
           </div>
         </div>
-      </section>
-    </main>
-<!-- UPDATE!) -->
-  <footer class="footer">
-      <div class="footer-content">
-        <div class="footer-brand">
-          © 2025 <strong>Customodoro</strong>
-          <span class="footer-version">v3.7.2</span>
-          • Handcrafted by <strong><em>YabuTech</em></strong>
-        </div>
-        <nav class="footer-links">
-          <a href="#" id="about-link-footer">
-            <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-            <span>About</span>
-          </a>
-          <span class="footer-divider">•</span>
-          <a href="mailto:yabutech@gmail.com">
-            <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-            <span>Contact</span>
-          </a>
-          <span class="footer-divider">•</span>
-          <a href="https://wakey2x.vercel.app/" target="_blank" rel="noopener">
-            <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            <span>Try Other App</span>
-          </a>
-          <span class="footer-divider">•</span>
-          <a href="https://www.linkedin.com/in/brian-yabut/" target="_blank" rel="noopener">
-            <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
-            <span>Connect</span>
-          </a>
-          <span class="footer-divider">•</span>
-          <a href="feedback.html">
-            <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-            <span>Feedback</span>
-          </a>
-        </nav>
       </div>
-    </footer>
-
- 
-  <!-- About Modal -->
-<div class="about-info-modal-overlay" id="about-info-modal-overlay">
-  <div class="about-info-modal">
-    <div class="about-info-modal-header">
-      <h3 class="about-info-modal-title">About Customodoro</h3>
-      <button class="about-info-modal-close" id="about-info-modal-close">&times;</button>
     </div>
-    <div class="about-info-modal-content">
-      <p><strong>Customodoro</strong> is a handcrafted productivity timer built to help you focus better, manage your time, and maintain balance.</p>
 
-      <p><strong>Why I made this?</strong> I built this for someone special — my girlfriend — because she told me the traditional Pomodoro style wasn't working well for her study sessions. So, I designed Reverse Pomodoro just for her — something more gentle and flexible, the way she needed it.</p>
-
-      <p>This app is for anyone who wants to focus with intention, rest with clarity, and make every session feel like progress.</p>
-
-      <p class="settings-note"><strong>Handcrafted by YabuTech — born from feedback, built to empower.</strong></p>
-    </div>
-    <div class="about-info-modal-footer">
-      <button class="about-info-btn" id="about-info-close-btn">Got it</button>
-    </div>
-  </div>
-</div>
-
-  <script src="js/theme-manager.js?v=2.3.5"></script>
-  <script src="js/about-modal.js?v=2.3.5"></script>
-</body>
+    <script src="js/theme-manager.js?v=2.3.5"></script>
+    <script src="js/about-modal.js?v=2.3.5"></script>
+  </body>
 </html>

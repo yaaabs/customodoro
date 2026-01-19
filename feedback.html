@@ -1,163 +1,297 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Preconnect to Google Fonts for faster loading -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  
-  <!-- Inter Font - Expanded Weight Range -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Preconnect to Google Fonts for faster loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-  <!-- PWA for iOS -->
+    <!-- Inter Font - Expanded Weight Range -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
 
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Customodoro">
+    <!-- PWA for iOS -->
 
-<meta name="description" content="Customodoro is a customizable Pomodoro timer built to boost your productivity and focus.">
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Customodoro" />
 
-  <title>Feedback - Customodoro Timer</title>
+    <meta
+      name="description"
+      content="Customodoro is a customizable Pomodoro timer built to boost your productivity and focus."
+    />
 
-  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png?v=1.1">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png?v=1.1" id="favicon">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png?v=1.1">
-  <link rel="shortcut icon" href="favicon/favicon.ico?v=1.1">
+    <title>Feedback - Customodoro Timer</title>
 
-  <link rel="manifest" href="manifest.json">
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="favicon/apple-touch-icon.png?v=1.1"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="favicon/favicon-32x32.png?v=1.1"
+      id="favicon"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="favicon/favicon-16x16.png?v=1.1"
+    />
+    <link rel="shortcut icon" href="favicon/favicon.ico?v=1.1" />
 
-  <!-- Essential CSS (load immediately) -->
-<link rel="stylesheet" href="css/style.css?v=2.3.6">
-<link rel="stylesheet" href="css/features.css?v=1.0.0">
-<link rel="stylesheet" href="css/utilities.css?v=1.0.0">
+    <link rel="manifest" href="manifest.json" />
 
-</head>
-<body class="pomodoro-mode">
-  <script>
-    // Apply saved theme before the page renders to prevent flashing
-    (function() {
-      const savedTheme = localStorage.getItem('siteTheme') || 'light';
-      document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-yourname', 'theme-custom');
-      document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-yourname', 'theme-rain', 'theme-custom');
+    <!-- Essential CSS (load immediately) -->
+    <link rel="stylesheet" href="css/style.css?v=2.3.6" />
+    <link rel="stylesheet" href="css/features.css?v=1.0.0" />
+    <link rel="stylesheet" href="css/utilities.css?v=1.0.0" />
+  </head>
+  <body class="pomodoro-mode">
+    <script>
+      // Apply saved theme before the page renders to prevent flashing
+      (function () {
+        const savedTheme = localStorage.getItem("siteTheme") || "light";
+        document.body.classList.remove(
+          "theme-default",
+          "theme-dark",
+          "theme-light",
+          "theme-yourname",
+          "theme-custom",
+        );
+        document.body.classList.remove(
+          "theme-default",
+          "theme-dark",
+          "theme-light",
+          "theme-yourname",
+          "theme-rain",
+          "theme-custom",
+        );
 
-      if (savedTheme === 'custom') {
-        const customBg = localStorage.getItem('customThemeBackground');
-        if (customBg) {
-          document.body.classList.add('theme-custom');
-          document.body.style.backgroundImage = `url(${customBg})`;
+        if (savedTheme === "custom") {
+          const customBg = localStorage.getItem("customThemeBackground");
+          if (customBg) {
+            document.body.classList.add("theme-custom");
+            document.body.style.backgroundImage = `url(${customBg})`;
+          } else {
+            document.body.classList.add("theme-light");
+          }
+        } else if (savedTheme === "rain") {
+          document.body.classList.add("theme-rain");
         } else {
-          document.body.classList.add('theme-light');
+          document.body.classList.add("theme-" + savedTheme);
         }
-      } else if (savedTheme === 'rain') {
-        document.body.classList.add('theme-rain');
-      } else {
-        document.body.classList.add('theme-' + savedTheme);
-      }
-    })();
-  </script>
-  <div class="container">
-    <header>
-      <h1 class="app-title">Customodoro Timer</h1>
+      })();
+    </script>
+    <div class="container">
+      <header>
+        <h1 class="app-title">Customodoro Timer</h1>
 
-      <br>
-      <div class="switch-mode">
-        <a href="./" class="switch-btn">Switch to Classic Pomodoro ⏱️</a>
-        <a href="reverse.html" class="switch-btn">Try Reverse Pomodoro ⏱️</a>
-      </div>
-      <style>
-    /* Responsive styles for switch-mode */
-    .switch-mode {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    @media (max-width: 600px) {
-      .switch-mode {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0.5rem;
-      }
-      .switch-mode .switch-btn {
-        width: 100%;
-        text-align: center;
-      }
-    }
-  </style>
-    </header>
-    
- <br>
-      
+        <br />
+        <div class="switch-mode">
+          <a href="./" class="switch-btn">Switch to Classic Pomodoro ⏱️</a>
+          <a href="reverse.html" class="switch-btn">Try Reverse Pomodoro ⏱️</a>
+        </div>
+        <style>
+          /* Responsive styles for switch-mode */
+          .switch-mode {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+          }
+          @media (max-width: 600px) {
+            .switch-mode {
+              flex-direction: column;
+              align-items: stretch;
+              gap: 0.5rem;
+            }
+            .switch-mode .switch-btn {
+              width: 100%;
+              text-align: center;
+            }
+          }
+        </style>
+      </header>
+
+      <br />
+
       <div class="notion-form-wrapper">
         <iframe
-          style="border:none;width:100%;height:700px;"
+          style="border: none; width: 100%; height: 700px"
           id="feedback-and-bug-reporting-form-fnkwn7"
-          src="https://noteforms.com/forms/feedback-and-bug-reporting-form-fnkwn7">
+          src="https://noteforms.com/forms/feedback-and-bug-reporting-form-fnkwn7"
+        >
         </iframe>
-        <script type="text/javascript" onload="initEmbed('feedback-and-bug-reporting-form-fnkwn7')" src="https://noteforms.com/widgets/iframe.min.js"></script>
+        <script
+          type="text/javascript"
+          onload="initEmbed('feedback-and-bug-reporting-form-fnkwn7')"
+          src="https://noteforms.com/widgets/iframe.min.js"
+        ></script>
       </div>
 
       <!-- UPDATE!) -->
-    <footer class="footer">
-      <div class="footer-content">
-        <div class="footer-brand">
-          © 2025 <strong>Customodoro</strong>
-          <span class="footer-version">v3.7.2</span>
-          • Handcrafted by <strong><em>YabuTech</em></strong>
+      <footer class="footer">
+        <div class="footer-content">
+          <div class="footer-brand">
+            © 2025 <strong>Customodoro</strong>
+            <span class="footer-version">v3.7.2</span>
+            • Handcrafted by <strong><em>YabuTech</em></strong>
+          </div>
+          <nav class="footer-links">
+            <a href="#" id="about-link-footer">
+              <svg
+                class="footer-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+              <span>About</span>
+            </a>
+            <span class="footer-divider">•</span>
+            <a href="mailto:yabutech@gmail.com">
+              <svg
+                class="footer-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                ></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              <span>Contact</span>
+            </a>
+            <span class="footer-divider">•</span>
+            <a
+              href="https://wakey2x.vercel.app/"
+              target="_blank"
+              rel="noopener"
+            >
+              <svg
+                class="footer-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                ></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+              <span>Try Other App</span>
+            </a>
+            <span class="footer-divider">•</span>
+            <a
+              href="https://www.linkedin.com/in/brian-yabut/"
+              target="_blank"
+              rel="noopener"
+            >
+              <svg
+                class="footer-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
+                ></path>
+                <rect x="2" y="9" width="4" height="12"></rect>
+                <circle cx="4" cy="4" r="2"></circle>
+              </svg>
+              <span>Connect</span>
+            </a>
+          </nav>
         </div>
-        <nav class="footer-links">
-          <a href="#" id="about-link-footer">
-            <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-            <span>About</span>
-          </a>
-          <span class="footer-divider">•</span>
-          <a href="mailto:yabutech@gmail.com">
-            <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-            <span>Contact</span>
-          </a>
-          <span class="footer-divider">•</span>
-          <a href="https://wakey2x.vercel.app/" target="_blank" rel="noopener">
-            <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            <span>Try Other App</span>
-          </a>
-          <span class="footer-divider">•</span>
-          <a href="https://www.linkedin.com/in/brian-yabut/" target="_blank" rel="noopener">
-            <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
-            <span>Connect</span>
-          </a>
-        </nav>
+      </footer>
+    </div>
+
+    <!-- About Modal -->
+    <div class="about-info-modal-overlay" id="about-info-modal-overlay">
+      <div class="about-info-modal">
+        <div class="about-info-modal-header">
+          <h3 class="about-info-modal-title">About Customodoro</h3>
+          <button class="about-info-modal-close" id="about-info-modal-close">
+            &times;
+          </button>
+        </div>
+        <div class="about-info-modal-content">
+          <p>
+            <strong>Customodoro</strong> is a handcrafted productivity timer
+            built to help you focus better, manage your time, and maintain
+            balance.
+          </p>
+
+          <p>
+            <strong>Why I made this?</strong> I built this for someone special —
+            my girlfriend — because she told me the traditional Pomodoro style
+            wasn't working well for her study sessions. So, I designed Reverse
+            Pomodoro just for her — something more gentle and flexible, the way
+            she needed it.
+          </p>
+
+          <p>
+            This app is for anyone who wants to focus with intention, rest with
+            clarity, and make every session feel like progress.
+          </p>
+
+          <p class="settings-note">
+            <strong
+              >Handcrafted by YabuTech — born from feedback, built to
+              empower.</strong
+            >
+          </p>
+        </div>
+        <div class="about-info-modal-footer">
+          <button class="about-info-btn" id="about-info-close-btn">
+            Got it
+          </button>
+        </div>
       </div>
-    </footer>
-  </div>
-
-  
-  
-  <!-- About Modal -->
-<div class="about-info-modal-overlay" id="about-info-modal-overlay">
-  <div class="about-info-modal">
-    <div class="about-info-modal-header">
-      <h3 class="about-info-modal-title">About Customodoro</h3>
-      <button class="about-info-modal-close" id="about-info-modal-close">&times;</button>
     </div>
-    <div class="about-info-modal-content">
-      <p><strong>Customodoro</strong> is a handcrafted productivity timer built to help you focus better, manage your time, and maintain balance.</p>
 
-      <p><strong>Why I made this?</strong> I built this for someone special — my girlfriend — because she told me the traditional Pomodoro style wasn't working well for her study sessions. So, I designed Reverse Pomodoro just for her — something more gentle and flexible, the way she needed it.</p>
-
-      <p>This app is for anyone who wants to focus with intention, rest with clarity, and make every session feel like progress.</p>
-
-      <p class="settings-note"><strong>Handcrafted by YabuTech — born from feedback, built to empower.</strong></p>
-    </div>
-    <div class="about-info-modal-footer">
-      <button class="about-info-btn" id="about-info-close-btn">Got it</button>
-    </div>
-  </div>
-</div>
-
-  <script src="js/theme-manager.js?v=2.3.5"></script>
-<script src="js/about-modal.js?v=2.3.5"></script>
-</body>
+    <script src="js/theme-manager.js?v=2.3.5"></script>
+    <script src="js/about-modal.js?v=2.3.5"></script>
+  </body>
 </html>

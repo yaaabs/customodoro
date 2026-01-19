@@ -1,807 +1,1342 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <!-- ═══════════════════════════════════════════════════════════════════════════════
+  <head>
+    <!-- ═══════════════════════════════════════════════════════════════════════════════
        BASIC META & VERIFICATION
        ═══════════════════════════════════════════════════════════════════════════════ -->
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="google-site-verification" content="xrFqm4zYAPEHRFkuFblD3N7PwmiMngvskCl9ARVp01E" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="google-site-verification"
+      content="xrFqm4zYAPEHRFkuFblD3N7PwmiMngvskCl9ARVp01E"
+    />
 
     <!-- Preconnect to Google Fonts for faster loading -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
     <!-- Inter Font - Expanded Weight Range -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
 
-    <link rel="stylesheet" href="css/style.css?v=3.9.4">
+    <link rel="stylesheet" href="css/style.css?v=3.9.4" />
 
-  <!-- ═══════════════════════════════════════════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════════════════════════════════════════
        SEO META TAGS
        ═══════════════════════════════════════════════════════════════════════════════ -->
-  <title>Reverse Pomodoro Timer - Overcome Procrastination | Customodoro</title>
-  <meta name="description" content="Discover Reverse Pomodoro - Customodoro's unique productivity technique. Start with breaks, build momentum gradually. Perfect for procrastination, ADHD, and overcoming mental blocks. Free revolutionary timer.">
-  <meta name="keywords" content="reverse pomodoro, reverse timer, procrastination help, ADHD productivity, overcome mental blocks, gradual productivity, alternative pomodoro, customodoro reverse mode, productivity for anxiety, gentle time management, break-first technique, procrastination timer, motivation builder">
-  <meta name="author" content="YabuTech">
-  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
-  <link rel="canonical" href="https://customodoro.vercel.app/reverse">
+    <title>
+      Reverse Pomodoro Timer - Overcome Procrastination | Customodoro
+    </title>
+    <meta
+      name="description"
+      content="Discover Reverse Pomodoro - Customodoro's unique productivity technique. Start with breaks, build momentum gradually. Perfect for procrastination, ADHD, and overcoming mental blocks. Free revolutionary timer."
+    />
+    <meta
+      name="keywords"
+      content="reverse pomodoro, reverse timer, procrastination help, ADHD productivity, overcome mental blocks, gradual productivity, alternative pomodoro, customodoro reverse mode, productivity for anxiety, gentle time management, break-first technique, procrastination timer, motivation builder"
+    />
+    <meta name="author" content="YabuTech" />
+    <meta
+      name="robots"
+      content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
+    />
+    <link rel="canonical" href="https://customodoro.vercel.app/reverse" />
 
-  <!-- ═══════════════════════════════════════════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════════════════════════════════════════
        TWITTER CARD (Must come before OpenGraph)
        ═══════════════════════════════════════════════════════════════════════════════ -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:site" content="@customodoro">
-  <meta name="twitter:creator" content="@customodoro">
-  <meta name="twitter:title" content="Reverse Pomodoro - Customodoro's Unique Productivity Mode">
-  <meta name="twitter:description" content="🔄 Discover Reverse Pomodoro! ⏰ Start with breaks, build momentum gradually. Perfect for procrastination & mental blocks. 🧠 Unique approach to productivity!">
-  <meta name="twitter:image" content="https://customodoro.vercel.app/images/customodoro_card.png">
-  <meta name="twitter:image:alt" content="Reverse Pomodoro Timer - Overcome Procrastination with Customodoro">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@customodoro" />
+    <meta name="twitter:creator" content="@customodoro" />
+    <meta
+      name="twitter:title"
+      content="Reverse Pomodoro - Customodoro's Unique Productivity Mode"
+    />
+    <meta
+      name="twitter:description"
+      content="🔄 Discover Reverse Pomodoro! ⏰ Start with breaks, build momentum gradually. Perfect for procrastination & mental blocks. 🧠 Unique approach to productivity!"
+    />
+    <meta
+      name="twitter:image"
+      content="https://customodoro.vercel.app/images/customodoro_card.png"
+    />
+    <meta
+      name="twitter:image:alt"
+      content="Reverse Pomodoro Timer - Overcome Procrastination with Customodoro"
+    />
 
-  <!-- ═══════════════════════════════════════════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════════════════════════════════════════
        OPEN GRAPH (Social Media Sharing)
        ═══════════════════════════════════════════════════════════════════════════════ -->
-  <meta property="og:site_name" content="Customodoro">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://customodoro.vercel.app/reverse">
-  <meta property="og:title" content="Reverse Pomodoro - Customodoro's Revolutionary Productivity Approach">
-  <meta property="og:description" content="Break through procrastination with Reverse Pomodoro! Start with rest periods and gradually build work momentum. Perfect for ADHD, anxiety, or when traditional Pomodoro feels overwhelming. Discover this game-changing productivity technique.">
-  <meta property="og:image" content="https://customodoro.vercel.app/images/customodoro_card.png">
-  <meta property="og:image:secure_url" content="https://customodoro.vercel.app/images/customodoro_card.png">
-  <meta property="og:image:type" content="image/png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Reverse Pomodoro Timer - Revolutionary Productivity Method">
-  <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Customodoro" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://customodoro.vercel.app/reverse" />
+    <meta
+      property="og:title"
+      content="Reverse Pomodoro - Customodoro's Revolutionary Productivity Approach"
+    />
+    <meta
+      property="og:description"
+      content="Break through procrastination with Reverse Pomodoro! Start with rest periods and gradually build work momentum. Perfect for ADHD, anxiety, or when traditional Pomodoro feels overwhelming. Discover this game-changing productivity technique."
+    />
+    <meta
+      property="og:image"
+      content="https://customodoro.vercel.app/images/customodoro_card.png"
+    />
+    <meta
+      property="og:image:secure_url"
+      content="https://customodoro.vercel.app/images/customodoro_card.png"
+    />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Reverse Pomodoro Timer - Revolutionary Productivity Method"
+    />
+    <meta property="og:locale" content="en_US" />
 
-  <!-- ═══════════════════════════════════════════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════════════════════════════════════════
        SCHEMA.ORG JSON-LD (SEO Structured Data)
        ═══════════════════════════════════════════════════════════════════════════════ -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "Reverse Pomodoro Timer - Customodoro",
-    "description": "Revolutionary Reverse Pomodoro technique that starts with breaks to build momentum. Perfect for procrastination, ADHD, and overcoming mental blocks. Free productivity tool.",
-    "url": "https://customodoro.vercel.app/reverse",
-    "image": "https://customodoro.vercel.app/images/customodoro_card.png",
-    "applicationCategory": "ProductivityApplication",
-    "operatingSystem": "Any",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    },
-    "author": {
-      "@type": "Organization",
-      "name": "Customodoro"
-    }
-  }
-  </script>
-
-  <!-- ═══════════════════════════════════════════════════════════════════════════════
-       PWA & MOBILE
-       ═══════════════════════════════════════════════════════════════════════════════ -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Customodoro">
-  <link rel="manifest" href="manifest.json">
-
-  <!-- ═══════════════════════════════════════════════════════════════════════════════
-       FAVICONS
-       ═══════════════════════════════════════════════════════════════════════════════ -->
-  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png?v=1.1">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png?v=1.1" id="favicon">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png?v=1.1">
-  <link rel="shortcut icon" href="favicon/favicon.ico?v=1.1">
-
-  <!-- UPDATE! -->
-
-<link rel="stylesheet" href="css/media-players.css?v=1.0.1">
-
-<link rel="stylesheet" href="css/features.css?v=1.0.1">
-
-<link rel="stylesheet" href="css/utilities.css?v=1.0.2">
-
-<!-- Supabase Client -->
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-
-  <script>
-    // Function to load deferred CSS files
-    function loadDeferredCSS() {
-      const deferredStyles = [
-        'theme-uploader',
-        'burnup-tracker'
-      ];
-      
-      deferredStyles.forEach(style => {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = `css/${style}.css`;
-        document.head.appendChild(link);
-      });
-    }
-    
-    // Load deferred styles when DOM is ready, with a slight delay to prioritize render
-    document.addEventListener('DOMContentLoaded', function() {
-      setTimeout(loadDeferredCSS, 100);
-    });
-  </script>
-</head>
-<body class="reverse-mode">
-  <script>
-    // Apply saved theme before the page renders to prevent flashing
-    (function() {
-      const savedTheme = localStorage.getItem('siteTheme') || 'light';
-      // Only run if document.body is available
-      if (document.body) {
-        document.body.classList.remove('theme-default', 'theme-dark', 'theme-light', 'theme-yourname', 'theme-custom');
-        if (savedTheme === 'custom') {
-          const customBg = localStorage.getItem('customThemeBackground');
-          if (customBg) {
-            document.body.classList.add('theme-custom');
-            document.body.style.backgroundImage = `url(${customBg})`;
-          } else {
-            document.body.classList.add('theme-light');
-          }
-        } else {
-          document.body.classList.add('theme-' + savedTheme);
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Reverse Pomodoro Timer - Customodoro",
+        "description": "Revolutionary Reverse Pomodoro technique that starts with breaks to build momentum. Perfect for procrastination, ADHD, and overcoming mental blocks. Free productivity tool.",
+        "url": "https://customodoro.vercel.app/reverse",
+        "image": "https://customodoro.vercel.app/images/customodoro_card.png",
+        "applicationCategory": "ProductivityApplication",
+        "operatingSystem": "Any",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "author": {
+          "@type": "Organization",
+          "name": "Customodoro"
         }
       }
-    })();
-  </script>
-  <div class="container">
-    <header>
-    <h1 class="app-title">Customodoro - Reverse Timer</h1>
-      <div class="header-top">
-        <!-- User Profile Display -->
-        <div class="user-profile" id="user-profile" style="display: none;">
-          <div class="user-avatar">
-            <div class="user-avatar-icon">👤</div>
-          </div>
-          <div class="user-info">
-            <div class="user-name" id="header-user-name">User</div>
-            <div class="user-sync-status" id="header-sync-status">
-              <span class="sync-indicator" id="header-sync-indicator">✅</span>
-              <span class="sync-text">Synced</span>
+    </script>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════════
+       PWA & MOBILE
+       ═══════════════════════════════════════════════════════════════════════════════ -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Customodoro" />
+    <link rel="manifest" href="manifest.json" />
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════════
+       FAVICONS
+       ═══════════════════════════════════════════════════════════════════════════════ -->
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="favicon/apple-touch-icon.png?v=1.1"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="favicon/favicon-32x32.png?v=1.1"
+      id="favicon"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="favicon/favicon-16x16.png?v=1.1"
+    />
+    <link rel="shortcut icon" href="favicon/favicon.ico?v=1.1" />
+
+    <!-- UPDATE! -->
+
+    <link rel="stylesheet" href="css/media-players.css?v=1.0.1" />
+
+    <link rel="stylesheet" href="css/features.css?v=1.0.1" />
+
+    <link rel="stylesheet" href="css/utilities.css?v=1.0.2" />
+
+    <!-- Supabase Client -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+    <script>
+      // Function to load deferred CSS files
+      function loadDeferredCSS() {
+        const deferredStyles = ["theme-uploader", "burnup-tracker"];
+
+        deferredStyles.forEach((style) => {
+          const link = document.createElement("link");
+          link.rel = "stylesheet";
+          link.href = `css/${style}.css`;
+          document.head.appendChild(link);
+        });
+      }
+
+      // Load deferred styles when DOM is ready, with a slight delay to prioritize render
+      document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(loadDeferredCSS, 100);
+      });
+    </script>
+  </head>
+  <body class="reverse-mode">
+    <script>
+      // Apply saved theme before the page renders to prevent flashing
+      (function () {
+        const savedTheme = localStorage.getItem("siteTheme") || "light";
+        // Only run if document.body is available
+        if (document.body) {
+          document.body.classList.remove(
+            "theme-default",
+            "theme-dark",
+            "theme-light",
+            "theme-yourname",
+            "theme-custom",
+          );
+          if (savedTheme === "custom") {
+            const customBg = localStorage.getItem("customThemeBackground");
+            if (customBg) {
+              document.body.classList.add("theme-custom");
+              document.body.style.backgroundImage = `url(${customBg})`;
+            } else {
+              document.body.classList.add("theme-light");
+            }
+          } else {
+            document.body.classList.add("theme-" + savedTheme);
+          }
+        }
+      })();
+    </script>
+    <div class="container">
+      <header>
+        <h1 class="app-title">Customodoro - Reverse Timer</h1>
+        <div class="header-top">
+          <!-- User Profile Display -->
+          <div class="user-profile" id="user-profile" style="display: none">
+            <div class="user-avatar">
+              <div class="user-avatar-icon">👤</div>
+            </div>
+            <div class="user-info">
+              <div class="user-name" id="header-user-name">User</div>
+              <div class="user-sync-status" id="header-sync-status">
+                <span class="sync-indicator" id="header-sync-indicator"
+                  >✅</span
+                >
+                <span class="sync-text">Synced</span>
+              </div>
+            </div>
+            <div class="user-actions">
+              <button
+                class="user-action-btn"
+                id="header-sync-btn"
+                title="Open Sync Settings"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M3 12A9 9 0 0 1 12 3a9.75 9.75 0 0 1 6.74 2.74L21 8"
+                  />
+                  <path d="M21 3v5h-5" />
+                  <path
+                    d="M21 12a9 9 0 0 1-12 9 9.75 9.75 0 0 1-6.74-2.74L0 16"
+                  />
+                  <path d="M3 16v5h5" />
+                </svg>
+              </button>
+              <button
+                class="user-action-btn"
+                id="header-logout-btn"
+                title="Sign Out"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16,17 21,12 16,7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+              </button>
             </div>
           </div>
-          <div class="user-actions">
-            <button class="user-action-btn" id="header-sync-btn" title="Open Sync Settings">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M3 12A9 9 0 0 1 12 3a9.75 9.75 0 0 1 6.74 2.74L21 8"/>
-                <path d="M21 3v5h-5"/>
-                <path d="M21 12a9 9 0 0 1-12 9 9.75 9.75 0 0 1-6.74-2.74L0 16"/>
-                <path d="M3 16v5h5"/>
-              </svg>
-            </button>
-            <button class="user-action-btn" id="header-logout-btn" title="Sign Out">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                <polyline points="16,17 21,12 16,7"/>
-                <line x1="21" y1="12" x2="9" y2="12"/>
-              </svg>
-            </button>
-          </div>
         </div>
-      </div>
-      <div class="mode-tabs">
-        <div class="tab active" id="reverse-tab">Reverse Pomodoro</div>
-        <div class="tab" id="break-tab">Break Accumulated</div>
-      </div>
-      <br>
-      <div class="switch-mode">
-        <a href="./" class="switch-btn">Switch to Classic Pomodoro ⏱️</a>
-      </div>
-    </header>
-    
-    <div class="timer-container">
-      <div class="timer" id="timer">00:00</div>
-      <div class="max-time">Current Max Time: 01:00:00</div>
-      <div class="timer-actions">
-        <button class="primary-btn" id="start-btn">START</button>
-        <button class="primary-btn" id="pause-btn" style="display: none;">PAUSE</button>
-        <button class="primary-btn" id="resume-btn" style="display: none;">RESUME</button>
-        <button class="primary-btn" id="stop-btn" style="display: none;">STOP</button>
-        <button class="secondary-btn" id="reset-btn">RESET</button>
-      </div>      <div class="progress-container">
-        <div class="progress-bar" id="progress-bar"></div>
-      </div>
-      <br>
-      <div class="current-task" id="current-task" style="display: none;">Current Task: <span id="current-task-title"></span></div>
-      
-      <!-- Burn-Up Time Tracker -->
-      <div class="burnup-tracker" id="burnup-tracker" style="display: none;">
-        <div class="burnup-header">
-          <span class="burnup-title">Burn-Up Tracker</span>
+        <div class="mode-tabs">
+          <div class="tab active" id="reverse-tab">Reverse Pomodoro</div>
+          <div class="tab" id="break-tab">Break Accumulated</div>
         </div>
-        <div class="burnup-progress-container">
-          <div class="burnup-progress-bar" id="burnup-progress-bar"></div>
+        <br />
+        <div class="switch-mode">
+          <a href="./" class="switch-btn">Switch to Classic Pomodoro ⏱️</a>
         </div>
-        <div class="burnup-stats">
-          <span class="burnup-spent">Spent: <span id="burnup-spent-time">00:00</span></span>
-          <span class="burnup-divider">/</span>
-          <span class="burnup-planned">Est: <span id="burnup-planned-time">01:00:00</span></span>
-          <span class="burnup-percentage" id="burnup-percentage">0%</span>
-        </div>
-        <!-- burnup-tracker content ends (Most Used Pomodoro placed later under User's Stats) -->
-      </div>
-    </div>
+      </header>
 
-<!-- STREAK! -->
-  <div id="streak-display" style="display:flex;justify-content:center;margin-bottom:24px;">
-  <div class="duo-streak-pill">
-    <span class="duo-flame">🔥</span>
-    <span class="duo-streak-num" id="duo-streak-num">0</span>
-    <span class="duo-streak-label">— day streak</span>
-  </div>
-  </div>
-    
-    <div class="info-section">
-      <div class="info-box">
-        <h3>How it works?</h3>
-        <p>Work for up to 1 hour. The longer you work, the longer break you earn:</p>
-        <ul id="info-break-tiers">
-          <li>5-20 mins = 2 min break</li>
-          <li>21-30 mins = 5 min break</li>
-          <li>31-45 mins = 10 min break</li>
-          <li>46-55 mins = 15 min break</li>
-          <li>56-60 mins = 30 min break</li>
+      <div class="timer-container">
+        <div class="timer" id="timer">00:00</div>
+        <div class="max-time">Current Max Time: 01:00:00</div>
+        <div class="timer-actions">
+          <button class="primary-btn" id="start-btn">START</button>
+          <button class="primary-btn" id="pause-btn" style="display: none">
+            PAUSE
+          </button>
+          <button class="primary-btn" id="resume-btn" style="display: none">
+            RESUME
+          </button>
+          <button class="primary-btn" id="stop-btn" style="display: none">
+            STOP
+          </button>
+          <button class="secondary-btn" id="reset-btn">RESET</button>
+        </div>
+        <div class="progress-container">
+          <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <br />
+        <div class="current-task" id="current-task" style="display: none">
+          Current Task: <span id="current-task-title"></span>
+        </div>
+
+        <!-- Burn-Up Time Tracker -->
+        <div class="burnup-tracker" id="burnup-tracker" style="display: none">
+          <div class="burnup-header">
+            <span class="burnup-title">Burn-Up Tracker</span>
+          </div>
+          <div class="burnup-progress-container">
+            <div class="burnup-progress-bar" id="burnup-progress-bar"></div>
+          </div>
+          <div class="burnup-stats">
+            <span class="burnup-spent"
+              >Spent: <span id="burnup-spent-time">00:00</span></span
+            >
+            <span class="burnup-divider">/</span>
+            <span class="burnup-planned"
+              >Est: <span id="burnup-planned-time">01:00:00</span></span
+            >
+            <span class="burnup-percentage" id="burnup-percentage">0%</span>
+          </div>
+          <!-- burnup-tracker content ends (Most Used Pomodoro placed later under User's Stats) -->
+        </div>
+      </div>
+
+      <!-- STREAK! -->
+      <div
+        id="streak-display"
+        style="display: flex; justify-content: center; margin-bottom: 24px"
+      >
+        <div class="duo-streak-pill">
+          <span class="duo-flame">🔥</span>
+          <span class="duo-streak-num" id="duo-streak-num">0</span>
+          <span class="duo-streak-label">— day streak</span>
+        </div>
+      </div>
+
+      <div class="info-section">
+        <div class="info-box">
+          <h3>How it works?</h3>
+          <p>
+            Work for up to 1 hour. The longer you work, the longer break you
+            earn:
+          </p>
+          <ul id="info-break-tiers">
+            <li>5-20 mins = 2 min break</li>
+            <li>21-30 mins = 5 min break</li>
+            <li>31-45 mins = 10 min break</li>
+            <li>46-55 mins = 15 min break</li>
+            <li>56-60 mins = 30 min break</li>
+          </ul>
+          <p class="settings-note">
+            💡 <strong>Pro tip:</strong> You can customize all timer settings,
+            including max work time and break durations, by clicking the
+            settings icon in the bottom right corner!
+          </p>
+        </div>
+      </div>
+
+      <div class="tasks-section">
+        <div class="tasks-header">
+          <div class="tasks-title">Tasks</div>
+        </div>
+        <div class="task-input-container">
+          <input
+            type="text"
+            class="task-input"
+            id="task-input"
+            placeholder="What are you working on?"
+          />
+        </div>
+        <!-- Add description textarea below input -->
+        <div class="task-desc-container">
+          <textarea
+            id="task-description-input"
+            class="task-desc-input"
+            placeholder="Optional description... (Shift+Enter for new line, Enter to add task)"
+            maxlength="500"
+            rows="2"
+          ></textarea>
+        </div>
+
+        <button id="add-task-btn" class="secondary-btn">Add Task</button>
+
+        <ul class="task-list" id="task-list">
+          <!-- Tasks will be added here -->
         </ul>
-        <p class="settings-note">💡 <strong>Pro tip:</strong> You can customize all timer settings, including max work time and break durations, by clicking the settings icon in the bottom right corner!</p>
-      </div>
-    </div>
-    
- <div class="tasks-section">
-      <div class="tasks-header">
-        <div class="tasks-title">Tasks</div>
-      </div>
-      <div class="task-input-container">
-        <input type="text" class="task-input" id="task-input" placeholder="What are you working on?">
-      </div>
-      <!-- Add description textarea below input -->
-      <div class="task-desc-container">
-        <textarea id="task-description-input" class="task-desc-input" placeholder="Optional description... (Shift+Enter for new line, Enter to add task)" maxlength="500" rows="2"></textarea>
-      </div>
-      
-      <button id="add-task-btn" class="secondary-btn">Add Task</button>
 
-     
-      <ul class="task-list" id="task-list">
-        <!-- Tasks will be added here -->
-      </ul>
+        <p class="settings-note">
+          🖱️
+          <strong
+            >You can now focus on a task by clicking it, and drag & drop tasks
+            to reorder!</strong
+          >
+        </p>
+      </div>
 
-      <p class="settings-note">🖱️ <strong>You can now focus on a task by clicking it, and drag & drop tasks to reorder!</strong></p>
-      
- </div>
- 
- <div class="tasks-section">
-    <!-- PRODUCTIVITY GRAPH -->
-    <section id="contribution-graph" style="margin:0 0 16px 0;"></section>
-  <!-- STREAK!!! Streak Stats Card -->
-  <div class="streak-stats-card">
-    <div class="streak-stats-header">
-      <div class="streak-title-section">
-        <span class="streak-fire">🔥</span>
-        <span class="streak-title">My Stats :</span>
-      </div>
-      <button class="leaderboard-btn" id="leaderboard-btn" title="View Global Leaderboard">
-        🏆 <span class="leaderboard-btn-text">Leaderboard</span>
-      </button>
-    </div>
-    <div class="streak-stats-content">
-      <div class="streak-stats-block">
-        <div class="streak-stats-value" id="streak-total">421</div>
-        <div class="streak-stats-label stats-responsive-text">Total Focus Points</div>
-        <div class="streak-stats-date" id="streak-total-date">Jan 2, 2024 - Present</div>
-      </div>
-      <div class="streak-stats-block streak-current">
-        <div class="streak-stats-circle">
-          <span class="streak-stats-value" id="streak-current">10</span>
-        </div>
-        <div class="streak-stats-label streak-current-label stats-responsive-text-emphasis">Current Streak</div>
-        <div class="streak-stats-date" id="streak-current-date">Jul 21 - Jul 30</div>
-      </div>
-      <div class="streak-stats-block">
-        <div class="streak-stats-value" id="streak-longest">27</div>
-        <div class="streak-stats-label stats-responsive-text">Longest Streak</div>
-        <div class="streak-stats-date" id="streak-longest-date">May 4 - May 30</div>
-      </div>
-    </div>
-  </div>
-  
-    <!-- Achievements Card -->
-    <div class="user-stats-card achievements-card">
-      <div class="user-stats-header">
-        <div class="user-stats-title-section">
-          <span class="user-stats-title">Achievements</span>
-        </div>
-      </div>
-      <div class="user-stats-content">
-        <div id="achievements-container"></div>
-      </div>
-    </div>
-  
-  <!-- User Stats Card -->
-  <div class="user-stats-card">
-    <div class="user-stats-header">
-      <div class="user-stats-title-section">
-        <span class="user-stats-title" id="user-stats-title">User's Stats</span>
-      </div>
-    </div>
-    <div class="user-stats-content">
-      <div class="user-stats-row" data-stat="totalFocusTime">
-        <span class="user-stats-label">⭐ Total Focus Time:</span>
-        <span class="user-stats-value" id="user-total-focus-time">0 mins (0 hrs)</span>
-      </div>
-      <div class="user-stats-row">
-        <span class="user-stats-label">📈 Completed Sessions:</span>
-        <span class="user-stats-value" id="user-total-sessions">0</span>
-      </div>
-      <div class="user-stats-row" data-stat="mostProductiveDay">
-        <span class="user-stats-label">🏆 Most Productive Day:</span>
-        <span class="user-stats-value" id="user-most-productive-day">0 hrs on Never</span>
-      </div>
-      <div class="user-stats-row">
-        <span class="user-stats-label">🍅 Classic Pomodoros:</span>
-        <span class="user-stats-value" id="user-classic-pomodoros">0</span>
-      </div>
-      <div class="user-stats-row">
-        <span class="user-stats-label">🔄 Reverse Pomodoros:</span>
-        <span class="user-stats-value" id="user-reverse-pomodoros">0</span>
-      </div>
-    </div>
-  </div>
-  
-    <!-- Most Used Pomodoro Card -->
-    <div class="user-stats-card pomodoro-usage-card" id="pomodoro-usage-card">
-      <div class="user-stats-header">
-        <div class="user-stats-title-section">
-          <span class="user-stats-title">Most Used Pomodoro</span>
-        </div>
-      </div>
-      <div class="user-stats-content">
-        <!-- Segmented horizontal bar (visual split between Classic and Reverse usage) -->
-        <div class="pomodoro-segmented-container" style="margin-top:6px;margin-bottom:12px;">
-          <div class="pomodoro-segmented-bar" id="pomodoro-segmented-bar" aria-hidden="true">
-            <div class="pomodoro-segment classic" id="pomodoro-segment-classic" aria-hidden="true"></div>
-            <div class="pomodoro-segment reverse" id="pomodoro-segment-reverse" aria-hidden="true"></div>
+      <div class="tasks-section">
+        <!-- PRODUCTIVITY GRAPH -->
+        <section id="contribution-graph" style="margin: 0 0 16px 0"></section>
+        <!-- STREAK!!! Streak Stats Card -->
+        <div class="streak-stats-card">
+          <div class="streak-stats-header">
+            <div class="streak-title-section">
+              <span class="streak-fire">🔥</span>
+              <span class="streak-title">My Stats :</span>
+            </div>
+            <button
+              class="leaderboard-btn"
+              id="leaderboard-btn"
+              title="View Global Leaderboard"
+            >
+              🏆 <span class="leaderboard-btn-text">Leaderboard</span>
+            </button>
           </div>
-          <div id="pomodoro-segmented-desc" class="sr-only" aria-live="polite" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">Most used pomodoro breakdown</div>
-        </div>
-        <div class="pomodoro-usage-row">
-          <div class="pomodoro-usage-entry">
-            <span class="pomodoro-dot classic" aria-hidden="true"></span>
-            <span class="pomodoro-usage-label">Classic Pomodoro</span>
-            <span class="pomodoro-usage-value" id="pomodoro-classic-percent">0%</span>
+          <div class="streak-stats-content">
+            <div class="streak-stats-block">
+              <div class="streak-stats-value" id="streak-total">421</div>
+              <div class="streak-stats-label stats-responsive-text">
+                Total Focus Points
+              </div>
+              <div class="streak-stats-date" id="streak-total-date">
+                Jan 2, 2024 - Present
+              </div>
+            </div>
+            <div class="streak-stats-block streak-current">
+              <div class="streak-stats-circle">
+                <span class="streak-stats-value" id="streak-current">10</span>
+              </div>
+              <div
+                class="streak-stats-label streak-current-label stats-responsive-text-emphasis"
+              >
+                Current Streak
+              </div>
+              <div class="streak-stats-date" id="streak-current-date">
+                Jul 21 - Jul 30
+              </div>
+            </div>
+            <div class="streak-stats-block">
+              <div class="streak-stats-value" id="streak-longest">27</div>
+              <div class="streak-stats-label stats-responsive-text">
+                Longest Streak
+              </div>
+              <div class="streak-stats-date" id="streak-longest-date">
+                May 4 - May 30
+              </div>
+            </div>
           </div>
         </div>
-        <div class="pomodoro-usage-row">
-          <div class="pomodoro-usage-entry">
-            <span class="pomodoro-dot reverse" aria-hidden="true"></span>
-            <span class="pomodoro-usage-label">Reverse Pomodoro</span>
-            <span class="pomodoro-usage-value" id="pomodoro-reverse-percent">0%</span>
+
+        <!-- Achievements Card -->
+        <div class="user-stats-card achievements-card">
+          <div class="user-stats-header">
+            <div class="user-stats-title-section">
+              <span class="user-stats-title">Achievements</span>
+            </div>
+          </div>
+          <div class="user-stats-content">
+            <div id="achievements-container"></div>
+          </div>
+        </div>
+
+        <!-- User Stats Card -->
+        <div class="user-stats-card">
+          <div class="user-stats-header">
+            <div class="user-stats-title-section">
+              <span class="user-stats-title" id="user-stats-title"
+                >User's Stats</span
+              >
+            </div>
+          </div>
+          <div class="user-stats-content">
+            <div class="user-stats-row" data-stat="totalFocusTime">
+              <span class="user-stats-label">⭐ Total Focus Time:</span>
+              <span class="user-stats-value" id="user-total-focus-time"
+                >0 mins (0 hrs)</span
+              >
+            </div>
+            <div class="user-stats-row">
+              <span class="user-stats-label">📈 Completed Sessions:</span>
+              <span class="user-stats-value" id="user-total-sessions">0</span>
+            </div>
+            <div class="user-stats-row" data-stat="mostProductiveDay">
+              <span class="user-stats-label">🏆 Most Productive Day:</span>
+              <span class="user-stats-value" id="user-most-productive-day"
+                >0 hrs on Never</span
+              >
+            </div>
+            <div class="user-stats-row">
+              <span class="user-stats-label">🍅 Classic Pomodoros:</span>
+              <span class="user-stats-value" id="user-classic-pomodoros"
+                >0</span
+              >
+            </div>
+            <div class="user-stats-row">
+              <span class="user-stats-label">🔄 Reverse Pomodoros:</span>
+              <span class="user-stats-value" id="user-reverse-pomodoros"
+                >0</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Most Used Pomodoro Card -->
+        <div
+          class="user-stats-card pomodoro-usage-card"
+          id="pomodoro-usage-card"
+        >
+          <div class="user-stats-header">
+            <div class="user-stats-title-section">
+              <span class="user-stats-title">Most Used Pomodoro</span>
+            </div>
+          </div>
+          <div class="user-stats-content">
+            <!-- Segmented horizontal bar (visual split between Classic and Reverse usage) -->
+            <div
+              class="pomodoro-segmented-container"
+              style="margin-top: 6px; margin-bottom: 12px"
+            >
+              <div
+                class="pomodoro-segmented-bar"
+                id="pomodoro-segmented-bar"
+                aria-hidden="true"
+              >
+                <div
+                  class="pomodoro-segment classic"
+                  id="pomodoro-segment-classic"
+                  aria-hidden="true"
+                ></div>
+                <div
+                  class="pomodoro-segment reverse"
+                  id="pomodoro-segment-reverse"
+                  aria-hidden="true"
+                ></div>
+              </div>
+              <div
+                id="pomodoro-segmented-desc"
+                class="sr-only"
+                aria-live="polite"
+                style="
+                  position: absolute;
+                  left: -9999px;
+                  top: auto;
+                  width: 1px;
+                  height: 1px;
+                  overflow: hidden;
+                "
+              >
+                Most used pomodoro breakdown
+              </div>
+            </div>
+            <div class="pomodoro-usage-row">
+              <div class="pomodoro-usage-entry">
+                <span class="pomodoro-dot classic" aria-hidden="true"></span>
+                <span class="pomodoro-usage-label">Classic Pomodoro</span>
+                <span class="pomodoro-usage-value" id="pomodoro-classic-percent"
+                  >0%</span
+                >
+              </div>
+            </div>
+            <div class="pomodoro-usage-row">
+              <div class="pomodoro-usage-entry">
+                <span class="pomodoro-dot reverse" aria-hidden="true"></span>
+                <span class="pomodoro-usage-label">Reverse Pomodoro</span>
+                <span class="pomodoro-usage-value" id="pomodoro-reverse-percent"
+                  >0%</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Data Recovery Notice -->
+        <div class="data-recovery-notice">
+          <div class="notice-icon">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+          </div>
+          <div class="notice-content">
+            <h3 class="notice-title">Missing Data?</h3>
+            <p class="notice-text">
+              If your <strong>productivity graph</strong>,
+              <strong>streaks</strong>, or
+              <strong>total focus points</strong> have disappeared after an
+              update, please
+              <a href="feedback.html" class="notice-link">submit feedback</a> or
+              email me at
+              <a href="mailto:brianyabutech@gmail.com" class="notice-link"
+                ><strong>brianyabutech@gmail.com</strong></a
+              >
+              so I can help you recover your data.
+            </p>
+          </div>
+        </div>
+
+        <!-- Troubleshooting Notice -->
+        <div class="data-recovery-notice">
+          <div class="notice-icon">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+              ></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+          </div>
+          <div class="notice-content">
+            <h3 class="notice-title">Experiencing Bugs or Version Issues?</h3>
+            <p class="notice-text">
+              Try refreshing the page first. If you're using a web browser,
+              press <strong>Ctrl + Shift + R</strong> (or
+              <strong>Cmd + Shift + R</strong> on Mac) to perform a hard
+              refresh. If the issue persists, please
+              <a href="feedback.html" class="notice-link">submit feedback</a> or
+              email me at
+              <a href="mailto:brianyabutech@gmail.com" class="notice-link"
+                ><strong>brianyabutech@gmail.com</strong></a
+              >.
+            </p>
           </div>
         </div>
       </div>
+
+      <section
+        class="pomodoro-preview"
+        aria-label="Introduction to Pomodoro Technique"
+      >
+        <div class="preview-content">
+          <h2 class="article-title">📚 What is the Pomodoro Technique?</h2>
+          <p class="article-preview">
+            Think in tomatoes, not hours. The Pomodoro Technique is a
+            revolutionary time management method that breaks your workday into
+            focused 25-minute sessions, followed by refreshing breaks. Created
+            by <b>Francesco Cirillo</b>, this scientifically-proven approach has
+            helped millions achieve better focus and work-life balance.
+          </p>
+          <div class="preview-features">
+            <span class="feature-tag">🧠 Enhanced Mental Clarity</span>
+            <span class="feature-tag">⚡ 25-Minute Focus Session</span>
+            <span class="feature-tag">🎯 70% Productivity Boost</span>
+            <span class="feature-tag">📚 Master Time Management</span>
+          </div>
+
+          <a href="pomodoro.html" class="learn-more-btn">
+            Learn More About the Pomodoro Technique
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+        </div>
+      </section>
+
+      <!-- UPDATE!) -->
+      <footer class="footer">
+        <div class="footer-content">
+          <div class="footer-brand">
+            © 2025 <strong>Customodoro</strong>
+            <span class="footer-version">v3.7.2</span>
+            • Handcrafted by <strong><em>YabuTech</em></strong>
+          </div>
+          <nav class="footer-links">
+            <a href="#" id="about-link-footer">
+              <svg
+                class="footer-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+              <span>About</span>
+            </a>
+            <span class="footer-divider">•</span>
+            <a href="mailto:yabutech@gmail.com">
+              <svg
+                class="footer-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                ></path>
+                <polyline points="22,6 12,13 2,6"></polyline>
+              </svg>
+              <span>Contact</span>
+            </a>
+            <span class="footer-divider">•</span>
+            <a
+              href="https://wakey2x.vercel.app/"
+              target="_blank"
+              rel="noopener"
+            >
+              <svg
+                class="footer-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                ></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+              <span>Try Other App</span>
+            </a>
+            <span class="footer-divider">•</span>
+            <a
+              href="https://www.linkedin.com/in/brian-yabut/"
+              target="_blank"
+              rel="noopener"
+            >
+              <svg
+                class="footer-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
+                ></path>
+                <rect x="2" y="9" width="4" height="12"></rect>
+                <circle cx="4" cy="4" r="2"></circle>
+              </svg>
+              <span>Connect</span>
+            </a>
+            <span class="footer-divider">•</span>
+            <a href="feedback.html">
+              <svg
+                class="footer-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                ></path>
+              </svg>
+              <span>Feedback</span>
+            </a>
+          </nav>
+        </div>
+      </footer>
     </div>
-  
-  <!-- Data Recovery Notice -->
-<div class="data-recovery-notice">
-  <div class="notice-icon">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="10"></circle>
-      <line x1="12" y1="8" x2="12" y2="12"></line>
-      <line x1="12" y1="16" x2="12.01" y2="16"></line>
-    </svg>
-  </div>
-  <div class="notice-content">
-    <h3 class="notice-title">Missing Data?</h3>
-    <p class="notice-text">
-      If your <strong>productivity graph</strong>, <strong>streaks</strong>, or <strong>total focus points</strong> have disappeared after an update, 
-      please <a href="feedback.html" class="notice-link">submit feedback</a> or 
-      email me at <a href="mailto:brianyabutech@gmail.com" class="notice-link"><strong>brianyabutech@gmail.com</strong></a> so I can help you recover your data.
-    </p>
-  </div>
-</div>
 
-<!-- Troubleshooting Notice -->
-<div class="data-recovery-notice">
-  <div class="notice-icon">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-      <line x1="12" y1="9" x2="12" y2="13"></line>
-      <line x1="12" y1="17" x2="12.01" y2="17"></line>
-    </svg>
-  </div>
-  <div class="notice-content">
-    <h3 class="notice-title">Experiencing Bugs or Version Issues?</h3>
-    <p class="notice-text">
-      Try refreshing the page first. If you're using a web browser, press <strong>Ctrl + Shift + R</strong> (or <strong>Cmd + Shift + R</strong> on Mac) to perform a hard refresh. 
-      If the issue persists, please <a href="feedback.html" class="notice-link">submit feedback</a> or 
-      email me at <a href="mailto:brianyabutech@gmail.com" class="notice-link"><strong>brianyabutech@gmail.com</strong></a>.
-    </p>
-  </div>
-</div>
-
-  </div>
-
-  <section class="pomodoro-preview" aria-label="Introduction to Pomodoro Technique">
-  <div class="preview-content">
-    <h2 class="article-title">📚 What is the Pomodoro Technique?</h2>
-    <p class="article-preview">
-      Think in tomatoes, not hours. The Pomodoro Technique is a revolutionary time management method that breaks your workday into focused 25-minute sessions, followed by refreshing breaks. Created by <b>Francesco Cirillo</b>, this scientifically-proven approach has helped millions achieve better focus and work-life balance.
-    </p>
-    <div class="preview-features">
-      <span class="feature-tag">🧠 Enhanced Mental Clarity</span>
-      <span class="feature-tag">⚡ 25-Minute Focus Session</span>
-      <span class="feature-tag">🎯 70% Productivity Boost</span>
-      <span class="feature-tag">📚 Master Time Management</span>
-    </div>
-  
-    <a href="pomodoro.html" class="learn-more-btn">
-      Learn More About the Pomodoro Technique
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="5" y1="12" x2="19" y2="12"></line>
-        <polyline points="12 5 19 12 12 19"></polyline>
+    <!-- Fullscreen Button -->
+    <button class="fullscreen-btn" id="fullscreen-btn" style="display: none">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path
+          d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"
+          class="enter-fullscreen-icon"
+        ></path>
+        <path
+          d="M8 15H5v3M19 15h3v3M19 9h3V6M8 9H5V6"
+          class="exit-fullscreen-icon"
+          style="display: none"
+        ></path>
       </svg>
-    </a>
-  </div>
-</section>
+    </button>
 
-    <!-- UPDATE!) -->
-    <footer class="footer">
-      <div class="footer-content">
-        <div class="footer-brand">
-          © 2025 <strong>Customodoro</strong>
-          <span class="footer-version">v3.7.2</span>
-          • Handcrafted by <strong><em>YabuTech</em></strong>
+    <!-- Focus Mode Button -->
+    <button
+      class="focus-mode-btn"
+      id="focus-mode-btn"
+      title="Focus Mode (Alt+F)"
+      style="display: none"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="12" cy="12" r="10"></circle>
+        <circle cx="12" cy="12" r="4"></circle>
+        <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+      </svg>
+    </button>
+
+    <!-- Settings Button -->
+    <button class="settings-btn" id="settings-btn" style="display: none">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="12" cy="12" r="3"></circle>
+        <path
+          d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
+        ></path>
+      </svg>
+    </button>
+
+    <!-- Settings Modal -->
+    <div class="settings-modal" id="settings-modal">
+      <div class="settings-content">
+        <!-- Add sidebar navigation -->
+        <div class="settings-sidebar">
+          <div class="settings-nav-item active" data-section="timer">
+            Reverse Timer
+          </div>
+          <div class="settings-nav-item" data-section="sound">Sound</div>
+          <div class="settings-nav-item" data-section="auto">Auto Start</div>
+          <div class="settings-nav-item" data-section="productivity">
+            Productivity <span class="bug-tag">BUG</span>
+          </div>
+          <div class="settings-nav-item" data-section="bgm">
+            Music <span class="beta-tag">BETA</span>
+          </div>
+          <div class="settings-nav-item" data-section="theme">
+            Theme <span class="new-tag">NEW</span>
+          </div>
+          <div class="settings-nav-item" data-section="sync">
+            Sync Data<span class="new-tag">NEW</span>
+          </div>
         </div>
-        <nav class="footer-links">
-          <a href="#" id="about-link-footer">
-            <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-            <span>About</span>
-          </a>
-          <span class="footer-divider">•</span>
-          <a href="mailto:yabutech@gmail.com">
-            <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-            <span>Contact</span>
-          </a>
-          <span class="footer-divider">•</span>
-          <a href="https://wakey2x.vercel.app/" target="_blank" rel="noopener">
-            <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            <span>Try Other App</span>
-          </a>
-          <span class="footer-divider">•</span>
-          <a href="https://www.linkedin.com/in/brian-yabut/" target="_blank" rel="noopener">
-            <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
-            <span>Connect</span>
-          </a>
-          <span class="footer-divider">•</span>
-          <a href="feedback.html">
-            <svg class="footer-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-            <span>Feedback</span>
-          </a>
-        </nav>
-      </div>
-    </footer>
-  </div>
 
-  <!-- Fullscreen Button -->
-  <button class="fullscreen-btn" id="fullscreen-btn" style="display: none;">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" class="enter-fullscreen-icon"></path>
-      <path d="M8 15H5v3M19 15h3v3M19 9h3V6M8 9H5V6" class="exit-fullscreen-icon" style="display: none;"></path>
-    </svg>
-  </button>
+        <div class="settings-main">
+          <div class="settings-header">
+            <h2 class="settings-title">Settings</h2>
+            <button class="settings-close" id="settings-close">&times;</button>
+          </div>
 
-  <!-- Focus Mode Button -->
-  <button class="focus-mode-btn" id="focus-mode-btn" title="Focus Mode (Alt+F)" style="display: none;">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="10"></circle>
-      <circle cx="12" cy="12" r="4"></circle>
-      <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
-    </svg>
-  </button>
-  
-  <!-- Settings Button -->
-  <button class="settings-btn" id="settings-btn" style="display: none;">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="3"></circle>
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-    </svg>
-  </button>
-  
-  <!-- Settings Modal -->
-  <div class="settings-modal" id="settings-modal">
-    <div class="settings-content">
-      <!-- Add sidebar navigation -->      <div class="settings-sidebar">
-        <div class="settings-nav-item active" data-section="timer">Reverse Timer</div>
-        <div class="settings-nav-item" data-section="sound">Sound</div>
-        <div class="settings-nav-item" data-section="auto">Auto Start</div>
-        <div class="settings-nav-item" data-section="productivity">Productivity <span class="bug-tag">BUG</span></div>
-        <div class="settings-nav-item" data-section="bgm">Music <span class="beta-tag">BETA</span></div>
-        <div class="settings-nav-item" data-section="theme">Theme <span class="new-tag">NEW</span></div>
-        <div class="settings-nav-item" data-section="sync">Sync Data<span class="new-tag">NEW</span></div>
-      </div>
-      
-      <div class="settings-main">
-        <div class="settings-header">
-          <h2 class="settings-title">Settings</h2>
-          <button class="settings-close" id="settings-close">&times;</button>
-        </div>
-        
-        <div class="settings-body">
-          <!-- Reverse Timer Settings Section -->
-          <div class="settings-section active" id="timer-section">
-            <h3 class="settings-section-title">Reverse Timer Settings</h3>
-           <div class="settings-row">
-             <div class="settings-label">Break Logic Mode</div>
-             <div class="select-wrapper">
-               <select class="theme-selector" id="break-logic-mode-selector">
-                 <option value="default">Standard 1hr (Default)</option>
-                 <option value="dynamic">Custom Timer (Dynamic)</option>
-               </select>
-             </div>
-           </div>
-            <div class="settings-row">
-              <div class="settings-label">Max Work Time (minutes)</div>
-              <div class="time-input-group">
-                <button class="time-btn" id="max-time-minus-btn">-</button>
-                <input type="number" class="time-input" id="max-time" value="60" min="15" max="360">
-                <button class="time-btn" id="max-time-plus-btn">+</button>
+          <div class="settings-body">
+            <!-- Reverse Timer Settings Section -->
+            <div class="settings-section active" id="timer-section">
+              <h3 class="settings-section-title">Reverse Timer Settings</h3>
+              <div class="settings-row">
+                <div class="settings-label">Break Logic Mode</div>
+                <div class="select-wrapper">
+                  <select class="theme-selector" id="break-logic-mode-selector">
+                    <option value="default">Standard 1hr (Default)</option>
+                    <option value="dynamic">Custom Timer (Dynamic)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-label">Max Work Time (minutes)</div>
+                <div class="time-input-group">
+                  <button class="time-btn" id="max-time-minus-btn">-</button>
+                  <input
+                    type="number"
+                    class="time-input"
+                    id="max-time"
+                    value="60"
+                    min="15"
+                    max="360"
+                  />
+                  <button class="time-btn" id="max-time-plus-btn">+</button>
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-label" id="break1-label">
+                  Break Time (5-20 mins work)
+                </div>
+                <div class="time-input-group">
+                  <button class="time-btn" id="break1-minus-btn">-</button>
+                  <input
+                    type="number"
+                    class="time-input"
+                    id="break1-time"
+                    value="2"
+                    min="1"
+                    max="360"
+                  />
+                  <button class="time-btn" id="break1-plus-btn">+</button>
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-label" id="break2-label">
+                  Break Time (21-30 mins work)
+                </div>
+                <div class="time-input-group">
+                  <button class="time-btn" id="break2-minus-btn">-</button>
+                  <input
+                    type="number"
+                    class="time-input"
+                    id="break2-time"
+                    value="5"
+                    min="2"
+                    max="360"
+                  />
+                  <button class="time-btn" id="break2-plus-btn">+</button>
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-label" id="break3-label">
+                  Break Time (31-45 mins work)
+                </div>
+                <div class="time-input-group">
+                  <button class="time-btn" id="break3-minus-btn">-</button>
+                  <input
+                    type="number"
+                    class="time-input"
+                    id="break3-time"
+                    value="10"
+                    min="5"
+                    max="360"
+                  />
+                  <button class="time-btn" id="break3-plus-btn">+</button>
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-label" id="break4-label">
+                  Break Time (46-55 mins work)
+                </div>
+                <div class="time-input-group">
+                  <button class="time-btn" id="break4-minus-btn">-</button>
+                  <input
+                    type="number"
+                    class="time-input"
+                    id="break4-time"
+                    value="15"
+                    min="10"
+                    max="360"
+                  />
+                  <button class="time-btn" id="break4-plus-btn">+</button>
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-label" id="break5-label">
+                  Break Time (56-60 mins work)
+                </div>
+                <div class="time-input-group">
+                  <button class="time-btn" id="break5-minus-btn">-</button>
+                  <input
+                    type="number"
+                    class="time-input"
+                    id="break5-time"
+                    value="30"
+                    min="15"
+                    max="360"
+                  />
+                  <button class="time-btn" id="break5-plus-btn">+</button>
+                </div>
               </div>
             </div>
-            <div class="settings-row">
-              <div class="settings-label" id="break1-label">Break Time (5-20 mins work)</div>
-              <div class="time-input-group">
-                <button class="time-btn" id="break1-minus-btn">-</button>
-                <input type="number" class="time-input" id="break1-time" value="2" min="1" max="360">
-                <button class="time-btn" id="break1-plus-btn">+</button>
-              </div>
-            </div>
-            <div class="settings-row">
-              <div class="settings-label" id="break2-label">Break Time (21-30 mins work)</div>
-              <div class="time-input-group">
-                <button class="time-btn" id="break2-minus-btn">-</button>
-                <input type="number" class="time-input" id="break2-time" value="5" min="2" max="360">
-                <button class="time-btn" id="break2-plus-btn">+</button>
-              </div>
-            </div>
-            <div class="settings-row">
-              <div class="settings-label" id="break3-label">Break Time (31-45 mins work)</div>
-              <div class="time-input-group">
-                <button class="time-btn" id="break3-minus-btn">-</button>
-                <input type="number" class="time-input" id="break3-time" value="10" min="5" max="360">
-                <button class="time-btn" id="break3-plus-btn">+</button>
-              </div>
-            </div>
-            <div class="settings-row">
-              <div class="settings-label" id="break4-label">Break Time (46-55 mins work)</div>
-              <div class="time-input-group">
-                <button class="time-btn" id="break4-minus-btn">-</button>
-                <input type="number" class="time-input" id="break4-time" value="15" min="10" max="360">
-                <button class="time-btn" id="break4-plus-btn">+</button>
-              </div>
-            </div>
-            <div class="settings-row">
-              <div class="settings-label" id="break5-label">Break Time (56-60 mins work)</div>
-              <div class="time-input-group">
-                <button class="time-btn" id="break5-minus-btn">-</button>
-                <input type="number" class="time-input" id="break5-time" value="30" min="15" max="360">
-                <button class="time-btn" id="break5-plus-btn">+</button>
-              </div>
-            </div>
-          </div>
-          
-           <!-- Sound Settings Section -->
-          <div class="settings-section" id="sound-section">
-            <h3 class="settings-section-title">Sound Settings</h3>
 
-            <div class="settings-row">
-              <div class="settings-label">Select Session Alert Sound:</div>
-              <div class="select-wrapper">
-                <select class="sound-selector" id="pomodoro-sound-selector">
-                  <option value="bell.mp3">Bell (Default)</option>
-                  <option value="alarm.mp3">iPhone Alarm Bell</option>
-                  <option value="level_up.mp3">Level Up</option>
-                  <option value="message_alert.mp3">Message Alert</option>
-                </select>
+            <!-- Sound Settings Section -->
+            <div class="settings-section" id="sound-section">
+              <h3 class="settings-section-title">Sound Settings</h3>
+
+              <div class="settings-row">
+                <div class="settings-label">Select Session Alert Sound:</div>
+                <div class="select-wrapper">
+                  <select class="sound-selector" id="pomodoro-sound-selector">
+                    <option value="bell.mp3">Bell (Default)</option>
+                    <option value="alarm.mp3">iPhone Alarm Bell</option>
+                    <option value="level_up.mp3">Level Up</option>
+                    <option value="message_alert.mp3">Message Alert</option>
+                  </select>
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-label">Session Sound Volume</div>
+                <div class="volume-container">
+                  <input
+                    type="range"
+                    class="volume-slider"
+                    id="pomodoro-volume-slider"
+                    min="0"
+                    max="100"
+                    value="60"
+                  />
+                  <div
+                    class="volume-percentage"
+                    id="pomodoro-volume-percentage"
+                  >
+                    60%
+                  </div>
+                </div>
+              </div>
+
+              <div class="settings-row">
+                <div class="settings-label">Select Break Alert Sound:</div>
+                <div class="select-wrapper">
+                  <select class="sound-selector" id="break-sound-selector">
+                    <option value="bell.mp3">Bell (Default)</option>
+                    <option value="alarm.mp3">iPhone Alarm Bell</option>
+                    <option value="level_up.mp3">Level Up</option>
+                    <option value="message_alert.mp3">Message Alert</option>
+                  </select>
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-label">Break Sound Volume</div>
+                <div class="volume-container">
+                  <input
+                    type="range"
+                    class="volume-slider"
+                    id="break-volume-slider"
+                    min="0"
+                    max="100"
+                    value="60"
+                  />
+                  <div class="volume-percentage" id="break-volume-percentage">
+                    60%
+                  </div>
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-label">Select Timer Sound:</div>
+                <div class="select-wrapper">
+                  <select class="sound-selector" id="timer-sound-selector">
+                    <option value="none">None (Default)</option>
+                    <option value="ticking">Wall Clock Ticking</option>
+                    <option value="whitenoise" disabled>White Noise</option>
+                    <option value="brownnoise" disabled>Brown Noise</option>
+                  </select>
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-label">Timer Sound Volume</div>
+                <div class="volume-container">
+                  <input
+                    type="range"
+                    class="volume-slider"
+                    id="timer-sound-volume-slider"
+                    min="0"
+                    max="100"
+                    value="60"
+                  />
+                  <div
+                    class="volume-percentage"
+                    id="timer-sound-volume-percentage"
+                  >
+                    60%
+                  </div>
+                </div>
+              </div>
+              <div class="settings-row">
+                <div class="settings-label">
+                  Timer Sound Effects (UI Click Sound)
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="sound-effects-toggle" checked />
+                  <span class="slider-toggle"></span>
+                </label>
+              </div>
+              <div class="settings-row">
+                <div class="settings-label">
+                  End of Session Alarm (Alert Sound)
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="alarm-toggle" checked />
+                  <span class="slider-toggle"></span>
+                </label>
+              </div>
+              <div class="settings-row sound-test-row">
+                <div class="settings-label">Test Sounds</div>
+                <div class="sound-test-buttons">
+                  <button class="sound-test-btn" id="test-click-sound">
+                    UI Sound 🔊
+                  </button>
+                  <button class="sound-test-btn" id="test-pomodoro-sound">
+                    Session Alert 🔊
+                  </button>
+                  <button class="sound-test-btn" id="test-break-sound">
+                    Break Alert 🔊
+                  </button>
+                  <button class="sound-test-btn" id="test-timer-sound">
+                    Timer Sound 🔊
+                  </button>
+                </div>
               </div>
             </div>
-            <div class="settings-row">
-              <div class="settings-label">Session Sound Volume</div>
-              <div class="volume-container">
-                <input type="range" class="volume-slider" id="pomodoro-volume-slider" min="0" max="100" value="60">
-                <div class="volume-percentage" id="pomodoro-volume-percentage">60%</div>
+
+            <!-- Auto Start Section -->
+            <div class="settings-section" id="auto-section">
+              <h3 class="settings-section-title">Auto Start</h3>
+              <div class="settings-row">
+                <div class="settings-label">
+                  Auto-start Breaks
+                  <span class="info-icon" id="auto-break-info">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="16" x2="12" y2="12"></line>
+                      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                  </span>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="auto-break-toggle" checked />
+                  <span class="slider-toggle"></span>
+                </label>
+              </div>
+
+              <div class="settings-note" style="margin-top: 16px">
+                <strong>💡 Troubleshooting:</strong> If auto-start isn't
+                working, try toggling the switch off and back on, then click
+                "Save changes" to reset the feature.
               </div>
             </div>
-            
-            <div class="settings-row">
-              <div class="settings-label">Select Break Alert Sound:</div>
-              <div class="select-wrapper">
-                <select class="sound-selector" id="break-sound-selector">
-                  <option value="bell.mp3">Bell (Default)</option>
-                  <option value="alarm.mp3">iPhone Alarm Bell</option>
-                  <option value="level_up.mp3">Level Up</option>
-                  <option value="message_alert.mp3">Message Alert</option>
-                </select>
-              </div>
-            </div>
-            <div class="settings-row">
-              <div class="settings-label">Break Sound Volume</div>
-              <div class="volume-container">
-                <input type="range" class="volume-slider" id="break-volume-slider" min="0" max="100" value="60">
-                <div class="volume-percentage" id="break-volume-percentage">60%</div>
-              </div>
-            </div>
-            <div class="settings-row">
-              <div class="settings-label">Select Timer Sound:</div>
-              <div class="select-wrapper">
-                <select class="sound-selector" id="timer-sound-selector">
-                  <option value="none">None (Default)</option>
-                  <option value="ticking">Wall Clock Ticking</option>
-                  <option value="whitenoise" disabled>White Noise</option>
-                  <option value="brownnoise" disabled>Brown Noise</option>
-                </select>
-              </div>
-            </div>
-            <div class="settings-row">
-              <div class="settings-label">Timer Sound Volume</div>
-              <div class="volume-container">
-                <input type="range" class="volume-slider" id="timer-sound-volume-slider" min="0" max="100" value="60">
-                <div class="volume-percentage" id="timer-sound-volume-percentage">60%</div>
-              </div>
-            </div>
-            <div class="settings-row">
-              <div class="settings-label">Timer Sound Effects (UI Click Sound)</div>
-              <label class="toggle-switch">
-                <input type="checkbox" id="sound-effects-toggle" checked>
-                <span class="slider-toggle"></span>
-              </label>
-            </div>
-            <div class="settings-row">
-              <div class="settings-label">End of Session Alarm (Alert Sound)</div>
-              <label class="toggle-switch">
-                <input type="checkbox" id="alarm-toggle" checked>
-                <span class="slider-toggle"></span>
-              </label>
-            </div>
-            <div class="settings-row sound-test-row">
-              <div class="settings-label">Test Sounds</div>
-              <div class="sound-test-buttons">
-                <button class="sound-test-btn" id="test-click-sound">UI Sound 🔊</button>
-                <button class="sound-test-btn" id="test-pomodoro-sound">Session Alert 🔊</button>
-                <button class="sound-test-btn" id="test-break-sound">Break Alert 🔊</button>
-                <button class="sound-test-btn" id="test-timer-sound">Timer Sound 🔊</button>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Auto Start Section -->
-          <div class="settings-section" id="auto-section">
-            <h3 class="settings-section-title">Auto Start</h3>
-            <div class="settings-row">
-              <div class="settings-label">
-                Auto-start Breaks
-                <span class="info-icon" id="auto-break-info">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="16" x2="12" y2="12"></line>
-                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                  </svg>
-                </span>
-              </div>
-              <label class="toggle-switch">
-                <input type="checkbox" id="auto-break-toggle" checked>
-                <span class="slider-toggle"></span>
-              </label>            </div>
-            
-            <div class="settings-note" style="margin-top: 16px;">
-              <strong>💡 Troubleshooting:</strong> If auto-start isn't working, try toggling the switch off and back on, then click "Save changes" to reset the feature.
-            </div>
-          </div>
             <!-- Productivity Section -->
-          <div class="settings-section" id="productivity-section">
-            <h3 class="settings-section-title">Productivity</h3>
-            <div class="settings-row">
-              <div class="settings-label">
-                Enable Burn-Up Time Tracker
-                <span class="info-icon" id="burnup-tracker-info">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="16" x2="12" y2="12"></line>
-                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                  </svg>
-                </span>
+            <div class="settings-section" id="productivity-section">
+              <h3 class="settings-section-title">Productivity</h3>
+              <div class="settings-row">
+                <div class="settings-label">
+                  Enable Burn-Up Time Tracker
+                  <span class="info-icon" id="burnup-tracker-info">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="16" x2="12" y2="12"></line>
+                      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                  </span>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="burnup-tracker-toggle" checked />
+                  <span class="slider-toggle"></span>
+                </label>
               </div>
-              <label class="toggle-switch">
-                <input type="checkbox" id="burnup-tracker-toggle" checked>
-                <span class="slider-toggle"></span>
-              </label>
-            </div>              <!-- Burn-Up Tracker Design Selector -->
-            <div class="settings-row tracker-design-row">
-              <div class="settings-label">
-                Burn-Up Tracker Design Style
-                <span class="info-icon" id="tracker-design-info">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="16" x2="12" y2="12"></line>
-                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                  </svg>
-                </span>
-              </div>
-              
-              <div class="tracker-design-selector">
-                <div class="tracker-design-options">
-                  <div class="tracker-design-option">
-                    <input type="radio" name="tracker-design" value="match-theme" id="design-match-theme" checked>
-                    <div class="option-content">
-                      <div class="option-text">
-                        <div class="option-label">Match Theme</div>
-                        <div class="option-description">Uses your selected theme style</div>
-                      </div>
-                      <div class="preview-mini-tracker preview-match-theme">
-                        <div class="mini-tracker-header">
-                          <span class="mini-tracker-title">BURN-UP</span>
-                          <div class="mini-tracker-indicator"></div>
+              <!-- Burn-Up Tracker Design Selector -->
+              <div class="settings-row tracker-design-row">
+                <div class="settings-label">
+                  Burn-Up Tracker Design Style
+                  <span class="info-icon" id="tracker-design-info">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="16" x2="12" y2="12"></line>
+                      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                  </span>
+                </div>
+
+                <div class="tracker-design-selector">
+                  <div class="tracker-design-options">
+                    <div class="tracker-design-option">
+                      <input
+                        type="radio"
+                        name="tracker-design"
+                        value="match-theme"
+                        id="design-match-theme"
+                        checked
+                      />
+                      <div class="option-content">
+                        <div class="option-text">
+                          <div class="option-label">Match Theme</div>
+                          <div class="option-description">
+                            Uses your selected theme style
+                          </div>
                         </div>
-                        <div class="mini-progress-container">
-                          <div class="mini-progress-bar"></div>
-                        </div>
-                        <div class="mini-tracker-stats">
-                          <span class="mini-stat">15:30</span>
-                          <span class="mini-percentage">62%</span>
-                          <span class="mini-stat">25:00</span>
+                        <div class="preview-mini-tracker preview-match-theme">
+                          <div class="mini-tracker-header">
+                            <span class="mini-tracker-title">BURN-UP</span>
+                            <div class="mini-tracker-indicator"></div>
+                          </div>
+                          <div class="mini-progress-container">
+                            <div class="mini-progress-bar"></div>
+                          </div>
+                          <div class="mini-tracker-stats">
+                            <span class="mini-stat">15:30</span>
+                            <span class="mini-percentage">62%</span>
+                            <span class="mini-stat">25:00</span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  
-                  <div class="tracker-design-option">
-                    <input type="radio" name="tracker-design" value="use-dark-style" id="design-dark-style">
-                    <div class="option-content">
-                      <div class="option-text">
-                        <div class="option-label">Use Dark Mode Style</div>
-                        <div class="option-description">Always use dark theme design</div>
-                      </div>
-                      <div class="preview-mini-tracker preview-dark-style">
-                        <div class="mini-tracker-header">
-                          <span class="mini-tracker-title">BURN-UP</span>
-                          <div class="mini-tracker-indicator"></div>
+
+                    <div class="tracker-design-option">
+                      <input
+                        type="radio"
+                        name="tracker-design"
+                        value="use-dark-style"
+                        id="design-dark-style"
+                      />
+                      <div class="option-content">
+                        <div class="option-text">
+                          <div class="option-label">Use Dark Mode Style</div>
+                          <div class="option-description">
+                            Always use dark theme design
+                          </div>
                         </div>
-                        <div class="mini-progress-container">
-                          <div class="mini-progress-bar"></div>
-                        </div>
-                        <div class="mini-tracker-stats">
-                          <span class="mini-stat">15:30</span>
-                          <span class="mini-percentage">62%</span>
-                          <span class="mini-stat">25:00</span>
+                        <div class="preview-mini-tracker preview-dark-style">
+                          <div class="mini-tracker-header">
+                            <span class="mini-tracker-title">BURN-UP</span>
+                            <div class="mini-tracker-indicator"></div>
+                          </div>
+                          <div class="mini-progress-container">
+                            <div class="mini-progress-bar"></div>
+                          </div>
+                          <div class="mini-tracker-stats">
+                            <span class="mini-stat">15:30</span>
+                            <span class="mini-percentage">62%</span>
+                            <span class="mini-stat">25:00</span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  
-                  <div class="tracker-design-option">
-                    <input type="radio" name="tracker-design" value="use-kimi-style" id="design-kimi-style">
-                    <div class="option-content">
-                      <div class="option-text">
-                        <div class="option-label">Use Kimi no Nawa Style</div>
-                        <div class="option-description">Always use transparent design</div>
-                      </div>
-                      <div class="preview-mini-tracker preview-kimi-style">
-                        <div class="mini-tracker-header">
-                          <span class="mini-tracker-title">BURN-UP</span>
-                          <div class="mini-tracker-indicator"></div>
+
+                    <div class="tracker-design-option">
+                      <input
+                        type="radio"
+                        name="tracker-design"
+                        value="use-kimi-style"
+                        id="design-kimi-style"
+                      />
+                      <div class="option-content">
+                        <div class="option-text">
+                          <div class="option-label">Use Kimi no Nawa Style</div>
+                          <div class="option-description">
+                            Always use transparent design
+                          </div>
                         </div>
-                        <div class="mini-progress-container">
-                          <div class="mini-progress-bar"></div>
-                        </div>
-                        <div class="mini-tracker-stats">
-                          <span class="mini-stat">15:30</span>
-                          <span class="mini-percentage">62%</span>
-                          <span class="mini-stat">25:00</span>
+                        <div class="preview-mini-tracker preview-kimi-style">
+                          <div class="mini-tracker-header">
+                            <span class="mini-tracker-title">BURN-UP</span>
+                            <div class="mini-tracker-indicator"></div>
+                          </div>
+                          <div class="mini-progress-container">
+                            <div class="mini-progress-bar"></div>
+                          </div>
+                          <div class="mini-tracker-stats">
+                            <span class="mini-stat">15:30</span>
+                            <span class="mini-percentage">62%</span>
+                            <span class="mini-stat">25:00</span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -809,788 +1344,1198 @@
                 </div>
               </div>
             </div>
-          </div>
-          
-          <!-- BGM Settings Section -->
-          <div class="settings-section" id="bgm-section">
-            <h3 class="settings-section-title">Background Music</h3>
-            <div class="settings-row">
-              <div class="settings-label">Enable Background Music</div>
-              <label class="toggle-switch">
-                <input type="checkbox" id="bgm-toggle" checked>
-                <span class="slider-toggle"></span>
-              </label>
-            </div>
-            
-            <div class="settings-row">
-              <div class="settings-label">Select playlist</div>
-              <div class="select-wrapper">
-                <select class="theme-selector" id="playlist-selector">
-                  <option value="deep-focus">Deep Focus Study</option>
-                  <option value="ambient-long">Ambient Playlist (Long)</option>
-                  <option value="smile-demons">NIKI Playlist</option>
-                  <option value="happy-jazz">Happy Swing Jazz Piano</option>
-                  <option value="gamma-waves">Gamma Waves</option>
-                </select>
+
+            <!-- BGM Settings Section -->
+            <div class="settings-section" id="bgm-section">
+              <h3 class="settings-section-title">Background Music</h3>
+              <div class="settings-row">
+                <div class="settings-label">Enable Background Music</div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="bgm-toggle" checked />
+                  <span class="slider-toggle"></span>
+                </label>
               </div>
-            </div>
-            
-            <div class="settings-row">
-              <div class="settings-label">Music Volume</div>
-              <div class="volume-container">
-                <input type="range" class="volume-slider" id="bgm-volume-slider" min="0" max="100" value="30">
-                <div class="volume-percentage" id="bgm-volume-percentage">30%</div>
+
+              <div class="settings-row">
+                <div class="settings-label">Select playlist</div>
+                <div class="select-wrapper">
+                  <select class="theme-selector" id="playlist-selector">
+                    <option value="deep-focus">Deep Focus Study</option>
+                    <option value="ambient-long">
+                      Ambient Playlist (Long)
+                    </option>
+                    <option value="smile-demons">NIKI Playlist</option>
+                    <option value="happy-jazz">Happy Swing Jazz Piano</option>
+                    <option value="gamma-waves">Gamma Waves</option>
+                  </select>
+                </div>
               </div>
-            </div>
+
+              <div class="settings-row">
+                <div class="settings-label">Music Volume</div>
+                <div class="volume-container">
+                  <input
+                    type="range"
+                    class="volume-slider"
+                    id="bgm-volume-slider"
+                    min="0"
+                    max="100"
+                    value="30"
+                  />
+                  <div class="volume-percentage" id="bgm-volume-percentage">
+                    30%
+                  </div>
+                </div>
+              </div>
 
               <!-- Track List Section -->
-            <div class="bgm-track-list-section">
-              <div class="track-list-header">
-                <h4 class="track-list-title">Track List</h4>                <div class="track-search-container">
-                  <input type="text" class="track-search-input" id="track-search-input" placeholder="Search tracks...">
-                  <svg class="track-search-icon" viewBox="0 0 24 24" width="16" height="16">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <path d="m21 21-4.35-4.35"></path>
-                  </svg>
-                  <button class="track-search-clear" id="track-search-clear" style="display: none;" title="Clear search">
-                    <svg viewBox="0 0 24 24" width="16" height="16">
-                      <path d="M18 6L6 18M6 6l12 12"></path>
+              <div class="bgm-track-list-section">
+                <div class="track-list-header">
+                  <h4 class="track-list-title">Track List</h4>
+                  <div class="track-search-container">
+                    <input
+                      type="text"
+                      class="track-search-input"
+                      id="track-search-input"
+                      placeholder="Search tracks..."
+                    />
+                    <svg
+                      class="track-search-icon"
+                      viewBox="0 0 24 24"
+                      width="16"
+                      height="16"
+                    >
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <button
+                      class="track-search-clear"
+                      id="track-search-clear"
+                      style="display: none"
+                      title="Clear search"
+                    >
+                      <svg viewBox="0 0 24 24" width="16" height="16">
+                        <path d="M18 6L6 18M6 6l12 12"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="track-list-container" id="track-list-container">
+                  <div class="track-list-empty" id="track-list-empty">
+                    Select a playlist to view tracks
+                  </div>
+                  <div class="track-list" id="track-list">
+                    <!-- Tracks will be populated dynamically -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Album Art Section -->
+              <div class="bgm-album-art-section">
+                <div class="bgm-album-art-container">
+                  <img
+                    class="bgm-album-art"
+                    id="bgm-album-art"
+                    src=""
+                    alt="Album Art"
+                    style="display: none"
+                  />
+                  <div
+                    class="bgm-album-art-placeholder"
+                    id="bgm-album-art-placeholder"
+                  >
+                    🎵
+                  </div>
+                </div>
+                <div class="bgm-track-display">
+                  <div class="bgm-current-track" id="bgm-current-track">
+                    No track selected
+                  </div>
+                  <div class="bgm-current-artist" id="bgm-current-artist">
+                    Select a playlist and press play
+                  </div>
+                </div>
+              </div>
+
+              <div class="bgm-player">
+                <div class="bgm-track-info">
+                  <div class="bgm-track-title" id="bgm-track-title">
+                    Select a playlist
+                  </div>
+                  <div class="bgm-track-artist" id="bgm-track-artist">
+                    and press play
+                  </div>
+                </div>
+
+                <div class="bgm-controls">
+                  <button class="bgm-btn bgm-btn-prev" id="bgm-prev-btn">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                      <path
+                        fill="currentColor"
+                        d="M6,18V6H8V18H6M9.5,12L18,6V18L9.5,12Z"
+                      />
+                    </svg>
+                  </button>
+
+                  <button class="bgm-btn bgm-btn-play" id="bgm-play-btn">
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="32"
+                      height="32"
+                      id="bgm-play-icon"
+                    >
+                      <path
+                        fill="currentColor"
+                        d="M8,5.14V19.14L19,12.14L8,5.14Z"
+                      />
+                    </svg>
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="32"
+                      height="32"
+                      id="bgm-pause-icon"
+                      style="display: none"
+                    >
+                      <path
+                        fill="currentColor"
+                        d="M14,19H18V5H14M6,19H10V5H6V19Z"
+                      />
+                    </svg>
+                  </button>
+
+                  <button class="bgm-btn bgm-btn-next" id="bgm-next-btn">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                      <path
+                        fill="currentColor"
+                        d="M16,18H18V6H16M6,18L14.5,12L6,6V18Z"
+                      />
                     </svg>
                   </button>
                 </div>
-              </div>
-              
-              <div class="track-list-container" id="track-list-container">
-                <div class="track-list-empty" id="track-list-empty">
-                  Select a playlist to view tracks
+
+                <div class="bgm-time-display">
+                  <span id="bgm-current-time">0:00</span> /
+                  <span id="bgm-total-time">0:00</span>
                 </div>
-                <div class="track-list" id="track-list">
-                  <!-- Tracks will be populated dynamically -->
+
+                <div class="bgm-progress-container" id="bgm-progress-container">
+                  <div class="bgm-progress-bar" id="bgm-progress-bar"></div>
+                  <div
+                    class="bgm-progress-circle"
+                    id="bgm-progress-circle"
+                  ></div>
                 </div>
-              </div>
-            </div>
-            
-            <!-- Album Art Section -->
-            <div class="bgm-album-art-section">
-              <div class="bgm-album-art-container">
-                <img class="bgm-album-art" id="bgm-album-art" src="" alt="Album Art" style="display: none;">
-                <div class="bgm-album-art-placeholder" id="bgm-album-art-placeholder">
-                  🎵
+
+                <div class="bgm-equalizer">
+                  <div class="bgm-equalizer-bar"></div>
+                  <div class="bgm-equalizer-bar"></div>
+                  <div class="bgm-equalizer-bar"></div>
+                  <div class="bgm-equalizer-bar"></div>
+                  <div class="bgm-equalizer-bar"></div>
+                  <div class="bgm-equalizer-bar"></div>
                 </div>
-              </div>
-              <div class="bgm-track-display">
-                <div class="bgm-current-track" id="bgm-current-track">No track selected</div>
-                <div class="bgm-current-artist" id="bgm-current-artist">Select a playlist and press play</div>
               </div>
             </div>
 
-            <div class="bgm-player">
-              <div class="bgm-track-info">
-                <div class="bgm-track-title" id="bgm-track-title">Select a playlist</div>
-                <div class="bgm-track-artist" id="bgm-track-artist">and press play</div>
-              </div>
-              
-              <div class="bgm-controls">
-                
-                
-                <button class="bgm-btn bgm-btn-prev" id="bgm-prev-btn">
-                  <svg viewBox="0 0 24 24" width="24" height="24">
-                    <path fill="currentColor" d="M6,18V6H8V18H6M9.5,12L18,6V18L9.5,12Z" />
-                  </svg>
-                </button>
-                
-                <button class="bgm-btn bgm-btn-play" id="bgm-play-btn">
-                  <svg viewBox="0 0 24 24" width="32" height="32" id="bgm-play-icon">
-                    <path fill="currentColor" d="M8,5.14V19.14L19,12.14L8,5.14Z" />
-                  </svg>
-                  <svg viewBox="0 0 24 24" width="32" height="32" id="bgm-pause-icon" style="display: none;">
-                    <path fill="currentColor" d="M14,19H18V5H14M6,19H10V5H6V19Z" />
-                  </svg>
-                </button>
-                
-                <button class="bgm-btn bgm-btn-next" id="bgm-next-btn">
-                  <svg viewBox="0 0 24 24" width="24" height="24">
-                    <path fill="currentColor" d="M16,18H18V6H16M6,18L14.5,12L6,6V18Z" />
-                  </svg>
-                </button>
-              </div>
-              
-              <div class="bgm-time-display">
-                <span id="bgm-current-time">0:00</span> / <span id="bgm-total-time">0:00</span>
-              </div>
-              
-              <div class="bgm-progress-container" id="bgm-progress-container">
-                <div class="bgm-progress-bar" id="bgm-progress-bar"></div>
-                <div class="bgm-progress-circle" id="bgm-progress-circle"></div>
-              </div>
-              
-              <div class="bgm-equalizer">
-                <div class="bgm-equalizer-bar"></div>
-                <div class="bgm-equalizer-bar"></div>
-                <div class="bgm-equalizer-bar"></div>
-                <div class="bgm-equalizer-bar"></div>
-                <div class="bgm-equalizer-bar"></div>
-                <div class="bgm-equalizer-bar"></div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Theme Section -->
-          <div class="settings-section" id="theme-section">
-            <h3 class="settings-section-title">Theme Settings</h3>
-            <div class="settings-row">
-              <div class="settings-label">Select theme</div>
-              <div class="select-wrapper">
-                <select class="theme-selector" id="theme-selector">
-                  <option value="light" selected>Light Mode (Default)</option>
-                  <option value="dark">Dark Mode</option>
-                  <option value="rain">Man in the Rain (GIF)</option>                  
-                  <option value="yourname">君の名は</option>
-                  <option value="color">Color Theme</option>
-                  <option value="custom">Custom Theme</option>
-                </select>
-              </div>
-            </div>
-            <div class="settings-row">
-              <div class="settings-label">
-                Locked In Mode when running
-                <span class="info-icon" id="lockedin-mode-info">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="16" x2="12" y2="12"></line>
-                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                  </svg>
-                </span>
-              </div>
-              <label class="toggle-switch">
-                <input type="checkbox" id="lockedin-mode-toggle" checked>
-                <span class="slider-toggle"></span>
-              </label>
-            </div>
-            <div class="theme-uploader">
-              <div class="upload-container">
-                <div class="upload-icon">📷</div>
-                <div class="upload-text">Click or drop an image here</div>
-                <div class="upload-subtext">Supports JPG, PNG, and GIF (max 2MB)</div>
-                <input type="file" class="file-input" id="custom-theme-upload" accept="image/*">
-              </div>
-              <div class="image-preview-container">
-                <img src="" alt="Image Preview" class="image-preview">
-                <div class="image-details">No image selected</div>
-                <div class="image-actions">
-                  <button class="preview-btn">Preview Theme</button>
-                  <button class="remove-btn">Remove</button>
+            <!-- Theme Section -->
+            <div class="settings-section" id="theme-section">
+              <h3 class="settings-section-title">Theme Settings</h3>
+              <div class="settings-row">
+                <div class="settings-label">Select theme</div>
+                <div class="select-wrapper">
+                  <select class="theme-selector" id="theme-selector">
+                    <option value="light" selected>Light Mode (Default)</option>
+                    <option value="dark">Dark Mode</option>
+                    <option value="rain">Man in the Rain (GIF)</option>
+                    <option value="yourname">君の名は</option>
+                    <option value="color">Color Theme</option>
+                    <option value="custom">Custom Theme</option>
+                  </select>
                 </div>
               </div>
-              <div class="settings-note">
-                Upload your own background image to create a custom theme.
-                For best results, use a high-quality landscape image.
+              <div class="settings-row">
+                <div class="settings-label">
+                  Locked In Mode when running
+                  <span class="info-icon" id="lockedin-mode-info">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="16" x2="12" y2="12"></line>
+                      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                  </span>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="lockedin-mode-toggle" checked />
+                  <span class="slider-toggle"></span>
+                </label>
               </div>
-            </div>
-            
-            <!-- Color Theme Selector -->
-            <div class="color-theme-selector" id="color-theme-selector">
-              <div class="color-theme-header">
-                <h4 class="color-theme-title">Choose Color Theme</h4>
-                <div class="color-theme-description">Select a predefined color or create your own</div>
-              </div>
-              
-              <!-- Predefined Color Palette -->
-              <div class="predefined-colors">
-                <div class="color-option" data-color="#A53860" style="background-color: #A53860;" title="Rose Ember">
-                  <div class="color-check" style="display: none;">✓</div>
-                </div>
-                <div class="color-option" data-color="#1B3C53" style="background-color: #1B3C53;" title="Midnight Fjord">
-                  <div class="color-check" style="display: none;">✓</div>
-                </div>
-                <div class="color-option" data-color="#4B352A" style="background-color: #4B352A;" title="Rustic Cocoa">
-                  <div class="color-check" style="display: none;">✓</div>
-                </div>
-                <div class="color-option" data-color="#4F1C51" style="background-color: #4F1C51;" title="Velvet Amethyst">
-                  <div class="color-check" style="display: none;">✓</div>
-                </div>
-                <div class="color-option" data-color="#722323" style="background-color: #722323;" title="Bloodstone Brick">
-                  <div class="color-check" style="display: none;">✓</div>
-                </div>
-              </div>
-              
-              <!-- Custom Color Picker -->
-              <div class="custom-color-picker">
-                <div class="custom-color-label" style="color: white;">
-                  <span class="custom-color-icon" style="color: white;">+</span>
-                  Custom Color:
-                </div>
-                <div class="color-picker-container">
-                  <input type="color" class="color-input" id="custom-color-input" value="#A53860" title="Click to open color picker">
-                  <div class="hex-input-container">
-                    <span class="hex-prefix">#</span>
-                    <input type="text" class="hex-input" id="custom-color-hex" value="4A90E2" placeholder="RRGGBB" maxlength="6">
+              <div class="theme-uploader">
+                <div class="upload-container">
+                  <div class="upload-icon">📷</div>
+                  <div class="upload-text">Click or drop an image here</div>
+                  <div class="upload-subtext">
+                    Supports JPG, PNG, and GIF (max 2MB)
                   </div>
-                  <div class="color-preview-indicator" id="color-preview-indicator"></div>
+                  <input
+                    type="file"
+                    class="file-input"
+                    id="custom-theme-upload"
+                    accept="image/*"
+                  />
+                </div>
+                <div class="image-preview-container">
+                  <img src="" alt="Image Preview" class="image-preview" />
+                  <div class="image-details">No image selected</div>
+                  <div class="image-actions">
+                    <button class="preview-btn">Preview Theme</button>
+                    <button class="remove-btn">Remove</button>
+                  </div>
+                </div>
+                <div class="settings-note">
+                  Upload your own background image to create a custom theme. For
+                  best results, use a high-quality landscape image.
                 </div>
               </div>
-              
-              <!-- Color Theme Actions -->
-              <div class="color-theme-actions">
-                <button class="color-preview-btn" id="color-preview-btn">Preview Color</button>
-                <button class="color-reset-btn" id="color-reset-btn">Reset to Default</button>
-              </div>
-              
-              <div class="settings-note">
-                Color themes apply a solid color background to the light mode layout.
-                Perfect for creating a personalized, distraction-free environment.
+
+              <!-- Color Theme Selector -->
+              <div class="color-theme-selector" id="color-theme-selector">
+                <div class="color-theme-header">
+                  <h4 class="color-theme-title">Choose Color Theme</h4>
+                  <div class="color-theme-description">
+                    Select a predefined color or create your own
+                  </div>
+                </div>
+
+                <!-- Predefined Color Palette -->
+                <div class="predefined-colors">
+                  <div
+                    class="color-option"
+                    data-color="#A53860"
+                    style="background-color: #a53860"
+                    title="Rose Ember"
+                  >
+                    <div class="color-check" style="display: none">✓</div>
+                  </div>
+                  <div
+                    class="color-option"
+                    data-color="#1B3C53"
+                    style="background-color: #1b3c53"
+                    title="Midnight Fjord"
+                  >
+                    <div class="color-check" style="display: none">✓</div>
+                  </div>
+                  <div
+                    class="color-option"
+                    data-color="#4B352A"
+                    style="background-color: #4b352a"
+                    title="Rustic Cocoa"
+                  >
+                    <div class="color-check" style="display: none">✓</div>
+                  </div>
+                  <div
+                    class="color-option"
+                    data-color="#4F1C51"
+                    style="background-color: #4f1c51"
+                    title="Velvet Amethyst"
+                  >
+                    <div class="color-check" style="display: none">✓</div>
+                  </div>
+                  <div
+                    class="color-option"
+                    data-color="#722323"
+                    style="background-color: #722323"
+                    title="Bloodstone Brick"
+                  >
+                    <div class="color-check" style="display: none">✓</div>
+                  </div>
+                </div>
+
+                <!-- Custom Color Picker -->
+                <div class="custom-color-picker">
+                  <div class="custom-color-label" style="color: white">
+                    <span class="custom-color-icon" style="color: white"
+                      >+</span
+                    >
+                    Custom Color:
+                  </div>
+                  <div class="color-picker-container">
+                    <input
+                      type="color"
+                      class="color-input"
+                      id="custom-color-input"
+                      value="#A53860"
+                      title="Click to open color picker"
+                    />
+                    <div class="hex-input-container">
+                      <span class="hex-prefix">#</span>
+                      <input
+                        type="text"
+                        class="hex-input"
+                        id="custom-color-hex"
+                        value="4A90E2"
+                        placeholder="RRGGBB"
+                        maxlength="6"
+                      />
+                    </div>
+                    <div
+                      class="color-preview-indicator"
+                      id="color-preview-indicator"
+                    ></div>
+                  </div>
+                </div>
+
+                <!-- Color Theme Actions -->
+                <div class="color-theme-actions">
+                  <button class="color-preview-btn" id="color-preview-btn">
+                    Preview Color
+                  </button>
+                  <button class="color-reset-btn" id="color-reset-btn">
+                    Reset to Default
+                  </button>
+                </div>
+
+                <div class="settings-note">
+                  Color themes apply a solid color background to the light mode
+                  layout. Perfect for creating a personalized, distraction-free
+                  environment.
+                </div>
               </div>
             </div>
-          </div>
-          
-          <!-- Sync Account Section -->
-          <div class="settings-section" id="sync-section">
-            <h3 class="settings-section-title">Sync Account</h3>
-            
-            <!-- Not Logged In State -->
-            <div class="sync-not-logged-in" id="sync-not-logged-in">
-              <div class="sync-hero">
-                <div class="sync-hero-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 12A9 9 0 0 1 12 3a9.75 9.75 0 0 1 6.74 2.74L21 8"/>
-                    <path d="M21 3v5h-5"/>
-                    <path d="M21 12a9 9 0 0 1-12 9 9.75 9.75 0 0 1-6.74-2.74L0 16"/>
-                    <path d="M3 16v5h5"/>
-                  </svg>
+
+            <!-- Sync Account Section -->
+            <div class="settings-section" id="sync-section">
+              <h3 class="settings-section-title">Sync Account</h3>
+
+              <!-- Not Logged In State -->
+              <div class="sync-not-logged-in" id="sync-not-logged-in">
+                <div class="sync-hero">
+                  <div class="sync-hero-icon">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="48"
+                      height="48"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <path
+                        d="M3 12A9 9 0 0 1 12 3a9.75 9.75 0 0 1 6.74 2.74L21 8"
+                      />
+                      <path d="M21 3v5h-5" />
+                      <path
+                        d="M21 12a9 9 0 0 1-12 9 9.75 9.75 0 0 1-6.74-2.74L0 16"
+                      />
+                      <path d="M3 16v5h5" />
+                    </svg>
+                  </div>
+                  <div class="sync-hero-content">
+                    <h4 class="sync-hero-title">Sync Across Devices</h4>
+                    <p class="sync-hero-description">
+                      Keep your streaks and stats synchronized across all your
+                      devices.
+                    </p>
+                  </div>
                 </div>
-                <div class="sync-hero-content">
-                  <h4 class="sync-hero-title">Sync Across Devices</h4>
-                  <p class="sync-hero-description">Keep your streaks and stats synchronized across all your devices.</p>
+
+                <div class="sync-benefits">
+                  <div class="sync-benefit">
+                    <div class="sync-benefit-icon">1️⃣</div>
+                    <div class="sync-benefit-text">
+                      Register your email on your PC/Laptop to upload your
+                      current stats
+                    </div>
+                  </div>
+                  <div class="sync-benefit">
+                    <div class="sync-benefit-icon">2️⃣</div>
+                    <div class="sync-benefit-text">
+                      Sign in with the same email on your iPad/Phone
+                    </div>
+                  </div>
+                  <div class="sync-benefit">
+                    <div class="sync-benefit-icon">3️⃣</div>
+                    <div class="sync-benefit-text">
+                      Your data automatically syncs after each session!
+                    </div>
+                  </div>
+                </div>
+
+                <div class="sync-auth-form">
+                  <div class="sync-form-group">
+                    <label class="sync-form-label">Email Address</label>
+                    <input
+                      type="email"
+                      class="sync-form-input"
+                      id="sync-email-input"
+                      placeholder="Enter your email address"
+                    />
+                    <div class="sync-form-note">
+                      We'll use this to identify your account. No password
+                      required!
+                    </div>
+                  </div>
+
+                  <div class="sync-form-group">
+                    <label class="sync-form-label"
+                      >Display Name (Optional)</label
+                    >
+                    <input
+                      type="text"
+                      class="sync-form-input"
+                      id="sync-username-input"
+                      placeholder="How should we call you?"
+                    />
+                  </div>
+
+                  <div class="sync-form-actions">
+                    <button
+                      class="sync-btn sync-btn-primary"
+                      id="sync-register-btn"
+                    >
+                      <span class="sync-btn-text">Create Account & Sync</span>
+                      <span class="sync-btn-spinner" style="display: none">
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        >
+                          <path d="M21 12a9 9 0 11-6.219-8.56" />
+                        </svg>
+                      </span>
+                    </button>
+                    <button
+                      class="sync-btn sync-btn-secondary"
+                      id="sync-login-btn"
+                    >
+                      <span class="sync-btn-text">Sign In</span>
+                      <span class="sync-btn-spinner" style="display: none">
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                        >
+                          <path d="M21 12a9 9 0 11-6.219-8.56" />
+                        </svg>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="sync-privacy-note">
+                  <div class="sync-privacy-icon">🔒</div>
+                  <div class="sync-privacy-text">
+                    Your data is stored securely and never shared with third
+                    parties.
+                  </div>
                 </div>
               </div>
-              
-              <div class="sync-benefits">
-                <div class="sync-benefit">
-                  <div class="sync-benefit-icon">1️⃣</div>
-                  <div class="sync-benefit-text">Register your email on your PC/Laptop to upload your current stats</div>
+
+              <!-- Logged In State -->
+              <div
+                class="sync-logged-in"
+                id="sync-logged-in"
+                style="display: none"
+              >
+                <div class="sync-user-profile">
+                  <div class="sync-user-avatar">
+                    <div class="sync-avatar-icon">👤</div>
+                  </div>
+                  <div class="sync-user-info">
+                    <div class="sync-user-name" id="sync-user-name">
+                      Loading...
+                    </div>
+                    <div class="sync-user-email" id="sync-user-email">
+                      Loading...
+                    </div>
+                  </div>
+                  <div class="sync-status" id="sync-status">
+                    <div class="sync-status-icon">✅</div>
+                    <div class="sync-status-text">Synced</div>
+                  </div>
                 </div>
-                <div class="sync-benefit">
-                  <div class="sync-benefit-icon">2️⃣</div>
-                  <div class="sync-benefit-text">Sign in with the same email on your iPad/Phone</div>
+
+                <div class="sync-stats">
+                  <div class="sync-stat">
+                    <div class="sync-stat-label">Sessions Synced</div>
+                    <div class="sync-stat-value" id="sync-sessions-count">
+                      0
+                    </div>
+                  </div>
+                  <div class="sync-stat">
+                    <div class="sync-stat-label">Last Sync</div>
+                    <div class="sync-stat-value" id="sync-last-sync">Never</div>
+                  </div>
+                  <div class="sync-stat">
+                    <div class="sync-stat-label">Account Created</div>
+                    <div class="sync-stat-value" id="sync-created-date">-</div>
+                  </div>
                 </div>
-                <div class="sync-benefit">
-                  <div class="sync-benefit-icon">3️⃣</div>
-                  <div class="sync-benefit-text">Your data automatically syncs after each session!</div>
+
+                <div
+                  class="settings-note"
+                  style="margin-top: 16px; margin-bottom: 16px"
+                >
+                  <strong>⚠️ Important:</strong> Before syncing, make sure the
+                  data on this device is accurate and up-to-date. If you have a
+                  device with outdated or incorrect data, please sign out from
+                  that device first and then sign in again to download the
+                  correct data. This prevents syncing incorrect data that could
+                  override your accurate records.
                 </div>
-              </div>
-              
-              <div class="sync-auth-form">
-                <div class="sync-form-group">
-                  <label class="sync-form-label">Email Address</label>
-                  <input type="email" class="sync-form-input" id="sync-email-input" placeholder="Enter your email address">
-                  <div class="sync-form-note">We'll use this to identify your account. No password required!</div>
-                </div>
-                
-                <div class="sync-form-group">
-                  <label class="sync-form-label">Display Name (Optional)</label>
-                  <input type="text" class="sync-form-input" id="sync-username-input" placeholder="How should we call you?">
-                </div>
-                
-                <div class="sync-form-actions">
-                  <button class="sync-btn sync-btn-primary" id="sync-register-btn">
-                    <span class="sync-btn-text">Create Account & Sync</span>
-                    <span class="sync-btn-spinner" style="display: none;">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 12a9 9 0 11-6.219-8.56"/>
+
+                <div class="sync-actions">
+                  <button
+                    class="sync-btn sync-btn-outline"
+                    id="sync-manual-btn"
+                  >
+                    <span class="sync-btn-text">Sync Now</span>
+                    <span class="sync-btn-spinner" style="display: none">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      >
+                        <path d="M21 12a9 9 0 11-6.219-8.56" />
                       </svg>
                     </span>
                   </button>
-                  <button class="sync-btn sync-btn-secondary" id="sync-login-btn">
-                    <span class="sync-btn-text">Sign In</span>
-                    <span class="sync-btn-spinner" style="display: none;">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 12a9 9 0 11-6.219-8.56"/>
-                      </svg>
-                    </span>
+                  <button class="sync-btn sync-btn-danger" id="sync-logout-btn">
+                    Sign Out
                   </button>
                 </div>
               </div>
-              
-              <div class="sync-privacy-note">
-                <div class="sync-privacy-icon">🔒</div>
-                <div class="sync-privacy-text">
-                  Your data is stored securely and never shared with third parties.
+
+              <!-- Error State -->
+              <div class="sync-error" id="sync-error" style="display: none">
+                <div class="sync-error-icon">⚠️</div>
+                <div class="sync-error-content">
+                  <div class="sync-error-title">Sync Error</div>
+                  <div class="sync-error-message" id="sync-error-message">
+                    Unable to connect to sync service.
+                  </div>
+                  <button class="sync-btn sync-btn-primary" id="sync-retry-btn">
+                    Try Again
+                  </button>
                 </div>
-              </div>
-            </div>
-            
-            <!-- Logged In State -->
-            <div class="sync-logged-in" id="sync-logged-in" style="display: none;">
-              <div class="sync-user-profile">
-                <div class="sync-user-avatar">
-                  <div class="sync-avatar-icon">👤</div>
-                </div>
-                <div class="sync-user-info">
-                  <div class="sync-user-name" id="sync-user-name">Loading...</div>
-                  <div class="sync-user-email" id="sync-user-email">Loading...</div>
-                </div>
-                <div class="sync-status" id="sync-status">
-                  <div class="sync-status-icon">✅</div>
-                  <div class="sync-status-text">Synced</div>
-                </div>
-              </div>
-              
-              <div class="sync-stats">
-                <div class="sync-stat">
-                  <div class="sync-stat-label">Sessions Synced</div>
-                  <div class="sync-stat-value" id="sync-sessions-count">0</div>
-                </div>
-                <div class="sync-stat">
-                  <div class="sync-stat-label">Last Sync</div>
-                  <div class="sync-stat-value" id="sync-last-sync">Never</div>
-                </div>
-                <div class="sync-stat">
-                  <div class="sync-stat-label">Account Created</div>
-                  <div class="sync-stat-value" id="sync-created-date">-</div>
-                </div>
-              </div>
-              
-              <div class="settings-note" style="margin-top: 16px; margin-bottom: 16px;">
-                <strong>⚠️ Important:</strong> Before syncing, make sure the data on this device is accurate and up-to-date. If you have a device with outdated or incorrect data, please sign out from that device first and then sign in again to download the correct data. This prevents syncing incorrect data that could override your accurate records.
-              </div>
-              
-              <div class="sync-actions">
-                <button class="sync-btn sync-btn-outline" id="sync-manual-btn">
-                  <span class="sync-btn-text">Sync Now</span>
-                  <span class="sync-btn-spinner" style="display: none;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M21 12a9 9 0 11-6.219-8.56"/>
-                    </span>
-                  </svg>
-                </button>
-                <button class="sync-btn sync-btn-danger" id="sync-logout-btn">Sign Out</button>
-              </div>
-            </div>
-            
-            <!-- Error State -->
-            <div class="sync-error" id="sync-error" style="display: none;">
-              <div class="sync-error-icon">⚠️</div>
-              <div class="sync-error-content">
-                <div class="sync-error-title">Sync Error</div>
-                <div class="sync-error-message" id="sync-error-message">Unable to connect to sync service.</div>
-                <button class="sync-btn sync-btn-primary" id="sync-retry-btn">Try Again</button>
               </div>
             </div>
           </div>
-        </div>
-        
-        <div class="settings-footer">
-          <button class="reset-btn" id="reset-settings-btn">Reset all</button>
-          <button class="close-btn" id="close-settings-btn">Close</button>
-          <button class="save-btn" id="save-settings-btn">Save changes</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <div class="toast" id="toast"></div>
-  
-  <!-- Mute Alert Modal -->
-  <div class="mute-alert-overlay" id="mute-alert-overlay">
-    <div class="mute-alert">
-      <div class="mute-alert-header">
-        <h3 class="mute-alert-title">
-          <span class="icon">🔊</span> Timer Complete
-        </h3>
-        <button class="mute-alert-close" id="mute-alert-close">&times;</button>
-      </div>
-      <div class="mute-alert-content">
-        <p id="mute-alert-message">Your timer session has completed!</p>
-      </div>
-      <div class="mute-alert-actions">
-        <button class="mute-btn mute-btn-secondary" id="dismiss-alert-btn">Dismiss</button>
-        <button class="mute-btn mute-btn-primary" id="mute-alert-btn">Mute Sound & Dismiss</button>
-      </div>
-    </div>
-  </div>
 
-  <!-- Motivational Alert Modal -->
-  <div class="motivational-alert-overlay" id="motivational-alert-overlay">
-    <div class="motivational-alert">
-      <div class="motivational-alert-header">
-        <h3 class="motivational-alert-title">
-          <span class="icon">💪</span> Stay Focused!
-        </h3>
-      </div>
-      <div class="motivational-alert-content">
-        <p id="motivational-alert-message">Your success story is waiting to be written! 📖🎯</p>
-      </div>
-      <div class="motivational-alert-actions">
-        <button class="motivational-btn motivational-btn-primary motivational-btn-single" id="motivational-alert-btn">OK, let me try again</button>
+          <div class="settings-footer">
+            <button class="reset-btn" id="reset-settings-btn">Reset all</button>
+            <button class="close-btn" id="close-settings-btn">Close</button>
+            <button class="save-btn" id="save-settings-btn">
+              Save changes
+            </button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Sync Data Confirmation Modal -->
-  <div class="lockedin-info-modal-overlay" id="sync-confirm-modal-overlay" style="display: none;">
-    <div class="lockedin-info-modal">
-      <div class="lockedin-info-modal-header">
-        <h3 class="lockedin-info-modal-title">⚠️ Sync Your Data</h3>
-        <button class="lockedin-info-modal-close" id="sync-confirm-modal-close">&times;</button>
-      </div>
-      <div class="lockedin-info-modal-content">
-        <p><strong>Are you sure you want to sync your data to this account?</strong></p>
-        
-        <p>This will:</p>
-        <ul>
-          <li>Upload your current stats, streaks, and sessions to the cloud</li>
-          <li>Link this browser's data to your account permanently</li>
-          <li>Allow you to access this data from other devices</li>
-        </ul>
-        
-        <div class="settings-note" style="background-color: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: 10px; border-radius: 5px; margin: 15px 0;">
-          <p><strong>⚠️ Important:</strong> Make sure you're using the correct email address. Once synced, this data will be associated with this account.</p>
+    <div class="toast" id="toast"></div>
+
+    <!-- Mute Alert Modal -->
+    <div class="mute-alert-overlay" id="mute-alert-overlay">
+      <div class="mute-alert">
+        <div class="mute-alert-header">
+          <h3 class="mute-alert-title">
+            <span class="icon">🔊</span> Timer Complete
+          </h3>
+          <button class="mute-alert-close" id="mute-alert-close">
+            &times;
+          </button>
         </div>
-        
-        <div style="margin: 20px 0; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
-          <p><strong>Current Data Summary:</strong></p>
+        <div class="mute-alert-content">
+          <p id="mute-alert-message">Your timer session has completed!</p>
+        </div>
+        <div class="mute-alert-actions">
+          <button class="mute-btn mute-btn-secondary" id="dismiss-alert-btn">
+            Dismiss
+          </button>
+          <button class="mute-btn mute-btn-primary" id="mute-alert-btn">
+            Mute Sound & Dismiss
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Motivational Alert Modal -->
+    <div class="motivational-alert-overlay" id="motivational-alert-overlay">
+      <div class="motivational-alert">
+        <div class="motivational-alert-header">
+          <h3 class="motivational-alert-title">
+            <span class="icon">💪</span> Stay Focused!
+          </h3>
+        </div>
+        <div class="motivational-alert-content">
+          <p id="motivational-alert-message">
+            Your success story is waiting to be written! 📖🎯
+          </p>
+        </div>
+        <div class="motivational-alert-actions">
+          <button
+            class="motivational-btn motivational-btn-primary motivational-btn-single"
+            id="motivational-alert-btn"
+          >
+            OK, let me try again
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sync Data Confirmation Modal -->
+    <div
+      class="lockedin-info-modal-overlay"
+      id="sync-confirm-modal-overlay"
+      style="display: none"
+    >
+      <div class="lockedin-info-modal">
+        <div class="lockedin-info-modal-header">
+          <h3 class="lockedin-info-modal-title">⚠️ Sync Your Data</h3>
+          <button
+            class="lockedin-info-modal-close"
+            id="sync-confirm-modal-close"
+          >
+            &times;
+          </button>
+        </div>
+        <div class="lockedin-info-modal-content">
+          <p>
+            <strong
+              >Are you sure you want to sync your data to this account?</strong
+            >
+          </p>
+
+          <p>This will:</p>
           <ul>
-            <li id="sync-confirm-sessions">Sessions: Loading...</li>
-            <li id="sync-confirm-streak">Current Streak: Loading...</li>
-            <li id="sync-confirm-points">Focus Points: Loading...</li>
+            <li>
+              Upload your current stats, streaks, and sessions to the cloud
+            </li>
+            <li>Link this browser's data to your account permanently</li>
+            <li>Allow you to access this data from other devices</li>
           </ul>
-        </div>
-      </div>
-      <div class="lockedin-info-modal-footer">
-        <button class="lockedin-info-btn" id="sync-confirm-cancel" style="background-color: #6c757d; margin-right: 10px;">Cancel</button>
-        <button class="lockedin-info-btn" id="sync-confirm-proceed" style="background-color: #28a745;">Yes, Sync My Data</button>
-      </div>
-    </div>
-  </div>
 
-  <!-- Auto-start Breaks Info Modal -->
-  <div class="lockedin-info-modal-overlay" id="auto-break-modal-overlay">
-    <div class="lockedin-info-modal">
-      <div class="lockedin-info-modal-header">
-        <h3 class="lockedin-info-modal-title">Auto-start Breaks</h3>
-        <button class="lockedin-info-modal-close" id="auto-break-modal-close">&times;</button>
-      </div>
-      <div class="lockedin-info-modal-content">
-        <p><strong>What is it?</strong> Automatically starts your earned break timer when a work session ends.</p>
-        
-        <p><strong>Benefits:</strong></p>
-        <ul>
-          <li>Ensures you take proper breaks between work sessions</li>
-          <li>Maintains your productivity rhythm</li>
-          <li>No need to manually start break timers</li>
-        </ul>
-        
-        <div class="settings-note">
-          <p><strong>💡 Tip:</strong> In Reverse mode, you earn longer breaks by working longer. Auto-start makes sure you receive your well-deserved break time!</p>
-        </div>
-      </div>
-      <div class="lockedin-info-modal-footer">
-        <button class="lockedin-info-btn" id="auto-break-close-btn">Got it</button>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Locked In Mode Info Modal -->
-  <div class="lockedin-info-modal-overlay" id="lockedin-info-modal-overlay">
-    <div class="lockedin-info-modal">
-      <div class="lockedin-info-modal-header">
-        <h3 class="lockedin-info-modal-title">Locked In Mode</h3>
-        <button class="lockedin-info-modal-close" id="lockedin-info-modal-close">&times;</button>
-      </div>
-      <div class="lockedin-info-modal-content">
-        <p><strong>What is it?</strong> A distraction-free, dark environment that activates automatically when your timer starts.</p>
-        
-        <p><strong>Benefits:</strong></p>
-        <ul>
-          <li>Minimalist interface shows only essential timer info</li>
-          <li>Hides distracting elements for maximum focus</li>
-          <li>Creates a calm, productive workspace</li>
-        </ul>
-        
-        <div class="settings-note">
-          <p><strong>💡 Pro Tip:</strong> Use Locked In Mode with fullscreen (F11 or fullscreen button) for the ultimate distraction-free experience that covers your entire screen!</p>
-        </div>      </div>
-      <div class="lockedin-info-modal-footer">
-        <button class="lockedin-info-btn" id="lockedin-info-close-btn">Got it</button>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Tracker Design Info Modal -->
-  <div class="lockedin-info-modal-overlay" id="tracker-design-info-modal-overlay">
-    <div class="lockedin-info-modal">
-      <div class="lockedin-info-modal-header">
-        <h3 class="lockedin-info-modal-title">Tracker Design Styles</h3>
-        <button class="lockedin-info-modal-close" id="tracker-design-info-modal-close">&times;</button>
-      </div>
-      <div class="lockedin-info-modal-content">
-        <p><strong>Choose your preferred visual style for the Burn-Up Tracker:</strong></p>
-        
-        <div class="tracker-design-explanation">
-          <div class="design-option-explanation">
-            <h4>🎨 Match Theme (Default)</h4>
-            <p>Automatically adapts to your selected theme colors and style.</p>
+          <div
+            class="settings-note"
+            style="
+              background-color: #fff3cd;
+              border: 1px solid #ffeaa7;
+              color: #856404;
+              padding: 10px;
+              border-radius: 5px;
+              margin: 15px 0;
+            "
+          >
+            <p>
+              <strong>⚠️ Important:</strong> Make sure you're using the correct
+              email address. Once synced, this data will be associated with this
+              account.
+            </p>
           </div>
-          
-          <div class="design-option-explanation">
-            <h4>☀️ Light Solid</h4>
-            <p>Clean, minimalistic design with solid light colors - perfect for bright environments.</p>
-          </div>
-          
-          <div class="design-option-explanation">
-            <h4>🌙 Dark Gradient</h4>
-            <p>Professional dark style with subtle gradients - ideal for low-light conditions.</p>
-          </div>
-          
-          <div class="design-option-explanation">
-            <h4>✨ Transparent Glass</h4>
-            <p>Modern glassmorphism effect with transparency and blur - stylish and contemporary.</p>
+
+          <div
+            style="
+              margin: 20px 0;
+              padding: 15px;
+              background-color: #f8f9fa;
+              border-radius: 5px;
+            "
+          >
+            <p><strong>Current Data Summary:</strong></p>
+            <ul>
+              <li id="sync-confirm-sessions">Sessions: Loading...</li>
+              <li id="sync-confirm-streak">Current Streak: Loading...</li>
+              <li id="sync-confirm-points">Focus Points: Loading...</li>
+            </ul>
           </div>
         </div>
-        
-        <div class="settings-note">
-          <p><strong>💡 Pro Tip:</strong> Your chosen design will persist across sessions and work independently of theme changes!</p>
+        <div class="lockedin-info-modal-footer">
+          <button
+            class="lockedin-info-btn"
+            id="sync-confirm-cancel"
+            style="background-color: #6c757d; margin-right: 10px"
+          >
+            Cancel
+          </button>
+          <button
+            class="lockedin-info-btn"
+            id="sync-confirm-proceed"
+            style="background-color: #28a745"
+          >
+            Yes, Sync My Data
+          </button>
         </div>
       </div>
-      <div class="lockedin-info-modal-footer">
-        <button class="lockedin-info-btn" id="tracker-design-info-close-btn">Got it</button>
-      </div>
     </div>
-  </div>
 
-  <!-- Burn-Up Tracker Info Modal -->
-  <div class="lockedin-info-modal-overlay" id="burnup-tracker-modal-overlay">
-    <div class="lockedin-info-modal">
-      <div class="lockedin-info-modal-header">
-        <h3 class="lockedin-info-modal-title">Burn-Up Time Tracker</h3>
-        <button class="lockedin-info-modal-close" id="burnup-tracker-modal-close">&times;</button>
-      </div>
-      <div class="lockedin-info-modal-content">
-        <p><strong>What is it?</strong> A visual progress tracker that shows "Time Spent vs. Planned" during active timer sessions.</p>
-        
-        <p><strong>Benefits:</strong></p>
-        <ul>
-          <li>Improves time estimation awareness</li>
-          <li>Provides visual feedback on your progress</li>
-          <li>Helps maintain focus by showing work accomplished</li>
-          <li>Works with both Pomodoro and Reverse timer modes</li>
-        </ul>
-        
-        <div class="settings-note">
-          <p><strong>💡 Pro Tip:</strong> Use the Burn-Up Tracker to get better at estimating how long tasks really take and improve your planning skills!</p>
+    <!-- Auto-start Breaks Info Modal -->
+    <div class="lockedin-info-modal-overlay" id="auto-break-modal-overlay">
+      <div class="lockedin-info-modal">
+        <div class="lockedin-info-modal-header">
+          <h3 class="lockedin-info-modal-title">Auto-start Breaks</h3>
+          <button class="lockedin-info-modal-close" id="auto-break-modal-close">
+            &times;
+          </button>
+        </div>
+        <div class="lockedin-info-modal-content">
+          <p>
+            <strong>What is it?</strong> Automatically starts your earned break
+            timer when a work session ends.
+          </p>
+
+          <p><strong>Benefits:</strong></p>
+          <ul>
+            <li>Ensures you take proper breaks between work sessions</li>
+            <li>Maintains your productivity rhythm</li>
+            <li>No need to manually start break timers</li>
+          </ul>
+
+          <div class="settings-note">
+            <p>
+              <strong>💡 Tip:</strong> In Reverse mode, you earn longer breaks
+              by working longer. Auto-start makes sure you receive your
+              well-deserved break time!
+            </p>
+          </div>
+        </div>
+        <div class="lockedin-info-modal-footer">
+          <button class="lockedin-info-btn" id="auto-break-close-btn">
+            Got it
+          </button>
         </div>
       </div>
-      <div class="lockedin-info-modal-footer">
-        <button class="lockedin-info-btn" id="burnup-tracker-close-btn">Got it</button>
+    </div>
+
+    <!-- Locked In Mode Info Modal -->
+    <div class="lockedin-info-modal-overlay" id="lockedin-info-modal-overlay">
+      <div class="lockedin-info-modal">
+        <div class="lockedin-info-modal-header">
+          <h3 class="lockedin-info-modal-title">Locked In Mode</h3>
+          <button
+            class="lockedin-info-modal-close"
+            id="lockedin-info-modal-close"
+          >
+            &times;
+          </button>
+        </div>
+        <div class="lockedin-info-modal-content">
+          <p>
+            <strong>What is it?</strong> A distraction-free, dark environment
+            that activates automatically when your timer starts.
+          </p>
+
+          <p><strong>Benefits:</strong></p>
+          <ul>
+            <li>Minimalist interface shows only essential timer info</li>
+            <li>Hides distracting elements for maximum focus</li>
+            <li>Creates a calm, productive workspace</li>
+          </ul>
+
+          <div class="settings-note">
+            <p>
+              <strong>💡 Pro Tip:</strong> Use Locked In Mode with fullscreen
+              (F11 or fullscreen button) for the ultimate distraction-free
+              experience that covers your entire screen!
+            </p>
+          </div>
+        </div>
+        <div class="lockedin-info-modal-footer">
+          <button class="lockedin-info-btn" id="lockedin-info-close-btn">
+            Got it
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-  
-  <!-- About Modal -->
-<div class="about-info-modal-overlay" id="about-info-modal-overlay">
-  <div class="about-info-modal">
-    <div class="about-info-modal-header">
-      <h3 class="about-info-modal-title">About Customodoro</h3>
-      <button class="about-info-modal-close" id="about-info-modal-close">&times;</button>
+
+    <!-- Tracker Design Info Modal -->
+    <div
+      class="lockedin-info-modal-overlay"
+      id="tracker-design-info-modal-overlay"
+    >
+      <div class="lockedin-info-modal">
+        <div class="lockedin-info-modal-header">
+          <h3 class="lockedin-info-modal-title">Tracker Design Styles</h3>
+          <button
+            class="lockedin-info-modal-close"
+            id="tracker-design-info-modal-close"
+          >
+            &times;
+          </button>
+        </div>
+        <div class="lockedin-info-modal-content">
+          <p>
+            <strong
+              >Choose your preferred visual style for the Burn-Up
+              Tracker:</strong
+            >
+          </p>
+
+          <div class="tracker-design-explanation">
+            <div class="design-option-explanation">
+              <h4>🎨 Match Theme (Default)</h4>
+              <p>
+                Automatically adapts to your selected theme colors and style.
+              </p>
+            </div>
+
+            <div class="design-option-explanation">
+              <h4>☀️ Light Solid</h4>
+              <p>
+                Clean, minimalistic design with solid light colors - perfect for
+                bright environments.
+              </p>
+            </div>
+
+            <div class="design-option-explanation">
+              <h4>🌙 Dark Gradient</h4>
+              <p>
+                Professional dark style with subtle gradients - ideal for
+                low-light conditions.
+              </p>
+            </div>
+
+            <div class="design-option-explanation">
+              <h4>✨ Transparent Glass</h4>
+              <p>
+                Modern glassmorphism effect with transparency and blur - stylish
+                and contemporary.
+              </p>
+            </div>
+          </div>
+
+          <div class="settings-note">
+            <p>
+              <strong>💡 Pro Tip:</strong> Your chosen design will persist
+              across sessions and work independently of theme changes!
+            </p>
+          </div>
+        </div>
+        <div class="lockedin-info-modal-footer">
+          <button class="lockedin-info-btn" id="tracker-design-info-close-btn">
+            Got it
+          </button>
+        </div>
+      </div>
     </div>
-    <div class="about-info-modal-content">
-      <p><strong>Customodoro</strong> is a handcrafted productivity timer built to help you focus better, manage your time, and maintain balance.</p>
 
-      <p><strong>Why I made this?</strong> I built this for someone special — my girlfriend — because she told me the traditional Pomodoro style wasn't working well for her study sessions. So, I designed Reverse Pomodoro just for her — something more gentle and flexible, the way she needed it.</p>
+    <!-- Burn-Up Tracker Info Modal -->
+    <div class="lockedin-info-modal-overlay" id="burnup-tracker-modal-overlay">
+      <div class="lockedin-info-modal">
+        <div class="lockedin-info-modal-header">
+          <h3 class="lockedin-info-modal-title">Burn-Up Time Tracker</h3>
+          <button
+            class="lockedin-info-modal-close"
+            id="burnup-tracker-modal-close"
+          >
+            &times;
+          </button>
+        </div>
+        <div class="lockedin-info-modal-content">
+          <p>
+            <strong>What is it?</strong> A visual progress tracker that shows
+            "Time Spent vs. Planned" during active timer sessions.
+          </p>
 
-      <p>This app is for anyone who wants to focus with intention, rest with clarity, and make every session feel like progress.</p>
+          <p><strong>Benefits:</strong></p>
+          <ul>
+            <li>Improves time estimation awareness</li>
+            <li>Provides visual feedback on your progress</li>
+            <li>Helps maintain focus by showing work accomplished</li>
+            <li>Works with both Pomodoro and Reverse timer modes</li>
+          </ul>
 
-      <p class="settings-note"><strong>Handcrafted by YabuTech — born from feedback, built to empower.</strong></p>
+          <div class="settings-note">
+            <p>
+              <strong>💡 Pro Tip:</strong> Use the Burn-Up Tracker to get better
+              at estimating how long tasks really take and improve your planning
+              skills!
+            </p>
+          </div>
+        </div>
+        <div class="lockedin-info-modal-footer">
+          <button class="lockedin-info-btn" id="burnup-tracker-close-btn">
+            Got it
+          </button>
+        </div>
+      </div>
     </div>
-    <div class="about-info-modal-footer">
-      <button class="about-info-btn" id="about-info-close-btn">Got it</button>
+
+    <!-- About Modal -->
+    <div class="about-info-modal-overlay" id="about-info-modal-overlay">
+      <div class="about-info-modal">
+        <div class="about-info-modal-header">
+          <h3 class="about-info-modal-title">About Customodoro</h3>
+          <button class="about-info-modal-close" id="about-info-modal-close">
+            &times;
+          </button>
+        </div>
+        <div class="about-info-modal-content">
+          <p>
+            <strong>Customodoro</strong> is a handcrafted productivity timer
+            built to help you focus better, manage your time, and maintain
+            balance.
+          </p>
+
+          <p>
+            <strong>Why I made this?</strong> I built this for someone special —
+            my girlfriend — because she told me the traditional Pomodoro style
+            wasn't working well for her study sessions. So, I designed Reverse
+            Pomodoro just for her — something more gentle and flexible, the way
+            she needed it.
+          </p>
+
+          <p>
+            This app is for anyone who wants to focus with intention, rest with
+            clarity, and make every session feel like progress.
+          </p>
+
+          <p class="settings-note">
+            <strong
+              >Handcrafted by YabuTech — born from feedback, built to
+              empower.</strong
+            >
+          </p>
+        </div>
+        <div class="about-info-modal-footer">
+          <button class="about-info-btn" id="about-info-close-btn">
+            Got it
+          </button>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
-<!-- UPDATE! -->
+    <!-- UPDATE! -->
 
-<!-- Timezone Manager - MUST load before reversePomodoro.js -->
-<script src="js/timezone-manager.js?v=1.0.0"></script>
-<script src="js/midnight-splitter.js?v=1.0.0"></script>
+    <!-- Timezone Manager - MUST load before reversePomodoro.js -->
+    <script src="js/timezone-manager.js?v=1.0.0"></script>
+    <script src="js/midnight-splitter.js?v=1.0.0"></script>
 
-<script src="js/reversePomodoro.js?v=2.10.2"></script>
+    <script src="js/reversePomodoro.js?v=2.10.2"></script>
 
-<script src="js/auth-service.js?v=1.0.0" defer></script>
-<script src="js/sync-manager.js?v=1.2.0" defer></script>
-<script src="js/sync-ui.js?v=1.1.0" defer></script>
-<script src="js/header-profile.js?v=1.0.0" defer></script>
+    <script src="js/auth-service.js?v=1.0.0" defer></script>
+    <script src="js/sync-manager.js?v=1.2.0" defer></script>
+    <script src="js/sync-ui.js?v=1.1.0" defer></script>
+    <script src="js/header-profile.js?v=1.0.0" defer></script>
 
-<script src="js/task-retention.js?v=1.0.0" defer></script>
+    <script src="js/task-retention.js?v=1.0.0" defer></script>
 
-<script src="js/settings.js?v=2.6.5" defer></script>
+    <script src="js/settings.js?v=2.6.5" defer></script>
 
-<script src="js/fullscreen.js?v=2.3.5" defer></script>
-<script src="js/lockedin-mode.js?v=2.3.5" defer></script>
-<script src="js/locked-in-info-modal.js?v=2.3.5" defer></script>
-<script src="js/focus-mode.js?v=2.3.5" defer></script>
-<script src="js/radial-menu.js?v=2.3.6" defer></script>
+    <script src="js/fullscreen.js?v=2.3.5" defer></script>
+    <script src="js/lockedin-mode.js?v=2.3.5" defer></script>
+    <script src="js/locked-in-info-modal.js?v=2.3.5" defer></script>
+    <script src="js/focus-mode.js?v=2.3.5" defer></script>
+    <script src="js/radial-menu.js?v=2.3.6" defer></script>
 
-<script src="js/bgm-player.js?v=2.3.6" defer></script>
-<script src="js/mini-music-player.js?v=2.3.6" defer></script>
+    <script src="js/bgm-player.js?v=2.3.6" defer></script>
+    <script src="js/mini-music-player.js?v=2.3.6" defer></script>
 
-<script src="js/about-modal.js?v=2.3.5" defer></script>
-<script src="js/theme-manager.js?v=2.6.2" defer></script>
+    <script src="js/about-modal.js?v=2.3.5" defer></script>
+    <script src="js/theme-manager.js?v=2.6.2" defer></script>
 
-<script src="js/leaderboard-integration.js?v=1.0.1" defer></script>
-<script src="js/database-leaderboard.js?v=2.2.0" defer></script>
-<script src="js/user-stats.js?v=1.0.0" defer></script>
-<script src="js/most-used-pomodoro.js?v=1.0.2" defer></script>
+    <script src="js/leaderboard-integration.js?v=1.0.1" defer></script>
+    <script src="js/database-leaderboard.js?v=2.2.0" defer></script>
+    <script src="js/user-stats.js?v=1.0.0" defer></script>
+    <script src="js/most-used-pomodoro.js?v=1.0.2" defer></script>
 
-<!-- Achievements loader (manual) -->
-<script src="js/database-achievements.js" defer></script>
-<script>
-  (function initAchievementsModule() {
-    function initAchievementsWhenReady() {
-      try {
-        window.currentUser = window.currentUser || null;
+    <!-- Achievements loader (manual) -->
+    <script src="js/database-achievements.js" defer></script>
+    <script>
+      (function initAchievementsModule() {
+        function initAchievementsWhenReady() {
+          try {
+            window.currentUser = window.currentUser || null;
 
-        if (typeof loadAchievements === 'function') {
-          loadAchievements('achievements-container');
-          return;
-        }
-
-        // Poll briefly for the loader to become available (handles deferred script ordering)
-        let attempts = 0;
-        const maxAttempts = 30; // ~3s
-        const poll = setInterval(() => {
-          attempts++;
-          if (typeof loadAchievements === 'function') {
-            clearInterval(poll);
-            try { loadAchievements('achievements-container'); } catch (err) { console.warn('Achievements init failed', err); }
-          } else if (attempts >= maxAttempts) {
-            clearInterval(poll);
-            console.warn('Achievements init: loader not available (timed out)');
-          }
-        }, 100);
-      } catch (e) {
-        console.warn('Achievements init failed', e);
-      }
-    }
-
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-      initAchievementsWhenReady();
-    } else {
-      document.addEventListener('DOMContentLoaded', initAchievementsWhenReady);
-    }
-
-    // Re-run on auth restore/login if authService exposes the listener API
-    try {
-      if (window.authService && typeof window.authService.addEventListener === 'function') {
-        window.authService.addEventListener((event) => {
-          if (event === 'restore' || event === 'login') {
-            try { initAchievementsWhenReady(); } catch (e) { console.warn(e); }
-          }
-        });
-      }
-    } catch (e) { /* ignore */ }
-  })();
-</script>
-
-<!-- UPDATE!) -->
-<script>
-// Service Worker Registration and Update Handler
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js')
-    .then((registration) => {
-      console.log('✅ Service Worker registered:', registration);
-      
-      // Check for updates immediately and every 30 seconds
-      const checkForUpdates = () => {
-        registration.update().then(() => {
-          console.log('🔍 Checked for updates');
-        });
-      };
-      
-      // Check for updates on registration
-      checkForUpdates();
-      
-      // Check for updates periodically
-      setInterval(checkForUpdates, 30000); // Every 30 seconds
-      
-      // Listen for service worker updates
-      registration.addEventListener('updatefound', () => {
-        console.log('🔄 New service worker found, installing...');
-        const newWorker = registration.installing;
-        
-        if (newWorker) {
-          newWorker.addEventListener('statechange', () => {
-            console.log('🔄 New SW state:', newWorker.state);
-            
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              // New service worker is ready!
-              console.log('🎉 New service worker ready - showing update prompt');
-              showUpdatePrompt();
+            if (typeof loadAchievements === "function") {
+              loadAchievements("achievements-container");
+              return;
             }
-          });
-        }
-      });
-    })
-    .catch((error) => {
-      console.error('❌ Service Worker registration failed:', error);
-    });
 
-  // Listen for messages from service worker
-  navigator.serviceWorker.addEventListener('message', (event) => {
-    if (event.data && event.data.type === 'NEW_VERSION_AVAILABLE') {
-      console.log('📨 Update message received from SW');
-      
-      // Check if it's a force update (for immediate updates)
-      if (event.data.forceUpdate) {
-        console.log('⚡ Force update detected - auto-refreshing...');
-        // Show brief notification before refresh
-        const notification = document.createElement('div');
-        notification.style.cssText = `
+            // Poll briefly for the loader to become available (handles deferred script ordering)
+            let attempts = 0;
+            const maxAttempts = 30; // ~3s
+            const poll = setInterval(() => {
+              attempts++;
+              if (typeof loadAchievements === "function") {
+                clearInterval(poll);
+                try {
+                  loadAchievements("achievements-container");
+                } catch (err) {
+                  console.warn("Achievements init failed", err);
+                }
+              } else if (attempts >= maxAttempts) {
+                clearInterval(poll);
+                console.warn(
+                  "Achievements init: loader not available (timed out)",
+                );
+              }
+            }, 100);
+          } catch (e) {
+            console.warn("Achievements init failed", e);
+          }
+        }
+
+        if (
+          document.readyState === "complete" ||
+          document.readyState === "interactive"
+        ) {
+          initAchievementsWhenReady();
+        } else {
+          document.addEventListener(
+            "DOMContentLoaded",
+            initAchievementsWhenReady,
+          );
+        }
+
+        // Re-run on auth restore/login if authService exposes the listener API
+        try {
+          if (
+            window.authService &&
+            typeof window.authService.addEventListener === "function"
+          ) {
+            window.authService.addEventListener((event) => {
+              if (event === "restore" || event === "login") {
+                try {
+                  initAchievementsWhenReady();
+                } catch (e) {
+                  console.warn(e);
+                }
+              }
+            });
+          }
+        } catch (e) {
+          /* ignore */
+        }
+      })();
+    </script>
+
+    <!-- UPDATE!) -->
+    <script>
+      // Service Worker Registration and Update Handler
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("/sw.js")
+          .then((registration) => {
+            console.log("✅ Service Worker registered:", registration);
+
+            // Check for updates immediately and every 30 seconds
+            const checkForUpdates = () => {
+              registration.update().then(() => {
+                console.log("🔍 Checked for updates");
+              });
+            };
+
+            // Check for updates on registration
+            checkForUpdates();
+
+            // Check for updates periodically
+            setInterval(checkForUpdates, 30000); // Every 30 seconds
+
+            // Listen for service worker updates
+            registration.addEventListener("updatefound", () => {
+              console.log("🔄 New service worker found, installing...");
+              const newWorker = registration.installing;
+
+              if (newWorker) {
+                newWorker.addEventListener("statechange", () => {
+                  console.log("🔄 New SW state:", newWorker.state);
+
+                  if (
+                    newWorker.state === "installed" &&
+                    navigator.serviceWorker.controller
+                  ) {
+                    // New service worker is ready!
+                    console.log(
+                      "🎉 New service worker ready - showing update prompt",
+                    );
+                    showUpdatePrompt();
+                  }
+                });
+              }
+            });
+          })
+          .catch((error) => {
+            console.error("❌ Service Worker registration failed:", error);
+          });
+
+        // Listen for messages from service worker
+        navigator.serviceWorker.addEventListener("message", (event) => {
+          if (event.data && event.data.type === "NEW_VERSION_AVAILABLE") {
+            console.log("📨 Update message received from SW");
+
+            // Check if it's a force update (for immediate updates)
+            if (event.data.forceUpdate) {
+              console.log("⚡ Force update detected - auto-refreshing...");
+              // Show brief notification before refresh
+              const notification = document.createElement("div");
+              notification.style.cssText = `
           position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
           background: #4F1C51; color: white; padding: 20px; border-radius: 12px;
           z-index: 99999; font-family: system-ui; text-align: center;
           box-shadow: 0 8px 32px rgba(0,0,0,0.3);
         `;
-        notification.innerHTML = `
+              notification.innerHTML = `
           <div style="font-size: 18px; margin-bottom: 8px;">🚀 Updating App...</div>
           <div style="font-size: 14px; opacity: 0.9;">Getting the latest version</div>
         `;
-        document.body.appendChild(notification);
-        
-        // Auto-refresh after brief delay
-        setTimeout(() => {
-          window.location.reload(true);
-        }, 1500);
-      } else {
-        // Show optional update prompt for regular updates
-        showUpdatePrompt();
+              document.body.appendChild(notification);
+
+              // Auto-refresh after brief delay
+              setTimeout(() => {
+                window.location.reload(true);
+              }, 1500);
+            } else {
+              // Show optional update prompt for regular updates
+              showUpdatePrompt();
+            }
+          }
+
+          if (event.data && event.data.type === "FORCE_RELOAD") {
+            console.log("🔄 Force reload message received");
+            // Perform hard refresh - clears all caches and reloads
+            window.location.reload(true);
+          }
+        });
+
+        // Also listen for controller changes (when new SW takes over)
+        navigator.serviceWorker.addEventListener("controllerchange", () => {
+          console.log("🔄 Service worker controller changed - reloading");
+          window.location.reload();
+        });
       }
-    }
-    
-    if (event.data && event.data.type === 'FORCE_RELOAD') {
-      console.log('🔄 Force reload message received');
-      // Perform hard refresh - clears all caches and reloads
-      window.location.reload(true);
-    }
-  });
 
-  // Also listen for controller changes (when new SW takes over)
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    console.log('🔄 Service worker controller changed - reloading');
-    window.location.reload();
-  });
-}
+      function showUpdatePrompt() {
+        // Prevent multiple modals
+        if (document.getElementById("updateModal")) {
+          return;
+        }
 
-function showUpdatePrompt() {
-  // Prevent multiple modals
-  if (document.getElementById('updateModal')) {
-    return;
-  }
-  
-  // Simple update prompt with single action
-  const updateModal = document.createElement('div');
-  updateModal.id = 'updateModal';
-  updateModal.innerHTML = `
+        // Simple update prompt with single action
+        const updateModal = document.createElement("div");
+        updateModal.id = "updateModal";
+        updateModal.innerHTML = `
     <div style="
       position: fixed;
       top: 0;
@@ -1639,29 +2584,29 @@ function showUpdatePrompt() {
       </div>
     </div>
   `;
-  
-  document.body.appendChild(updateModal);
-  
-  // Handle button click
-  document.getElementById('updateBtn').onclick = () => {
-    document.body.removeChild(updateModal);
-    performHardRefresh();
-  };
-  
-  // Handle tap on mobile better
-  document.getElementById('updateBtn').ontouchstart = () => {
-    document.getElementById('updateBtn').style.background = '#0056CC';
-  };
-  
-  document.getElementById('updateBtn').ontouchend = () => {
-    document.getElementById('updateBtn').style.background = '#007AFF';
-  };
-}
 
-function performHardRefresh() {
-  // Show loading indicator with better mobile support
-  const loadingDiv = document.createElement('div');
-  loadingDiv.innerHTML = `
+        document.body.appendChild(updateModal);
+
+        // Handle button click
+        document.getElementById("updateBtn").onclick = () => {
+          document.body.removeChild(updateModal);
+          performHardRefresh();
+        };
+
+        // Handle tap on mobile better
+        document.getElementById("updateBtn").ontouchstart = () => {
+          document.getElementById("updateBtn").style.background = "#0056CC";
+        };
+
+        document.getElementById("updateBtn").ontouchend = () => {
+          document.getElementById("updateBtn").style.background = "#007AFF";
+        };
+      }
+
+      function performHardRefresh() {
+        // Show loading indicator with better mobile support
+        const loadingDiv = document.createElement("div");
+        loadingDiv.innerHTML = `
     <div style="
       position: fixed;
       top: 0;
@@ -1691,99 +2636,100 @@ function performHardRefresh() {
       }
     </style>
   `;
-  document.body.appendChild(loadingDiv);
-  
-  // Force new service worker to activate if waiting
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistration().then((registration) => {
-      if (registration && registration.waiting) {
-        // Tell the waiting service worker to skip waiting
-        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-      } else if (navigator.serviceWorker.controller) {
-        // Clear caches via current service worker
-        navigator.serviceWorker.controller.postMessage({
-          type: 'HARD_REFRESH'
-        });
-      }
-    });
-  }
-  
-  // Preserve important user data before clearing storage
-try {
-  // Use real variable names for keys, matching your app code
-  const STATS_BY_DAY_KEY = 'customodoroStatsByDay';      // Productivity graph data
-  const USER_KEY = 'customodoroUser';                    // User profile data
-  const SETTINGS_KEY = 'customodoroSettings';            // User settings
-  const TASKS_KEY = 'pomodoroTasks';                     // Classic tasks
-  const REVERSE_TASKS_KEY = 'reverseTasks';              // Reverse Pomodoro tasks
-  const THEME_KEY = 'customodoroTheme';                  // Selected theme
-  const PREFERENCES_KEY = 'customodoroPreferences';      // Other user preferences
-  const PROGRESS_KEY = 'customodoroProgress';            // Progress tracking
-  const ACHIEVEMENTS_KEY = 'customodoroAchievements';    // Achievements
-  const STREAKS_KEY = 'customodoroStreaks';              // Streak data
-  const GOALS_KEY = 'customodoroGoals';                  // Goals
-  const AUTH_KEY = 'customodoro-auth';                   // Authentication data
-  const LAST_SYNC_KEY = 'customodoro-last-sync';         // Last sync timestamp
-  const HAS_USED_SYNC_KEY = 'customodoro-has-used-sync'; // Flag for sync usage
-  const SESSIONS_KEY = 'customodoro-sessions';           // Synced sessions data
+        document.body.appendChild(loadingDiv);
 
-  const preservedKeys = [
-    STATS_BY_DAY_KEY,
-    USER_KEY,
-    SETTINGS_KEY,
-    TASKS_KEY,
-    REVERSE_TASKS_KEY,
-    THEME_KEY,
-    PREFERENCES_KEY,
-    PROGRESS_KEY,
-    ACHIEVEMENTS_KEY,
-    STREAKS_KEY,
-    GOALS_KEY,
-    AUTH_KEY,
-    LAST_SYNC_KEY,
-    HAS_USED_SYNC_KEY,
-    SESSIONS_KEY
-  ];
-    
-    // Backup preserved data
-    const preservedData = {};
-    preservedKeys.forEach(key => {
-      const value = localStorage.getItem(key);
-      if (value !== null) {
-        preservedData[key] = value;
-      }
-    });
-    
-    console.log('💾 Backing up user data...', Object.keys(preservedData));
-    
-    // Clear all storage
-    localStorage.clear();
-    sessionStorage.clear();
-    
-    // Restore preserved data immediately
-    Object.keys(preservedData).forEach(key => {
-      localStorage.setItem(key, preservedData[key]);
-    });
-    
-    console.log('✅ User data restored successfully!', Object.keys(preservedData));
-    
-  } catch (e) {
-    console.error('❌ Storage operation failed:', e);
-    // Even if storage fails, still proceed with refresh
-  }
-  
-  // Force hard reload with a slightly longer delay for mobile
-  setTimeout(() => {
-    // Multiple reload methods for better mobile compatibility
-    if (window.location.reload) {
-      window.location.reload(true);
-    } else {
-      // Fallback for older mobile browsers
-      window.location.href = window.location.href;
-    }
-  }, 2000); // Longer delay to ensure SW processes messages
-}
-</script>
+        // Force new service worker to activate if waiting
+        if ("serviceWorker" in navigator) {
+          navigator.serviceWorker.getRegistration().then((registration) => {
+            if (registration && registration.waiting) {
+              // Tell the waiting service worker to skip waiting
+              registration.waiting.postMessage({ type: "SKIP_WAITING" });
+            } else if (navigator.serviceWorker.controller) {
+              // Clear caches via current service worker
+              navigator.serviceWorker.controller.postMessage({
+                type: "HARD_REFRESH",
+              });
+            }
+          });
+        }
 
-</body>
+        // Preserve important user data before clearing storage
+        try {
+          // Use real variable names for keys, matching your app code
+          const STATS_BY_DAY_KEY = "customodoroStatsByDay"; // Productivity graph data
+          const USER_KEY = "customodoroUser"; // User profile data
+          const SETTINGS_KEY = "customodoroSettings"; // User settings
+          const TASKS_KEY = "pomodoroTasks"; // Classic tasks
+          const REVERSE_TASKS_KEY = "reverseTasks"; // Reverse Pomodoro tasks
+          const THEME_KEY = "customodoroTheme"; // Selected theme
+          const PREFERENCES_KEY = "customodoroPreferences"; // Other user preferences
+          const PROGRESS_KEY = "customodoroProgress"; // Progress tracking
+          const ACHIEVEMENTS_KEY = "customodoroAchievements"; // Achievements
+          const STREAKS_KEY = "customodoroStreaks"; // Streak data
+          const GOALS_KEY = "customodoroGoals"; // Goals
+          const AUTH_KEY = "customodoro-auth"; // Authentication data
+          const LAST_SYNC_KEY = "customodoro-last-sync"; // Last sync timestamp
+          const HAS_USED_SYNC_KEY = "customodoro-has-used-sync"; // Flag for sync usage
+          const SESSIONS_KEY = "customodoro-sessions"; // Synced sessions data
+
+          const preservedKeys = [
+            STATS_BY_DAY_KEY,
+            USER_KEY,
+            SETTINGS_KEY,
+            TASKS_KEY,
+            REVERSE_TASKS_KEY,
+            THEME_KEY,
+            PREFERENCES_KEY,
+            PROGRESS_KEY,
+            ACHIEVEMENTS_KEY,
+            STREAKS_KEY,
+            GOALS_KEY,
+            AUTH_KEY,
+            LAST_SYNC_KEY,
+            HAS_USED_SYNC_KEY,
+            SESSIONS_KEY,
+          ];
+
+          // Backup preserved data
+          const preservedData = {};
+          preservedKeys.forEach((key) => {
+            const value = localStorage.getItem(key);
+            if (value !== null) {
+              preservedData[key] = value;
+            }
+          });
+
+          console.log("💾 Backing up user data...", Object.keys(preservedData));
+
+          // Clear all storage
+          localStorage.clear();
+          sessionStorage.clear();
+
+          // Restore preserved data immediately
+          Object.keys(preservedData).forEach((key) => {
+            localStorage.setItem(key, preservedData[key]);
+          });
+
+          console.log(
+            "✅ User data restored successfully!",
+            Object.keys(preservedData),
+          );
+        } catch (e) {
+          console.error("❌ Storage operation failed:", e);
+          // Even if storage fails, still proceed with refresh
+        }
+
+        // Force hard reload with a slightly longer delay for mobile
+        setTimeout(() => {
+          // Multiple reload methods for better mobile compatibility
+          if (window.location.reload) {
+            window.location.reload(true);
+          } else {
+            // Fallback for older mobile browsers
+            window.location.href = window.location.href;
+          }
+        }, 2000); // Longer delay to ensure SW processes messages
+      }
+    </script>
+  </body>
 </html>
