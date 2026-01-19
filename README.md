@@ -1,8 +1,8 @@
 <div align="center">
 
-# 🍅 **Customodoro - Custom Pomodoro Timer & Productivity App** 
+# 🍅 **Customodoro - Custom Pomodoro Timer & Productivity App**
 
-*The Ultimate Customizable Pomodoro Experience for Enhanced Focus and Productivity*
+_The Ultimate Customizable Pomodoro Experience for Enhanced Focus and Productivity_
 
 [![Live Demo](https://img.shields.io/badge/🚀%20Live%20Demo-customodoro.vercel.app-blue?style=for-the-badge)](https://customodoro.vercel.app)
 [![PWA Ready](https://img.shields.io/badge/📱%20PWA-Ready-green?style=for-the-badge)](https://customodoro.vercel.app)
@@ -27,7 +27,7 @@
 
 **Key SEO Keywords**: `customodoro`, `pomodoro timer`, `productivity app`, `focus timer`, `custom pomodoro`, `time management app`, `study timer`, `work timer`, `reverse pomodoro`, `productivity tracker`
 
-> *"Why settle for one-size-fits-all when you can have it YOUR way?"*
+> _"Why settle for one-size-fits-all when you can have it YOUR way?"_
 
 ---
 
@@ -42,33 +42,36 @@
 
 ## 🎭 **Dual Timer Modes - Classic vs Reverse Pomodoro**
 
-### 🍅 **Classic Pomodoro Mode** 
-*Perfect for structured productivity and traditional Pomodoro technique*
+### 🍅 **Classic Pomodoro Mode**
+
+_Perfect for structured productivity and traditional Pomodoro technique_
 
 - **⏰ Pomodoro Sessions** - Customizable focus periods
-- **☕ Short Breaks** - Quick recharge breaks 
+- **☕ Short Breaks** - Quick recharge breaks
 - **🛋️ Long Breaks** - Extended rest periods
 - **📊 Session Tracking** - Visual progress with completion dots
 - **🎯 Task Management** - Built-in task list with completion tracking
 
-### ⏱️ **Reverse Pomodoro Mode** 
-*Revolutionary stopwatch approach for flexible work sessions*
+### ⏱️ **Reverse Pomodoro Mode**
+
+_Revolutionary stopwatch approach for flexible work sessions_
 
 **Work as long as you want, earn breaks based on your effort!**
 
 | 💪 **Work Duration** | 🏖️ **Earned Break** |
-|---------------------|---------------------|
-| 5-20 minutes        | 2 minutes          |
-| 21-30 minutes       | 5 minutes          |
-| 31-45 minutes       | 10 minutes         |
-| 46-55 minutes       | 15 minutes         |
-| 56-60 minutes       | **30 minutes!**    |
+| -------------------- | ------------------- |
+| 5-20 minutes         | 2 minutes           |
+| 21-30 minutes        | 5 minutes           |
+| 31-45 minutes        | 10 minutes          |
+| 46-55 minutes        | 15 minutes          |
+| 56-60 minutes        | **30 minutes!**     |
 
-*Perfect for deep work sessions, creative flow states, coding marathons, or when you're just "in the zone"*
+_Perfect for deep work sessions, creative flow states, coding marathons, or when you're just "in the zone"_
 
 **🚀 Try Reverse Mode Now**: **[customodoro.vercel.app/reverse](https://customodoro.vercel.app/reverse)**
 
 **Two Reverse Pomodoro Sub-modes:**
+
 - **Standard Mode:** Default 1-hour max work time
 - **Dynamic Mode:** Customize max work time up to 6 hours for deep work marathons
 
@@ -77,6 +80,7 @@
 ## 🎨 **Stunning Customization Options for Enhanced User Experience**
 
 ### 🎵 **Immersive Audio Experience**
+
 - **🔊 Volume Control** - Fine-tune your audio experience
 - **🎺 Premium Alert Sounds** - Choose from curated sound collection
   - iPhone Alarm Bell
@@ -92,6 +96,7 @@
 - **🔕 Smart Sound Effects** - Contextual audio feedback
 
 ### 🎭 **Beautiful Themes for Personalization**
+
 - **☀️ Light Mode** - Clean, minimalist design for daytime productivity
 - **🌙 Dark Mode** - Easy on the eyes for evening work sessions
 - **🌸 君の名は (Your Name)** - Anime-inspired aesthetic theme
@@ -103,9 +108,10 @@
 
 - **🔒 Locked-In Mode** - When the timer starts, everything fades to black except the timer — no distractions, just pure focus.
 - **🎯 Focus Mode** - A cleaner interface that hides non-essential elements while keeping your current theme in the background.
- - **⛶ Full Screen Mode** - Expand the timer into an immersive fullscreen view that hides browser chrome and peripheral UI for maximum focus; toggle via the toolbar or using the browser's fullscreen shortcut (usually F11) for a distraction-free experience.
+- **⛶ Full Screen Mode** - Expand the timer into an immersive fullscreen view that hides browser chrome and peripheral UI for maximum focus; toggle via the toolbar or using the browser's fullscreen shortcut (usually F11) for a distraction-free experience.
 
 ### ⚡ **Smart Automation Features**
+
 - **🚀 Auto-start Breaks** - Seamless transitions to rest periods
 - **💪 Auto-start Pomodoros** - Jump back into work automatically
 - **🧠 Session Memory** - Remembers your preferences across sessions
@@ -115,15 +121,18 @@
 ## 🎯 **Advanced Productivity Features**
 
 ### 📱 **Radial Menu System**
+
 Elegant floating action menu with quick access to:
+
 - **⚙️ Settings Panel** - Full customization options
-- **🎯 Focus Mode** - Minimal distraction interface  
+- **🎯 Focus Mode** - Minimal distraction interface
 - **📺 Fullscreen Mode** - Immersive full-screen timer experience
- - **🔁 Sync Account** - Sign in to sync your stats across devices (optional)
- - **🧹 Clear Cache & Reload** - Quickly reset cached data and reload the app
- - **🎵 Mini Music Player** - Compact background music controls for on-the-go focus
+- **🔁 Sync Account** - Sign in to sync your stats across devices (optional)
+- **🧹 Clear Cache & Reload** - Quickly reset cached data and reload the app
+- **🎵 Mini Music Player** - Compact background music controls for on-the-go focus
 
 ### 📋 **Smart Task Management System**
+
 - **✅ Add & Track Tasks** - Stay organized with built-in task lists
 - **⚡ Real-time Progress** - Visual completion tracking
 - **🗑️ Easy Management** - Add, complete, or delete tasks effortlessly
@@ -132,10 +141,12 @@ Elegant floating action menu with quick access to:
 New: You can now focus on a task by clicking it, and drag & drop tasks to reorder! This makes shifting priorities and concentrating on a single task simple and tactile.
 
 ### 📈 **Productivity Graph (NEW!)**
+
 We've expanded our analytics into a new "Stats & Analytics" suite that includes the original Productivity Graph plus several new stats cards to give you deeper insights into your habits.
 
- **📅 Productivity Graph (Heatmap)** — The original calendar-style heatmap (contribution-graph inspired) showing focus density over time.
-  - My Stats: Total Focus Points, Current Streak, Longest Streak
+**📅 Productivity Graph (Heatmap)** — The original calendar-style heatmap (contribution-graph inspired) showing focus density over time.
+
+- My Stats: Total Focus Points, Current Streak, Longest Streak
 - **📊 User's Stats Card (Dynamic)** — Personalized stats that update when you sign in:
   - Total Focus Time
   - Completed Sessions
@@ -147,12 +158,14 @@ We've expanded our analytics into a new "Stats & Analytics" suite that includes 
 These cards can be shown together on a dashboard or broken into their own section for advanced users.
 
 ### 💾 **Persistent Settings & Data Privacy**
+
 - **🔄 Auto-save Preferences** - Your settings are always remembered
 - **🔧 Granular Controls** - Customize every aspect of your timer experience
 - **⚡ Quick Reset Options** - Start fresh anytime with one click
 - **🔒 Privacy-First** - All data stored locally, no account required
 
 #### Sync Across Devices (Optional)
+
 We provide an opt-in sync feature so you can keep streaks and stats consistent across phones, tablets, and computers. Syncing is optional — the app remains fully functional without an account and stores data locally by default.
 
 How it works:
@@ -168,11 +181,13 @@ We take safety seriously: synchronization is opt-in and secured (data is uploade
 ## 🚀 **Installation & Setup Guide**
 
 ### **🌐 Web App (Recommended)**
+
 **Classic Mode**: Visit **[customodoro.vercel.app](https://customodoro.vercel.app)**  
 **Reverse Mode**: Visit **[customodoro.vercel.app/reverse](https://customodoro.vercel.app/reverse)**  
 Both modes support PWA installation - click "Add to Home Screen" for native app experience!
 
 ### **💻 Local Development**
+
 ```bash
 # Clone the Customodoro repository
 git clone https://github.com/yourusername/customodoro.git
@@ -187,6 +202,7 @@ python -m http.server 8000
 ```
 
 ### **📱 Mobile Installation**
+
 - **iOS**: Safari → Share → Add to Home Screen
 - **Android**: Chrome → Menu → Add to Home Screen
 - **Desktop**: Browser → Install button in address bar
@@ -209,12 +225,12 @@ python -m http.server 8000
 
 ## 📊 **Use Cases & Target Audience**
 
-| 👨‍💼 **Professionals** | 👨‍🎓 **Students** | 🎨 **Creatives** | 🏠 **Remote Workers** |
-|---------------------|----------------|-----------------|---------------------|
-| Meeting preparation | Study sessions | Design sprints  | Home office focus   |
-| Project deadlines   | Exam preparation | Writing blocks  | Video call prep    |
-| Email processing    | Research work  | Art sessions    | Task management     |
-| Time management     | Assignment work | Content creation | Productivity tracking |
+| 👨‍💼 **Professionals** | 👨‍🎓 **Students**  | 🎨 **Creatives** | 🏠 **Remote Workers** |
+| -------------------- | ---------------- | ---------------- | --------------------- |
+| Meeting preparation  | Study sessions   | Design sprints   | Home office focus     |
+| Project deadlines    | Exam preparation | Writing blocks   | Video call prep       |
+| Email processing     | Research work    | Art sessions     | Task management       |
+| Time management      | Assignment work  | Content creation | Productivity tracking |
 
 ---
 
@@ -263,7 +279,6 @@ Reverse keeps the same UI, themes, and analytics, but changes the timing model: 
 
 ## 🏆 **Why Choose Customodoro Over Other Pomodoro Apps?**
 
-
 ✅ **Dual Timer Modes** - Only app with both Classic & Reverse Pomodoro techniques
 
 ✅ **100% Free & Open Source** - No premium features locked behind paywall
@@ -291,7 +306,7 @@ Reverse keeps the same UI, themes, and analytics, but changes the timing model: 
 **Primary Keywords**: customodoro, custom pomodoro timer, productivity app, focus timer, time management  
 **Secondary Keywords**: reverse pomodoro, study timer, work timer, pomodoro technique app, productivity tracker  
 **Long-tail Keywords**: customizable pomodoro timer online, free productivity app, pomodoro timer with task management  
-**Technical Keywords**: PWA pomodoro timer, offline productivity app, browser-based focus timer  
+**Technical Keywords**: PWA pomodoro timer, offline productivity app, browser-based focus timer
 
 ---
 
@@ -301,7 +316,7 @@ Reverse keeps the same UI, themes, and analytics, but changes the timing model: 
 **⏱️ Reverse Pomodoro**: [customodoro.vercel.app/reverse](https://customodoro.vercel.app/reverse)  
 **📝 Bug Reports & Feature Requests**: [Submit Feedback](https://noteforms.com/forms/feedback-and-bug-reporting-form-fnkwn7)  
 **📧 Direct Contact**: [brianyabutech@gmail.com](mailto:brianyabutech@gmail.com)  
-**⭐ GitHub Repository**: Star this repo to support development!  
+**⭐ GitHub Repository**: Star this repo to support development!
 
 ---
 
@@ -328,7 +343,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **🚀 Try Customodoro now: [customodoro.vercel.app](https://customodoro.vercel.app)**
 
-*Made with ❤️ for productivity enthusiasts worldwide*
+_Made with ❤️ for productivity enthusiasts worldwide_
 
 **© 2025 Customodoro Timer - Empowering Productivity Through Customization**
 

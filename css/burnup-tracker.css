@@ -9,7 +9,7 @@
   position: relative;
   overflow: hidden;
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  box-shadow: 
+  box-shadow:
     0 6px 24px rgba(0, 0, 0, 0.12),
     0 2px 8px rgba(139, 95, 191, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
@@ -17,16 +17,18 @@
 
 /* Subtle gradient overlay for depth */
 .burnup-tracker::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(139, 95, 191, 0.1) 50%, 
-    transparent 100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(139, 95, 191, 0.1) 50%,
+    transparent 100%
+  );
   transition: left 0.6s ease;
   z-index: 1;
   pointer-events: none;
@@ -35,7 +37,7 @@
 .burnup-tracker.active {
   background: rgba(139, 95, 191, 0.12);
   border-color: rgba(139, 95, 191, 0.45);
-  box-shadow: 
+  box-shadow:
     0 8px 32px rgba(139, 95, 191, 0.25),
     0 2px 12px rgba(168, 85, 247, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
@@ -66,7 +68,7 @@
 }
 
 .burnup-title::before {
-  content: '●';
+  content: "●";
   position: absolute;
   left: -12px;
   top: 50%;
@@ -77,8 +79,15 @@
 }
 
 @keyframes pulse-dot {
-  0%, 100% { opacity: 0.7; transform: translateY(-50%) scale(1); }
-  50% { opacity: 1; transform: translateY(-50%) scale(1.15); }
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: translateY(-50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.15);
+  }
 }
 
 .burnup-status-indicator {
@@ -91,11 +100,12 @@
 }
 
 @keyframes status-glow {
-  0%, 100% { 
+  0%,
+  100% {
     box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
     transform: scale(1);
   }
-  50% { 
+  50% {
     box-shadow: 0 0 16px rgba(16, 185, 129, 0.7);
     transform: scale(1.1);
   }
@@ -114,43 +124,48 @@
 }
 
 .burnup-progress-container::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(255, 255, 255, 0.2) 50%, 
-    transparent 100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    transparent 100%
+  );
   transform: translateX(-100%);
   animation: progress-shimmer 3s infinite ease-in-out;
 }
 
 @keyframes progress-shimmer {
-  0% { transform: translateX(-100%); }
-  50% { transform: translateX(100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .burnup-progress-bar {
   height: 100%;
-  background: linear-gradient(135deg, 
-    #8b5fbf 0%, 
-    #a855f7 50%, 
-    #c084fc 100%);
+  background: linear-gradient(135deg, #8b5fbf 0%, #a855f7 50%, #c084fc 100%);
   width: 0%;
   border-radius: 6px;
   transition: width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   position: relative;
-  box-shadow: 
+  box-shadow:
     0 0 8px rgba(139, 95, 191, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .burnup-progress-bar::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   right: -1px;
@@ -163,8 +178,12 @@
 }
 
 @keyframes tip-pulse {
-  0% { opacity: 0.7; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .burnup-stats {
@@ -220,10 +239,11 @@
 }
 
 @keyframes percentage-glow {
-  0%, 100% { 
+  0%,
+  100% {
     box-shadow: 0 2px 8px rgba(139, 95, 191, 0.2);
   }
-  50% { 
+  50% {
     box-shadow: 0 2px 16px rgba(139, 95, 191, 0.3);
   }
 }
@@ -232,41 +252,64 @@
 #burnup-spent-time,
 #burnup-planned-time {
   font-weight: 700;
-  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-family: "SF Mono", "Monaco", "Inconsolata", "Roboto Mono", monospace;
   letter-spacing: 0.5px;
   color: inherit;
 }
 
 /* Particle effect background */
 .burnup-tracker::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: 
-    radial-gradient(circle at 20% 20%, rgba(139, 95, 191, 0.1) 1px, transparent 1px),
-    radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.1) 1px, transparent 1px),
-    radial-gradient(circle at 40% 60%, rgba(192, 132, 252, 0.05) 1px, transparent 1px);
-  background-size: 30px 30px, 40px 40px, 50px 50px;
+  background-image:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(139, 95, 191, 0.1) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(168, 85, 247, 0.1) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at 40% 60%,
+      rgba(192, 132, 252, 0.05) 1px,
+      transparent 1px
+    );
+  background-size:
+    30px 30px,
+    40px 40px,
+    50px 50px;
   animation: particles-float 20s linear infinite;
   pointer-events: none;
   z-index: 0;
 }
 
 @keyframes particles-float {
-  0% { transform: translate(0, 0); }
-  33% { transform: translate(10px, -10px); }
-  66% { transform: translate(-5px, 5px); }
-  100% { transform: translate(0, 0); }
+  0% {
+    transform: translate(0, 0);
+  }
+  33% {
+    transform: translate(10px, -10px);
+  }
+  66% {
+    transform: translate(-5px, 5px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
 }
 
 /* Light theme - Minimalistic solid color containers per mode */
 
 /* Light theme - Pomodoro mode solid color (#9E9586) */
 body.theme-light.pomodoro-mode .burnup-tracker {
-  background: #9E9586;
+  background: #9e9586;
   border: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   backdrop-filter: none;
@@ -274,7 +317,7 @@ body.theme-light.pomodoro-mode .burnup-tracker {
 
 /* Light theme - Short Break mode solid color (#4D5158) */
 body.theme-light.short-break-mode .burnup-tracker {
-  background: #4D5158;
+  background: #4d5158;
   border: 1px solid rgba(0, 0, 0, 0.15);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   backdrop-filter: none;
@@ -282,7 +325,7 @@ body.theme-light.short-break-mode .burnup-tracker {
 
 /* Light theme - Long Break mode solid color (#383D46) */
 body.theme-light.long-break-mode .burnup-tracker {
-  background: #383D46;
+  background: #383d46;
   border: 1px solid rgba(0, 0, 0, 0.2);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   backdrop-filter: none;
@@ -290,7 +333,7 @@ body.theme-light.long-break-mode .burnup-tracker {
 
 /* Light theme - Reverse mode solid color (#4D5158) */
 body.theme-light.reverse-mode .burnup-tracker {
-  background: #4D5158;
+  background: #4d5158;
   border: 1px solid rgba(0, 0, 0, 0.15);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   backdrop-filter: none;
@@ -298,7 +341,7 @@ body.theme-light.reverse-mode .burnup-tracker {
 
 /* Light theme - Break mode solid color (#4D5158) */
 body.theme-light.break-mode .burnup-tracker {
-  background: #4D5158;
+  background: #4d5158;
   border: 1px solid rgba(0, 0, 0, 0.15);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   backdrop-filter: none;
@@ -307,7 +350,7 @@ body.theme-light.break-mode .burnup-tracker {
 /* Light theme active state with subtle enhancement */
 .theme-light .burnup-tracker.active {
   transform: translateY(-1px);
-  box-shadow: 
+  box-shadow:
     0 6px 20px rgba(0, 0, 0, 0.15),
     0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -372,12 +415,14 @@ body.theme-light.break-mode .burnup-tracker {
 
 /* Dark theme with consistent dark styling across all modes */
 .theme-dark .burnup-tracker {
-  background: linear-gradient(135deg, 
-    rgba(17, 24, 39, 0.95) 0%, 
-    rgba(31, 41, 55, 0.9) 50%, 
-    rgba(17, 24, 39, 0.95) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(17, 24, 39, 0.95) 0%,
+    rgba(31, 41, 55, 0.9) 50%,
+    rgba(17, 24, 39, 0.95) 100%
+  );
   border: 1px solid rgba(139, 95, 191, 0.5);
-  box-shadow: 
+  box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.6),
     0 2px 16px rgba(139, 95, 191, 0.15),
     inset 0 1px 0 rgba(139, 95, 191, 0.1);
@@ -389,25 +434,29 @@ body.theme-dark.short-break-mode .burnup-tracker,
 body.theme-dark.long-break-mode .burnup-tracker,
 body.theme-dark.reverse-mode .burnup-tracker,
 body.theme-dark.break-mode .burnup-tracker {
-  background: linear-gradient(135deg, 
-    rgba(17, 24, 39, 0.95) 0%, 
-    rgba(31, 41, 55, 0.9) 50%, 
-    rgba(17, 24, 39, 0.95) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(17, 24, 39, 0.95) 0%,
+    rgba(31, 41, 55, 0.9) 50%,
+    rgba(17, 24, 39, 0.95) 100%
+  );
   border: 1px solid rgba(139, 95, 191, 0.5);
-  box-shadow: 
+  box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.6),
     0 2px 16px rgba(139, 95, 191, 0.15),
     inset 0 1px 0 rgba(139, 95, 191, 0.1);
 }
 
 .theme-dark .burnup-tracker.active {
-  background: linear-gradient(135deg, 
-    rgba(139, 95, 191, 0.25) 0%, 
-    rgba(168, 85, 247, 0.2) 30%, 
-    rgba(192, 132, 252, 0.15) 70%, 
-    rgba(139, 95, 191, 0.25) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(139, 95, 191, 0.25) 0%,
+    rgba(168, 85, 247, 0.2) 30%,
+    rgba(192, 132, 252, 0.15) 70%,
+    rgba(139, 95, 191, 0.25) 100%
+  );
   border-color: rgba(139, 95, 191, 0.7);
-  box-shadow: 
+  box-shadow:
     0 12px 40px rgba(139, 95, 191, 0.35),
     0 4px 24px rgba(168, 85, 247, 0.25),
     inset 0 1px 0 rgba(139, 95, 191, 0.2);
@@ -425,11 +474,13 @@ body.theme-dark.break-mode .burnup-tracker {
 }
 
 .theme-dark .burnup-progress-container {
-  background: linear-gradient(90deg, 
-    rgba(17, 24, 39, 0.9) 0%, 
-    rgba(31, 41, 55, 0.8) 100%);
+  background: linear-gradient(
+    90deg,
+    rgba(17, 24, 39, 0.9) 0%,
+    rgba(31, 41, 55, 0.8) 100%
+  );
   border: 1px solid rgba(139, 95, 191, 0.4);
-  box-shadow: 
+  box-shadow:
     inset 0 2px 8px rgba(0, 0, 0, 0.7),
     inset 0 1px 0 rgba(139, 95, 191, 0.15);
 }
@@ -441,9 +492,11 @@ body.theme-dark.break-mode .burnup-tracker {
 
 .theme-dark .burnup-spent,
 .theme-dark .burnup-planned {
-  background: linear-gradient(135deg, 
-    rgba(139, 95, 191, 0.15) 0%, 
-    rgba(168, 85, 247, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(139, 95, 191, 0.15) 0%,
+    rgba(168, 85, 247, 0.1) 100%
+  );
   border: 1px solid rgba(139, 95, 191, 0.3);
   color: rgba(243, 244, 246, 0.95);
   font-weight: 600;
@@ -452,9 +505,11 @@ body.theme-dark.break-mode .burnup-tracker {
 
 .theme-dark .burnup-spent:hover,
 .theme-dark .burnup-planned:hover {
-  background: linear-gradient(135deg, 
-    rgba(139, 95, 191, 0.25) 0%, 
-    rgba(168, 85, 247, 0.18) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(139, 95, 191, 0.25) 0%,
+    rgba(168, 85, 247, 0.18) 100%
+  );
   border-color: rgba(139, 95, 191, 0.5);
   box-shadow: 0 4px 12px rgba(139, 95, 191, 0.25);
 }
@@ -468,9 +523,11 @@ body.theme-dark.break-mode .burnup-tracker {
 
 .theme-dark .burnup-percentage {
   color: #c084fc;
-  background: linear-gradient(135deg, 
-    rgba(139, 95, 191, 0.2) 0%, 
-    rgba(168, 85, 247, 0.15) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(139, 95, 191, 0.2) 0%,
+    rgba(168, 85, 247, 0.15) 100%
+  );
   border: 1px solid rgba(139, 95, 191, 0.4);
   font-weight: 700;
   box-shadow: 0 2px 12px rgba(139, 95, 191, 0.3);
@@ -511,7 +568,7 @@ body.theme-custom.break-mode .burnup-tracker {
 .theme-custom .burnup-tracker.active {
   background: rgba(0, 0, 0, 0.6);
   border-color: rgba(255, 255, 255, 0.3);
-  box-shadow: 
+  box-shadow:
     0 12px 40px rgba(0, 0, 0, 0.4),
     0 4px 24px rgba(139, 95, 191, 0.2);
 }
@@ -592,12 +649,34 @@ body.theme-custom.break-mode .burnup-tracker {
 .theme-dark .burnup-tracker::after,
 .theme-yourname .burnup-tracker::after,
 .theme-custom .burnup-tracker::after {
-  background-image: 
-    linear-gradient(45deg, transparent 40%, rgba(139, 95, 191, 0.03) 50%, transparent 60%),
-    linear-gradient(-45deg, transparent 40%, rgba(168, 85, 247, 0.03) 50%, transparent 60%),
-    radial-gradient(circle at 25% 25%, rgba(139, 95, 191, 0.1) 1px, transparent 1px),
-    radial-gradient(circle at 75% 75%, rgba(168, 85, 247, 0.1) 1px, transparent 1px);
-  background-size: 60px 60px, 60px 60px, 40px 40px, 50px 50px;
+  background-image:
+    linear-gradient(
+      45deg,
+      transparent 40%,
+      rgba(139, 95, 191, 0.03) 50%,
+      transparent 60%
+    ),
+    linear-gradient(
+      -45deg,
+      transparent 40%,
+      rgba(168, 85, 247, 0.03) 50%,
+      transparent 60%
+    ),
+    radial-gradient(
+      circle at 25% 25%,
+      rgba(139, 95, 191, 0.1) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at 75% 75%,
+      rgba(168, 85, 247, 0.1) 1px,
+      transparent 1px
+    );
+  background-size:
+    60px 60px,
+    60px 60px,
+    40px 40px,
+    50px 50px;
 }
 
 /* Responsive design with enhanced mobile experience */
@@ -607,27 +686,27 @@ body.theme-custom.break-mode .burnup-tracker {
     padding: 16px;
     border-radius: 16px;
   }
-  
+
   .burnup-title {
     font-size: 12px;
     letter-spacing: 1px;
   }
-  
+
   .burnup-stats {
     font-size: 11px;
     gap: 8px;
   }
-  
+
   .burnup-percentage {
     font-size: 14px;
     padding: 6px 12px;
   }
-  
+
   .burnup-progress-container {
     height: 10px;
     margin-bottom: 14px;
   }
-  
+
   .burnup-spent,
   .burnup-planned {
     padding: 6px 10px;
@@ -641,28 +720,28 @@ body.theme-custom.break-mode .burnup-tracker {
     padding: 14px;
     border-radius: 14px;
   }
-  
+
   .burnup-title {
     font-size: 11px;
     letter-spacing: 0.8px;
   }
-  
+
   .burnup-stats {
     font-size: 10px;
     gap: 6px;
     grid-template-columns: 1fr auto 1fr auto;
   }
-  
+
   .burnup-progress-container {
     height: 8px;
     margin-bottom: 12px;
   }
-  
+
   .burnup-percentage {
     font-size: 13px;
     padding: 5px 10px;
   }
-  
+
   .burnup-spent,
   .burnup-planned {
     padding: 5px 8px;
@@ -715,14 +794,14 @@ body.theme-custom.break-mode .burnup-tracker {
 /* Micro-interactions for enhanced UX */
 .burnup-tracker:hover {
   transform: translateY(-1px);
-  box-shadow: 
+  box-shadow:
     0 12px 40px rgba(0, 0, 0, 0.4),
     0 4px 20px rgba(139, 95, 191, 0.2);
 }
 
 .burnup-tracker.active:hover {
   transform: translateY(-3px);
-  box-shadow: 
+  box-shadow:
     0 16px 50px rgba(139, 95, 191, 0.3),
     0 8px 30px rgba(168, 85, 247, 0.2);
 }
@@ -756,22 +835,24 @@ body.theme-custom.break-mode .burnup-tracker {
   backdrop-filter: none !important;
   border: 1px solid #dee2e6 !important;
   color: #2c3e50 !important;
-  box-shadow: 
+  box-shadow:
     0 2px 8px rgba(0, 0, 0, 0.1),
     0 1px 3px rgba(0, 0, 0, 0.08) !important;
 }
 
 .burnup-tracker.tracker-design-light-solid::before {
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(40, 167, 69, 0.1) 50%, 
-    transparent 100%) !important;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(40, 167, 69, 0.1) 50%,
+    transparent 100%
+  ) !important;
 }
 
 .burnup-tracker.tracker-design-light-solid.active {
   background: #e9ecef !important;
   border-color: #28a745 !important;
-  box-shadow: 
+  box-shadow:
     0 4px 12px rgba(40, 167, 69, 0.2),
     0 2px 6px rgba(0, 0, 0, 0.1) !important;
 }
@@ -780,11 +861,15 @@ body.theme-custom.break-mode .burnup-tracker {
 .burnup-tracker.tracker-design-light-solid .burnup-title,
 .burnup-tracker.tracker-design-light-solid .burnup-timer,
 .burnup-tracker.tracker-design-light-solid .burnup-stats-item span,
-.burnup-tracker.tracker-design-light-solid .burnup-stats-item .burnup-stats-value {
+.burnup-tracker.tracker-design-light-solid
+  .burnup-stats-item
+  .burnup-stats-value {
   color: #2c3e50 !important;
 }
 
-.burnup-tracker.tracker-design-light-solid .burnup-stats-item .burnup-stats-label {
+.burnup-tracker.tracker-design-light-solid
+  .burnup-stats-item
+  .burnup-stats-label {
   color: #6c757d !important;
 }
 
@@ -803,22 +888,24 @@ body.theme-custom.break-mode .burnup-tracker {
   backdrop-filter: none !important;
   border: 1px solid #404040 !important;
   color: #ffffff !important;
-  box-shadow: 
+  box-shadow:
     0 6px 20px rgba(0, 0, 0, 0.4),
     0 2px 8px rgba(0, 0, 0, 0.2) !important;
 }
 
 .burnup-tracker.tracker-design-dark-gradient::before {
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(102, 126, 234, 0.2) 50%, 
-    transparent 100%) !important;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(102, 126, 234, 0.2) 50%,
+    transparent 100%
+  ) !important;
 }
 
 .burnup-tracker.tracker-design-dark-gradient.active {
   background: linear-gradient(135deg, #2d2d2d, #3a3a3a) !important;
   border-color: #667eea !important;
-  box-shadow: 
+  box-shadow:
     0 8px 24px rgba(102, 126, 234, 0.3),
     0 4px 12px rgba(0, 0, 0, 0.3) !important;
 }
@@ -827,11 +914,15 @@ body.theme-custom.break-mode .burnup-tracker {
 .burnup-tracker.tracker-design-dark-gradient .burnup-title,
 .burnup-tracker.tracker-design-dark-gradient .burnup-timer,
 .burnup-tracker.tracker-design-dark-gradient .burnup-stats-item span,
-.burnup-tracker.tracker-design-dark-gradient .burnup-stats-item .burnup-stats-value {
+.burnup-tracker.tracker-design-dark-gradient
+  .burnup-stats-item
+  .burnup-stats-value {
   color: #ffffff !important;
 }
 
-.burnup-tracker.tracker-design-dark-gradient .burnup-stats-item .burnup-stats-label {
+.burnup-tracker.tracker-design-dark-gradient
+  .burnup-stats-item
+  .burnup-stats-label {
   color: #b0b0b0 !important;
 }
 
@@ -850,23 +941,25 @@ body.theme-custom.break-mode .burnup-tracker {
   backdrop-filter: blur(20px) saturate(180%) !important;
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
   color: #ffffff !important;
-  box-shadow: 
+  box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.3),
     0 2px 12px rgba(255, 255, 255, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
 }
 
 .burnup-tracker.tracker-design-transparent-glass::before {
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(255, 255, 255, 0.15) 50%, 
-    transparent 100%) !important;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.15) 50%,
+    transparent 100%
+  ) !important;
 }
 
 .burnup-tracker.tracker-design-transparent-glass.active {
   background: rgba(255, 255, 255, 0.15) !important;
   border-color: rgba(76, 175, 80, 0.6) !important;
-  box-shadow: 
+  box-shadow:
     0 12px 40px rgba(0, 0, 0, 0.4),
     0 4px 16px rgba(76, 175, 80, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
@@ -876,12 +969,16 @@ body.theme-custom.break-mode .burnup-tracker {
 .burnup-tracker.tracker-design-transparent-glass .burnup-title,
 .burnup-tracker.tracker-design-transparent-glass .burnup-timer,
 .burnup-tracker.tracker-design-transparent-glass .burnup-stats-item span,
-.burnup-tracker.tracker-design-transparent-glass .burnup-stats-item .burnup-stats-value {
+.burnup-tracker.tracker-design-transparent-glass
+  .burnup-stats-item
+  .burnup-stats-value {
   color: #ffffff !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-.burnup-tracker.tracker-design-transparent-glass .burnup-stats-item .burnup-stats-label {
+.burnup-tracker.tracker-design-transparent-glass
+  .burnup-stats-item
+  .burnup-stats-label {
   color: rgba(255, 255, 255, 0.8) !important;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
@@ -893,9 +990,11 @@ body.theme-custom.break-mode .burnup-tracker {
 }
 
 .burnup-tracker.tracker-design-transparent-glass .burnup-progress-fill {
-  background: linear-gradient(90deg, 
-    rgba(76, 175, 80, 0.8), 
-    rgba(129, 199, 132, 0.8)) !important;
+  background: linear-gradient(
+    90deg,
+    rgba(76, 175, 80, 0.8),
+    rgba(129, 199, 132, 0.8)
+  ) !important;
   backdrop-filter: blur(5px) !important;
 }
 
@@ -934,38 +1033,41 @@ body.theme-custom.break-mode .burnup-tracker {
   background: #f5af19 !important;
 }
 
-.burnup-tracker.tracker-design-transparent-glass .burnup-status-indicator.on-track {
+.burnup-tracker.tracker-design-transparent-glass
+  .burnup-status-indicator.on-track {
   background: rgba(76, 175, 80, 0.8) !important;
   backdrop-filter: blur(5px) !important;
 }
 
-.burnup-tracker.tracker-design-transparent-glass .burnup-status-indicator.behind {
+.burnup-tracker.tracker-design-transparent-glass
+  .burnup-status-indicator.behind {
   background: rgba(244, 67, 54, 0.8) !important;
   backdrop-filter: blur(5px) !important;
 }
 
-.burnup-tracker.tracker-design-transparent-glass .burnup-status-indicator.ahead {
+.burnup-tracker.tracker-design-transparent-glass
+  .burnup-status-indicator.ahead {
   background: rgba(255, 193, 7, 0.8) !important;
   backdrop-filter: blur(5px) !important;
 }
 
 /* Hover effects for different designs */
 .burnup-tracker.tracker-design-light-solid:hover {
-  box-shadow: 
+  box-shadow:
     0 4px 16px rgba(0, 0, 0, 0.15),
     0 2px 8px rgba(40, 167, 69, 0.1) !important;
   transform: translateY(-2px);
 }
 
 .burnup-tracker.tracker-design-dark-gradient:hover {
-  box-shadow: 
+  box-shadow:
     0 12px 32px rgba(0, 0, 0, 0.5),
     0 4px 16px rgba(102, 126, 234, 0.2) !important;
   transform: translateY(-2px);
 }
 
 .burnup-tracker.tracker-design-transparent-glass:hover {
-  box-shadow: 
+  box-shadow:
     0 16px 48px rgba(0, 0, 0, 0.4),
     0 6px 20px rgba(255, 255, 255, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
@@ -986,12 +1088,14 @@ body.theme-custom.break-mode .burnup-tracker {
 
 /* Use Dark Style Design - Always applies dark theme styling regardless of current theme */
 .burnup-tracker.tracker-design-use-dark-style {
-  background: linear-gradient(135deg, 
-    rgba(17, 24, 39, 0.95) 0%, 
-    rgba(31, 41, 55, 0.9) 50%, 
-    rgba(17, 24, 39, 0.95) 100%) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(17, 24, 39, 0.95) 0%,
+    rgba(31, 41, 55, 0.9) 50%,
+    rgba(17, 24, 39, 0.95) 100%
+  ) !important;
   border: 1px solid rgba(139, 95, 191, 0.5) !important;
-  box-shadow: 
+  box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.6),
     0 2px 16px rgba(139, 95, 191, 0.15),
     inset 0 1px 0 rgba(139, 95, 191, 0.1) !important;
@@ -999,13 +1103,15 @@ body.theme-custom.break-mode .burnup-tracker {
 }
 
 .burnup-tracker.tracker-design-use-dark-style.active {
-  background: linear-gradient(135deg, 
-    rgba(139, 95, 191, 0.25) 0%, 
-    rgba(168, 85, 247, 0.2) 30%, 
-    rgba(192, 132, 252, 0.15) 70%, 
-    rgba(139, 95, 191, 0.25) 100%) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(139, 95, 191, 0.25) 0%,
+    rgba(168, 85, 247, 0.2) 30%,
+    rgba(192, 132, 252, 0.15) 70%,
+    rgba(139, 95, 191, 0.25) 100%
+  ) !important;
   border-color: rgba(139, 95, 191, 0.7) !important;
-  box-shadow: 
+  box-shadow:
     0 12px 40px rgba(139, 95, 191, 0.35),
     0 4px 24px rgba(168, 85, 247, 0.25),
     inset 0 1px 0 rgba(139, 95, 191, 0.2) !important;
@@ -1023,20 +1129,24 @@ body.theme-custom.break-mode .burnup-tracker {
 }
 
 .burnup-tracker.tracker-design-use-dark-style .burnup-progress-container {
-  background: linear-gradient(90deg, 
-    rgba(17, 24, 39, 0.9) 0%, 
-    rgba(31, 41, 55, 0.8) 100%) !important;
+  background: linear-gradient(
+    90deg,
+    rgba(17, 24, 39, 0.9) 0%,
+    rgba(31, 41, 55, 0.8) 100%
+  ) !important;
   border: 1px solid rgba(139, 95, 191, 0.4) !important;
-  box-shadow: 
+  box-shadow:
     inset 0 2px 8px rgba(0, 0, 0, 0.7),
     inset 0 1px 0 rgba(139, 95, 191, 0.15) !important;
 }
 
 .burnup-tracker.tracker-design-use-dark-style .burnup-spent,
 .burnup-tracker.tracker-design-use-dark-style .burnup-planned {
-  background: linear-gradient(135deg, 
-    rgba(139, 95, 191, 0.15) 0%, 
-    rgba(168, 85, 247, 0.1) 100%) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(139, 95, 191, 0.15) 0%,
+    rgba(168, 85, 247, 0.1) 100%
+  ) !important;
   border: 1px solid rgba(139, 95, 191, 0.3) !important;
   color: rgba(243, 244, 246, 0.95) !important;
   font-weight: 600 !important;
@@ -1045,9 +1155,11 @@ body.theme-custom.break-mode .burnup-tracker {
 
 .burnup-tracker.tracker-design-use-dark-style .burnup-spent:hover,
 .burnup-tracker.tracker-design-use-dark-style .burnup-planned:hover {
-  background: linear-gradient(135deg, 
-    rgba(139, 95, 191, 0.25) 0%, 
-    rgba(168, 85, 247, 0.18) 100%) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(139, 95, 191, 0.25) 0%,
+    rgba(168, 85, 247, 0.18) 100%
+  ) !important;
   border-color: rgba(139, 95, 191, 0.5) !important;
   box-shadow: 0 4px 12px rgba(139, 95, 191, 0.25) !important;
 }
@@ -1061,9 +1173,11 @@ body.theme-custom.break-mode .burnup-tracker {
 
 .burnup-tracker.tracker-design-use-dark-style .burnup-percentage {
   color: #c084fc !important;
-  background: linear-gradient(135deg, 
-    rgba(139, 95, 191, 0.2) 0%, 
-    rgba(168, 85, 247, 0.15) 100%) !important;
+  background: linear-gradient(
+    135deg,
+    rgba(139, 95, 191, 0.2) 0%,
+    rgba(168, 85, 247, 0.15) 100%
+  ) !important;
   border: 1px solid rgba(139, 95, 191, 0.4) !important;
   font-weight: 700 !important;
   box-shadow: 0 2px 12px rgba(139, 95, 191, 0.3) !important;
@@ -1090,7 +1204,7 @@ body.theme-custom.break-mode .burnup-tracker {
 .burnup-tracker.tracker-design-use-kimi-style.active {
   background: rgba(0, 0, 0, 0.6) !important;
   border-color: rgba(255, 255, 255, 0.3) !important;
-  box-shadow: 
+  box-shadow:
     0 12px 40px rgba(0, 0, 0, 0.4),
     0 4px 24px rgba(139, 95, 191, 0.2) !important;
 }
@@ -1165,28 +1279,28 @@ body.theme-custom.break-mode .burnup-tracker {
 /* Hover effects for design overrides */
 .burnup-tracker.tracker-design-use-dark-style:hover {
   transform: translateY(-1px);
-  box-shadow: 
+  box-shadow:
     0 12px 40px rgba(0, 0, 0, 0.4),
     0 4px 20px rgba(139, 95, 191, 0.2) !important;
 }
 
 .burnup-tracker.tracker-design-use-dark-style.active:hover {
   transform: translateY(-3px);
-  box-shadow: 
+  box-shadow:
     0 16px 50px rgba(139, 95, 191, 0.3),
     0 8px 30px rgba(168, 85, 247, 0.2) !important;
 }
 
 .burnup-tracker.tracker-design-use-kimi-style:hover {
   transform: translateY(-1px);
-  box-shadow: 
+  box-shadow:
     0 12px 40px rgba(0, 0, 0, 0.4),
     0 4px 20px rgba(255, 255, 255, 0.1) !important;
 }
 
 .burnup-tracker.tracker-design-use-kimi-style.active:hover {
   transform: translateY(-3px);
-  box-shadow: 
+  box-shadow:
     0 16px 50px rgba(0, 0, 0, 0.5),
     0 8px 30px rgba(139, 95, 191, 0.25) !important;
 }
@@ -1204,22 +1318,26 @@ body.theme-custom.break-mode .burnup-tracker {
 
 /* Progress bar overrides */
 .burnup-tracker.tracker-design-use-dark-style .burnup-progress-bar {
-  background: linear-gradient(135deg, 
-    #8b5fbf 0%, 
-    #a855f7 50%, 
-    #c084fc 100%) !important;
-  box-shadow: 
+  background: linear-gradient(
+    135deg,
+    #8b5fbf 0%,
+    #a855f7 50%,
+    #c084fc 100%
+  ) !important;
+  box-shadow:
     0 0 8px rgba(139, 95, 191, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
 }
 
 .burnup-tracker.tracker-design-use-kimi-style .burnup-progress-bar {
-  background: linear-gradient(135deg, 
-    #8b5fbf 0%, 
-    #a855f7 50%, 
-    #c084fc 100%) !important;
+  background: linear-gradient(
+    135deg,
+    #8b5fbf 0%,
+    #a855f7 50%,
+    #c084fc 100%
+  ) !important;
   backdrop-filter: blur(2px) !important;
-  box-shadow: 
+  box-shadow:
     0 0 8px rgba(139, 95, 191, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
 }
@@ -1244,25 +1362,51 @@ body.theme-custom.break-mode .burnup-tracker {
 /* Ensure neural network pattern overlay works with design overrides */
 .burnup-tracker.tracker-design-use-dark-style::after,
 .burnup-tracker.tracker-design-use-kimi-style::after {
-  background-image: 
-    linear-gradient(45deg, transparent 40%, rgba(139, 95, 191, 0.03) 50%, transparent 60%),
-    linear-gradient(-45deg, transparent 40%, rgba(168, 85, 247, 0.03) 50%, transparent 60%),
-    radial-gradient(circle at 25% 25%, rgba(139, 95, 191, 0.1) 1px, transparent 1px),
-    radial-gradient(circle at 75% 75%, rgba(168, 85, 247, 0.1) 1px, transparent 1px) !important;
-  background-size: 60px 60px, 60px 60px, 40px 40px, 50px 50px !important;
+  background-image:
+    linear-gradient(
+      45deg,
+      transparent 40%,
+      rgba(139, 95, 191, 0.03) 50%,
+      transparent 60%
+    ),
+    linear-gradient(
+      -45deg,
+      transparent 40%,
+      rgba(168, 85, 247, 0.03) 50%,
+      transparent 60%
+    ),
+    radial-gradient(
+      circle at 25% 25%,
+      rgba(139, 95, 191, 0.1) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at 75% 75%,
+      rgba(168, 85, 247, 0.1) 1px,
+      transparent 1px
+    ) !important;
+  background-size:
+    60px 60px,
+    60px 60px,
+    40px 40px,
+    50px 50px !important;
 }
 
 /* Particle effect background for design overrides */
 .burnup-tracker.tracker-design-use-dark-style::before {
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(139, 95, 191, 0.1) 50%, 
-    transparent 100%) !important;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(139, 95, 191, 0.1) 50%,
+    transparent 100%
+  ) !important;
 }
 
 .burnup-tracker.tracker-design-use-kimi-style::before {
-  background: linear-gradient(90deg, 
-    transparent 0%, 
-    rgba(255, 255, 255, 0.1) 50%, 
-    transparent 100%) !important;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 100%
+  ) !important;
 }

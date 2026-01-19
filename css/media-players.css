@@ -2,11 +2,11 @@
    MEDIA PLAYERS - Audio Features
    ═══════════════════════════════════════════════════════════════════════════════ */
 
-   /* ─────────────────────────────────────────────────────────────────────────────
+/* ─────────────────────────────────────────────────────────────────────────────
    BGM Player Codes - 1
    ───────────────────────────────────────────────────────────────────────────── */
 
-   /* BGM Player Styles */
+/* BGM Player Styles */
 .bgm-player {
   background-color: rgba(0, 0, 0, 0.15);
   border-radius: 12px;
@@ -45,7 +45,9 @@
   background: none;
   border: none;
   cursor: pointer;
-  transition: transform 0.2s ease, color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
   padding: 10px;
   border-radius: 50%;
   display: flex;
@@ -138,7 +140,7 @@
 }
 
 .bgm-btn-shuffle.active::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 50%;
@@ -207,9 +209,15 @@
 }
 
 @keyframes equalize {
-  0% { transform: scaleY(1); }
-  50% { transform: scaleY(0.5); }
-  100% { transform: scaleY(1); }
+  0% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.5);
+  }
+  100% {
+    transform: scaleY(1);
+  }
 }
 
 /* Dark theme adjustments */
@@ -266,8 +274,12 @@
 }
 
 @keyframes bgmAlbumSpin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .bgm-album-art-placeholder {
@@ -475,7 +487,7 @@
 }
 
 .track-item.active::before {
-  content: '';
+  content: "";
   position: absolute;
   right: 15px;
   top: 50%;
@@ -488,8 +500,15 @@
 }
 
 @keyframes nowPlayingPulse {
-  0%, 100% { opacity: 1; transform: translateY(-50%) scale(1); }
-  50% { opacity: 0.5; transform: translateY(-50%) scale(1.2); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translateY(-50%) scale(1.2);
+  }
 }
 
 .track-item.playing {
@@ -559,8 +578,13 @@
 }
 
 @keyframes albumPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.02); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
 }
 
 .track-item-info {
@@ -680,8 +704,13 @@
 }
 
 @keyframes playingBars {
-  0%, 100% { transform: scaleY(1); }
-  50% { transform: scaleY(0.3); }
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.3);
+  }
 }
 
 /* Search highlighting */
@@ -732,30 +761,30 @@
     gap: 15px;
     align-items: stretch;
   }
-  
+
   .track-search-container {
     max-width: none;
     margin-left: 0;
   }
-  
+
   .track-list-container {
     max-height: 250px;
   }
-    .track-item {
+  .track-item {
     padding: 10px 12px;
   }
-  
+
   .track-album-art {
     width: 36px;
     height: 36px;
     margin-left: 8px;
     margin-right: 6px;
   }
-  
+
   .track-item-title {
     font-size: 13px;
   }
-  
+
   .track-item-artist {
     font-size: 11px;
   }
@@ -765,33 +794,32 @@
   .bgm-track-list-section {
     padding: 15px;
   }
-  
+
   .track-list-title {
     font-size: 16px;
   }
-  
+
   .track-search-input {
     font-size: 13px;
     padding: 7px 10px 7px 30px;
   }
-  
+
   .track-search-icon {
     left: 10px;
     width: 14px;
     height: 14px;
   }
-  
+
   .track-list-container {
     max-height: 200px;
   }
 }
 
-
 /* ─────────────────────────────────────────────────────────────────────────────
    Mini Music Player Codes - 2
    ───────────────────────────────────────────────────────────────────────────── */
 
-   /* Mini Music Player Modal */
+/* Mini Music Player Modal */
 .mini-music-modal {
   display: none;
   position: fixed;
@@ -821,8 +849,14 @@
 }
 
 @keyframes miniModalFadeIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .mini-music-header {
@@ -896,7 +930,8 @@
   justify-content: center;
 }
 
-.mini-btn-prev, .mini-btn-next {
+.mini-btn-prev,
+.mini-btn-next {
   width: 44px;
   height: 44px;
 }
@@ -949,7 +984,7 @@
   right: 0;
   bottom: 0;
   background-color: #444;
-  transition: .4s;
+  transition: 0.4s;
   border-radius: 24px;
 }
 
@@ -961,7 +996,7 @@
   left: 3px;
   bottom: 3px;
   background-color: white;
-  transition: .4s;
+  transition: 0.4s;
   border-radius: 50%;
 }
 
@@ -1139,7 +1174,9 @@ input:checked + .mini-slider-toggle:before {
   width: 90%;
   max-width: 400px;
   border-radius: 16px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
   overflow: hidden;
   animation: modalFadeIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   color: #fff;
@@ -1148,8 +1185,14 @@ input:checked + .mini-slider-toggle:before {
 }
 
 @keyframes modalFadeIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .mini-player-header {
@@ -1429,7 +1472,8 @@ input:checked + .mini-slider-toggle:before {
   background: rgba(0, 0, 0, 0.1);
 }
 
-.mini-close-btn, .mini-settings-btn {
+.mini-close-btn,
+.mini-settings-btn {
   padding: 8px 16px;
   min-height: 36px;
   border-radius: 6px;
@@ -1442,8 +1486,12 @@ input:checked + .mini-slider-toggle:before {
 
 /* Animation for spinning album art */
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .mini-album-art.spinning {
@@ -1457,11 +1505,11 @@ input:checked + .mini-slider-toggle:before {
     width: 220px;
     height: 220px;
   }
-  
+
   .mini-track-title {
     font-size: 20px;
   }
-  
+
   .mini-track-artist {
     font-size: 16px;
   }
@@ -1476,34 +1524,34 @@ input:checked + .mini-slider-toggle:before {
     padding: 16px;
     align-items: center;
   }
-  
+
   .landscape-mode .mini-album-art-container {
     grid-row: span 2;
   }
-  
+
   .landscape-mode .mini-player-info {
     text-align: left;
     padding-right: 16px;
   }
-  
+
   .landscape-mode .mini-player-controls {
     justify-content: flex-start;
     margin-top: 0;
   }
-  
+
   .landscape-mode .mini-player-progress-container,
   .landscape-mode .mini-player-volume {
     grid-column: span 2;
     width: 100%;
   }
-  
+
   .landscape-mode .mini-btn {
     width: 42px;
     height: 42px;
     min-width: 42px;
     min-height: 42px;
   }
-  
+
   .landscape-mode .mini-btn-play {
     width: 48px;
     height: 48px;
@@ -1519,15 +1567,15 @@ input:checked + .mini-slider-toggle:before {
     overflow-y: auto;
     margin: 10px auto;
   }
-  
+
   .mini-player-body {
     padding: 12px;
   }
-  
+
   .mini-album-art-container {
     margin-bottom: 0;
   }
-  
+
   .mini-album-art,
   .mini-album-art-placeholder {
     width: 100px;
@@ -1535,11 +1583,11 @@ input:checked + .mini-slider-toggle:before {
     min-width: 100px;
     min-height: 100px;
   }
-  
+
   .mini-player-controls {
     gap: 12px;
   }
-  
+
   .mini-volume-slider {
     min-width: 80px;
   }
@@ -1555,7 +1603,8 @@ input:checked + .mini-slider-toggle:before {
   background: rgba(0, 0, 0, 0.1);
 }
 
-.mini-close-btn, .mini-settings-btn {
+.mini-close-btn,
+.mini-settings-btn {
   padding: 8px 16px;
   min-height: 36px;
   border-radius: 6px;
@@ -1707,34 +1756,34 @@ input:checked + .mini-slider-toggle:before {
     padding: 16px;
     align-items: center;
   }
-  
+
   .landscape-mode .mini-album-art-container {
     grid-row: span 2;
   }
-  
+
   .landscape-mode .mini-player-info {
     text-align: left;
     padding-right: 16px;
   }
-  
+
   .landscape-mode .mini-player-controls {
     justify-content: flex-start;
     margin-top: 0;
   }
-  
+
   .landscape-mode .mini-player-progress-container,
   .landscape-mode .mini-player-volume {
     grid-column: span 2;
     width: 100%;
   }
-  
+
   .landscape-mode .mini-btn {
     width: 42px;
     height: 42px;
     min-width: 42px;
     min-height: 42px;
   }
-  
+
   .landscape-mode .mini-btn-play {
     width: 48px;
     height: 48px;
@@ -1750,15 +1799,15 @@ input:checked + .mini-slider-toggle:before {
     overflow-y: auto;
     margin: 10px auto;
   }
-  
+
   .mini-player-body {
     padding: 12px;
   }
-  
+
   .mini-album-art-container {
     margin-bottom: 0;
   }
-  
+
   .mini-album-art,
   .mini-album-art-placeholder {
     width: 100px;
@@ -1766,11 +1815,11 @@ input:checked + .mini-slider-toggle:before {
     min-width: 100px;
     min-height: 100px;
   }
-  
+
   .mini-player-controls {
     gap: 12px;
   }
-  
+
   .mini-volume-slider {
     min-width: 80px;
   }
@@ -1786,7 +1835,8 @@ input:checked + .mini-slider-toggle:before {
   background: rgba(0, 0, 0, 0.1);
 }
 
-.mini-close-btn, .mini-settings-btn {
+.mini-close-btn,
+.mini-settings-btn {
   padding: 8px 16px;
   min-height: 36px;
   border-radius: 6px;
@@ -1938,34 +1988,34 @@ input:checked + .mini-slider-toggle:before {
     padding: 16px;
     align-items: center;
   }
-  
+
   .landscape-mode .mini-album-art-container {
     grid-row: span 2;
   }
-  
+
   .landscape-mode .mini-player-info {
     text-align: left;
     padding-right: 16px;
   }
-  
+
   .landscape-mode .mini-player-controls {
     justify-content: flex-start;
     margin-top: 0;
   }
-  
+
   .landscape-mode .mini-player-progress-container,
   .landscape-mode .mini-player-volume {
     grid-column: span 2;
     width: 100%;
   }
-  
+
   .landscape-mode .mini-btn {
     width: 42px;
     height: 42px;
     min-width: 42px;
     min-height: 42px;
   }
-  
+
   .landscape-mode .mini-btn-play {
     width: 48px;
     height: 48px;
@@ -1981,15 +2031,15 @@ input:checked + .mini-slider-toggle:before {
     overflow-y: auto;
     margin: 10px auto;
   }
-  
+
   .mini-player-body {
     padding: 12px;
   }
-  
+
   .mini-album-art-container {
     margin-bottom: 0;
   }
-  
+
   .mini-album-art,
   .mini-album-art-placeholder {
     width: 100px;
@@ -1997,11 +2047,11 @@ input:checked + .mini-slider-toggle:before {
     min-width: 100px;
     min-height: 100px;
   }
-  
+
   .mini-player-controls {
     gap: 12px;
   }
-  
+
   .mini-volume-slider {
     min-width: 80px;
   }
@@ -2017,7 +2067,8 @@ input:checked + .mini-slider-toggle:before {
   background: rgba(0, 0, 0, 0.1);
 }
 
-.mini-close-btn, .mini-settings-btn {
+.mini-close-btn,
+.mini-settings-btn {
   padding: 8px 16px;
   min-height: 36px;
   border-radius: 6px;
@@ -2169,34 +2220,34 @@ input:checked + .mini-slider-toggle:before {
     padding: 16px;
     align-items: center;
   }
-  
+
   .landscape-mode .mini-album-art-container {
     grid-row: span 2;
   }
-  
+
   .landscape-mode .mini-player-info {
     text-align: left;
     padding-right: 16px;
   }
-  
+
   .landscape-mode .mini-player-controls {
     justify-content: flex-start;
     margin-top: 0;
   }
-  
+
   .landscape-mode .mini-player-progress-container,
   .landscape-mode .mini-player-volume {
     grid-column: span 2;
     width: 100%;
   }
-  
+
   .landscape-mode .mini-btn {
     width: 42px;
     height: 42px;
     min-width: 42px;
     min-height: 42px;
   }
-  
+
   .landscape-mode .mini-btn-play {
     width: 48px;
     height: 48px;
@@ -2212,15 +2263,15 @@ input:checked + .mini-slider-toggle:before {
     overflow-y: auto;
     margin: 10px auto;
   }
-  
+
   .mini-player-body {
     padding: 12px;
   }
-  
+
   .mini-album-art-container {
     margin-bottom: 0;
   }
-  
+
   .mini-album-art,
   .mini-album-art-placeholder {
     width: 100px;
@@ -2228,11 +2279,11 @@ input:checked + .mini-slider-toggle:before {
     min-width: 100px;
     min-height: 100px;
   }
-  
+
   .mini-player-controls {
     gap: 12px;
   }
-  
+
   .mini-volume-slider {
     min-width: 80px;
   }
@@ -2248,7 +2299,8 @@ input:checked + .mini-slider-toggle:before {
   background: rgba(0, 0, 0, 0.1);
 }
 
-.mini-close-btn, .mini-settings-btn {
+.mini-close-btn,
+.mini-settings-btn {
   padding: 8px 16px;
   min-height: 36px;
   border-radius: 6px;
@@ -2400,34 +2452,34 @@ input:checked + .mini-slider-toggle:before {
     padding: 16px;
     align-items: center;
   }
-  
+
   .landscape-mode .mini-album-art-container {
     grid-row: span 2;
   }
-  
+
   .landscape-mode .mini-player-info {
     text-align: left;
     padding-right: 16px;
   }
-  
+
   .landscape-mode .mini-player-controls {
     justify-content: flex-start;
     margin-top: 0;
   }
-  
+
   .landscape-mode .mini-player-progress-container,
   .landscape-mode .mini-player-volume {
     grid-column: span 2;
     width: 100%;
   }
-  
+
   .landscape-mode .mini-btn {
     width: 42px;
     height: 42px;
     min-width: 42px;
     min-height: 42px;
   }
-  
+
   .landscape-mode .mini-btn-play {
     width: 48px;
     height: 48px;
@@ -2443,15 +2495,15 @@ input:checked + .mini-slider-toggle:before {
     overflow-y: auto;
     margin: 10px auto;
   }
-  
+
   .mini-player-body {
     padding: 12px;
   }
-  
+
   .mini-album-art-container {
     margin-bottom: 0;
   }
-  
+
   .mini-album-art,
   .mini-album-art-placeholder {
     width: 100px;
@@ -2459,11 +2511,11 @@ input:checked + .mini-slider-toggle:before {
     min-width: 100px;
     min-height: 100px;
   }
-  
+
   .mini-player-controls {
     gap: 12px;
   }
-  
+
   .mini-volume-slider {
     min-width: 80px;
   }
@@ -2479,7 +2531,8 @@ input:checked + .mini-slider-toggle:before {
   background: rgba(0, 0, 0, 0.1);
 }
 
-.mini-close-btn, .mini-settings-btn {
+.mini-close-btn,
+.mini-settings-btn {
   padding: 8px 16px;
   min-height: 36px;
   border-radius: 6px;
@@ -2631,34 +2684,34 @@ input:checked + .mini-slider-toggle:before {
     padding: 16px;
     align-items: center;
   }
-  
+
   .landscape-mode .mini-album-art-container {
     grid-row: span 2;
   }
-  
+
   .landscape-mode .mini-player-info {
     text-align: left;
     padding-right: 16px;
   }
-  
+
   .landscape-mode .mini-player-controls {
     justify-content: flex-start;
     margin-top: 0;
   }
-  
+
   .landscape-mode .mini-player-progress-container,
   .landscape-mode .mini-player-volume {
     grid-column: span 2;
     width: 100%;
   }
-  
+
   .landscape-mode .mini-btn {
     width: 42px;
     height: 42px;
     min-width: 42px;
     min-height: 42px;
   }
-  
+
   .landscape-mode .mini-btn-play {
     width: 48px;
     height: 48px;
@@ -2674,15 +2727,15 @@ input:checked + .mini-slider-toggle:before {
     overflow-y: auto;
     margin: 10px auto;
   }
-  
+
   .mini-player-body {
     padding: 12px;
   }
-  
+
   .mini-album-art-container {
     margin-bottom: 0;
   }
-  
+
   .mini-album-art,
   .mini-album-art-placeholder {
     width: 100px;
@@ -2690,11 +2743,11 @@ input:checked + .mini-slider-toggle:before {
     min-width: 100px;
     min-height: 100px;
   }
-  
+
   .mini-player-controls {
     gap: 12px;
   }
-  
+
   .mini-volume-slider {
     min-width: 80px;
   }
@@ -2710,7 +2763,8 @@ input:checked + .mini-slider-toggle:before {
   background: rgba(0, 0, 0, 0.1);
 }
 
-.mini-close-btn, .mini-settings-btn {
+.mini-close-btn,
+.mini-settings-btn {
   padding: 8px 16px;
   min-height: 36px;
   border-radius: 6px;
@@ -2862,34 +2916,34 @@ input:checked + .mini-slider-toggle:before {
     padding: 16px;
     align-items: center;
   }
-  
+
   .landscape-mode .mini-album-art-container {
     grid-row: span 2;
   }
-  
+
   .landscape-mode .mini-player-info {
     text-align: left;
     padding-right: 16px;
   }
-  
+
   .landscape-mode .mini-player-controls {
     justify-content: flex-start;
     margin-top: 0;
   }
-  
+
   .landscape-mode .mini-player-progress-container,
   .landscape-mode .mini-player-volume {
     grid-column: span 2;
     width: 100%;
   }
-  
+
   .landscape-mode .mini-btn {
     width: 42px;
     height: 42px;
     min-width: 42px;
     min-height: 42px;
   }
-  
+
   .landscape-mode .mini-btn-play {
     width: 48px;
     height: 48px;
@@ -2905,15 +2959,15 @@ input:checked + .mini-slider-toggle:before {
     overflow-y: auto;
     margin: 10px auto;
   }
-  
+
   .mini-player-body {
     padding: 12px;
   }
-  
+
   .mini-album-art-container {
     margin-bottom: 0;
   }
-  
+
   .mini-album-art,
   .mini-album-art-placeholder {
     width: 100px;
@@ -2921,11 +2975,11 @@ input:checked + .mini-slider-toggle:before {
     min-width: 100px;
     min-height: 100px;
   }
-  
+
   .mini-player-controls {
     gap: 12px;
   }
-  
+
   .mini-volume-slider {
     min-width: 80px;
   }
@@ -2941,7 +2995,8 @@ input:checked + .mini-slider-toggle:before {
   background: rgba(0, 0, 0, 0.1);
 }
 
-.mini-close-btn, .mini-settings-btn {
+.mini-close-btn,
+.mini-settings-btn {
   padding: 8px 16px;
   min-height: 36px;
   border-radius: 6px;
@@ -3093,34 +3148,34 @@ input:checked + .mini-slider-toggle:before {
     padding: 16px;
     align-items: center;
   }
-  
+
   .landscape-mode .mini-album-art-container {
     grid-row: span 2;
   }
-  
+
   .landscape-mode .mini-player-info {
     text-align: left;
     padding-right: 16px;
   }
-  
+
   .landscape-mode .mini-player-controls {
     justify-content: flex-start;
     margin-top: 0;
   }
-  
+
   .landscape-mode .mini-player-progress-container,
   .landscape-mode .mini-player-volume {
     grid-column: span 2;
     width: 100%;
   }
-  
+
   .landscape-mode .mini-btn {
     width: 42px;
     height: 42px;
     min-width: 42px;
     min-height: 42px;
   }
-  
+
   .landscape-mode .mini-btn-play {
     width: 48px;
     height: 48px;
@@ -3136,15 +3191,15 @@ input:checked + .mini-slider-toggle:before {
     overflow-y: auto;
     margin: 10px auto;
   }
-  
+
   .mini-player-body {
     padding: 12px;
   }
-  
+
   .mini-album-art-container {
     margin-bottom: 0;
   }
-  
+
   .mini-album-art,
   .mini-album-art-placeholder {
     width: 100px;
@@ -3152,11 +3207,11 @@ input:checked + .mini-slider-toggle:before {
     min-width: 100px;
     min-height: 100px;
   }
-  
+
   .mini-player-controls {
     gap: 12px;
   }
-  
+
   .mini-volume-slider {
     min-width: 80px;
   }
@@ -3172,7 +3227,8 @@ input:checked + .mini-slider-toggle:before {
   background: rgba(0, 0, 0, 0.1);
 }
 
-.mini-close-btn, .mini-settings-btn {
+.mini-close-btn,
+.mini-settings-btn {
   padding: 8px 16px;
   min-height: 36px;
   border-radius: 6px;
@@ -3324,27 +3380,27 @@ input:checked + .mini-slider-toggle:before {
     padding: 16px;
     align-items: center;
   }
-  
+
   .landscape-mode .mini-album-art-container {
     grid-row: span 2;
   }
-  
+
   .landscape-mode .mini-player-info {
     text-align: left;
     padding-right: 16px;
   }
-  
+
   .landscape-mode .mini-player-controls {
     justify-content: flex-start;
     margin-top: 0;
   }
-  
+
   .landscape-mode .mini-player-progress-container,
   .landscape-mode .mini-player-volume {
     grid-column: span 2;
     width: 100%;
   }
-  
+
   .landscape-mode .mini-btn {
     width: 42px;
     height: 42px;
