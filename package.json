@@ -1,0 +1,12 @@
+{
+  "name": "customodoro",
+  "version": "3.7.3",
+  "description": "Customodoro - Vanilla JS Pomodoro Timer",
+  "private": true,
+  "scripts": {
+    "version-bump": "node scripts/version-bump.js"
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}
