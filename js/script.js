@@ -1953,17 +1953,45 @@ function getColor(minutes, maxMinutes, emptyColor = "#ebedf0") {
 // Day labels (GitHub shows Mon, Wed, Fri)
 const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-// Month labels
+// Month labels — compute a centered label across the month's span and avoid placing a month label directly over the previous month
 function getMonthLabels(dates) {
-  const labels = [];
+  const ranges = [];
   let lastMonth = -1;
   dates.forEach((date, i) => {
     const month = date.getMonth();
     if (month !== lastMonth) {
-      labels.push({ month: date.toLocaleString('default', { month: 'short' }), x: i });
+      ranges.push({ month, first: i, last: i });
       lastMonth = month;
+    } else {
+      ranges[ranges.length - 1].last = i;
     }
   });
+
+  const labels = [];
+  let prevX = -Infinity;
+
+  ranges.forEach(range => {
+    // Prefer centering the label across the month's first..last week
+    let x = (range.first + range.last) / 2;
+
+    // If the month occupies a single week, nudge it slightly right so it doesn't sit under the previous month's text
+    if (range.first === range.last && range.first < dates.length - 1) {
+      x = range.first + 0.5; // half-column shift
+    }
+
+    // Ensure label positions don't collide; enforce minimal column gap (0.8 columns)
+    const minGap = 0.8;
+    if (x <= prevX + minGap) {
+      x = prevX + minGap;
+    }
+
+    // Clamp x so it's within available columns
+    x = Math.min(x, dates.length - 1);
+
+    labels.push({ month: new Date(2020, range.month, 1).toLocaleString('default', { month: 'short' }), x });
+    prevX = x;
+  });
+
   return labels;
 }
 
@@ -2221,9 +2249,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const svgParts = [`<svg width="${width}" height="${height}" style="font-family:sans-serif;background:${bgColor};min-width:${minGraphWidth}px;display:block;">`];
 
   // Month labels (top)
+  // Center month label above the first week cell (fixes Jan misalignment, see clean-code.md Rule 5.1)
   monthLabels.forEach(label => {
-    const x = leftPad + label.x * (cellSize + cellGap);
-    svgParts.push(`<text x="${x}" y="15" fill="${labelColor}" font-size="11" font-weight="500">${label.month}</text>`);
+    const x = leftPad + label.x * (cellSize + cellGap) + cellSize / 2;
+    svgParts.push(`<text x="${x}" y="15" fill="${labelColor}" font-size="11" font-weight="500" text-anchor="middle">${label.month}</text>`);
   });
 
   // Day labels (left, accurate)
