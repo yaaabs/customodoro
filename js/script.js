@@ -1,7 +1,5 @@
 // Add this at the top of your script.js (after DOM loads):
-console.debug('=== DEBUGGING CONTRIBUTION GRAPH CONNECTION ===');
-console.debug('addCustomodoroSession function exists:', typeof window.addCustomodoroSession === 'function');
-console.debug('renderContributionGraph function exists:', typeof window.renderContributionGraph === 'function');
+
 
 // DOM Elements
 const timerElement = document.getElementById('timer');
@@ -470,9 +468,10 @@ function saveStats() {
 }
 
 // Update stats when pomodoro completes
-function updateStats() {
+// Accept minutes to record (defaults to configured pomodoro length)
+function updateStats(minutes = pomodoroTime) {
   dailyStats.completedPomodoros++;
-  dailyStats.totalFocusTime += pomodoroTime;
+  dailyStats.totalFocusTime += minutes;
   saveStats();
   
   // Update streak display after stats change
@@ -810,11 +809,17 @@ function toggleTimer() {
 
 // Handle timer completion - centralized logic to prevent duplication
 function handleTimerCompletion() {
-  // CRITICAL: Prevent duplicate completion
-  if (sessionCompleted && timerInterval === null && !isRunning) {
-    // Already completed, just ensure cleanup
+  // CRITICAL: Ensure completion logic runs exactly once (idempotent)
+  // Manual Test Checklist (Timer Safety):
+  // - Start pomodoro, pause at 5s, resume → should continue from 5s
+  // - Pause and Stop → should NOT record a session
+  // - Timer reaches 0:00 → alarm plays once only, not repeated
+  // - Switch mode mid-timer → old timer clears, new mode starts fresh
+  // Follows Rule 3.3 and Rule 3.1
+  if (completionHandled) {
     return;
   }
+  completionHandled = true; // Mark as handled immediately
   sessionCompleted = true;
   
   // CRITICAL: Clear interval and set to null
@@ -832,52 +837,54 @@ function handleTimerCompletion() {
   // For pomodoro mode, increment counter and add session
   if (currentMode === 'pomodoro') {
     completedPomodoros++;
-    updateStats();
 
-    console.log('🎯 Pomodoro completed! Current mode:', currentMode);
-    console.log('🕐 Initial seconds:', initialSeconds);
-    console.log('⏱️ Current seconds remaining:', currentSeconds);
-    
-    const sessionMinutes = Math.floor(initialSeconds / 60);
-    console.log('📊 Session minutes to add:', sessionMinutes);
-    
-    if (typeof window.addCustomodoroSession === 'function') {
-        console.log('✅ Adding session to contribution graph...');
-        
-        // MIDNIGHT: Use midnight splitter if available, otherwise fall back to standard
-        if (typeof window.recordSessionWithMidnightSplit === 'function') {
-          window.recordSessionWithMidnightSplit('classic', sessionMinutes);
-        } else {
-          window.addCustomodoroSession('classic', sessionMinutes);
-        }
-        
-        console.log('✅ Session added successfully!');
-        
-        // Also manually trigger a re-render
-        if (typeof window.renderContributionGraph === 'function') {
-            window.renderContributionGraph();
-            console.log('✅ Graph re-rendered!');
-        }
-        
-        // Trigger automatic sync if user is logged in
-        if (window.syncManager && window.authService?.isLoggedIn()) {
-            console.log('🔄 Triggering automatic sync after session...');
-            try {
-              // Use queueSync for consistency with other parts of the app
-              window.syncManager.queueSync(window.syncManager.getCurrentLocalData());
-              console.log('✅ Auto-sync queued after session');
-              
-              // Update sync UI stats
-              if (window.syncUI) {
-                window.syncUI.updateStats();
+    // Compute actual worked minutes (elapsed) not the configured session length
+    const elapsedSeconds = Math.max(initialSeconds - currentSeconds, 0);
+    const sessionMinutes = Math.floor(elapsedSeconds / 60);
+
+
+
+    // Only record if we have at least 1 minute of work to avoid accidental 0-minute sessions
+    if (sessionMinutes > 0) {
+      updateStats(sessionMinutes);
+
+      if (typeof window.addCustomodoroSession === 'function') {
+
+          // MIDNIGHT: Use midnight splitter if available, otherwise fall back to standard
+          if (typeof window.recordSessionWithMidnightSplit === 'function') {
+            window.recordSessionWithMidnightSplit('classic', sessionMinutes);
+          } else {
+            window.addCustomodoroSession('classic', sessionMinutes);
+          }
+
+
+          // Also manually trigger a re-render
+          if (typeof window.renderContributionGraph === 'function') {
+              window.renderContributionGraph();
+
+          }
+
+          // Trigger automatic sync if user is logged in
+          if (window.syncManager && window.authService?.isLoggedIn()) {
+
+              try {
+                // Use queueSync for consistency with other parts of the app
+                window.syncManager.queueSync(window.syncManager.getCurrentLocalData());
+
+                // Update sync UI stats
+                if (window.syncUI) {
+                  window.syncUI.updateStats();
+                }
+              } catch (error) {
+                console.warn('⚠️ Auto-sync failed after session:', error);
               }
-            } catch (error) {
-              console.warn('⚠️ Auto-sync failed after session:', error);
-            }
-        }
+          }
+      } else {
+          console.error('❌ addCustomodoroSession function not found!');
+
+      }
     } else {
-        console.error('❌ addCustomodoroSession function not found!');
-        console.log('Available window functions:', Object.keys(window).filter(key => key.includes('custom')));
+      // No minutes to record; skipping analytics/sync.
     }
   }
   
@@ -913,6 +920,8 @@ function resetTimer() {
   
   // Reset session completion guard
   sessionCompleted = false;
+  // Reset completion handled guard so next session can complete normally
+  completionHandled = false;
   
   // Clear timestamp variables
   timerStartTime = null;

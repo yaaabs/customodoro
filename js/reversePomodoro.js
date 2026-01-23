@@ -3,6 +3,7 @@ if ('Notification' in window) {
   Notification.requestPermission();
 }
 
+
 // Audio setup
 const sounds = {
     click: new Audio('audio/SFX/start.wav'),
@@ -392,6 +393,8 @@ let timerState = 'idle'; // 'idle', 'running', 'paused', 'stopped'
 
 // Session completion guard - prevents multiple completions/alarms per session
 let sessionCompleted = false;
+// Completion handled guard: ensures completion logic runs exactly once per session (Rule 3.3)
+let completionHandled = false;
 
 // Button display management function
 function updateButtonDisplay() {
@@ -714,6 +717,8 @@ function handleStart() {
   
   // Reset session completion guard for new session
   sessionCompleted = false;
+  // Reset completion handled so the next session can complete normally
+  completionHandled = false;
   
   playSound('start');
   showToast(currentMode === 'break' ? "Enjoy your break! 😌" : "Time to focus! 💪");
@@ -905,11 +910,16 @@ function toggleTimer() {
 
 // Complete session
 function completeSession(playSoundArg = true) {
-    // CRITICAL: Prevent duplicate completion
-    if (sessionCompleted && timerInterval === null) {
-      // Already completed, just ensure cleanup
+    // CRITICAL: Ensure completion logic runs exactly once (idempotent)
+    // Manual Test Checklist (Reverse Timer Safety):
+    // - Start reverse session, pause and resume → elapsed time consistent
+    // - Stop mid-session → should record only elapsed minutes (not full MAX)
+    // - Session completion must record minutes once and not duplicate alarms
+    // Follows Rule 3.3 and Rule 3.5
+    if (completionHandled) {
       return;
     }
+    completionHandled = true;
     sessionCompleted = true;
     
     // CRITICAL: Clear interval and set to null
@@ -924,14 +934,20 @@ function completeSession(playSoundArg = true) {
 
     const workMinutes = Math.floor(currentSeconds / 60);
 
-    // Always record the session for the graph
-    if (typeof window.addCustomodoroSession === 'function') {
+    // Only record the session if there is at least 1 minute of work
+    if (workMinutes > 0 && typeof window.addCustomodoroSession === 'function') {
         // MIDNIGHT: Use midnight splitter if available
         if (typeof window.recordSessionWithMidnightSplit === 'function') {
           window.recordSessionWithMidnightSplit('reverse', workMinutes);
         } else {
           window.addCustomodoroSession('reverse', workMinutes);
         }
+
+        if (typeof window.renderContributionGraph === 'function') {
+          window.renderContributionGraph();
+        }
+    } else if (workMinutes === 0) {
+        // No work minutes recorded; skipping contribution update.
     }
 
     // Calculate earned break BEFORE showing any messages
@@ -939,8 +955,12 @@ function completeSession(playSoundArg = true) {
 
     // Only play completion sound if the timer reached max time or playSoundArg is true
     if (currentSeconds >= MAX_TIME || playSoundArg) {
-        window.playSound('pomodoroComplete');
-        showMuteAlert(`Great work! You worked for ${workMinutes} minutes and earned a ${earnedBreakTime}-minute break!`);
+        try {
+          playSound('pomodoroComplete');
+          showMuteAlert(`Great work! You worked for ${workMinutes} minutes and earned a ${earnedBreakTime}-minute break!`);
+        } catch (err) {
+          console.warn('[Audio] Completion audio failed:', err);
+        }
         
         // Desktop notification for max time reached
         if ('Notification' in window && Notification.permission === 'granted') {
@@ -961,13 +981,11 @@ function completeSession(playSoundArg = true) {
 
     // Auto-start the break if enabled in settings - Fixed logic
     const autoBreaks = localStorage.getItem('autoBreak') === 'true';
-    console.log('🔄 Auto-break check:', { autoBreaks, setting: localStorage.getItem('autoBreak') });
-    
+    // Auto-break check (silently handled)
     if (earnedBreakTime > 0 && autoBreaks) {
-        console.log('✅ Auto-starting break timer');
         setTimeout(() => toggleTimer(), 500);
     } else {
-        console.log('⏸️ Auto-break disabled or no break time earned');
+        // Auto-break disabled or no break time earned
     }
 }
 
@@ -1028,6 +1046,8 @@ function resetTimer(showMessage = false) {
     
     // Reset session completion guard
     sessionCompleted = false;
+    // Reset completion handled guard so next session can complete normally
+    completionHandled = false;
     
     // Clear timestamp variables
     timerStartTime = null;
