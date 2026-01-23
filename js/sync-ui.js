@@ -849,34 +849,97 @@ async handleLogin() {
     const modal = document.getElementById('custom-sync-modal');
     const cancelBtn = document.getElementById('custom-sync-cancel');
     const proceedBtn = document.getElementById('custom-sync-proceed');
+    const contentWrapper = modal?.querySelector('div');
     
-    // Close modal function
+    // Make modal content scrollable on small viewports and ensure buttons are interactive
+    if (contentWrapper) {
+      contentWrapper.style.maxHeight = '90vh';
+      contentWrapper.style.overflowY = 'auto';
+      contentWrapper.addEventListener('click', (e) => e.stopPropagation()); // prevent background click
+    }
+    
+    // Accessibility & focus management
+    if (modal) {
+      modal.setAttribute('role', 'dialog');
+      modal.setAttribute('aria-modal', 'true');
+      modal.tabIndex = -1; // make focusable
+      setTimeout(() => modal.focus(), 50);
+    }
+    
+    // Prevent background scroll while modal is open
+    document.body.classList.add('modal-open');
+    
+    // Close modal function with cleanup
     const closeModal = () => {
       if (modal) {
         modal.remove();
       }
+      // Remove modal-open when closing (defensive)
+      document.body.classList.remove('modal-open');
+      // Remove keydown listener
+      document.removeEventListener('keydown', onKeyDown);
     };
     
-    // Add event listeners
-    cancelBtn.addEventListener('click', closeModal);
-    
-    proceedBtn.addEventListener('click', async () => {
-      console.log('User confirmed sync, proceeding with', action);
-      closeModal();
-      
-      if (action === 'register') {
-        await this.doRegister(email, username);
-      } else if (action === 'login') {
-        await this.doLogin(email);
-      }
-    });
-    
-    // Close on background click
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
+    // Escape key handler
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') {
         closeModal();
       }
-    });
+    };
+    document.addEventListener('keydown', onKeyDown);
+    
+    // Add event listeners (defensive checks)
+    try {
+      if (cancelBtn) {
+        cancelBtn.style.pointerEvents = 'auto';
+        cancelBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          closeModal();
+        });
+      } else {
+        console.warn('SyncUI: cancel button not found in sync modal');
+      }
+    } catch (err) {
+      console.error('Failed to attach cancel listener:', err);
+    }
+    
+    try {
+      if (proceedBtn) {
+        proceedBtn.style.pointerEvents = 'auto';
+        proceedBtn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log('User confirmed sync, proceeding with', action);
+          try {
+            // Close first to ensure UI responsiveness while async work runs
+            closeModal();
+            if (action === 'register') {
+              await this.doRegister(email, username);
+            } else if (action === 'login') {
+              await this.doLogin(email);
+            }
+          } catch (err) {
+            console.error('Error during sync proceed action:', err);
+            // Show a non-blocking toast error if something bad happens
+            this.showToast('❌ An error occurred. Please try again.', 'error');
+          }
+        });
+      } else {
+        console.warn('SyncUI: proceed button not found in sync modal');
+      }
+    } catch (err) {
+      console.error('Failed to attach proceed listener:', err);
+    }
+    
+    // Close on background click
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          closeModal();
+        }
+      });
+    }
     
     console.log('Custom modal created and should be visible!');
   }
@@ -1095,55 +1158,102 @@ async handleLogin() {
     const codeInput = document.getElementById('verification-code-input');
     const cancelBtn = document.getElementById('verification-cancel');
     const verifyBtn = document.getElementById('verification-verify');
+    const contentWrapper = modal?.querySelector('div');
 
-    // Focus on input
-    setTimeout(() => codeInput.focus(), 100);
+    // Make modal content scrollable on small viewports and prevent background clicks
+    if (contentWrapper) {
+      contentWrapper.style.maxHeight = '90vh';
+      contentWrapper.style.overflowY = 'auto';
+      contentWrapper.addEventListener('click', (e) => e.stopPropagation());
+    }
 
-    // Close modal function
+    // Accessibility & focus
+    if (modal) {
+      modal.setAttribute('role', 'dialog');
+      modal.setAttribute('aria-modal', 'true');
+      modal.tabIndex = -1;
+      setTimeout(() => {
+        // Focus input if available, otherwise focus modal
+        if (codeInput) codeInput.focus();
+        else modal.focus();
+      }, 100);
+    }
+
+    // Prevent background scroll while modal is open
+    document.body.classList.add('modal-open');
+
+    // Close modal function with cleanup
     const closeModal = () => {
       if (modal) modal.remove();
+      document.body.classList.remove('modal-open');
+      document.removeEventListener('keydown', onKeyDown);
     };
 
+    // Escape key handler
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+
     // Cancel button
-    cancelBtn.addEventListener('click', closeModal);
+    try {
+      if (cancelBtn) cancelBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); closeModal(); });
+      else console.warn('SyncUI: verification cancel button not found');
+    } catch (err) {
+      console.error('Failed to attach cancel listener to verification modal:', err);
+    }
 
     // Verify button
-    verifyBtn.addEventListener('click', async () => {
-      const code = codeInput.value.trim();
-      if (!code) {
-        this.showToast('Please enter the verification code', 'error');
-        return;
-      }
+    try {
+      if (verifyBtn) {
+        verifyBtn.addEventListener('click', async () => {
+          const code = codeInput.value.trim();
+          if (!code) {
+            this.showToast('Please enter the verification code', 'error');
+            return;
+          }
 
-      try {
-        verifyBtn.textContent = 'Verifying...';
-        verifyBtn.disabled = true;
+          try {
+            verifyBtn.textContent = 'Verifying...';
+            verifyBtn.disabled = true;
 
-        await window.authService.verifyEmail(email, code);
-        this.showToast('✅ Email verified successfully!', 'success');
-        closeModal();
-        this.clearForm();
-      } catch (error) {
-        console.error('Verification error:', error);
-        this.showToast('❌ ' + error.message, 'error');
-        verifyBtn.textContent = 'Verify';
-        verifyBtn.disabled = false;
+            await window.authService.verifyEmail(email, code);
+            this.showToast('✅ Email verified successfully!', 'success');
+            closeModal();
+            this.clearForm();
+          } catch (error) {
+            console.error('Verification error:', error);
+            this.showToast('❌ ' + error.message, 'error');
+            verifyBtn.textContent = 'Verify';
+            verifyBtn.disabled = false;
+          }
+        });
+      } else {
+        console.warn('SyncUI: verification verify button not found');
       }
-    });
+    } catch (err) {
+      console.error('Failed to attach verification listener:', err);
+    }
 
     // Enter key to verify
-    codeInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        verifyBtn.click();
-      }
-    });
+    if (codeInput) {
+      codeInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          verifyBtn?.click();
+        }
+      });
+    }
 
     // Close on background click
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        closeModal();
-      }
-    });
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          closeModal();
+        }
+      });
+    }
   }
 
   // Actually perform login  
