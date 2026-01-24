@@ -2,9 +2,9 @@
 // This module handles preserving tasks when users switch between Classic and Reverse modes
 
 // Constants for localStorage keys
-const CLASSIC_TASKS_KEY = 'pomodoroTasks';
-const REVERSE_TASKS_KEY = 'reverseTasks';
-const TASK_RETENTION_MODAL_ID = 'task-retention-modal';
+const CLASSIC_TASKS_KEY = "pomodoroTasks";
+const REVERSE_TASKS_KEY = "reverseTasks";
+const TASK_RETENTION_MODAL_ID = "task-retention-modal";
 
 // Task Retention Modal HTML
 const TASK_RETENTION_MODAL_HTML = `
@@ -278,16 +278,16 @@ class TaskRetentionManager {
   constructor() {
     this.modal = null;
     this.currentTasks = [];
-    this.targetMode = '';
+    this.targetMode = "";
     this.resolvePromise = null;
     this.init();
   }
 
   init() {
     // Add CSS to head
-    if (!document.getElementById('task-retention-styles')) {
-      const styleElement = document.createElement('div');
-      styleElement.id = 'task-retention-styles';
+    if (!document.getElementById("task-retention-styles")) {
+      const styleElement = document.createElement("div");
+      styleElement.id = "task-retention-styles";
       styleElement.innerHTML = TASK_RETENTION_MODAL_CSS;
       document.head.appendChild(styleElement);
     }
@@ -296,37 +296,37 @@ class TaskRetentionManager {
   createModal() {
     // Remove existing modal if any
     this.removeModal();
-    
+
     // Create modal element
-    const modalContainer = document.createElement('div');
+    const modalContainer = document.createElement("div");
     modalContainer.innerHTML = TASK_RETENTION_MODAL_HTML;
     document.body.appendChild(modalContainer.firstElementChild);
-    
+
     this.modal = document.getElementById(TASK_RETENTION_MODAL_ID);
-    
+
     // Add event listeners
     this.setupEventListeners();
   }
 
   setupEventListeners() {
-    const keepBtn = document.getElementById('keep-tasks-btn');
-    const discardBtn = document.getElementById('discard-tasks-btn');
-    const closeBtn = document.getElementById('task-retention-close-btn');
-    
-    keepBtn.addEventListener('click', () => this.handleKeepTasks());
-    discardBtn.addEventListener('click', () => this.handleDiscardTasks());
-    closeBtn.addEventListener('click', () => this.closeModal());
-    
+    const keepBtn = document.getElementById("keep-tasks-btn");
+    const discardBtn = document.getElementById("discard-tasks-btn");
+    const closeBtn = document.getElementById("task-retention-close-btn");
+
+    keepBtn.addEventListener("click", () => this.handleKeepTasks());
+    discardBtn.addEventListener("click", () => this.handleDiscardTasks());
+    closeBtn.addEventListener("click", () => this.closeModal());
+
     // Close on overlay click
-    this.modal.addEventListener('click', (e) => {
+    this.modal.addEventListener("click", (e) => {
       if (e.target === this.modal) {
         this.handleDiscardTasks();
       }
     });
-    
+
     // Close on Escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && this.modal?.classList.contains('show')) {
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && this.modal?.classList.contains("show")) {
         this.handleDiscardTasks();
       }
     });
@@ -348,8 +348,8 @@ class TaskRetentionManager {
   getCurrentModeTasks() {
     // Determine current mode based on current page
     const currentPage = window.location.pathname;
-    const isReversePage = currentPage.includes('reverse.html');
-    
+    const isReversePage = currentPage.includes("reverse.html");
+
     if (isReversePage) {
       // We're on reverse page, get reverse tasks
       const reverseTasks = localStorage.getItem(REVERSE_TASKS_KEY);
@@ -363,49 +363,54 @@ class TaskRetentionManager {
 
   getTasksFromTaskList() {
     // Get tasks from current DOM
-    const taskListElement = document.getElementById('task-list');
+    const taskListElement = document.getElementById("task-list");
     if (!taskListElement) return [];
-    
+
     const taskItems = Array.from(taskListElement.children);
-    return taskItems.map(taskItem => {
-      const textElement = taskItem.querySelector('.task-text');
-      const checkboxElement = taskItem.querySelector('.task-checkbox');
-      const descElement = taskItem.querySelector('.task-description');
-      const isFocused = taskItem.classList.contains('task-focused');
-      
+    return taskItems.map((taskItem) => {
+      const textElement = taskItem.querySelector(".task-text");
+      const checkboxElement = taskItem.querySelector(".task-checkbox");
+      const descElement = taskItem.querySelector(".task-description");
+      const isFocused = taskItem.classList.contains("task-focused");
+
       return {
-        text: textElement ? textElement.textContent : '',
+        text: textElement ? textElement.textContent : "",
         completed: checkboxElement ? checkboxElement.checked : false,
-        description: descElement ? descElement.textContent : '',
-        focused: isFocused
+        description: descElement ? descElement.textContent : "",
+        focused: isFocused,
       };
     });
   }
 
   populateTaskPreview(tasks) {
-    const taskPreview = document.getElementById('task-preview');
-    const taskCount = document.getElementById('task-count');
-    
+    const taskPreview = document.getElementById("task-preview");
+    const taskCount = document.getElementById("task-count");
+
     taskCount.textContent = tasks.length;
-    
+
     if (tasks.length === 0) {
-      taskPreview.innerHTML = '<p style="text-align: center; color: #666;">No tasks found</p>';
+      taskPreview.innerHTML =
+        '<p style="text-align: center; color: #666;">No tasks found</p>';
       return;
     }
-    
-    taskPreview.innerHTML = tasks.map(task => `
+
+    taskPreview.innerHTML = tasks
+      .map(
+        (task) => `
       <div class="task-preview-item">
         <div class="task-preview-item-content">
-          <div class="task-preview-item-title ${task.focused ? 'focused-task' : ''}">${this.escapeHtml(task.text)} ${task.focused ? '⭐' : ''}</div>
-          ${task.description ? `<div class="task-preview-item-desc">${this.escapeHtml(task.description)}</div>` : ''}
+          <div class="task-preview-item-title ${task.focused ? "focused-task" : ""}">${this.escapeHtml(task.text)} ${task.focused ? "⭐" : ""}</div>
+          ${task.description ? `<div class="task-preview-item-desc">${this.escapeHtml(task.description)}</div>` : ""}
         </div>
-        ${task.completed ? '<div class="task-preview-item-status completed">Completed</div>' : ''}
+        ${task.completed ? '<div class="task-preview-item-status completed">Completed</div>' : ""}
       </div>
-    `).join('');
+    `,
+      )
+      .join("");
   }
 
   escapeHtml(text) {
-    const div = document.createElement('div');
+    const div = document.createElement("div");
     div.textContent = text;
     return div.innerHTML;
   }
@@ -413,116 +418,126 @@ class TaskRetentionManager {
   async showRetentionDialog(targetMode) {
     return new Promise((resolve) => {
       this.resolvePromise = resolve;
-      
+
       // Get current tasks from DOM (more reliable than localStorage for current state)
       this.currentTasks = this.getTasksFromTaskList();
-      
+
       // If no tasks, resolve immediately with no transfer
       if (this.currentTasks.length === 0) {
         resolve(false);
         return;
       }
-      
+
       this.targetMode = targetMode;
-      
+
       // Create and show modal
       this.createModal();
-      
+
       // Update modal content
-      document.getElementById('target-mode').textContent = targetMode;
+      document.getElementById("target-mode").textContent = targetMode;
       this.populateTaskPreview(this.currentTasks);
-      
+
       // Show modal
-      this.modal.classList.add('show');
+      this.modal.classList.add("show");
     });
   }
 
   handleKeepTasks() {
     // Transfer tasks to target mode
     this.transferTasks(this.currentTasks, this.targetMode);
-    
+
     // Show success notification if possible
-    if (typeof window.showToast === 'function') {
+    if (typeof window.showToast === "function") {
       window.showToast(`Tasks transferred to ${this.targetMode}! 🎯`);
     }
-    
+
     this.hideModal();
     this.resolvePromise?.(true);
   }
 
   handleDiscardTasks() {
     // Clear any existing tasks in the target mode to ensure a fresh start
-    const targetKey = this.targetMode === 'Classic Pomodoro' ? CLASSIC_TASKS_KEY : REVERSE_TASKS_KEY;
+    const targetKey =
+      this.targetMode === "Classic Pomodoro"
+        ? CLASSIC_TASKS_KEY
+        : REVERSE_TASKS_KEY;
     // Instead of merging tasks, we'll make sure the target mode starts fresh
     localStorage.setItem(targetKey, JSON.stringify([]));
     console.log(`Tasks cleared in ${this.targetMode} (Start Fresh selected)`);
-    
+
     // Show notification if possible
-    if (typeof window.showToast === 'function') {
+    if (typeof window.showToast === "function") {
       window.showToast(`Starting fresh in ${this.targetMode}! 🔄`);
     }
-    
+
     this.hideModal();
     this.resolvePromise?.(false);
   }
 
   hideModal() {
     if (this.modal) {
-      this.modal.classList.remove('show');
+      this.modal.classList.remove("show");
       setTimeout(() => this.removeModal(), 300);
     }
   }
 
   transferTasks(tasks, targetMode) {
-    const targetKey = targetMode === 'Classic Pomodoro' ? CLASSIC_TASKS_KEY : REVERSE_TASKS_KEY;
-    
+    const targetKey =
+      targetMode === "Classic Pomodoro" ? CLASSIC_TASKS_KEY : REVERSE_TASKS_KEY;
+
     // Get existing tasks in target mode
     const existingTasks = localStorage.getItem(targetKey);
     let targetTasks = existingTasks ? JSON.parse(existingTasks) : [];
-    
+
     // Create deep copies of tasks to ensure no shared references
     const tasksCopy = JSON.parse(JSON.stringify(tasks));
-    
+
     // Create a more robust deduplication system using both text and description
     const isDuplicate = (newTask, existingTask) => {
       return (
-        newTask.text === existingTask.text && 
+        newTask.text === existingTask.text &&
         newTask.description === existingTask.description
       );
     };
-    
+
     // Filter out duplicate tasks using the more robust comparison
-    const newTasks = tasksCopy.filter(newTask => 
-      !targetTasks.some(existingTask => isDuplicate(newTask, existingTask))
+    const newTasks = tasksCopy.filter(
+      (newTask) =>
+        !targetTasks.some((existingTask) => isDuplicate(newTask, existingTask)),
     );
-    
+
     // Use completely fresh data for the target mode
     targetTasks = [...targetTasks, ...newTasks];
-    
+
     // Save to localStorage
     localStorage.setItem(targetKey, JSON.stringify(targetTasks));
-    
-    console.log(`Transferred ${newTasks.length} new tasks to ${targetMode} (${tasks.length - newTasks.length} duplicates skipped)`, targetTasks);
+
+    console.log(
+      `Transferred ${newTasks.length} new tasks to ${targetMode} (${tasks.length - newTasks.length} duplicates skipped)`,
+      targetTasks,
+    );
   }
 
   // Method to handle mode switching with task retention
   async handleModeSwitch(targetUrl, targetMode) {
     // Get latest tasks from DOM before showing dialog
     this.currentTasks = this.getTasksFromTaskList();
-    
+
     // Only show the dialog if there are actually tasks to transfer
     if (this.currentTasks.length > 0) {
       const shouldTransfer = await this.showRetentionDialog(targetMode);
-      
+
       if (shouldTransfer) {
-        console.log(`${this.currentTasks.length} tasks transferred to ${targetMode}`);
+        console.log(
+          `${this.currentTasks.length} tasks transferred to ${targetMode}`,
+        );
       } else {
-        console.log('User chose to start fresh in the target mode');
+        console.log("User chose to start fresh in the target mode");
       }
     } else {
-      console.log('No tasks to transfer, proceeding directly');
+      console.log("No tasks to transfer, proceeding directly");
     }
-    
+
     // Navigate to target page
     window.location.href = targetUrl;
   }
@@ -534,52 +549,59 @@ window.taskRetentionManager = new TaskRetentionManager();
 // Function to add task saving to Classic Pomodoro (since it doesn't have it yet)
 function addClassicTaskSaving() {
   // Only run on classic pomodoro page (not reverse.html)
-  if (window.location.pathname.includes('reverse.html')) return;
-  
+  if (window.location.pathname.includes("reverse.html")) return;
+
   // Function to save classic tasks
   function saveClassicTasks() {
-    const taskListElement = document.getElementById('task-list');
+    const taskListElement = document.getElementById("task-list");
     if (!taskListElement) return;
-    
-    const taskItems = Array.from(taskListElement.children).map(taskItem => {
-      const textElement = taskItem.querySelector('.task-text');
-      const checkboxElement = taskItem.querySelector('.task-checkbox');
-      const descElement = taskItem.querySelector('.task-description');
-      const isFocused = taskItem.classList.contains('task-focused');
-      
+
+    const taskItems = Array.from(taskListElement.children).map((taskItem) => {
+      const textElement = taskItem.querySelector(".task-text");
+      const checkboxElement = taskItem.querySelector(".task-checkbox");
+      const descElement = taskItem.querySelector(".task-description");
+      const isFocused = taskItem.classList.contains("task-focused");
+
       return {
-        text: textElement ? textElement.textContent : '',
+        text: textElement ? textElement.textContent : "",
         completed: checkboxElement ? checkboxElement.checked : false,
-        description: descElement ? descElement.textContent : '',
-        focused: isFocused
+        description: descElement ? descElement.textContent : "",
+        focused: isFocused,
       };
     });
-    
+
     localStorage.setItem(CLASSIC_TASKS_KEY, JSON.stringify(taskItems));
-    console.log('Classic tasks saved to localStorage:', taskItems);
+    console.log("Classic tasks saved to localStorage:", taskItems);
   }
-  
+
   // Function to load classic tasks
   function loadClassicTasks() {
-    const taskListElement = document.getElementById('task-list');
+    const taskListElement = document.getElementById("task-list");
     if (!taskListElement) return;
-    
+
     const savedTasks = localStorage.getItem(CLASSIC_TASKS_KEY);
     if (!savedTasks) return;
-    
+
     try {
       const taskItems = JSON.parse(savedTasks);
-      
+
       // Clear existing tasks
-      taskListElement.innerHTML = '';
-      
+      taskListElement.innerHTML = "";
+
       // Recreate tasks
-      taskItems.forEach(task => {
-        if (typeof window.createTaskElement === 'function') {
-          window.createTaskElement(task.text, task.completed, task.description || '');
-          
+      taskItems.forEach((task) => {
+        if (typeof window.createTaskElement === "function") {
+          window.createTaskElement(
+            task.text,
+            task.completed,
+            task.description || "",
+          );
+
           // Handle focused task
-          if (task.focused && typeof window.setCurrentFocusedTask === 'function') {
+          if (
+            task.focused &&
+            typeof window.setCurrentFocusedTask === "function"
+          ) {
             // Find the task element that was just created
             const taskElements = Array.from(taskListElement.children);
             const lastTask = taskElements[taskElements.length - 1];
@@ -591,56 +613,58 @@ function addClassicTaskSaving() {
           }
         }
       });
-      
-      console.log('Classic tasks loaded from localStorage:', taskItems);
+
+      console.log("Classic tasks loaded from localStorage:", taskItems);
     } catch (error) {
-      console.error('Error loading classic tasks:', error);
+      console.error("Error loading classic tasks:", error);
     }
   }
-  
+
   // Wait for DOM and functions to be ready before overriding
   function initTaskSaving() {
     // Override existing functions to include saving
     const originalCreateTaskElement = window.createTaskElement;
     if (originalCreateTaskElement) {
-      window.createTaskElement = function(...args) {
+      window.createTaskElement = function (...args) {
         const result = originalCreateTaskElement.apply(this, args);
         setTimeout(saveClassicTasks, 100); // Save after DOM updates
         return result;
       };
     }
-    
+
     // Also override addTask if it exists
     const originalAddTask = window.addTask;
     if (originalAddTask) {
-      window.addTask = function(...args) {
+      window.addTask = function (...args) {
         const result = originalAddTask.apply(this, args);
         setTimeout(saveClassicTasks, 100);
         return result;
       };
     }
   }
-  
+
   // Try to initialize immediately, and also on DOMContentLoaded
-  if (typeof window.createTaskElement === 'function') {
+  if (typeof window.createTaskElement === "function") {
     initTaskSaving();
   }
-  
-  document.addEventListener('DOMContentLoaded', () => {
+
+  document.addEventListener("DOMContentLoaded", () => {
     setTimeout(initTaskSaving, 500); // Give other scripts time to load
   });
-  
+
   // Add save on checkbox changes and task deletions
-  document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('task-checkbox') || 
-        e.target.classList.contains('task-delete')) {
+  document.addEventListener("click", (e) => {
+    if (
+      e.target.classList.contains("task-checkbox") ||
+      e.target.classList.contains("task-delete")
+    ) {
       setTimeout(saveClassicTasks, 100);
     }
   });
-  
+
   // Load tasks when DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadClassicTasks);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", loadClassicTasks);
   } else {
     loadClassicTasks();
   }
@@ -652,45 +676,47 @@ addClassicTaskSaving();
 // Helper function to ensure tasks are only deleted in the current mode
 function setupIsolatedTaskDeletion() {
   // Watch for task deletion events
-  document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('task-delete')) {
+  document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("task-delete")) {
       // Get the task item being deleted
-      const taskItem = e.target.closest('.task-item');
+      const taskItem = e.target.closest(".task-item");
       if (!taskItem) return;
-      
+
       // Get the task text
-      const taskText = taskItem.querySelector('.task-text')?.textContent;
+      const taskText = taskItem.querySelector(".task-text")?.textContent;
       if (!taskText) return;
-      
+
       // Determine current mode based on current page
       const currentPage = window.location.pathname;
-      const isReversePage = currentPage.includes('reverse.html');
+      const isReversePage = currentPage.includes("reverse.html");
       const currentKey = isReversePage ? REVERSE_TASKS_KEY : CLASSIC_TASKS_KEY;
-      
+
       // Get current tasks from localStorage
       const savedTasks = localStorage.getItem(currentKey);
       if (!savedTasks) return;
-      
+
       try {
         // Parse tasks
         const tasks = JSON.parse(savedTasks);
-        
+
         // Filter out the deleted task
-        const updatedTasks = tasks.filter(task => task.text !== taskText);
-        
+        const updatedTasks = tasks.filter((task) => task.text !== taskText);
+
         // Save back to localStorage for current mode only
         localStorage.setItem(currentKey, JSON.stringify(updatedTasks));
-        
-        console.log(`Task "${taskText}" deleted from ${isReversePage ? 'Reverse' : 'Classic'} mode only.`);
+
+        console.log(
+          `Task "${taskText}" deleted from ${isReversePage ? "Reverse" : "Classic"} mode only.`,
+        );
       } catch (error) {
-        console.error('Error processing task deletion:', error);
+        console.error("Error processing task deletion:", error);
       }
     }
   });
 }
 
 // Initialize isolated task deletion on DOMContentLoaded
-document.addEventListener('DOMContentLoaded', setupIsolatedTaskDeletion);
+document.addEventListener("DOMContentLoaded", setupIsolatedTaskDeletion);
 
 // Export for global access
 window.TaskRetentionManager = TaskRetentionManager;
