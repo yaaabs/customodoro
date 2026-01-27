@@ -758,6 +758,7 @@ class SyncUI {
           <strong>🚨 CRITICAL WARNING:</strong> ${warningMessage} ${action === "register" ? "Creating" : "Signing into"} this account will sync your data to the cloud.
         </div>
         
+        <!--
         <div style="
           background: #d4edda !important;
           border: 1px solid #c3e6cb !important;
@@ -769,6 +770,7 @@ class SyncUI {
         ">
           <strong>✅ Data Protection:</strong> Your existing progress will be preserved and uploaded to your account. Please review the current data summary first.
         </div>
+        -->
       `;
     } else if (hasSignificantData) {
       warningHTML = `
@@ -784,6 +786,7 @@ class SyncUI {
           <strong>⚠️ Important:</strong> ${warningMessage} ${action === "register" ? "Creating" : "Signing into"} this account will sync your data to the cloud. If this is not your first time using sync, please review the current data summary below if it matches your current data.
         </div>
         
+        <!--
         <div style="
           background: #d4edda !important;
           border: 1px solid #c3e6cb !important;
@@ -795,6 +798,7 @@ class SyncUI {
         ">
           <strong>✅ Data Protection:</strong> Your existing progress will be preserved and uploaded to your account.
         </div>
+        -->
       `;
     } else {
       warningHTML = `
@@ -862,6 +866,7 @@ class SyncUI {
             </ul>
           </div>
           
+          <!--
           <p style="margin: 0 0 10px 0 !important; color: #555 !important; font-size: 14px !important;">This will:</p>
           <ul style="margin: 0 0 20px 20px !important; color: #555 !important; font-size: 14px !important;">
             <li>${hasSignificantData ? "Upload your current stats, streaks, and sessions to the cloud" : "Initialize your account with empty data"}</li>
@@ -869,6 +874,7 @@ class SyncUI {
             <li>Allow you to access this data from other devices</li>
             ${hasSignificantData ? "<li>Keep your existing progress safe in the cloud</li>" : ""}
           </ul>
+          -->
           
           <div style="
             display: flex !important;

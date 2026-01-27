@@ -3940,6 +3940,37 @@ body.theme-rain #add-task-btn.secondary-btn:hover {
   }
 }
 
+/* Desktop: allow long date lines to wrap and avoid overlap (>=768px) */
+@media (min-width: 768px) {
+  .streak-stats-date {
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    text-align: center;
+    line-height: 1.25;
+    margin-top: 4px;
+    max-width: 100%;
+  }
+
+  /* Ensure label doesn't collapse layout if it's unusually long */
+  .streak-stats-label {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 100%;
+  }
+
+  /* Small visual tweak to increase spacing between blocks if date wraps to multiple lines */
+  .streak-stats-content {
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .streak-stats-block {
+    padding-bottom: 14px;
+  }
+}
+
 /* User Stats Card - Matching Streak Stats Card Design */
 .user-stats-card {
   background: #181a1b;
