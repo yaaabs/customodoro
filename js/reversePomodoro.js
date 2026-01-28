@@ -821,10 +821,15 @@ function handleResume() {
     timerStartTime = now - (pausedTimeRemaining * 1000);
     timerEndTime = now + ((MAX_TIME - pausedTimeRemaining) * 1000);
   } else {
-    // For break: we stored remaining time
-    timerEndTime = now + (pausedTimeRemaining * 1000);
+    // For break: we stored remaining time — only resume if >1s remains, otherwise start fresh
+    if (pausedTimeRemaining !== null && pausedTimeRemaining > 1) {
+      timerEndTime = now + (pausedTimeRemaining * 1000);
+    } else {
+      timerEndTime = now + (currentSeconds * 1000);
+    }
   }
   
+  // Clear any stale pause value to avoid tiny leftover resumes
   pausedTimeRemaining = null;
   isRunning = true;
   timerState = 'running';

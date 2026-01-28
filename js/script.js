@@ -745,14 +745,15 @@ function toggleTimer() {
       window.startMidnightTracking('classic');
     }
     
-    if (pausedTimeRemaining !== null) {
-      // Resuming from pause
+    if (pausedTimeRemaining !== null && pausedTimeRemaining > 1) {
+      // Resuming from pause (only if more than 1s remains — guard against tiny residuals)
       timerEndTime = now + (pausedTimeRemaining * 1000);
     } else {
-      // Fresh start - all modes in classic pomodoro are countdown
+      // Fresh start - ignore tiny paused values to avoid 00:01 glitch
       timerEndTime = now + (currentSeconds * 1000);
     }
-    
+
+    // Clear any stale pause value to avoid resuming with a tiny leftover
     pausedTimeRemaining = null;
     isRunning = true;
     startButton.textContent = 'PAUSE';
@@ -886,6 +887,8 @@ function handleTimerCompletion() {
   showToast(getCompletionMessage());
 
   // Move to next timer phase with auto-start
+  // Clear any paused value so the next phase starts with full duration
+  pausedTimeRemaining = null;
   if (currentMode === 'pomodoro') {
     if (completedPomodoros % maxSessions === 0) {
       switchMode('longBreak', true);
@@ -1027,6 +1030,10 @@ function switchMode(mode, autoStart = false) {
   isRunning = false;
   sessionCompleted = false;
   startButton.textContent = 'START';
+  // Ensure no leftover timestamps or paused values remain (fixes 00:01 glitch on PWA)
+  timerStartTime = null;
+  timerEndTime = null;
+  pausedTimeRemaining = null;
   
   // Reset and hide burn-up tracker when switching modes
   resetBurnupTracker();
