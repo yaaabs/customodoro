@@ -59,9 +59,6 @@ let timerStartTime = null;  // When timer started (timestamp)
 let timerEndTime = null;    // When timer should end (timestamp)
 let pausedTimeRemaining = null; // Time left when paused
 
-// Session completion guard - prevents multiple completions/alarms per session
-let sessionCompleted = false;
-
 // Burn-Up Tracker variables
 let isBurnupTrackerEnabled = localStorage.getItem('burnupTrackerEnabled') !== 'false'; // Default to true
 let burnupStartTime = 0;
@@ -439,9 +436,8 @@ document.addEventListener('keydown', (e) => {
 
 // Add Page Visibility API for accurate timer tracking when tab becomes active
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && isRunning && !sessionCompleted) {
+  if (!document.hidden && isRunning) {
     // Tab became visible - recalculate immediately
-    // The updateTimerFromTimestamp will handle completion if time has elapsed
     updateTimerFromTimestamp();
   }
 });
@@ -683,11 +679,6 @@ function updateFavicon(status) {
 
 // New timestamp-based timer update function for accurate time tracking
 function updateTimerFromTimestamp() {
-  // Guard: Don't process if session already completed or not running
-  if (sessionCompleted || !isRunning) {
-    return;
-  }
-  
   const now = Date.now();
   
   if (currentMode === 'pomodoro') {
@@ -696,8 +687,6 @@ function updateTimerFromTimestamp() {
     currentSeconds = Math.max(Math.floor(remaining), 0);
     
     if (currentSeconds <= 0) {
-      // Set guard immediately to prevent duplicate calls
-      sessionCompleted = true;
       handleTimerCompletion();
       return;
     }
@@ -707,8 +696,6 @@ function updateTimerFromTimestamp() {
     currentSeconds = Math.max(Math.floor(remaining), 0);
     
     if (currentSeconds <= 0) {
-      // Set guard immediately to prevent duplicate calls
-      sessionCompleted = true;
       handleTimerCompletion();
       return;
     }
@@ -725,15 +712,6 @@ function updateTimerFromTimestamp() {
 // Toggle timer between start and pause
 function toggleTimer() {
   if (!isRunning) {
-    // CRITICAL: Clear any existing interval first to prevent multiple intervals
-    if (timerInterval) {
-      clearInterval(timerInterval);
-      timerInterval = null;
-    }
-    
-    // Reset session completion guard for new/resumed session
-    sessionCompleted = false;
-    
     // Starting timer
     playSound('start'); // Play start/click sound
     showToast(motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)]);
@@ -745,15 +723,14 @@ function toggleTimer() {
       window.startMidnightTracking('classic');
     }
     
-    if (pausedTimeRemaining !== null && pausedTimeRemaining > 1) {
-      // Resuming from pause (only if more than 1s remains — guard against tiny residuals)
+    if (pausedTimeRemaining !== null) {
+      // Resuming from pause
       timerEndTime = now + (pausedTimeRemaining * 1000);
     } else {
-      // Fresh start - ignore tiny paused values to avoid 00:01 glitch
+      // Fresh start - all modes in classic pomodoro are countdown
       timerEndTime = now + (currentSeconds * 1000);
     }
-
-    // Clear any stale pause value to avoid resuming with a tiny leftover
+    
     pausedTimeRemaining = null;
     isRunning = true;
     startButton.textContent = 'PAUSE';
@@ -780,11 +757,8 @@ function toggleTimer() {
     // Stop timer sound when pausing
     stopTimerSound();
     
-    // CRITICAL: Clear interval and set to null
-    if (timerInterval) {
-      clearInterval(timerInterval);
-      timerInterval = null;
-    }
+    // Pause timer
+    clearInterval(timerInterval);
     isRunning = false;
     
     // Calculate and store remaining time
@@ -811,18 +785,8 @@ function toggleTimer() {
 
 // Handle timer completion - centralized logic to prevent duplication
 function handleTimerCompletion() {
-  // CRITICAL: Prevent duplicate completion
-  if (sessionCompleted && timerInterval === null && !isRunning) {
-    // Already completed, just ensure cleanup
-    return;
-  }
-  sessionCompleted = true;
-  
-  // CRITICAL: Clear interval and set to null
-  if (timerInterval) {
-    clearInterval(timerInterval);
-    timerInterval = null;
-  }
+  // Stop the timer
+  clearInterval(timerInterval);
   isRunning = false;
   startButton.textContent = 'START';
   updateFavicon('paused');
@@ -887,8 +851,6 @@ function handleTimerCompletion() {
   showToast(getCompletionMessage());
 
   // Move to next timer phase with auto-start
-  // Clear any paused value so the next phase starts with full duration
-  pausedTimeRemaining = null;
   if (currentMode === 'pomodoro') {
     if (completedPomodoros % maxSessions === 0) {
       switchMode('longBreak', true);
@@ -908,14 +870,7 @@ function handleTimerCompletion() {
 
 // Reset the current timer - modified to be more robust
 function resetTimer() {
-  // CRITICAL: Clear interval and set to null
-  if (timerInterval) {
-    clearInterval(timerInterval);
-    timerInterval = null;
-  }
-  
-  // Reset session completion guard
-  sessionCompleted = false;
+  clearInterval(timerInterval);
   
   // Clear timestamp variables
   timerStartTime = null;
@@ -1026,14 +981,8 @@ function switchMode(mode, autoStart = false) {
   initialSeconds = currentSeconds;
   // Reset timer state
   clearInterval(timerInterval);
-  timerInterval = null;
   isRunning = false;
-  sessionCompleted = false;
   startButton.textContent = 'START';
-  // Ensure no leftover timestamps or paused values remain (fixes 00:01 glitch on PWA)
-  timerStartTime = null;
-  timerEndTime = null;
-  pausedTimeRemaining = null;
   
   // Reset and hide burn-up tracker when switching modes
   resetBurnupTracker();
@@ -1960,45 +1909,17 @@ function getColor(minutes, maxMinutes, emptyColor = "#ebedf0") {
 // Day labels (GitHub shows Mon, Wed, Fri)
 const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-// Month labels — compute a centered label across the month's span and avoid placing a month label directly over the previous month
+// Month labels
 function getMonthLabels(dates) {
-  const ranges = [];
+  const labels = [];
   let lastMonth = -1;
   dates.forEach((date, i) => {
     const month = date.getMonth();
     if (month !== lastMonth) {
-      ranges.push({ month, first: i, last: i });
+      labels.push({ month: date.toLocaleString('default', { month: 'short' }), x: i });
       lastMonth = month;
-    } else {
-      ranges[ranges.length - 1].last = i;
     }
   });
-
-  const labels = [];
-  let prevX = -Infinity;
-
-  ranges.forEach(range => {
-    // Prefer centering the label across the month's first..last week
-    let x = (range.first + range.last) / 2;
-
-    // If the month occupies a single week, nudge it slightly right so it doesn't sit under the previous month's text
-    if (range.first === range.last && range.first < dates.length - 1) {
-      x = range.first + 0.5; // half-column shift
-    }
-
-    // Ensure label positions don't collide; enforce minimal column gap (0.8 columns)
-    const minGap = 0.8;
-    if (x <= prevX + minGap) {
-      x = prevX + minGap;
-    }
-
-    // Clamp x so it's within available columns
-    x = Math.min(x, dates.length - 1);
-
-    labels.push({ month: new Date(2020, range.month, 1).toLocaleString('default', { month: 'short' }), x });
-    prevX = x;
-  });
-
   return labels;
 }
 
@@ -2256,10 +2177,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const svgParts = [`<svg width="${width}" height="${height}" style="font-family:sans-serif;background:${bgColor};min-width:${minGraphWidth}px;display:block;">`];
 
   // Month labels (top)
-  // Center month label above the first week cell (fixes Jan misalignment, see clean-code.md Rule 5.1)
   monthLabels.forEach(label => {
-    const x = leftPad + label.x * (cellSize + cellGap) + cellSize / 2;
-    svgParts.push(`<text x="${x}" y="15" fill="${labelColor}" font-size="11" font-weight="500" text-anchor="middle">${label.month}</text>`);
+    const x = leftPad + label.x * (cellSize + cellGap);
+    svgParts.push(`<text x="${x}" y="15" fill="${labelColor}" font-size="11" font-weight="500">${label.month}</text>`);
   });
 
   // Day labels (left, accurate)
@@ -2336,16 +2256,16 @@ weeks.forEach((week, x) => {
     container.innerHTML = `
       <div class="tasks-title" style="color:${titleColor};margin-bottom:6px;">Productivity Graph</div>
 
-    <div class="contrib-subheader" style="margin-bottom:6px;">
-      <div id="contrib-current-range" class="contrib-range" style="font-size:13px;color:${labelColor};">Last 12 Months</div>
-      <div class="contrib-controls" style="display:flex;gap:8px;align-items:center;">
-        <label for="contribution-range-select" class="contrib-label" style="font-size:12px;color:${labelColor};margin-right:6px;">View:</label>
-        <select id="contribution-range-select" class="contrib-select" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid ${cellBorder};background:${bgColor};color:${labelColor};cursor:pointer;max-width:160px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:12px;">
+      <div id="contrib-current-range" style="font-size:13px;color:${labelColor};min-width:120px;">Last 12 Months</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <label for="contribution-range-select" style="font-size:12px;color:${labelColor};margin-right:6px;">View:</label>
+        <select id="contribution-range-select" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid ${cellBorder};background:${bgColor};color:${labelColor};cursor:pointer;">
           <option value="last12">Last 12 Months</option>
           <option value="all">All Time</option>
           <!-- Year options populated dynamically -->
         </select>
-        <select id="contribution-month-select" class="contrib-select month-select" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid ${cellBorder};background:${bgColor};color:${labelColor};cursor:pointer;display:none;max-width:120px;">
+        <select id="contribution-month-select" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid ${cellBorder};background:${bgColor};color:${labelColor};cursor:pointer;display:none;margin-left:6px;">
           <option value="0">All months</option>
           <option value="01">Jan</option>
           <option value="02">Feb</option>

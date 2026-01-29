@@ -390,9 +390,6 @@ let pausedTimeRemaining = null; // Time left when paused
 // Timer state management for pause/resume functionality
 let timerState = 'idle'; // 'idle', 'running', 'paused', 'stopped'
 
-// Session completion guard - prevents multiple completions/alarms per session
-let sessionCompleted = false;
-
 // Button display management function
 function updateButtonDisplay() {
   // Hide all buttons first
@@ -652,11 +649,6 @@ window.updateBurnupTracker = updateBurnupTracker;
 
 // New timestamp-based timer update function for accurate time tracking
 function updateTimerFromTimestamp() {
-  // Guard: Don't process if session already completed or not running
-  if (sessionCompleted || !isRunning) {
-    return;
-  }
-  
   const now = Date.now();
   
   if (currentMode === 'reverse') {
@@ -665,8 +657,6 @@ function updateTimerFromTimestamp() {
     currentSeconds = Math.min(Math.floor(elapsed), MAX_TIME);
     
     if (currentSeconds >= MAX_TIME) {
-      // Set guard immediately to prevent duplicate calls
-      sessionCompleted = true;
       completeSession();
       return;
     }
@@ -676,8 +666,6 @@ function updateTimerFromTimestamp() {
     currentSeconds = Math.max(Math.floor(remaining), 0);
     
     if (currentSeconds <= 0) {
-      // Set guard immediately to prevent duplicate calls
-      sessionCompleted = true;
       completeBreak();
       return;
     }
@@ -705,15 +693,6 @@ function handleStart() {
     showToast("You've reached the maximum time!");
     return;
   }
-  
-  // CRITICAL: Clear any existing interval first to prevent multiple intervals
-  if (timerInterval) {
-    clearInterval(timerInterval);
-    timerInterval = null;
-  }
-  
-  // Reset session completion guard for new session
-  sessionCompleted = false;
   
   playSound('start');
   showToast(currentMode === 'break' ? "Enjoy your break! 😌" : "Time to focus! 💪");
@@ -765,12 +744,7 @@ function handlePause() {
   
   // Stop timer sound when pausing
   stopTimerSound();
-  
-  // CRITICAL: Clear interval and set to null
-  if (timerInterval) {
-    clearInterval(timerInterval);
-    timerInterval = null;
-  }
+  clearInterval(timerInterval);
   isRunning = false;
   timerState = 'paused';
   
@@ -804,12 +778,6 @@ function handlePause() {
 }
 
 function handleResume() {
-  // CRITICAL: Clear any existing interval first
-  if (timerInterval) {
-    clearInterval(timerInterval);
-    timerInterval = null;
-  }
-  
   playSound('start');
   showToast("Resuming timer! 🔄");
   
@@ -821,15 +789,10 @@ function handleResume() {
     timerStartTime = now - (pausedTimeRemaining * 1000);
     timerEndTime = now + ((MAX_TIME - pausedTimeRemaining) * 1000);
   } else {
-    // For break: we stored remaining time — only resume if >1s remains, otherwise start fresh
-    if (pausedTimeRemaining !== null && pausedTimeRemaining > 1) {
-      timerEndTime = now + (pausedTimeRemaining * 1000);
-    } else {
-      timerEndTime = now + (currentSeconds * 1000);
-    }
+    // For break: we stored remaining time
+    timerEndTime = now + (pausedTimeRemaining * 1000);
   }
   
-  // Clear any stale pause value to avoid tiny leftover resumes
   pausedTimeRemaining = null;
   isRunning = true;
   timerState = 'running';
@@ -856,12 +819,7 @@ function handleStop() {
   
   // Stop timer sound when stopping
   stopTimerSound();
-  
-  // CRITICAL: Clear interval and set to null
-  if (timerInterval) {
-    clearInterval(timerInterval);
-    timerInterval = null;
-  }
+  clearInterval(timerInterval);
   isRunning = false;
   timerState = 'stopped';
   
@@ -909,19 +867,8 @@ function toggleTimer() {
 }
 
 // Complete session
-function completeSession(playSoundArg = true) {
-    // CRITICAL: Prevent duplicate completion
-    if (sessionCompleted && timerInterval === null) {
-      // Already completed, just ensure cleanup
-      return;
-    }
-    sessionCompleted = true;
-    
-    // CRITICAL: Clear interval and set to null
-    if (timerInterval) {
-      clearInterval(timerInterval);
-      timerInterval = null;
-    }
+function completeSession(playSound = true) {
+    clearInterval(timerInterval);
     isRunning = false;
     timerState = 'idle';
     hideBurnupTracker();
@@ -942,8 +889,8 @@ function completeSession(playSoundArg = true) {
     // Calculate earned break BEFORE showing any messages
     earnedBreakTime = calculateBreakTime(currentSeconds);
 
-    // Only play completion sound if the timer reached max time or playSoundArg is true
-    if (currentSeconds >= MAX_TIME || playSoundArg) {
+    // Only play completion sound if the timer reached max time or playSound is true
+    if (currentSeconds >= MAX_TIME || playSound) {
         window.playSound('pomodoroComplete');
         showMuteAlert(`Great work! You worked for ${workMinutes} minutes and earned a ${earnedBreakTime}-minute break!`);
         
@@ -978,18 +925,7 @@ function completeSession(playSoundArg = true) {
 
 // Complete break
 function completeBreak() {
-    // CRITICAL: Prevent duplicate completion
-    if (sessionCompleted && timerInterval === null) {
-      // Already completed, just ensure cleanup
-      return;
-    }
-    sessionCompleted = true;
-    
-    // CRITICAL: Clear interval and set to null
-    if (timerInterval) {
-      clearInterval(timerInterval);
-      timerInterval = null;
-    }
+    clearInterval(timerInterval);
     isRunning = false;
     timerState = 'idle';
     
@@ -1025,14 +961,7 @@ function completeBreak() {
 
 // Reset timer
 function resetTimer(showMessage = false) {
-    // CRITICAL: Clear interval and set to null
-    if (timerInterval) {
-      clearInterval(timerInterval);
-      timerInterval = null;
-    }
-    
-    // Reset session completion guard
-    sessionCompleted = false;
+    clearInterval(timerInterval);
     
     // Clear timestamp variables
     timerStartTime = null;
@@ -1103,10 +1032,8 @@ function switchMode(mode) {
   
   // Reset timer state
   clearInterval(timerInterval);
-  timerInterval = null;
   isRunning = false;
   timerState = 'idle';
-  sessionCompleted = false;
   
   // Clear timestamp variables
   timerStartTime = null;
@@ -1773,9 +1700,8 @@ document.addEventListener('keydown', (e) => {
 
 // Add Page Visibility API for accurate timer tracking when tab becomes active
 document.addEventListener('visibilitychange', () => {
-  if (!document.hidden && isRunning && !sessionCompleted) {
+  if (!document.hidden && isRunning) {
     // Tab became visible - recalculate immediately
-    // The updateTimerFromTimestamp will handle completion if time has elapsed
     updateTimerFromTimestamp();
   }
 });
@@ -2123,45 +2049,17 @@ function getColor(minutes, maxMinutes, emptyColor = "#ebedf0") {
 // Day labels (GitHub shows Mon, Wed, Fri)
 const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-// Month labels — compute a centered label across the month's span and avoid placing a month label directly over the previous month
+// Month labels
 function getMonthLabels(dates) {
-  const ranges = [];
+  const labels = [];
   let lastMonth = -1;
   dates.forEach((date, i) => {
     const month = date.getMonth();
     if (month !== lastMonth) {
-      ranges.push({ month, first: i, last: i });
+      labels.push({ month: date.toLocaleString('default', { month: 'short' }), x: i });
       lastMonth = month;
-    } else {
-      ranges[ranges.length - 1].last = i;
     }
   });
-
-  const labels = [];
-  let prevX = -Infinity;
-
-  ranges.forEach(range => {
-    // Prefer centering the label across the month's first..last week
-    let x = (range.first + range.last) / 2;
-
-    // If the month occupies a single week, nudge it slightly right so it doesn't sit under the previous month's text
-    if (range.first === range.last && range.first < dates.length - 1) {
-      x = range.first + 0.5; // half-column shift
-    }
-
-    // Ensure label positions don't collide; enforce minimal column gap (0.8 columns)
-    const minGap = 0.8;
-    if (x <= prevX + minGap) {
-      x = prevX + minGap;
-    }
-
-    // Clamp x so it's within available columns
-    x = Math.min(x, dates.length - 1);
-
-    labels.push({ month: new Date(2020, range.month, 1).toLocaleString('default', { month: 'short' }), x });
-    prevX = x;
-  });
-
   return labels;
 }
 
@@ -2409,10 +2307,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const svgParts = [`<svg width="${width}" height="${height}" style="font-family:sans-serif;background:${bgColor};min-width:${minGraphWidth}px;display:block;">`];
 
   // Month labels (top)
-  // Center month label above the first week cell (fixes Jan misalignment, see clean-code.md Rule 5.1)
   monthLabels.forEach(label => {
-    const x = leftPad + label.x * (cellSize + cellGap) + cellSize / 2;
-    svgParts.push(`<text x="${x}" y="15" fill="${labelColor}" font-size="11" font-weight="500" text-anchor="middle">${label.month}</text>`);
+    const x = leftPad + label.x * (cellSize + cellGap);
+    svgParts.push(`<text x="${x}" y="15" fill="${labelColor}" font-size="11" font-weight="500">${label.month}</text>`);
   });
 
   // Day labels (left, accurate)
@@ -2481,16 +2378,16 @@ weeks.forEach((week, x) => {
     container.innerHTML = `
       <div class="tasks-title" style="color:${titleColor};margin-bottom:6px;">Productivity Graph</div>
 
-    <div class="contrib-subheader" style="margin-bottom:6px;">
-      <div id="contrib-current-range" class="contrib-range" style="font-size:13px;color:${labelColor};">Last 12 Months</div>
-      <div class="contrib-controls" style="display:flex;gap:8px;align-items:center;">
-        <label for="contribution-range-select" class="contrib-label" style="font-size:12px;color:${labelColor};margin-right:6px;">View:</label>
-        <select id="contribution-range-select" class="contrib-select" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid ${cellBorder};background:${bgColor};color:${labelColor};cursor:pointer;max-width:160px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:12px;">
+      <div id="contrib-current-range" style="font-size:13px;color:${labelColor};min-width:120px;">Last 12 Months</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <label for="contribution-range-select" style="font-size:12px;color:${labelColor};margin-right:6px;">View:</label>
+        <select id="contribution-range-select" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid ${cellBorder};background:${bgColor};color:${labelColor};cursor:pointer;">
           <option value="last12">Last 12 Months</option>
           <option value="all">All Time</option>
           <!-- Year options populated dynamically -->
         </select>
-        <select id="contribution-month-select" class="contrib-select month-select" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid ${cellBorder};background:${bgColor};color:${labelColor};cursor:pointer;display:none;max-width:120px;">
+        <select id="contribution-month-select" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid ${cellBorder};background:${bgColor};color:${labelColor};cursor:pointer;display:none;margin-left:6px;">
           <option value="0">All months</option>
           <option value="01">Jan</option>
           <option value="02">Feb</option>
