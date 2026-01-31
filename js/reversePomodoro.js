@@ -706,7 +706,22 @@ function updateTimerFromTimestamp() {
 
   // Update locked-in mode if active
   if (window.lockedInMode && window.lockedInMode.isActive()) {
-    updateLockedInMode();
+    let hours = Math.floor(currentSeconds / 3600);
+    let minutes = Math.floor((currentSeconds % 3600) / 60);
+    let seconds = currentSeconds % 60;
+    let timeText;
+    if (hours > 0) {
+      timeText = `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    } else {
+      timeText = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    }
+    const progressPercent = currentMode === "break"
+      ? ((initialSeconds - currentSeconds) / initialSeconds) * 100
+      : (currentSeconds / MAX_TIME) * 100;
+    const buttonText = startButton ? startButton.textContent : "START";
+    const sessionText = null; // Reverse timer doesn't have sessions
+    
+    window.lockedInMode.update(timeText, progressPercent, buttonText, sessionText);
   }
 }
 

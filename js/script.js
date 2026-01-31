@@ -730,7 +730,15 @@ function updateTimerFromTimestamp() {
 
   // Update locked-in mode if active
   if (window.lockedInMode && window.lockedInMode.isActive()) {
-    updateLockedInMode();
+    const minutes = Math.floor(currentSeconds / 60);
+    const seconds = currentSeconds % 60;
+    const timeText = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    const progressPercent = initialSeconds > 0 ? ((initialSeconds - currentSeconds) / initialSeconds) * 100 : 0;
+    const buttonText = startButton ? startButton.textContent : "START";
+    const sessionTextElement = document.getElementById('session-text');
+    const sessionTextContent = sessionTextElement ? sessionTextElement.textContent : `#${currentSession}`;
+    
+    window.lockedInMode.update(timeText, progressPercent, buttonText, sessionTextContent);
   }
 }
 
