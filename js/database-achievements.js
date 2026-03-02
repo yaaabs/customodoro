@@ -146,6 +146,40 @@
         description: "Honored for holding the longest streak in December.",
         date: "2026-01-01",
       },
+
+            // Streak Legend Badge for January
+      {
+        title: "Streak Legend",
+        icon: "images/badges/custom-badges/2026-01/jan-streak.webp",
+        description: "Honored for holding the longest streak in January.",
+        date: "2026-01-01",
+      },
+
+      // Session Master Badge for January
+      {
+        title: "Session Master",
+        icon: "images/badges/custom-badges/2026-01/jan-session.webp",
+        description: "Recognized for completing the most sessions in January.",
+        date: "2026-01-01",
+      },
+
+      // Focus King Badge for January
+      {
+        title: "Focus King",
+        icon: "images/badges/custom-badges/2026-01/jan-focus-points.webp",
+        description:
+          "Crowned for earning the highest Focus Points in January.",
+        date: "2026-01-01",
+      },
+
+      // Overall Champion Badge for January
+      {
+        title: "Overall Champion",
+        icon: "images/badges/custom-badges/2026-01/jan-champion.webp",
+        description:
+          "Awarded for being the top overall performer with the highest average across all categories in January.",
+        date: "2026-01-01",
+      },
     ],
     //================================================================//
 
