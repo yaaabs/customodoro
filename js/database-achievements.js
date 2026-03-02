@@ -201,6 +201,40 @@
           "Awarded for being the top overall performer with the highest average across all categories in December.",
         date: "2026-01-01",
       },
+
+            // Streak Legend Badge for February
+      {
+        title: "Streak Legend",
+        icon: "images/badges/custom-badges/2026-02/feb-streak.webp",
+        description: "Honored for holding the longest streak in February.",
+        date: "2026-02-01",
+      },
+
+      // Session Master Badge for February
+      {
+        title: "Session Master",
+        icon: "images/badges/custom-badges/2026-02/feb-session.webp",
+        description: "Recognized for completing the most sessions in February.",
+        date: "2026-02-011",
+      },
+
+      // Focus King Badge for February
+      {
+        title: "Focus King",
+        icon: "images/badges/custom-badges/2026-02/feb-focus-points.webp",
+        description:
+          "Crowned for earning the highest Focus Points in February.",
+        date: "2026-02-01",
+      },
+
+      // Overall Champion Badge for February
+      {
+        title: "Overall Champion",
+        icon: "images/badges/custom-badges/2026-02/feb-champion.webp",
+        description:
+          "Awarded for being the top overall performer with the highest average across all categories in February.",
+        date: "2026-02-01",
+      },
     ],
 
     //================================================================//
