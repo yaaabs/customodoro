@@ -235,6 +235,24 @@
           "Awarded for being the top overall performer with the highest average across all categories in February.",
         date: "2026-02-01",
       },
+
+            // Focus King Badge for March
+      {
+        title: "Focus King",
+        icon: "images/badges/custom-badges/2026-03/march-focus-points.webp",
+        description:
+          "Crowned for earning the highest Focus Points in March.",
+        date: "2026-04-01",
+      },
+
+      // Overall Champion Badge for March
+      {
+        title: "Overall Champion",
+        icon: "images/badges/custom-badges/2026-03/march-champion.webp",
+        description:
+          "Awarded for being the top overall performer with the highest average across all categories in March.",
+        date: "2026-04-01",
+      },
     ],
 
     //================================================================//
@@ -250,6 +268,31 @@
       },
     ],
     //================================================================//
+   
+    //================================================================//
+    marta: [
+      // Session Master Badges
+      {
+        title: "Session Master",
+        icon: "images/badges/custom-badges/2026-03/march-session.webp",
+        description: "Recognized for completing the most sessions in March.",
+        date: "2026-04-01",
+      },
+    ],
+    //================================================================//
+
+    //================================================================//
+    IFTEKHAR24642: [
+      // Streak Legend Badge for March
+      {
+        title: "Streak Legend",
+        icon: "images/badges/custom-badges/2026-03/march-streak.webp",
+        description: "Honored for holding the longest streak in March.",
+        date: "2026-04-01",
+      },
+    ],
+    //================================================================//
+
   };
 
   // Convert username to proper case for lookup

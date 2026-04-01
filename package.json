@@ -4,7 +4,8 @@
   "description": "Customodoro - Vanilla JS Pomodoro Timer",
   "private": true,
   "scripts": {
-    "version-bump": "node scripts/version-bump.js"
+    "version-bump": "node scripts/version-bump.js",
+    "monthly-badges": "node scripts/monthly-leaderboard-badges.js"
   },
   "engines": {
     "node": ">=14"
