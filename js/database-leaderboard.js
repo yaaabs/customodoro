@@ -1266,13 +1266,17 @@ class DatabaseLeaderboardModal {
     const categoryMarkup = categories.map((category) => {
       const entries = winners.topByCategory?.[category.key] || [];
       const rows = entries.length > 0
-        ? entries.map((entry, index) => `
-            <li class="leaderboard-history-result-row">
+        ? entries.map((entry, index) => {
+            const rankClass = index === 0 ? 'rank-gold' : index === 1 ? 'rank-silver' : index === 2 ? 'rank-bronze' : '';
+
+            return `
+            <li class="leaderboard-history-result-row ${rankClass}">
               <span class="leaderboard-history-rank">#${index + 1}</span>
               <span class="leaderboard-history-user">${this.escapeHtml(entry.username)}</span>
               <span class="leaderboard-history-score">${this.formatScore(entry.score, category.key)}</span>
             </li>
-          `).join('')
+          `;
+          }).join('')
         : `
             <li class="leaderboard-history-result-row empty">
               <span class="leaderboard-history-user">No recorded winners</span>
@@ -1280,7 +1284,7 @@ class DatabaseLeaderboardModal {
           `;
 
       return `
-        <article class="leaderboard-history-result-card">
+        <article class="leaderboard-history-result-card ${category.key === 'overall_champion' ? 'is-overall-champion' : ''}">
           <div class="leaderboard-history-result-head">
             <span class="leaderboard-history-result-icon">${category.icon}</span>
             <span>${category.label}</span>

@@ -836,6 +836,170 @@ body.theme-color #stop-btn:hover {
   border: 1px solid rgba(226, 232, 240, 0.9);
 }
 
+.leaderboard-history-result-row.rank-gold {
+  background: linear-gradient(90deg, rgba(255, 248, 209, 0.98) 0%, rgba(255, 236, 153, 0.92) 100%);
+  border-color: rgba(246, 183, 0, 0.65);
+  box-shadow: 0 8px 18px rgba(180, 121, 0, 0.14);
+}
+
+.leaderboard-history-result-row.rank-silver {
+  background: linear-gradient(90deg, rgba(251, 252, 253, 0.99) 0%, rgba(216, 223, 231, 0.96) 100%);
+  border-color: rgba(152, 162, 175, 0.82);
+  box-shadow:
+    0 6px 14px rgba(112, 124, 140, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.leaderboard-history-result-row.rank-bronze {
+  background: linear-gradient(90deg, rgba(255, 242, 233, 0.98) 0%, rgba(224, 164, 125, 0.88) 100%);
+  border-color: rgba(143, 90, 47, 0.7);
+  box-shadow: 0 5px 12px rgba(120, 73, 34, 0.1);
+}
+
+.leaderboard-history-result-row.rank-gold .leaderboard-history-rank {
+  color: #b77900;
+}
+
+.leaderboard-history-result-row.rank-silver .leaderboard-history-rank {
+  color: #7a838f;
+}
+
+.leaderboard-history-result-row.rank-bronze .leaderboard-history-rank {
+  color: #8f5a2f;
+}
+
+.leaderboard-history-result-row.rank-gold .leaderboard-history-user,
+.leaderboard-history-result-row.rank-silver .leaderboard-history-user,
+.leaderboard-history-result-row.rank-bronze .leaderboard-history-user {
+  font-weight: 700;
+}
+
+.leaderboard-history-result-row.rank-gold .leaderboard-history-score {
+  color: #8b5b00;
+}
+
+.leaderboard-history-result-row.rank-silver .leaderboard-history-score {
+  color: #5d6876;
+}
+.leaderboard-history-result-card.is-overall-champion {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(255, 185, 0, 0.55);
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.18), transparent 32%),
+    linear-gradient(180deg, #ffb900 0%, #e2a400 100%);
+  box-shadow:
+    0 14px 26px rgba(180, 121, 0, 0.12),
+    0 0 0 1px rgba(255, 255, 255, 0.28) inset;
+}
+.leaderboard-history-result-card.is-overall-champion::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 45%,
+    rgba(255, 255, 255, 0.06) 55%,
+    transparent 100%
+  );
+  transform: translateX(-70%);
+  animation: overallChampionSheen 4.8s ease-in-out infinite;
+  pointer-events: none;
+}
+.leaderboard-history-result-card.is-overall-champion .leaderboard-history-result-head {
+  position: relative;
+  color: #5f3d00;
+}
+.leaderboard-history-result-card.is-overall-champion .leaderboard-history-result-icon {
+  background: linear-gradient(135deg, #f3f4f6 0%, #d1d5db 100%);
+  box-shadow:
+    0 5px 12px rgba(107, 114, 128, 0.18),
+    0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+}
+.leaderboard-history-result-card.is-overall-champion .leaderboard-history-result-list {
+  position: relative;
+}
+.leaderboard-history-result-card.is-overall-champion .leaderboard-history-result-row.rank-gold {
+  background: linear-gradient(90deg, rgba(255, 250, 222, 0.98) 0%, rgba(255, 241, 190, 0.96) 100%);
+  border-color: rgba(255, 185, 0, 0.72);
+  box-shadow:
+    0 8px 18px rgba(180, 121, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.32) inset;
+}
+.leaderboard-history-result-card.is-overall-champion .leaderboard-history-result-row.rank-gold::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.42) 50%, transparent 100%);
+  transform: translateX(-60%);
+  animation: rowSheen 3.6s ease-in-out infinite;
+  pointer-events: none;
+}
+body.theme-dark .leaderboard-history-result-card.is-overall-champion {
+  border-color: rgba(255, 185, 0, 0.5);
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.08), transparent 30%),
+    linear-gradient(180deg, #ffb900 0%, #9d7100 100%);
+  box-shadow:
+    0 14px 26px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(255, 232, 149, 0.05) inset;
+}
+body.theme-dark .leaderboard-history-result-card.is-overall-champion .leaderboard-history-result-head {
+  color: #5f3d00;
+}
+body.theme-dark .leaderboard-history-result-card.is-overall-champion .leaderboard-history-result-icon {
+  background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+  box-shadow:
+    0 5px 12px rgba(0, 0, 0, 0.18),
+    0 0 14px rgba(156, 163, 175, 0.18);
+}
+body.theme-dark .leaderboard-history-result-card.is-overall-champion .leaderboard-history-result-row.rank-gold {
+  background: linear-gradient(90deg, rgba(255, 250, 222, 0.96) 0%, rgba(255, 241, 190, 0.9) 100%);
+  border-color: rgba(255, 185, 0, 0.58);
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.26),
+    0 0 0 1px rgba(255, 236, 153, 0.06) inset;
+}
+@keyframes overallChampionSheen {
+  0% {
+    transform: translateX(-70%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateX(70%);
+    opacity: 0.35;
+  }
+  100% {
+    transform: translateX(70%);
+    opacity: 0;
+  }
+}
+@keyframes rowSheen {
+  0% {
+    transform: translateX(-60%);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.5;
+  }
+  60% {
+    transform: translateX(65%);
+    opacity: 0.25;
+  }
+  100% {
+    transform: translateX(65%);
+    opacity: 0;
+  }
+}
+
+.leaderboard-history-result-row.rank-bronze .leaderboard-history-score {
+  color: #6f4321;
+}
+
 .leaderboard-history-result-row.empty {
   grid-template-columns: 1fr;
 }
@@ -867,6 +1031,72 @@ body.theme-color #stop-btn:hover {
   border-radius: 12px;
   background: var(--bg-secondary, #f8f9fa);
   color: var(--text-secondary, #666);
+}
+
+body.theme-dark .leaderboard-history-result-card {
+  background: linear-gradient(180deg, rgba(28, 28, 28, 0.98), rgba(24, 24, 24, 0.96));
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+body.theme-dark .leaderboard-history-result-head {
+  color: #f3f4f6;
+}
+
+body.theme-dark .leaderboard-history-result-icon {
+  background: rgba(139, 95, 191, 0.14);
+}
+
+body.theme-dark .leaderboard-history-result-row {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+body.theme-dark .leaderboard-history-result-row.rank-gold {
+  background: linear-gradient(90deg, rgba(255, 225, 107, 0.16) 0%, rgba(145, 99, 0, 0.3) 100%);
+  border-color: rgba(246, 200, 79, 0.55);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+}
+
+body.theme-dark .leaderboard-history-result-row.rank-silver {
+  background: linear-gradient(90deg, rgba(210, 219, 230, 0.1) 0%, rgba(112, 124, 140, 0.2) 100%);
+  border-color: rgba(144, 160, 178, 0.45);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.24);
+}
+
+body.theme-dark .leaderboard-history-result-row.rank-bronze {
+  background: linear-gradient(90deg, rgba(153, 97, 54, 0.22) 0%, rgba(86, 51, 28, 0.4) 100%);
+  border-color: rgba(184, 119, 69, 0.42);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.22);
+}
+
+body.theme-dark .leaderboard-history-result-row.rank-gold .leaderboard-history-rank {
+  color: #ffd75a;
+}
+
+body.theme-dark .leaderboard-history-result-row.rank-silver .leaderboard-history-rank {
+  color: #d3dbe5;
+}
+
+body.theme-dark .leaderboard-history-result-row.rank-bronze .leaderboard-history-rank {
+  color: #e0a06d;
+}
+
+body.theme-dark .leaderboard-history-result-row.rank-gold .leaderboard-history-user,
+body.theme-dark .leaderboard-history-result-row.rank-silver .leaderboard-history-user,
+body.theme-dark .leaderboard-history-result-row.rank-bronze .leaderboard-history-user {
+  color: #f3f4f6;
+}
+
+body.theme-dark .leaderboard-history-result-row.rank-gold .leaderboard-history-score,
+body.theme-dark .leaderboard-history-result-row.rank-silver .leaderboard-history-score,
+body.theme-dark .leaderboard-history-result-row.rank-bronze .leaderboard-history-score {
+  color: #d1d5db;
+}
+
+body.theme-dark .leaderboard-history-loading,
+body.theme-dark .leaderboard-history-empty {
+  background: rgba(255, 255, 255, 0.04);
+  color: #cbd5e1;
 }
 
 @media (max-width: 640px) {
