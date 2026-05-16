@@ -293,6 +293,51 @@
     ],
     //================================================================//
 
+    //================================================================//
+    melle: [
+      // Streak Legend Badge for April
+      {
+        title: "Streak Legend",
+        icon: "images/badges/custom-badges/2026-04/april-streak.webp",
+        description: "Honored for holding the longest streak in April.",
+        date: "2026-05-01",
+      },
+    ],
+    //================================================================//
+
+    //================================================================//
+    arathefangirl: [
+      // Session Master Badge for April
+      {
+        title: "Session Master",
+        icon: "images/badges/custom-badges/2026-04/april-session.webp",
+        description: "Recognized for completing the most sessions in April.",
+        date: "2026-05-01",
+      },
+    ],
+    //================================================================//
+
+    //================================================================//
+    Sarthak: [
+      // Overall Champion Badge for April
+      {
+        title: "Overall Champion",
+        icon: "images/badges/custom-badges/2026-04/april-champion.webp",
+        description:
+          "Awarded for being the top overall performer with the highest average across all categories in April.",
+        date: "2026-05-01",
+      },
+
+      // Focus King Badge for April
+      {
+        title: "Focus King",
+        icon: "images/badges/custom-badges/2026-04/april-focus-points.webp",
+        description: "Crowned for earning the highest Focus Points in April.",
+        date: "2026-05-01",
+      },
+    ],
+    //================================================================//
+
   };
 
   // Convert username to proper case for lookup
