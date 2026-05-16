@@ -1226,6 +1226,9 @@ body.theme-color .footer-divider {
   font-size: 13px;
   min-width: 0; /* allow shrinking on small screens */
 }
+#contribution-graph #contrib-current-range {
+  min-width: 0; /* allow shrinking on small screens */
+}
 #contribution-graph .contrib-controls {
   display: flex;
   gap: 8px;
@@ -1233,7 +1236,9 @@ body.theme-color .footer-divider {
   flex-wrap: wrap;
 }
 #contribution-graph .contrib-controls .contrib-select {
-  max-width: 160px;
+  width: 132px;
+  min-width: 132px;
+  max-width: 132px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1242,30 +1247,20 @@ body.theme-color .footer-divider {
   margin-left: 0;
 }
 
-/* Smaller screen adjustments: stack and better spacing */
+/* Smaller screen adjustments */
 @media (max-width: 420px) {
-  #contribution-graph .contrib-subheader {
-    align-items: flex-start;
-  }
-  #contribution-graph .contrib-range {
-    width: 100%;
-    margin-bottom: 6px;
-  }
-  #contribution-graph .contrib-controls {
-    width: 100%;
-    justify-content: flex-start;
-  }
   #contribution-graph .contrib-controls .contrib-select {
-    flex: 0 1 auto;
-  }
-  #contribution-graph .contrib-controls .month-select {
-    order: 3;
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
   }
 }
 
 @media (max-width: 360px) {
   #contribution-graph .contrib-controls .contrib-select {
-    max-width: 120px;
+    width: 112px;
+    min-width: 112px;
+    max-width: 112px;
     font-size: 11px;
   }
 }

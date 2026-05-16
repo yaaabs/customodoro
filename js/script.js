@@ -99,6 +99,10 @@ timerSounds.brownnoise = timerSounds.ticking;
 
 let currentTimerSound = null;
 
+function getLockedInPrimaryButtonText() {
+  return isRunning ? "PAUSE" : "START";
+}
+
 // Initialize sound settings from localStorage
 function initializeSoundSettings() {
   // Migration: Handle old shared settings
@@ -454,13 +458,20 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-// Add Page Visibility API for accurate timer tracking when tab becomes active
-document.addEventListener("visibilitychange", () => {
-  if (!document.hidden && isRunning) {
-    // Tab became visible - recalculate immediately
+// Re-sync timers after mobile backgrounding, screen wake, or PWA restore.
+function syncRunningTimerAfterRestore() {
+  if (isRunning) {
     updateTimerFromTimestamp();
   }
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) {
+    syncRunningTimerAfterRestore();
+  }
 });
+window.addEventListener("focus", syncRunningTimerAfterRestore);
+window.addEventListener("pageshow", syncRunningTimerAfterRestore);
 
 // Session tracking
 let dailyStats = {
@@ -734,7 +745,7 @@ function updateTimerFromTimestamp() {
     const seconds = currentSeconds % 60;
     const timeText = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
     const progressPercent = initialSeconds > 0 ? ((initialSeconds - currentSeconds) / initialSeconds) * 100 : 0;
-    const buttonText = startButton ? startButton.textContent : "START";
+    const buttonText = getLockedInPrimaryButtonText();
     const sessionTextElement = document.getElementById('session-text');
     const sessionTextContent = sessionTextElement ? sessionTextElement.textContent : `#${currentSession}`;
     
@@ -819,7 +830,11 @@ function toggleTimer() {
       const minutes = Math.floor(currentSeconds / 60);
       const seconds = currentSeconds % 60;
       const timeString = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-      window.lockedInMode.update(timeString, null, "START");
+      window.lockedInMode.update(
+        timeString,
+        null,
+        getLockedInPrimaryButtonText(),
+      );
     }
   }
 }
@@ -962,7 +977,11 @@ function resetTimer() {
     const minutes = Math.floor(currentSeconds / 60);
     const seconds = currentSeconds % 60;
     const timeString = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-    window.lockedInMode.update(timeString, 0, "START");
+    window.lockedInMode.update(
+      timeString,
+      0,
+      getLockedInPrimaryButtonText(),
+    );
   }
 }
 
@@ -1076,6 +1095,18 @@ function switchMode(mode, autoStart = false) {
     }
   }
 }
+
+window.timerControls = {
+  getState() {
+    return isRunning ? "running" : "idle";
+  },
+  runPrimaryAction() {
+    toggleTimer();
+  },
+  reset() {
+    resetTimer();
+  },
+};
 
 // Add link handler for mode switching with task retention
 document.addEventListener("DOMContentLoaded", function () {
@@ -2381,16 +2412,16 @@ function renderContributionGraph() {
     container.innerHTML = `
       <div class="tasks-title" style="color:${titleColor};margin-bottom:6px;">Productivity Graph</div>
 
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:12px;">
-      <div id="contrib-current-range" style="font-size:13px;color:${labelColor};min-width:120px;">Last 12 Months</div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <label for="contribution-range-select" style="font-size:12px;color:${labelColor};margin-right:6px;">View:</label>
-        <select id="contribution-range-select" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid ${cellBorder};background:${bgColor};color:${labelColor};cursor:pointer;">
+    <div class="contrib-subheader" style="margin-bottom:6px;">
+      <div id="contrib-current-range" class="contrib-range" style="color:${labelColor};">Last 12 Months</div>
+      <div class="contrib-controls">
+        <label for="contribution-range-select" style="font-size:12px;color:${labelColor};">View:</label>
+        <select id="contribution-range-select" class="contrib-select" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid ${cellBorder};background:${bgColor};color:${labelColor};cursor:pointer;">
           <option value="last12">Last 12 Months</option>
           <option value="all">All Time</option>
           <!-- Year options populated dynamically -->
         </select>
-        <select id="contribution-month-select" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid ${cellBorder};background:${bgColor};color:${labelColor};cursor:pointer;display:none;margin-left:6px;">
+        <select id="contribution-month-select" class="contrib-select month-select" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid ${cellBorder};background:${bgColor};color:${labelColor};cursor:pointer;display:none;">
           <option value="0">All months</option>
           <option value="01">Jan</option>
           <option value="02">Feb</option>

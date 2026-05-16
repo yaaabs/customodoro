@@ -4,6 +4,9 @@
   "description": "Customodoro - Vanilla JS Pomodoro Timer",
   "private": true,
   "scripts": {
+    "test": "node --test --test-concurrency=1 --experimental-test-isolation=none tests/timer-smoke.test.cjs tests/timer-regression.test.cjs",
+    "test:smoke": "node --test --test-concurrency=1 --experimental-test-isolation=none tests/timer-smoke.test.cjs",
+    "test:regression": "node --test --test-concurrency=1 --experimental-test-isolation=none tests/timer-regression.test.cjs",
     "version-bump": "node scripts/version-bump.js",
     "monthly-badges": "node scripts/monthly-leaderboard-badges.js"
   },

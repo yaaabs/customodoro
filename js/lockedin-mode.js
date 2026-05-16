@@ -5,6 +5,39 @@
   let isLockedInModeActive = false;
   let lockedInModeTimer = null; // Timer variable for the delayed activation
 
+  function getTimerControls() {
+    if (
+      window.timerControls &&
+      typeof window.timerControls.getState === "function" &&
+      typeof window.timerControls.runPrimaryAction === "function" &&
+      typeof window.timerControls.reset === "function"
+    ) {
+      return window.timerControls;
+    }
+
+    return null;
+  }
+
+  function getPrimaryActionText(state) {
+    switch (state) {
+      case "running":
+        return "PAUSE";
+      case "paused":
+        return "RESUME";
+      default:
+        return "START";
+    }
+  }
+
+  function getFallbackTimerState() {
+    const startBtn = document.getElementById("start-btn");
+    if (startBtn && startBtn.textContent.trim().toUpperCase() === "PAUSE") {
+      return "running";
+    }
+
+    return "idle";
+  }
+
   // Create locked in mode overlay
   function createLockedInModeElements() {
     const overlay = document.createElement("div");
@@ -28,6 +61,12 @@
     document
       .getElementById("lockedin-mode-toggle-btn")
       .addEventListener("click", function () {
+        const timerControls = getTimerControls();
+        if (timerControls) {
+          timerControls.runPrimaryAction();
+          return;
+        }
+
         const startBtn = document.getElementById("start-btn");
         if (startBtn) startBtn.click();
       });
@@ -35,6 +74,12 @@
     document
       .getElementById("lockedin-mode-reset-btn")
       .addEventListener("click", function () {
+        const timerControls = getTimerControls();
+        if (timerControls) {
+          timerControls.reset();
+          return;
+        }
+
         const resetBtn = document.getElementById("reset-btn");
         if (resetBtn) resetBtn.click();
       });
@@ -204,13 +249,16 @@
     }
 
     // Copy button state
-    const startBtn = document.getElementById("start-btn");
     const lockedInModeToggleBtn = document.getElementById(
       "lockedin-mode-toggle-btn",
     );
 
-    if (startBtn && lockedInModeToggleBtn) {
-      lockedInModeToggleBtn.textContent = startBtn.textContent;
+    if (lockedInModeToggleBtn) {
+      const timerControls = getTimerControls();
+      const timerState = timerControls
+        ? timerControls.getState()
+        : getFallbackTimerState();
+      lockedInModeToggleBtn.textContent = getPrimaryActionText(timerState);
     }
 
     // Show the overlay
@@ -271,8 +319,13 @@
       lockedInModeProgress.style.width = `${progressPercent}%`;
     }
 
-    if (lockedInModeToggleBtn && buttonText) {
-      lockedInModeToggleBtn.textContent = buttonText;
+    if (lockedInModeToggleBtn) {
+      const timerControls = getTimerControls();
+      const timerState = timerControls
+        ? timerControls.getState()
+        : getFallbackTimerState();
+      lockedInModeToggleBtn.textContent =
+        buttonText || getPrimaryActionText(timerState);
     }
 
     if (lockedInModeSession && sessionText) {

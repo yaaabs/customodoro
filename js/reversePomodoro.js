@@ -410,6 +410,40 @@ let pausedTimeRemaining = null; // Time left when paused
 
 // Timer state management for pause/resume functionality
 let timerState = "idle"; // 'idle', 'running', 'paused', 'stopped'
+let isSessionTransitioning = false;
+let isBreakTransitioning = false;
+
+function formatTimerText(totalSeconds) {
+  const safeSeconds = Math.max(0, Math.floor(totalSeconds));
+  const hours = Math.floor(safeSeconds / 3600);
+  const minutes = Math.floor((safeSeconds % 3600) / 60);
+  const seconds = safeSeconds % 60;
+
+  if (hours > 0) {
+    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  }
+
+  return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+}
+
+function getLockedInPrimaryButtonText() {
+  switch (timerState) {
+    case "running":
+      return "PAUSE";
+    case "paused":
+      return "RESUME";
+    default:
+      return "START";
+  }
+}
+
+function getElapsedReverseSeconds(now = Date.now()) {
+  if (currentMode !== "reverse" || timerStartTime === null) {
+    return currentSeconds;
+  }
+
+  return Math.min(Math.max((now - timerStartTime) / 1000, 0), MAX_TIME);
+}
 
 // Button display management function
 function updateButtonDisplay() {
@@ -532,15 +566,7 @@ function updateInfoSection() {
 // Update timer display
 function updateDisplay() {
   // NEW: Show H:MM:SS if >= 1 hour, else MM:SS
-  let hours = Math.floor(currentSeconds / 3600);
-  let minutes = Math.floor((currentSeconds % 3600) / 60);
-  let seconds = currentSeconds % 60;
-  let timeString;
-  if (hours > 0) {
-    timeString = `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-  } else {
-    timeString = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-  }
+  const timeString = formatTimerText(currentSeconds);
   timerElement.textContent = timeString;
 
   // Update progress bar based on mode
@@ -684,11 +710,12 @@ function updateTimerFromTimestamp() {
 
   if (currentMode === "reverse") {
     // Count-up mode
-    const elapsed = (now - timerStartTime) / 1000;
+    const elapsed = getElapsedReverseSeconds(now);
     currentSeconds = Math.min(Math.floor(elapsed), MAX_TIME);
 
-    if (currentSeconds >= MAX_TIME) {
-      completeSession();
+    if (timerEndTime !== null && now >= timerEndTime) {
+      currentSeconds = MAX_TIME;
+      completeSession(true, { workedSeconds: MAX_TIME });
       return;
     }
   } else {
@@ -696,7 +723,8 @@ function updateTimerFromTimestamp() {
     const remaining = (timerEndTime - now) / 1000;
     currentSeconds = Math.max(Math.floor(remaining), 0);
 
-    if (currentSeconds <= 0) {
+    if (timerEndTime !== null && now >= timerEndTime) {
+      currentSeconds = 0;
       completeBreak();
       return;
     }
@@ -706,19 +734,13 @@ function updateTimerFromTimestamp() {
 
   // Update locked-in mode if active
   if (window.lockedInMode && window.lockedInMode.isActive()) {
-    let hours = Math.floor(currentSeconds / 3600);
-    let minutes = Math.floor((currentSeconds % 3600) / 60);
-    let seconds = currentSeconds % 60;
-    let timeText;
-    if (hours > 0) {
-      timeText = `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-    } else {
-      timeText = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-    }
+    const timeText = formatTimerText(currentSeconds);
     const progressPercent = currentMode === "break"
-      ? ((initialSeconds - currentSeconds) / initialSeconds) * 100
+      ? (initialSeconds > 0
+          ? ((initialSeconds - currentSeconds) / initialSeconds) * 100
+          : 0)
       : (currentSeconds / MAX_TIME) * 100;
-    const buttonText = startButton ? startButton.textContent : "START";
+    const buttonText = getLockedInPrimaryButtonText();
     const sessionText = null; // Reverse timer doesn't have sessions
     
     window.lockedInMode.update(timeText, progressPercent, buttonText, sessionText);
@@ -775,12 +797,12 @@ function handleStart() {
   playTimerSound();
 
   // Enter locked in mode if enabled
-  if (window.lockedInMode && window.lockedInMode.isEnabled()) {
-    setTimeout(() => {
-      if (isRunning && window.lockedInMode) {
-        window.lockedInMode.enter();
-      }
-    }, 1000);
+  if (
+    window.lockedInMode &&
+    window.lockedInMode.isEnabled() &&
+    !window.lockedInMode.isActive()
+  ) {
+    window.lockedInMode.enter(true);
   }
 
   // Start the interval
@@ -816,10 +838,11 @@ function handlePause() {
 
   // Update locked in mode if active
   if (window.lockedInMode && window.lockedInMode.isActive()) {
-    const minutes = Math.floor(currentSeconds / 60);
-    const seconds = currentSeconds % 60;
-    const timeString = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-    window.lockedInMode.update(timeString, null, "RESUME");
+    window.lockedInMode.update(
+      formatTimerText(currentSeconds),
+      null,
+      getLockedInPrimaryButtonText(),
+    );
   }
 
   showToast("Timer paused ⏸️");
@@ -854,8 +877,12 @@ function handleResume() {
   playTimerSound();
 
   // Re-enter locked in mode if enabled
-  if (window.lockedInMode && window.lockedInMode.isEnabled()) {
-    window.lockedInMode.enter();
+  if (
+    window.lockedInMode &&
+    window.lockedInMode.isEnabled() &&
+    !window.lockedInMode.isActive()
+  ) {
+    window.lockedInMode.enter(true);
   }
 
   // Restart the interval
@@ -919,7 +946,7 @@ function toggleTimer() {
 }
 
 // Complete session
-function completeSession(playSound = true) {
+function completeSessionLegacy(playSound = true) {
   clearInterval(timerInterval);
   isRunning = false;
   timerState = "idle";
@@ -983,7 +1010,7 @@ function completeSession(playSound = true) {
 }
 
 // Complete break
-function completeBreak() {
+function completeBreakLegacy() {
   clearInterval(timerInterval);
   isRunning = false;
   timerState = "idle";
@@ -1016,6 +1043,182 @@ function completeBreak() {
 
   showToast("Break time is over! Ready to work again? 💪");
   switchMode("reverse"); // Also detected as automatic transition
+}
+
+function completeSession(playSound = true, options = {}) {
+  if (isSessionTransitioning) return;
+  isSessionTransitioning = true;
+
+  try {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    isRunning = false;
+    timerState = "idle";
+    hideBurnupTracker();
+    stopTimerSound();
+
+    const workedSeconds = Math.max(
+      0,
+      Math.min(
+        MAX_TIME,
+        Math.floor(
+          options.workedSeconds !== undefined
+            ? options.workedSeconds
+            : getElapsedReverseSeconds(),
+        ),
+      ),
+    );
+    const workMinutes = Math.floor(workedSeconds / 60);
+
+    currentSeconds = workedSeconds;
+    earnedBreakTime = calculateBreakTime(workedSeconds);
+
+    const hasEarnedBreak = earnedBreakTime > 0;
+    const autoBreakEnabled =
+      hasEarnedBreak && localStorage.getItem("autoBreak") === "true";
+    const completionMessage = hasEarnedBreak
+      ? `Great work! You worked for ${workMinutes} minutes and earned a ${earnedBreakTime}-minute break!`
+      : `Great work! You worked for ${workMinutes} minutes. No break earned yet.`;
+
+    try {
+      if (hasEarnedBreak) {
+        switchMode("break", autoBreakEnabled);
+      } else {
+        switchMode("reverse");
+      }
+    } catch (error) {
+      console.error("Reverse session transition failed:", error);
+      currentMode = "reverse";
+      reverseTab.classList.add("active");
+      breakTab.classList.remove("active");
+      currentSeconds = 0;
+      initialSeconds = MAX_TIME;
+      timerStartTime = null;
+      timerEndTime = null;
+      pausedTimeRemaining = null;
+      updateDisplay();
+      updateButtonDisplay();
+      if (window.lockedInMode && window.lockedInMode.isActive()) {
+        window.lockedInMode.exit();
+      }
+    }
+
+    try {
+      if (
+        workMinutes > 0 &&
+        typeof window.addCustomodoroSession === "function"
+      ) {
+        if (typeof window.recordSessionWithMidnightSplit === "function") {
+          window.recordSessionWithMidnightSplit("reverse", workMinutes);
+        } else {
+          window.addCustomodoroSession("reverse", workMinutes);
+        }
+      }
+    } catch (error) {
+      console.error("Reverse session recording failed:", error);
+    }
+
+    try {
+      if (window.syncManager && window.authService?.isLoggedIn()) {
+        window.syncManager.queueSync(window.syncManager.getCurrentLocalData());
+        if (window.syncUI) {
+          window.syncUI.updateStats();
+        }
+      }
+    } catch (error) {
+      console.warn("Reverse auto-sync failed after session:", error);
+    }
+
+    try {
+      if (workedSeconds >= MAX_TIME || playSound) {
+        window.playSound("pomodoroComplete");
+        showMuteAlert(completionMessage);
+
+        if (
+          hasEarnedBreak &&
+          "Notification" in window &&
+          Notification.permission === "granted"
+        ) {
+          const alarmEnabled = localStorage.getItem("alarm") !== "false";
+          if (alarmEnabled) {
+            new Notification("Max Time Reached!", {
+              body: `You worked for ${workMinutes} minutes! Time for a ${earnedBreakTime}-minute break.`,
+              icon: "/images/badges/1.webp",
+              vibrate: [100, 50, 100],
+            });
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Reverse completion notification failed:", error);
+    }
+
+    try {
+      showToast(
+        hasEarnedBreak
+          ? `${completionMessage} Great job!`
+          : `${completionMessage} Keep going!`,
+      );
+    } catch (error) {
+      console.error("Reverse completion toast failed:", error);
+    }
+  } finally {
+    isSessionTransitioning = false;
+  }
+}
+
+function completeBreak() {
+  if (isBreakTransitioning) return;
+  isBreakTransitioning = true;
+
+  try {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    isRunning = false;
+    timerState = "idle";
+    stopTimerSound();
+
+    if (typeof window.resetMidnightTracking === "function") {
+      window.resetMidnightTracking();
+    }
+
+    switchMode("reverse");
+
+    try {
+      playSound("breakComplete");
+    } catch (error) {
+      console.error("Break completion sound failed:", error);
+    }
+
+    try {
+      showBreakReadinessConfirmation("Break time is over! Ready to work again?");
+    } catch (error) {
+      console.error("Break readiness confirmation failed:", error);
+    }
+
+    try {
+      if ("Notification" in window && Notification.permission === "granted") {
+        const alarmEnabled = localStorage.getItem("alarm") !== "false";
+        if (alarmEnabled) {
+          new Notification("Break Complete!", {
+            body: "Ready to start another work session?",
+            icon: "/images/badges/2.webp",
+            vibrate: [100, 50, 100],
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Break completion notification failed:", error);
+    }
+
+    try {
+      showToast("Break time is over! Ready to work again?");
+    } catch (error) {
+      console.error("Break completion toast failed:", error);
+    }
+  } finally {
+    isBreakTransitioning = false;
+  }
 }
 
 // Reset timer
@@ -1051,7 +1254,11 @@ function resetTimer(showMessage = false) {
 
   // Also update locked in mode if active
   if (window.lockedInMode && window.lockedInMode.isActive()) {
-    window.lockedInMode.update("00:00", 0, "START");
+    window.lockedInMode.update(
+      "00:00",
+      0,
+      getLockedInPrimaryButtonText(),
+    );
   }
 
   // Only show toast message when explicitly requested (user clicked reset)
@@ -1061,7 +1268,7 @@ function resetTimer(showMessage = false) {
 }
 
 // Switch between reverse and break modes with validation
-function switchMode(mode) {
+function switchMode(mode, autoStart = false) {
   // Don't show task deletion confirmation for automatic mode changes
   const isAutoSwitch =
     // If we're coming from a completed session
@@ -1125,7 +1332,56 @@ function switchMode(mode) {
   if (window.lockedInMode && window.lockedInMode.isActive()) {
     window.lockedInMode.exit();
   }
+
+  if (autoStart) {
+    const shouldAutoStart =
+      mode === "break" &&
+      currentSeconds > 0 &&
+      localStorage.getItem("autoBreak") === "true";
+
+    console.log("Reverse auto-start check:", {
+      mode,
+      shouldAutoStart,
+      autoBreak: localStorage.getItem("autoBreak"),
+      currentSeconds,
+    });
+
+    if (shouldAutoStart) {
+      setTimeout(() => {
+        if (
+          currentMode === mode &&
+          !isRunning &&
+          timerState === "idle" &&
+          currentSeconds > 0
+        ) {
+          handleStart();
+        }
+      }, 500);
+    }
+  }
 }
+
+window.timerControls = {
+  getState() {
+    return timerState;
+  },
+  runPrimaryAction() {
+    switch (timerState) {
+      case "running":
+        handlePause();
+        break;
+      case "paused":
+        handleResume();
+        break;
+      default:
+        handleStart();
+        break;
+    }
+  },
+  reset() {
+    resetTimer(true);
+  },
+};
 
 // Functions to save and load tasks from localStorage
 function saveTasks() {
@@ -1796,13 +2052,19 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-// Add Page Visibility API for accurate timer tracking when tab becomes active
-document.addEventListener("visibilitychange", () => {
-  if (!document.hidden && isRunning) {
-    // Tab became visible - recalculate immediately
+function syncReverseTimerAfterRestore() {
+  if (isRunning) {
     updateTimerFromTimestamp();
   }
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) {
+    syncReverseTimerAfterRestore();
+  }
 });
+window.addEventListener("focus", syncReverseTimerAfterRestore);
+window.addEventListener("pageshow", syncReverseTimerAfterRestore);
 
 // --- DRAG & DROP TASK REORDERING ---
 
@@ -2515,16 +2777,16 @@ function renderContributionGraph() {
     container.innerHTML = `
       <div class="tasks-title" style="color:${titleColor};margin-bottom:6px;">Productivity Graph</div>
 
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:12px;">
-      <div id="contrib-current-range" style="font-size:13px;color:${labelColor};min-width:120px;">Last 12 Months</div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <label for="contribution-range-select" style="font-size:12px;color:${labelColor};margin-right:6px;">View:</label>
-        <select id="contribution-range-select" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid ${cellBorder};background:${bgColor};color:${labelColor};cursor:pointer;">
+    <div class="contrib-subheader" style="margin-bottom:6px;">
+      <div id="contrib-current-range" class="contrib-range" style="color:${labelColor};">Last 12 Months</div>
+      <div class="contrib-controls">
+        <label for="contribution-range-select" style="font-size:12px;color:${labelColor};">View:</label>
+        <select id="contribution-range-select" class="contrib-select" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid ${cellBorder};background:${bgColor};color:${labelColor};cursor:pointer;">
           <option value="last12">Last 12 Months</option>
           <option value="all">All Time</option>
           <!-- Year options populated dynamically -->
         </select>
-        <select id="contribution-month-select" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid ${cellBorder};background:${bgColor};color:${labelColor};cursor:pointer;display:none;margin-left:6px;">
+        <select id="contribution-month-select" class="contrib-select month-select" style="font-size:12px;padding:4px 8px;border-radius:6px;border:1px solid ${cellBorder};background:${bgColor};color:${labelColor};cursor:pointer;display:none;">
           <option value="0">All months</option>
           <option value="01">Jan</option>
           <option value="02">Feb</option>
