@@ -3055,6 +3055,10 @@ body.lockedin-mode-active {
   overflow: hidden; /* Prevent scrolling when locked in mode is active */
 }
 
+body.lockedin-mode-active .user-profile {
+  display: none !important;
+}
+
 /* Make buttons pop more on the black background */
 .lockedin-mode-overlay .primary-btn {
   background-color: #ffffff;

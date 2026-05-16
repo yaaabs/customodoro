@@ -38,6 +38,14 @@
     return "idle";
   }
 
+  function setLockedInModeActiveState(active) {
+    isLockedInModeActive = active;
+
+    if (document.body) {
+      document.body.classList.toggle("lockedin-mode-active", active);
+    }
+  }
+
   // Create locked in mode overlay
   function createLockedInModeElements() {
     const overlay = document.createElement("div");
@@ -264,7 +272,7 @@
     // Show the overlay
     overlay.classList.add("active");
     document.body.style.overflow = "hidden"; // Prevent scrolling when in locked in mode
-    isLockedInModeActive = true;
+    setLockedInModeActiveState(true);
 
     // Apply theme-specific styling to locked in mode if needed
     const currentTheme = document.body.className.match(/theme-\S+/);
@@ -286,9 +294,10 @@
     const overlay = document.querySelector(".lockedin-mode-overlay");
     if (overlay) {
       overlay.classList.remove("active");
-      document.body.style.overflow = ""; // Restore scrolling
-      isLockedInModeActive = false;
     }
+
+    document.body.style.overflow = ""; // Restore scrolling
+    setLockedInModeActiveState(false);
   }
 
   // Update locked in mode data

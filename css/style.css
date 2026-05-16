@@ -2982,6 +2982,10 @@ body.lockedin-mode-active {
   overflow: hidden; /* Prevent scrolling when locked in mode is active */
 }
 
+body.lockedin-mode-active .user-profile {
+  display: none !important;
+}
+
 /* Ensure all focus-info-modal is replaced with lockedin-info-modal */
 .lockedin-info-modal-overlay,
 .about-info-modal-overlay {

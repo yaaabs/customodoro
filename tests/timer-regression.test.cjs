@@ -155,6 +155,10 @@ describe("Customodoro timer regression tests", () => {
     harness.evaluate("toggleTimer()");
     harness.evaluate("window.lockedInMode.enter()");
 
+    assert.equal(
+      harness.evaluate("document.body.classList.contains('lockedin-mode-active')"),
+      true,
+    );
     assert.equal(harness.evaluate("window.timerControls.getState()"), "running");
     assert.equal(
       harness.evaluate("document.getElementById('lockedin-mode-toggle-btn').textContent"),
@@ -166,6 +170,12 @@ describe("Customodoro timer regression tests", () => {
     assert.equal(
       harness.evaluate("document.getElementById('lockedin-mode-toggle-btn').textContent"),
       "RESUME",
+    );
+
+    harness.evaluate("window.lockedInMode.exit()");
+    assert.equal(
+      harness.evaluate("document.body.classList.contains('lockedin-mode-active')"),
+      false,
     );
   });
 });
