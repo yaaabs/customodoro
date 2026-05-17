@@ -1106,13 +1106,8 @@ class DatabaseLeaderboardModal {
   }
 
   getHistoryActionLabel(state) {
-    if (!state) return 'Choose a month';
-    if (state.downloadable) {
-      return `Download ${this.historyMonthLabels[this.selectedHistoryMonth]} CSV`;
-    }
-    if (state.status === 'current') return 'Current Month Still Running';
-    if (state.status === 'future') return 'Future Month Locked';
-    return 'No History Available';
+    if (!state) return 'Download CSV';
+    return 'Download CSV';
   }
 
   getHistoryStatusNote(state) {
@@ -1170,6 +1165,12 @@ class DatabaseLeaderboardModal {
 
     const selectedState = this.getSelectedHistoryState();
     const toggleLabel = this.historyMonthsCollapsed ? 'Show months' : 'Hide months';
+    const selectedMonthLabel = this.selectedHistoryMonth !== null
+      ? `${this.historyMonthLabels[this.selectedHistoryMonth]} ${selectedYear}`
+      : `${selectedYear}`;
+    const downloadButtonLabel = selectedState?.downloadable
+      ? `Download ${selectedMonthLabel} CSV`
+      : 'Download CSV';
 
     return `
       <section class="leaderboard-history-controls-shell">
@@ -1182,8 +1183,8 @@ class DatabaseLeaderboardModal {
             <select class="leaderboard-export-select" id="leaderboard-history-year" aria-label="Select history year">
               ${availableYears.map((year) => `<option value="${year}" ${year === selectedYear ? 'selected' : ''}>${year}</option>`).join('')}
             </select>
-            <button class="leaderboard-export-btn" type="button" data-history-action="download" ${selectedState && selectedState.downloadable ? '' : 'disabled'}>
-              ${this.getHistoryActionLabel(selectedState)}
+            <button class="leaderboard-export-btn leaderboard-export-btn--download" type="button" data-history-action="download" title="${downloadButtonLabel}" aria-label="${downloadButtonLabel}" ${selectedState && selectedState.downloadable ? '' : 'disabled'}>
+              <span class="leaderboard-export-btn-text">${this.getHistoryActionLabel(selectedState)}</span>
             </button>
             <button class="leaderboard-history-toggle" type="button" data-history-action="toggle-months" aria-expanded="${this.historyMonthsCollapsed ? 'false' : 'true'}">
               ${toggleLabel}
@@ -1706,7 +1707,7 @@ class DatabaseLeaderboardModal {
           <div class="leaderboard-error">
             <h3>Connection Error</h3>
             <p>Unable to load leaderboard data. Please check your connection and try again.</p>
-            <button class="leaderboard-retry-btn">Retry</button>
+            <button class="leaderboard-retry-btn" type="button">Retry</button>
           </div>
         `;
         
@@ -1726,7 +1727,7 @@ class DatabaseLeaderboardModal {
         <div class="leaderboard-error">
           <h3>Connection Error</h3>
           <p>Unable to load leaderboard data. Please check your connection and try again.</p>
-          <button class="leaderboard-retry-btn">Retry</button>
+          <button class="leaderboard-retry-btn" type="button">Retry</button>
         </div>
       `;
       
