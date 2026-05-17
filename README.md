@@ -345,6 +345,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 _Made with ❤️ for productivity enthusiasts worldwide_
 
-**© 2025 Customodoro Timer - Empowering Productivity Through Customization**
+**© 2026 Customodoro Timer - Empowering Productivity Through Customization**
 
 </div>
