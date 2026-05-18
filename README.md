@@ -1,23 +1,15 @@
-<div align="center">
-
 # 🍅 **Customodoro - Custom Pomodoro Timer & Productivity App**
 
-_The Ultimate Customizable Pomodoro Experience for Enhanced Focus and Productivity_
+The Ultimate Customizable Pomodoro Experience for Enhanced Focus and Productivity
 
 [![Live Demo](https://img.shields.io/badge/🚀%20Live%20Demo-customodoro.vercel.app-blue?style=for-the-badge)](https://customodoro.vercel.app)
 [![PWA Ready](https://img.shields.io/badge/📱%20PWA-Ready-green?style=for-the-badge)](https://customodoro.vercel.app)
 
-[![Made with Love](https://img.shields.io/badge/Made%20with-❤️-red?style=for-the-badge)](https://github.com)
-[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
-[![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://www.w3.org/Style/CSS/Overview.en.html)
-[![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://html.spec.whatwg.org/)
+[![Made with Love](https://img.shields.io/badge/Made%20with-❤️-red?style=for-the-badge)](https://github.com) [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript) [![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://www.w3.org/Style/CSS/Overview.en.html) [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://html.spec.whatwg.org/)
 
-**🎯 Focus • ⚡ Customize • 🚀 Achieve**
+🎯 Focus • ⚡ Customize • 🚀 Achieve
 
-**🍅 Try Classic Mode: [customodoro.vercel.app](https://customodoro.vercel.app)**  
-**⏱️ Try Reverse Mode: [customodoro.vercel.app/reverse](https://customodoro.vercel.app/reverse)**
-
-</div>
+🍅 Try Classic Mode: [customodoro.vercel.app](https://customodoro.vercel.app) • ⏱️ Try Reverse Mode: [customodoro.vercel.app/reverse](https://customodoro.vercel.app/reverse)
 
 ---
 
@@ -33,8 +25,8 @@ _The Ultimate Customizable Pomodoro Experience for Enhanced Focus and Productivi
 
 ## 🚀 **Quick Start - Try Customodoro Now**
 
-**🌐 Live Demo - Classic Mode**: **[customodoro.vercel.app](https://customodoro.vercel.app)**  
-**⏱️ Live Demo - Reverse Mode**: **[customodoro.vercel.app/reverse](https://customodoro.vercel.app/reverse)**
+**🌐 Live Demo - Classic Mode**: [customodoro.vercel.app](https://customodoro.vercel.app)  
+**⏱️ Live Demo - Reverse Mode**: [customodoro.vercel.app/reverse](https://customodoro.vercel.app/reverse)
 
 **📱 Install as PWA**: Visit the link above and click "Add to Home Screen" for a native app experience!
 
@@ -44,7 +36,7 @@ _The Ultimate Customizable Pomodoro Experience for Enhanced Focus and Productivi
 
 ### 🍅 **Classic Pomodoro Mode**
 
-_Perfect for structured productivity and traditional Pomodoro technique_
+Perfect for structured productivity and traditional Pomodoro technique
 
 - **⏰ Pomodoro Sessions** - Customizable focus periods
 - **☕ Short Breaks** - Quick recharge breaks
@@ -54,7 +46,7 @@ _Perfect for structured productivity and traditional Pomodoro technique_
 
 ### ⏱️ **Reverse Pomodoro Mode**
 
-_Revolutionary stopwatch approach for flexible work sessions_
+Revolutionary stopwatch approach for flexible work sessions
 
 **Work as long as you want, earn breaks based on your effort!**
 
@@ -66,7 +58,7 @@ _Revolutionary stopwatch approach for flexible work sessions_
 | 46-55 minutes        | 15 minutes          |
 | 56-60 minutes        | **30 minutes!**     |
 
-_Perfect for deep work sessions, creative flow states, coding marathons, or when you're just "in the zone"_
+Perfect for deep work sessions, creative flow states, coding marathons, or when you're just "in the zone"
 
 **🚀 Try Reverse Mode Now**: **[customodoro.vercel.app/reverse](https://customodoro.vercel.app/reverse)**
 
@@ -211,7 +203,7 @@ python -m http.server 8000
 
 ## 🛠️ **Technical Stack & Performance**
 
-```
+```text
  - 🌐 Frontend: Pure HTML5, CSS3, Vanilla JavaScript
  - 🖥️ Backend: Node.js server with Express, Supabase for database and auth
  - 📱 PWA: Add to Home Screen support for mobile install; offline functionality is not enabled
@@ -234,10 +226,9 @@ python -m http.server 8000
 
 ---
 
-## 🎪 **Comprehensive Feature Showcase**
+## 🎪 Comprehensive Feature Showcase
 
-<details>
-<summary><strong>🍅 Classic Pomodoro Timer Features</strong></summary>
+### 🍅 Classic Pomodoro Timer Features
 
 Classic is the traditional Pomodoro experience reimagined with full customization. It’s perfect when you want strict timeboxing, predictable transitions, and repeatable short work sprints.
 
@@ -247,10 +238,7 @@ Classic is the traditional Pomodoro experience reimagined with full customizatio
 - Session automation: Auto-start between sessions, configurable session count before a long break, and visual progress indicators.
 - Best for: users who prefer regimented sessions, quick resets, and measurable, repeatable progress.
 
-</details>
-
-<details>
-<summary><strong>⏱️ Reverse Pomodoro Timer Features</strong></summary>
+### ⏱️ Reverse Pomodoro Timer Features
 
 Reverse keeps the same UI, themes, and analytics, but changes the timing model: instead of starting with a preset countdown, it counts your focus time and rewards you with breaks.
 
@@ -261,10 +249,7 @@ Reverse keeps the same UI, themes, and analytics, but changes the timing model: 
 - Mode behavior: Stopwatch-style (counts up); breaks are earned based on accumulated time tiers instead of preset countdowns.
 - Best for: deep-focus sessions, creative work, and anyone who wants to earn rest based on effort rather than being forced to stop by a timer.
 
-</details>
-
-<details>
-<summary><strong>🎨 Customization & Personalization Features</strong></summary>
+### 🎨 Customization & Personalization Features
 
 - 🎭 **5 Built-in Premium Themes** plus unlimited custom theme support
 - 🖼️ **Custom Background Upload** (JPG, PNG up to 2MB with optimization)
@@ -273,15 +258,15 @@ Reverse keeps the same UI, themes, and analytics, but changes the timing model: 
 - 🔊 **Advanced Audio Settings** with multiple curated sound packs
 - 🎨 **Theme Persistence** across sessions and devices
 
-</details>
-
----
-
-## 🏆 **Why Choose Customodoro Over Other Pomodoro Apps?**
-
-✅ **Dual Timer Modes** - Only app with both Classic & Reverse Pomodoro techniques
-
-✅ **100% Free & Open Source** - No premium features locked behind paywall
+```text
+ - 🌐 Frontend: Pure HTML5, CSS3, Vanilla JavaScript
+ - 🖥️ Backend: Node.js server with Express, Supabase for database and auth
+ - 📱 PWA: Add to Home Screen support for mobile install; offline functionality is not enabled
+ - 🔧 Dependencies: Minimal frontend dependencies; backend uses Node.js and Supabase client libraries
+ - 💾 Storage: Local Storage for client-side settings and quick persistence, plus Supabase Postgres for cross-device stats and sync
+ - ⚡ Performance: Lighthouse scores 93+ for Accessibility, SEO, and Best Practices
+ - 🔒 Security: HTTPS, CSP headers, secure by design; Supabase Row Level Security (RLS) enabled for user data isolation
+```
 
 ✅ **Registration Optional** - Start using immediately; create an account only if you want cross-device sync (privacy-first)
 
@@ -337,14 +322,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-<div align="center">
-
 **⭐ Star this repository if Customodoro helped boost your productivity!**
 
-**🚀 Try Customodoro now: [customodoro.vercel.app](https://customodoro.vercel.app)**
+🚀 Try Customodoro now: [customodoro.vercel.app](https://customodoro.vercel.app)
 
-_Made with ❤️ for productivity enthusiasts worldwide_
+Made with ❤️ for productivity enthusiasts worldwide
 
-**© 2026 Customodoro Timer - Empowering Productivity Through Customization**
-
-</div>
+© 2026 Customodoro Timer - Empowering Productivity Through Customization
