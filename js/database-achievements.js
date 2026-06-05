@@ -314,6 +314,31 @@
         description: "Recognized for completing the most sessions in April.",
         date: "2026-05-01",
       },
+
+      // Streak Legend Badge for May
+      {
+        title: "Streak Legend",
+        icon: "images/badges/custom-badges/2026-05/may-streak.png",
+        description: "Honored for holding the longest streak in May.",
+        date: "2026-06-01",
+      },
+
+      // Overall Champion Badge for May
+      {
+        title: "Overall Champion",
+        icon: "images/badges/custom-badges/2026-05/may-champion.png",
+        description:
+          "Awarded for being the top overall performer with the highest average across all categories in May.",
+        date: "2026-06-01",
+      },
+
+      // Focus King Badge for May
+      {
+        title: "Focus King",
+        icon: "images/badges/custom-badges/2026-05/may-focus-points.png",
+        description: "Crowned for earning the highest Focus Points in May.",
+        date: "2026-06-01",
+      },
     ],
     //================================================================//
 
@@ -334,6 +359,18 @@
         icon: "images/badges/custom-badges/2026-04/april-focus-points.webp",
         description: "Crowned for earning the highest Focus Points in April.",
         date: "2026-05-01",
+      },
+    ],
+    //================================================================//
+
+    //================================================================//
+    studybuddy: [
+      // Session Master Badge for May
+      {
+        title: "Session Master",
+        icon: "images/badges/custom-badges/2026-05/may-session.png",
+        description: "Recognized for completing the most sessions in May.",
+        date: "2026-06-01",
       },
     ],
     //================================================================//
