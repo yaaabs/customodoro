@@ -827,6 +827,8 @@ class DatabaseLeaderboardModal {
     this.selectedHistoryYear = null;
     this.selectedHistoryMonth = null;
     this.historyMonthsCollapsed = null;
+    this.leaderboardLoadId = 0;
+    this.historyLoadId = 0;
     
     this.init();
   }
@@ -1325,9 +1327,17 @@ class DatabaseLeaderboardModal {
     `;
   }
 
-  async loadHistoryTab() {
+  async loadHistoryTab(parentLoadId = null) {
     const content = document.querySelector('.leaderboard-content');
     if (!content) return;
+    const historyLoadId = ++this.historyLoadId;
+    const leaderboardLoadId = parentLoadId || ++this.leaderboardLoadId;
+    const isCurrentHistoryLoad = () => (
+      this.isVisible &&
+      this.currentCategory === 'history' &&
+      this.leaderboardLoadId === leaderboardLoadId &&
+      this.historyLoadId === historyLoadId
+    );
 
     if (!this.monthlyHistoryOverview) {
       content.innerHTML = `
@@ -1337,6 +1347,7 @@ class DatabaseLeaderboardModal {
         </div>
       `;
       await this.initMonthlyWinnersExport();
+      if (!isCurrentHistoryLoad()) return;
     }
 
     if (this.selectedHistoryYear === null || this.selectedHistoryMonth === null) {
@@ -1362,6 +1373,7 @@ class DatabaseLeaderboardModal {
 
     try {
       const winners = await this.getHistoryPreview(this.selectedHistoryYear, this.selectedHistoryMonth);
+      if (!isCurrentHistoryLoad()) return;
       if (!winners || !winners.totalParticipants) {
         this.renderHistoryEmptyState('No saved winners', 'This month does not have a completed winners snapshot yet.');
         return;
@@ -1672,10 +1684,23 @@ class DatabaseLeaderboardModal {
     document.body.style.overflow = '';
   }
 
+  isCurrentLeaderboardLoad(loadId, category, period) {
+    return (
+      this.isVisible &&
+      this.leaderboardLoadId === loadId &&
+      this.currentCategory === category &&
+      this.currentPeriod === period
+    );
+  }
+
   loadLeaderboard() {
     const content = document.querySelector('.leaderboard-content');
+    const loadId = ++this.leaderboardLoadId;
+    const category = this.currentCategory;
+    const period = this.currentPeriod;
+
     if (this.currentCategory === 'history') {
-      this.loadHistoryTab();
+      this.loadHistoryTab(loadId);
       return;
     }
     
@@ -1689,7 +1714,7 @@ class DatabaseLeaderboardModal {
 
     // Load real data and calculate dynamic badges with better error handling
     Promise.all([
-      this.leaderboard.getLeaderboard(this.currentCategory, this.currentPeriod, this.MAX_LEADERBOARD_USERS)
+      this.leaderboard.getLeaderboard(category, period, this.MAX_LEADERBOARD_USERS)
         .catch(error => {
           console.error('Leaderboard data fetch error:', error);
           return { rankings: [], highlightedUser: null, totalCount: 0, error: true };
@@ -1701,6 +1726,8 @@ class DatabaseLeaderboardModal {
         })
     ])
     .then(([data, dynamicBadges]) => {
+      if (!this.isCurrentLeaderboardLoad(loadId, category, period)) return;
+
       // Handle potential errors in the data
       if (data.error) {
         content.innerHTML = `
@@ -1719,9 +1746,11 @@ class DatabaseLeaderboardModal {
       
       // Update badges with dynamic calculations
       this.dynamicBadges = dynamicBadges;
-      this.renderLeaderboard(data);
+      this.renderLeaderboard(data, category);
     })
     .catch(error => {
+      if (!this.isCurrentLeaderboardLoad(loadId, category, period)) return;
+
       console.error('Error loading leaderboard:', error);
       content.innerHTML = `
         <div class="leaderboard-error">
@@ -1737,7 +1766,7 @@ class DatabaseLeaderboardModal {
     });
   }
 
-  renderLeaderboard(data) {
+  renderLeaderboard(data, activeCategory = this.currentCategory) {
     const content = document.querySelector('.leaderboard-content');
     
     if (!data.rankings || data.rankings.length === 0) {
@@ -1757,7 +1786,8 @@ class DatabaseLeaderboardModal {
       'longest_streak': { unit: 'days', icon: '⚡' }
     };
 
-    const category = categoryLabels[this.currentCategory];
+    const category = categoryLabels[activeCategory];
+    if (!category) return;
     const currentUserId = this.leaderboard.currentUser?.userId;
 
     let html = '<ul class="leaderboard-list">';
@@ -1772,7 +1802,7 @@ class DatabaseLeaderboardModal {
       const initials = this.getUserInitials(user.full_name || user.username);
       
       // Format score
-      const formattedScore = this.formatScore(user.score, this.currentCategory);
+      const formattedScore = this.formatScore(user.score, activeCategory);
       
       // Determine rank highlight class
       const rankHighlightClass = rank === 1 ? 'rank-gold' : rank === 2 ? 'rank-silver' : rank === 3 ? 'rank-bronze' : '';
@@ -1806,7 +1836,7 @@ class DatabaseLeaderboardModal {
     if (data.highlightedUser) {
       const highlightedUser = data.highlightedUser;
       const initials = this.getUserInitials(highlightedUser.full_name || highlightedUser.username);
-      const formattedScore = this.formatScore(highlightedUser.score, this.currentCategory);
+      const formattedScore = this.formatScore(highlightedUser.score, activeCategory);
       
       html += `
         <div class="highlighted-user-section">
