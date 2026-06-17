@@ -1,4 +1,5 @@
 const path = require("path");
+const fs = require("fs");
 const { describe, test, beforeEach, afterEach } = require("node:test");
 const assert = require("node:assert/strict");
 const { mock } = require("node:test");
@@ -178,4 +179,24 @@ describe("Customodoro timer regression tests", () => {
       false,
     );
   });
+});
+
+test("PWA copyright year uses the shared current-year updater", () => {
+  const script = fs.readFileSync(
+    path.join(repoRoot, "js", "copyright-year.js"),
+    "utf8",
+  );
+  const serviceWorker = fs.readFileSync(path.join(repoRoot, "sw.js"), "utf8");
+  const pages = ["index.html", "reverse.html", "pomodoro.html", "feedback.html"];
+
+  assert.match(script, /const launchYear = 2025;/);
+  assert.match(script, /new Date\(\)\.getFullYear\(\)/);
+  assert.match(script, /querySelectorAll\("\.copyright-year"\)/);
+  assert.match(serviceWorker, /\/js\/copyright-year\.js/);
+
+  for (const page of pages) {
+    const html = fs.readFileSync(path.join(repoRoot, page), "utf8");
+    assert.match(html, /class="copyright-year"/);
+    assert.match(html, /js\/copyright-year\.js\?v=1\.0\.0/);
+  }
 });

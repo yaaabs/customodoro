@@ -1,4 +1,4 @@
-const CACHE_NAME = "customodoro-static-v7.4.12"; // Bump to v7.4.12
+const CACHE_NAME = "customodoro-static-v7.4.13"; // Bump to v7.4.13
 const ASSETS_CACHE = "customodoro-assets-v6.2.2"; // Bump to v6.2.2
 const urlsToCache = [
   // ═══════════════════════════════════════════════════════════════════
@@ -42,6 +42,7 @@ const urlsToCache = [
   "/js/about-modal.js",
   "/js/auth-service.js",
   "/js/bgm-player.js",
+  "/js/copyright-year.js",
   "/js/database-achievements.js",
   "/js/database-leaderboard.js",
   "/js/focus-mode.js",
