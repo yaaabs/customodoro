@@ -27,13 +27,10 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════════
        SEO META TAGS
        ═══════════════════════════════════════════════════════════════════════════════ -->
-    <title>
-      Customodoro - Boost Productivity 70% with Smart Pomodoro Timer | Free
-      Focus App
-    </title>
+    <title>Customodoro - Pomodoro & Reverse Pomodoro Timer</title>
     <meta
       name="description"
-      content="Transform your productivity with Customodoro - the most adaptable Pomodoro timer. Boost focus by 70% using scientifically-proven time management techniques. Features customizable intervals, focus-enhancing sounds, and progress tracking."
+      content="Free Pomodoro timer with Classic and Reverse Pomodoro (Flowmodoro) modes. Earn breaks from focus time, track streaks, and work offline."
     />
     <meta
       name="keywords"
@@ -54,11 +51,11 @@
     <meta name="twitter:creator" content="@customodoro" />
     <meta
       name="twitter:title"
-      content="Customodoro - The Ultimate Customizable Pomodoro Timer"
+      content="Customodoro - Reverse Pomodoro & Flowmodoro Timer"
     />
     <meta
       name="twitter:description"
-      content="🍅 Transform your work habits with Customodoro's scientifically-proven Pomodoro timer. ⏱️ Custom intervals ⚡ Focus tracking 📊 Progress analytics. Free & Open Source!"
+      content="🍅 Free Pomodoro and Reverse Pomodoro timer with Flowmodoro-style earned breaks, focus tracking, analytics, and offline PWA support."
     />
     <meta
       name="twitter:image"
@@ -77,11 +74,11 @@
     <meta property="og:url" content="https://customodoro.vercel.app/" />
     <meta
       property="og:title"
-      content="Customodoro - The Ultimate Customizable Pomodoro Timer"
+      content="Customodoro - Free Pomodoro & Reverse Pomodoro Timer"
     />
     <meta
       property="og:description"
-      content="Transform your work and study habits with Customodoro's scientifically-proven Pomodoro timer. Customize intervals, track progress, and achieve more with less mental fatigue. Free productivity app with focus tracking."
+      content="Free Pomodoro and Reverse Pomodoro timer. Use Flowmodoro-style earned breaks, track sessions and streaks, and install the offline-ready PWA."
     />
     <meta
       property="og:image"
@@ -108,20 +105,91 @@
         "@context": "https://schema.org",
         "@type": "WebApplication",
         "name": "Customodoro",
-        "description": "Custom Pomodoro Timer & Productivity App that helps boost productivity. Track your focus sessions, set custom intervals, and achieve your goals.",
+        "alternateName": [
+          "Customodoro Timer",
+          "Reverse Pomodoro Timer",
+          "Flowmodoro App"
+        ],
         "url": "https://customodoro.vercel.app/",
-        "image": "https://customodoro.vercel.app/images/customodoro_card.png",
+        "description": "Free customizable Pomodoro timer with Classic and Reverse Pomodoro (Flowmodoro) modes, focus tracking, streaks, and productivity analytics.",
         "applicationCategory": "ProductivityApplication",
         "operatingSystem": "Any",
+        "browserRequirements": "Requires JavaScript. Works offline via Service Worker.",
+        "image": "https://customodoro.vercel.app/images/customodoro_card.png",
+        "screenshot": "https://customodoro.vercel.app/images/customodoro_card.png",
+        "featureList": [
+          "Classic Pomodoro countdown timer",
+          "Reverse Pomodoro (Flowmodoro) stopwatch mode",
+          "Customizable work, short break, and long break intervals",
+          "Daily focus streaks and session tracking",
+          "Productivity analytics and contribution graph",
+          "Global leaderboard via Supabase",
+          "Ambient sound profiles and background music",
+          "Custom themes and background image upload",
+          "Offline support via Progressive Web App",
+          "Cross-device sync with free account"
+        ],
         "offers": {
           "@type": "Offer",
           "price": "0",
           "priceCurrency": "USD"
         },
-        "author": {
-          "@type": "Organization",
-          "name": "Customodoro"
-        }
+        "creator": {
+          "@type": "Person",
+          "name": "Brian Yabut",
+          "alternateName": "YabuTech",
+          "url": "https://yabutech.vercel.app"
+        },
+        "license": "https://opensource.org/licenses/MIT",
+        "isAccessibleForFree": true
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is Reverse Pomodoro Timer?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Reverse Pomodoro Timer is Customodoro's count-up focus mode. Instead of starting with a fixed countdown, you work freely and earn break time proportional to how long you worked. This style of timer is also commonly known as Flowmodoro."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is Flowmodoro?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Flowmodoro is the broader name for a focus technique where you work without a fixed countdown, then take a break based on your work duration. Customodoro teaches this through its Reverse Pomodoro Timer."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Customodoro free?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Customodoro is completely free to use, requires no account to start, and is open source under the MIT license. An optional free account enables cross-device sync and leaderboard access."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does Customodoro work offline?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. Customodoro is a Progressive Web App with a service worker that caches core assets. It can be installed on supported devices and runs offline after the first load."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is the difference between Classic and Reverse Pomodoro in Customodoro?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Classic mode uses a fixed countdown timer, with customizable work sessions plus short and long breaks. Reverse Pomodoro mode, also known as Flowmodoro, counts up while you work and calculates your break time proportionally based on how long you focused."
+            }
+          }
+        ]
       }
     </script>
 
@@ -136,6 +204,7 @@
     />
     <meta name="apple-mobile-web-app-title" content="Customodoro" />
     <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#e53935" />
 
     <!-- ═══════════════════════════════════════════════════════════════════════════════
        FAVICONS
@@ -642,15 +711,15 @@
           <h2 class="article-title">📚 What is the Pomodoro Technique?</h2>
           <p class="article-preview">
             Think in tomatoes, not hours. The Pomodoro Technique is a
-            revolutionary time management method that breaks your workday into
-            focused 25-minute sessions, followed by refreshing breaks. Created
-            by <b>Francesco Cirillo</b>, this scientifically-proven approach has
-            helped millions achieve better focus and work-life balance.
+            time management method that breaks your workday into focused
+            25-minute sessions, followed by refreshing breaks. Created by
+            <b>Francesco Cirillo</b>, this approach helps many people structure
+            focus time and recovery time.
           </p>
           <div class="preview-features">
             <span class="feature-tag">🧠 Enhanced Mental Clarity</span>
             <span class="feature-tag">⚡ 25-Minute Focus Session</span>
-            <span class="feature-tag">🎯 70% Productivity Boost</span>
+            <span class="feature-tag">🎯 Focus Session Tracking</span>
             <span class="feature-tag">📚 Master Time Management</span>
           </div>
 
@@ -671,6 +740,65 @@
               <polyline points="12 5 19 12 12 19"></polyline>
             </svg>
           </a>
+        </div>
+      </section>
+
+      <section class="seo-content" aria-label="About Customodoro">
+        <div class="seo-content-inner">
+          <h2>What is Customodoro?</h2>
+          <p>
+            Customodoro is a free, customizable Pomodoro timer Progressive Web
+            App. It offers Classic Pomodoro and Reverse Pomodoro (Flowmodoro)
+            modes, letting you choose between fixed countdown sessions or an
+            open-ended stopwatch that earns break time proportional to how long
+            you worked. No account required, works offline, and is open source
+            under the MIT license.
+          </p>
+
+          <h3>What is Reverse Pomodoro Timer?</h3>
+          <p>
+            Reverse Pomodoro Timer is Customodoro's count-up focus mode. You
+            work freely until your concentration naturally ends, then earn a
+            break based on your work duration. This style of timer is also
+            commonly known as Flowmodoro.
+          </p>
+
+          <h3>Key Features</h3>
+          <ul>
+            <li>Classic Pomodoro countdown with short and long breaks</li>
+            <li>Reverse Pomodoro (Flowmodoro) count-up timer with earned breaks</li>
+            <li>Customizable intervals, sounds, and themes</li>
+            <li>Daily focus streaks and productivity graph</li>
+            <li>Global leaderboard and achievements</li>
+            <li>Offline-ready PWA installable on supported devices</li>
+            <li>Cross-device sync with a free account</li>
+            <li>Free and open source under the MIT license</li>
+          </ul>
+
+          <h3>Frequently Asked Questions</h3>
+          <dl>
+            <dt>Is Customodoro free?</dt>
+            <dd>
+              Yes. Customodoro is free to use, requires no account to start, and
+              is open source under the MIT license.
+            </dd>
+
+            <dt>What is the difference between Classic and Reverse Pomodoro?</dt>
+            <dd>
+              Classic counts down from a fixed interval. Reverse Pomodoro, also
+              called Flowmodoro, counts up and calculates your break from how
+              long you worked.
+            </dd>
+
+            <dt>Does it work offline?</dt>
+            <dd>
+              Yes. Install Customodoro as a PWA and it runs offline after the
+              first load.
+            </dd>
+          </dl>
+
+          <p><a href="pomodoro.html">Learn more about the Pomodoro Technique</a></p>
+          <p><a href="reverse.html">Try Reverse Pomodoro Timer (Flowmodoro)</a></p>
         </div>
       </section>
 

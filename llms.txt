@@ -1,0 +1,19 @@
+# Customodoro
+
+> Free customizable Pomodoro timer PWA with Classic and Reverse Pomodoro
+> (Flowmodoro) modes, focus tracking, streaks, leaderboard,
+> and offline support. Built by Brian Yabut (YabuTech). MIT license.
+
+## App
+
+- [Classic Pomodoro Timer](https://customodoro.vercel.app/): 25-minute countdown with customizable intervals, streaks, and analytics
+- [Reverse Pomodoro Timer / Flowmodoro](https://customodoro.vercel.app/reverse): Count-up timer that earns breaks based on work duration
+
+## Learn
+
+- [What is the Pomodoro Technique?](https://customodoro.vercel.app/pomodoro): Educational article on the Pomodoro method and its variants
+- [How Customodoro was built](https://customodoro.vercel.app/LEARN.md): Vanilla JS, PWA, Supabase, and Service Worker implementation notes
+
+## Optional
+
+- [Feedback & Bug Reports](https://customodoro.vercel.app/feedback)

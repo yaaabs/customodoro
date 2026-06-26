@@ -26,16 +26,14 @@
     <!-- ═══════════════════════════════════════════════════════════════════════════════
        SEO META TAGS
        ═══════════════════════════════════════════════════════════════════════════════ -->
-    <title>
-      Reverse Pomodoro Timer - Overcome Procrastination | Customodoro
-    </title>
+    <title>Reverse Pomodoro Timer - Flowmodoro Mode | Customodoro</title>
     <meta
       name="description"
-      content="Discover Reverse Pomodoro - Customodoro's unique productivity technique. Start with breaks, build momentum gradually. Perfect for procrastination, ADHD, and overcoming mental blocks. Free revolutionary timer."
+      content="Customodoro's Reverse Pomodoro Timer, also known as Flowmodoro. Work freely, count up, and earn break time from your focus duration. Free PWA."
     />
     <meta
       name="keywords"
-      content="reverse pomodoro, reverse timer, procrastination help, ADHD productivity, overcome mental blocks, gradual productivity, alternative pomodoro, customodoro reverse mode, productivity for anxiety, gentle time management, break-first technique, procrastination timer, motivation builder"
+      content="reverse pomodoro, reverse pomodoro timer, reverse timer, flowmodoro, flowmodoro timer, customodoro reverse mode, count up pomodoro, earned break timer, alternative pomodoro, productivity timer"
     />
     <meta name="author" content="YabuTech" />
     <meta
@@ -52,11 +50,11 @@
     <meta name="twitter:creator" content="@customodoro" />
     <meta
       name="twitter:title"
-      content="Reverse Pomodoro - Customodoro's Unique Productivity Mode"
+      content="Reverse Pomodoro Timer - Flowmodoro Mode"
     />
     <meta
       name="twitter:description"
-      content="🔄 Discover Reverse Pomodoro! ⏰ Start with breaks, build momentum gradually. Perfect for procrastination & mental blocks. 🧠 Unique approach to productivity!"
+      content="🔄 Customodoro's Reverse Pomodoro Timer, also known as Flowmodoro. Count up while you focus and earn break time."
     />
     <meta
       name="twitter:image"
@@ -75,11 +73,11 @@
     <meta property="og:url" content="https://customodoro.vercel.app/reverse" />
     <meta
       property="og:title"
-      content="Reverse Pomodoro - Customodoro's Revolutionary Productivity Approach"
+      content="Reverse Pomodoro Timer - Flowmodoro Mode | Customodoro"
     />
     <meta
       property="og:description"
-      content="Break through procrastination with Reverse Pomodoro! Start with rest periods and gradually build work momentum. Perfect for ADHD, anxiety, or when traditional Pomodoro feels overwhelming. Discover this game-changing productivity technique."
+      content="Use Customodoro's Reverse Pomodoro Timer, also known as Flowmodoro, to count up while you focus and earn break time."
     />
     <meta
       property="og:image"
@@ -94,7 +92,7 @@
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="Reverse Pomodoro Timer - Revolutionary Productivity Method"
+      content="Reverse Pomodoro Timer - Flowmodoro Mode by Customodoro"
     />
     <meta property="og:locale" content="en_US" />
 
@@ -105,21 +103,59 @@
       {
         "@context": "https://schema.org",
         "@type": "WebApplication",
-        "name": "Reverse Pomodoro Timer - Customodoro",
-        "description": "Revolutionary Reverse Pomodoro technique that starts with breaks to build momentum. Perfect for procrastination, ADHD, and overcoming mental blocks. Free productivity tool.",
+        "name": "Customodoro Reverse Pomodoro Timer - Flowmodoro Mode",
         "url": "https://customodoro.vercel.app/reverse",
+        "description": "Reverse Pomodoro Timer, also known as Flowmodoro, that lets you work freely and earn break time proportional to how long you focused. Free PWA by YabuTech.",
         "image": "https://customodoro.vercel.app/images/customodoro_card.png",
+        "screenshot": "https://customodoro.vercel.app/images/customodoro_card.png",
         "applicationCategory": "ProductivityApplication",
         "operatingSystem": "Any",
+        "browserRequirements": "Requires JavaScript. Works offline via Service Worker.",
+        "featureList": [
+          "Reverse Pomodoro count-up focus timer",
+          "Flowmodoro earned break calculation",
+          "Standard and Dynamic Reverse Pomodoro sub-modes",
+          "Focus session tracking",
+          "Daily streaks and productivity analytics",
+          "Offline support via Progressive Web App"
+        ],
         "offers": {
           "@type": "Offer",
           "price": "0",
           "priceCurrency": "USD"
         },
-        "author": {
-          "@type": "Organization",
-          "name": "Customodoro"
-        }
+        "creator": {
+          "@type": "Person",
+          "name": "Brian Yabut",
+          "alternateName": "YabuTech",
+          "url": "https://yabutech.vercel.app"
+        },
+        "license": "https://opensource.org/licenses/MIT",
+        "isAccessibleForFree": true
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is Reverse Pomodoro Timer?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Reverse Pomodoro Timer is Customodoro's count-up focus mode. Instead of starting with a fixed countdown, you work freely and earn break time based on how long you focused. This technique is also commonly known as Flowmodoro."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Reverse Pomodoro the same as Flowmodoro?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "They describe the same style of focus timer: work first with a count-up timer, then earn a break from your focus duration. Customodoro calls this feature Reverse Pomodoro Timer while also identifying it as Flowmodoro so people can recognize the global term."
+            }
+          }
+        ]
       }
     </script>
 
@@ -134,6 +170,7 @@
     />
     <meta name="apple-mobile-web-app-title" content="Customodoro" />
     <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#e53935" />
 
     <!-- ═══════════════════════════════════════════════════════════════════════════════
        FAVICONS
@@ -662,15 +699,15 @@
           <h2 class="article-title">📚 What is the Pomodoro Technique?</h2>
           <p class="article-preview">
             Think in tomatoes, not hours. The Pomodoro Technique is a
-            revolutionary time management method that breaks your workday into
-            focused 25-minute sessions, followed by refreshing breaks. Created
-            by <b>Francesco Cirillo</b>, this scientifically-proven approach has
-            helped millions achieve better focus and work-life balance.
+            time management method that breaks your workday into focused
+            25-minute sessions, followed by refreshing breaks. Created by
+            <b>Francesco Cirillo</b>, this approach helps many people structure
+            focus time and recovery time.
           </p>
           <div class="preview-features">
             <span class="feature-tag">🧠 Enhanced Mental Clarity</span>
             <span class="feature-tag">⚡ 25-Minute Focus Session</span>
-            <span class="feature-tag">🎯 70% Productivity Boost</span>
+            <span class="feature-tag">🎯 Focus Session Tracking</span>
             <span class="feature-tag">📚 Master Time Management</span>
           </div>
 
