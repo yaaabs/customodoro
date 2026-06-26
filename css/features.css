@@ -3135,8 +3135,13 @@ body.lockedin-mode-active {
   overflow: hidden; /* Prevent scrolling when locked in mode is active */
 }
 
-body.lockedin-mode-active .user-profile {
+body.lockedin-mode-active #user-profile,
+body.lockedin-mode-active #user-profile .user-avatar,
+body.lockedin-mode-active #user-profile .user-info,
+body.lockedin-mode-active #user-profile .user-actions {
   display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 /* Make buttons pop more on the black background */

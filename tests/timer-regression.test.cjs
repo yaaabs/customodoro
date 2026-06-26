@@ -319,3 +319,18 @@ test("locked-in mode mobile display panel avoids the exit tap target", () => {
   assert.match(featuresCss, /bottom:\s*max\(16px,\s*env\(safe-area-inset-bottom\)\);/);
   assert.match(featuresCss, /transform:\s*translate\(-50%,\s*10px\);/);
 });
+
+test("locked-in mode suppresses account controls after sync updates", () => {
+  const featuresCss = fs.readFileSync(
+    path.join(repoRoot, "css", "features.css"),
+    "utf8",
+  );
+
+  assert.match(featuresCss, /body\.lockedin-mode-active #user-profile,/);
+  assert.match(
+    featuresCss,
+    /body\.lockedin-mode-active #user-profile \.user-actions/,
+  );
+  assert.match(featuresCss, /display:\s*none\s*!important;/);
+  assert.match(featuresCss, /pointer-events:\s*none\s*!important;/);
+});
