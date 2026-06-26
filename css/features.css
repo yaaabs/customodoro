@@ -2996,6 +2996,16 @@ body.focus-mode-active #streak-display {
   backdrop-filter: none; /* Remove any backdrop filters */
 }
 
+.lockedin-mode-overlay[data-show-buttons="false"]
+  [data-lockedin-control="buttons"],
+.lockedin-mode-overlay[data-show-progress="false"]
+  [data-lockedin-control="progress"],
+.lockedin-mode-overlay[data-show-session="false"]
+  [data-lockedin-control="session"],
+.lockedin-mode-overlay[data-show-exit="false"] [data-lockedin-control="exit"] {
+  display: none;
+}
+
 .lockedin-mode-timer {
   font-size: 120px;
   font-weight: bold;
@@ -3006,6 +3016,8 @@ body.focus-mode-active #streak-display {
 
 .lockedin-mode-buttons {
   display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 20px;
   margin-bottom: 40px;
 }
@@ -3041,13 +3053,81 @@ body.focus-mode-active #streak-display {
   color: rgba(255, 255, 255, 0.6);
   font-size: 14px;
   cursor: pointer;
+  min-height: 36px;
   padding: 8px 12px;
   border-radius: 4px;
+  touch-action: manipulation;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    opacity 0.2s ease,
+    visibility 0.2s ease;
 }
 
 .lockedin-mode-exit:hover {
   background-color: rgba(255, 255, 255, 0.1);
   color: #ffffff;
+}
+
+.lockedin-mode-overlay.controls-visible .lockedin-mode-exit,
+.lockedin-mode-overlay:focus-within .lockedin-mode-exit {
+  opacity: 1;
+  visibility: visible;
+}
+
+.lockedin-mode-panel {
+  position: absolute;
+  top: 64px;
+  right: 20px;
+  width: 190px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(18, 18, 18, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  color: rgba(255, 255, 255, 0.86);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease,
+    transform 0.2s ease;
+}
+
+.lockedin-mode-overlay.controls-visible .lockedin-mode-panel,
+.lockedin-mode-overlay:focus-within .lockedin-mode-panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.lockedin-mode-panel-title {
+  margin-bottom: 8px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.lockedin-mode-panel label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+  font-size: 13px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.lockedin-mode-panel input {
+  width: 16px;
+  height: 16px;
+  accent-color: #ffffff;
 }
 
 /* Additional styles to ensure complete darkness */
@@ -3060,6 +3140,13 @@ body.lockedin-mode-active .user-profile {
 }
 
 /* Make buttons pop more on the black background */
+.lockedin-mode-buttons button {
+  box-sizing: border-box;
+  min-width: 120px;
+  font-family: var(--font-family);
+  letter-spacing: 0.5px;
+}
+
 .lockedin-mode-overlay .primary-btn {
   background-color: #ffffff;
   color: #000000;
@@ -3070,6 +3157,7 @@ body.lockedin-mode-active .user-profile {
 .lockedin-mode-overlay .secondary-btn {
   color: #ffffff;
   background-color: rgba(255, 255, 255, 0.1);
+  margin-left: 0;
 }
 
 .lockedin-mode-overlay .secondary-btn:hover {
@@ -3090,6 +3178,54 @@ body.lockedin-mode-active .user-profile {
 
   .lockedin-mode-buttons {
     flex-direction: column;
+    gap: 16px;
+    width: min(240px, calc(100vw - 32px));
+  }
+
+  .lockedin-mode-buttons .primary-btn,
+  .lockedin-mode-buttons .secondary-btn {
+    width: 100%;
+  }
+
+  .lockedin-mode-buttons .secondary-btn {
+    margin-left: 0;
+    margin-top: 0;
+    padding: 12px 20px;
+  }
+
+  .lockedin-mode-exit {
+    top: max(12px, env(safe-area-inset-top));
+    right: 12px;
+    min-height: 44px;
+    padding: 10px 12px;
+    background-color: rgba(18, 18, 18, 0.78);
+    font-size: 13px;
+  }
+
+  .lockedin-mode-panel {
+    top: auto;
+    right: auto;
+    bottom: max(16px, env(safe-area-inset-bottom));
+    left: 50%;
+    width: min(320px, calc(100vw - 24px));
+    padding: 14px;
+    transform: translate(-50%, 10px);
+  }
+
+  .lockedin-mode-overlay.controls-visible .lockedin-mode-panel,
+  .lockedin-mode-overlay:focus-within .lockedin-mode-panel {
+    transform: translate(-50%, 0);
+  }
+
+  .lockedin-mode-panel label {
+    min-height: 38px;
+    gap: 10px;
+    font-size: 14px;
+  }
+
+  .lockedin-mode-panel input {
+    width: 20px;
+    height: 20px;
   }
 }
 

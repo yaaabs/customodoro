@@ -179,6 +179,100 @@ describe("Customodoro timer regression tests", () => {
       false,
     );
   });
+
+  test("locked-in mode hides and restores the radial menu", () => {
+    const harness = setupReverseHarness({
+      breakLogicMode: "dynamic",
+      reverseMaxTime: "2",
+      reverseBreak1: "1",
+      reverseBreak2: "1",
+      reverseBreak3: "1",
+      reverseBreak4: "1",
+      reverseBreak5: "1",
+      autoBreak: "false",
+      lockedInModeEnabled: "true",
+      focusModeEnabled: "true",
+    });
+
+    harness.evaluate(`
+      const radialMenuContainer = document.createElement("div");
+      radialMenuContainer.className = "radial-menu-container";
+      document.body.appendChild(radialMenuContainer);
+      window.__radialMenuCloseCalls = 0;
+      window.radialMenu = {
+        close() {
+          window.__radialMenuCloseCalls += 1;
+        },
+      };
+    `);
+
+    harness.evaluate("window.lockedInMode.enter()");
+    assert.equal(
+      harness.evaluate(
+        "document.querySelector('.radial-menu-container').hidden",
+      ),
+      true,
+    );
+    assert.equal(
+      harness.evaluate(
+        "document.querySelector('.radial-menu-container').getAttribute('aria-hidden')",
+      ),
+      "true",
+    );
+    assert.equal(harness.evaluate("window.__radialMenuCloseCalls"), 1);
+
+    harness.evaluate("window.lockedInMode.exit()");
+    assert.equal(
+      harness.evaluate(
+        "document.querySelector('.radial-menu-container').hidden",
+      ),
+      false,
+    );
+    assert.equal(
+      harness.evaluate(
+        "document.querySelector('.radial-menu-container').getAttribute('aria-hidden')",
+      ),
+      "false",
+    );
+  });
+
+  test("locked-in mode applies saved display preferences", () => {
+    const harness = setupReverseHarness({
+      breakLogicMode: "dynamic",
+      reverseMaxTime: "2",
+      reverseBreak1: "1",
+      reverseBreak2: "1",
+      reverseBreak3: "1",
+      reverseBreak4: "1",
+      reverseBreak5: "1",
+      autoBreak: "false",
+      lockedInModeEnabled: "true",
+      focusModeEnabled: "true",
+      lockedInModeVisibility: JSON.stringify({
+        buttons: false,
+        progress: false,
+        session: true,
+        exit: false,
+      }),
+    });
+
+    harness.evaluate("window.lockedInMode.enter()");
+
+    assert.deepEqual(
+      harness.evaluate(`({
+        buttons: document.querySelector(".lockedin-mode-overlay").dataset.showButtons,
+        progress: document.querySelector(".lockedin-mode-overlay").dataset.showProgress,
+        session: document.querySelector(".lockedin-mode-overlay").dataset.showSession,
+        exit: document.querySelector(".lockedin-mode-overlay").dataset.showExit,
+      })`),
+      {
+        buttons: "false",
+        progress: "false",
+        session: "true",
+        exit: "false",
+      },
+    );
+  });
 });
 
 test("PWA copyright year uses the shared current-year updater", () => {
@@ -199,4 +293,29 @@ test("PWA copyright year uses the shared current-year updater", () => {
     assert.match(html, /class="copyright-year"/);
     assert.match(html, /js\/copyright-year\.js\?v=1\.0\.0/);
   }
+});
+
+test("locked-in mode keeps timer button sizing consistent", () => {
+  const featuresCss = fs.readFileSync(
+    path.join(repoRoot, "css", "features.css"),
+    "utf8",
+  );
+
+  assert.match(featuresCss, /\.lockedin-mode-buttons button\s*{/);
+  assert.match(featuresCss, /min-width:\s*120px;/);
+  assert.match(featuresCss, /\.lockedin-mode-buttons \.primary-btn,/);
+  assert.match(featuresCss, /width:\s*100%;/);
+});
+
+test("locked-in mode mobile display panel avoids the exit tap target", () => {
+  const featuresCss = fs.readFileSync(
+    path.join(repoRoot, "css", "features.css"),
+    "utf8",
+  );
+
+  assert.match(featuresCss, /@media \(max-width:\s*480px\)/);
+  assert.match(featuresCss, /\.lockedin-mode-exit\s*{[\s\S]*min-height:\s*44px;/);
+  assert.match(featuresCss, /\.lockedin-mode-panel\s*{[\s\S]*top:\s*auto;/);
+  assert.match(featuresCss, /bottom:\s*max\(16px,\s*env\(safe-area-inset-bottom\)\);/);
+  assert.match(featuresCss, /transform:\s*translate\(-50%,\s*10px\);/);
 });

@@ -4,6 +4,38 @@
   let isLockedInModeEnabled = false;
   let isLockedInModeActive = false;
   let lockedInModeTimer = null; // Timer variable for the delayed activation
+  let lockedInControlsTimer = null;
+  const LOCKED_IN_CONTROLS_VISIBLE_MS = 2500;
+  const LOCKED_IN_VISIBILITY_STORAGE_KEY = "lockedInModeVisibility";
+  const lockedInVisibilityDefaults = {
+    buttons: true,
+    progress: true,
+    session: true,
+    exit: true,
+  };
+
+  function getLockedInVisibilityOptions() {
+    try {
+      const savedOptions = JSON.parse(
+        localStorage.getItem(LOCKED_IN_VISIBILITY_STORAGE_KEY) || "{}",
+      );
+
+      return {
+        ...lockedInVisibilityDefaults,
+        ...savedOptions,
+      };
+    } catch (error) {
+      console.warn("Unable to load Locked In Mode visibility options:", error);
+      return { ...lockedInVisibilityDefaults };
+    }
+  }
+
+  function saveLockedInVisibilityOptions(options) {
+    localStorage.setItem(
+      LOCKED_IN_VISIBILITY_STORAGE_KEY,
+      JSON.stringify(options),
+    );
+  }
 
   function getTimerControls() {
     if (
@@ -46,24 +78,100 @@
     }
   }
 
+  function setDistractionControlsHidden(hidden) {
+    const radialMenuContainer = document.querySelector(".radial-menu-container");
+    if (!radialMenuContainer) return;
+
+    if (
+      hidden &&
+      window.radialMenu &&
+      typeof window.radialMenu.close === "function"
+    ) {
+      window.radialMenu.close();
+    }
+
+    radialMenuContainer.hidden = hidden;
+    radialMenuContainer.setAttribute("aria-hidden", String(hidden));
+  }
+
+  function applyLockedInVisibilityOptions() {
+    const overlay = document.querySelector(".lockedin-mode-overlay");
+    if (!overlay) return;
+
+    const visibilityOptions = getLockedInVisibilityOptions();
+    Object.entries(visibilityOptions).forEach(([key, isVisible]) => {
+      overlay.dataset[`show${key.charAt(0).toUpperCase()}${key.slice(1)}`] =
+        String(isVisible);
+    });
+
+    overlay
+      .querySelectorAll("[data-lockedin-visibility]")
+      .forEach((input) => {
+        input.checked = Boolean(visibilityOptions[input.value]);
+      });
+  }
+
+  function showLockedInControlsTemporarily() {
+    const overlay = document.querySelector(".lockedin-mode-overlay");
+    if (!overlay || !isLockedInModeActive) return;
+
+    overlay.classList.add("controls-visible");
+
+    if (lockedInControlsTimer) {
+      clearTimeout(lockedInControlsTimer);
+    }
+
+    lockedInControlsTimer = setTimeout(() => {
+      overlay.classList.remove("controls-visible");
+      lockedInControlsTimer = null;
+    }, LOCKED_IN_CONTROLS_VISIBLE_MS);
+  }
+
+  function clearLockedInControlsTimer() {
+    if (!lockedInControlsTimer) return;
+
+    clearTimeout(lockedInControlsTimer);
+    lockedInControlsTimer = null;
+  }
+
   // Create locked in mode overlay
   function createLockedInModeElements() {
     const overlay = document.createElement("div");
     overlay.className = "lockedin-mode-overlay";
     overlay.innerHTML = `
       <div class="lockedin-mode-timer">00:00</div>
-      <div class="lockedin-mode-buttons">
+      <div class="lockedin-mode-buttons" data-lockedin-control="buttons">
         <button class="primary-btn" id="lockedin-mode-toggle-btn">PAUSE</button>
         <button class="secondary-btn" id="lockedin-mode-reset-btn">Reset</button>
       </div>
-      <div class="lockedin-mode-progress">
+      <div class="lockedin-mode-progress" data-lockedin-control="progress">
         <div class="lockedin-mode-progress-inner"></div>
       </div>
-      <div class="lockedin-mode-session" id="lockedin-mode-session">#1</div>
-      <button class="lockedin-mode-exit" id="lockedin-mode-exit">Exit Locked In Mode</button>
+      <div class="lockedin-mode-session" id="lockedin-mode-session" data-lockedin-control="session">#1</div>
+      <div class="lockedin-mode-panel" aria-label="Locked In Mode display options">
+        <div class="lockedin-mode-panel-title">Display</div>
+        <label>
+          <input type="checkbox" value="buttons" data-lockedin-visibility />
+          Timer buttons
+        </label>
+        <label>
+          <input type="checkbox" value="progress" data-lockedin-visibility />
+          Progress bar
+        </label>
+        <label>
+          <input type="checkbox" value="session" data-lockedin-visibility />
+          Session number
+        </label>
+        <label>
+          <input type="checkbox" value="exit" data-lockedin-visibility />
+          Exit link
+        </label>
+      </div>
+      <button class="lockedin-mode-exit" id="lockedin-mode-exit" data-lockedin-control="exit">Exit Locked In Mode</button>
     `;
 
     document.body.appendChild(overlay);
+    applyLockedInVisibilityOptions();
 
     // Set up event listeners
     document
@@ -95,6 +203,26 @@
     document
       .getElementById("lockedin-mode-exit")
       .addEventListener("click", exitLockedInMode);
+
+    overlay
+      .querySelectorAll("[data-lockedin-visibility]")
+      .forEach((input) => {
+        input.addEventListener("change", function () {
+          const visibilityOptions = getLockedInVisibilityOptions();
+          visibilityOptions[input.value] = input.checked;
+          saveLockedInVisibilityOptions(visibilityOptions);
+          applyLockedInVisibilityOptions();
+          showLockedInControlsTemporarily();
+        });
+      });
+
+    overlay.addEventListener("mousemove", showLockedInControlsTemporarily);
+    overlay.addEventListener("touchstart", showLockedInControlsTemporarily);
+    overlay.addEventListener("focusin", function () {
+      overlay.classList.add("controls-visible");
+      clearLockedInControlsTimer();
+    });
+    overlay.addEventListener("focusout", showLockedInControlsTemporarily);
 
     // Keyboard shortcut to exit locked in mode
     document.addEventListener("keydown", function (e) {
@@ -273,6 +401,9 @@
     overlay.classList.add("active");
     document.body.style.overflow = "hidden"; // Prevent scrolling when in locked in mode
     setLockedInModeActiveState(true);
+    setDistractionControlsHidden(true);
+    applyLockedInVisibilityOptions();
+    showLockedInControlsTemporarily();
 
     // Apply theme-specific styling to locked in mode if needed
     const currentTheme = document.body.className.match(/theme-\S+/);
@@ -294,10 +425,13 @@
     const overlay = document.querySelector(".lockedin-mode-overlay");
     if (overlay) {
       overlay.classList.remove("active");
+      overlay.classList.remove("controls-visible");
     }
 
+    clearLockedInControlsTimer();
     document.body.style.overflow = ""; // Restore scrolling
     setLockedInModeActiveState(false);
+    setDistractionControlsHidden(false);
   }
 
   // Update locked in mode data
