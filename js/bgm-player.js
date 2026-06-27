@@ -342,7 +342,6 @@
     // Set initial BGM enabled state
     setBGMEnabled(bgmToggle.checked);
 
-    console.log("BGM Player Initialized");
     window.bgmPlayer.isInitialized = true;
 
     // OPTIMIZATION: We're not preloading any audio until user interaction
@@ -505,7 +504,6 @@
     // Add autoplay functionality - when track ends, play next track
     if (audio) {
       audio.addEventListener("ended", function () {
-        console.log("Track ended, auto-advancing to next track");
         nextTrack();
         // Auto-play the next track
         if (currentPlaylist && currentTrackIndex < currentPlaylist.length) {
@@ -517,7 +515,7 @@
 
       // Add error handling for failed track loads
       audio.addEventListener("error", function (e) {
-        console.error("Error loading track:", e);
+        window.customodoroLogger.error("BGM_PLAYER_LOADING_TRACK");
         isTrackLoaded = false; // OPTIMIZATION: Reset loaded state
 
         // Try to skip to next track if current one fails
@@ -635,7 +633,7 @@
             updatePlayButtonIcon();
           })
           .catch((error) => {
-            console.error("Error playing audio:", error);
+            window.customodoroLogger.error("BGM_PLAYER_PLAYING_AUDIO");
             isPlaying = false;
             updatePlayButtonIcon();
           });
@@ -808,7 +806,7 @@
   // Load a playlist
   function loadPlaylist(playlistName) {
     if (!playlists[playlistName]) {
-      console.error(`Playlist '${playlistName}' not found`);
+      window.customodoroLogger.error("BGM_PLAYER_PLAYLIST_PLAYLISTNAME_NOT_FOUND");
       return;
     }
 
@@ -834,10 +832,10 @@
 
     try {
       if (!currentPlaylist[currentTrackIndex]) {
-        console.warn("Invalid track index, resetting to 0");
+        window.customodoroLogger.error("BGM_PLAYER_INVALID_TRACK_INDEX_RESETTING_TO_0");
         currentTrackIndex = 0;
         if (!currentPlaylist[currentTrackIndex]) {
-          console.error("No tracks available to play");
+          window.customodoroLogger.error("BGM_PLAYER_NO_TRACKS_AVAILABLE_TO_PLAY");
           return;
         }
       }
@@ -856,16 +854,15 @@
             isPlaying = true;
             updatePlayButtonIcon();
             updateTrackDisplay();
-            console.log(`Playing: ${currentPlaylist[currentTrackIndex].title}`);
           })
           .catch((error) => {
-            console.error("Audio playback failed:", error);
+            window.customodoroLogger.error("BGM_PLAYER_AUDIO_PLAYBACK_FAILED");
             isPlaying = false;
             updatePlayButtonIcon();
           });
       }
     } catch (error) {
-      console.error("Failed to play audio:", error);
+      window.customodoroLogger.error("BGM_PLAYER_FAILED_TO_PLAY_AUDIO");
       isPlaying = false;
       updatePlayButtonIcon();
     }

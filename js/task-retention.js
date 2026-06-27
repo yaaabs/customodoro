@@ -463,7 +463,6 @@ class TaskRetentionManager {
         : REVERSE_TASKS_KEY;
     // Instead of merging tasks, we'll make sure the target mode starts fresh
     localStorage.setItem(targetKey, JSON.stringify([]));
-    console.log(`Tasks cleared in ${this.targetMode} (Start Fresh selected)`);
 
     // Show notification if possible
     if (typeof window.showToast === "function") {
@@ -512,10 +511,6 @@ class TaskRetentionManager {
     // Save to localStorage
     localStorage.setItem(targetKey, JSON.stringify(targetTasks));
 
-    console.log(
-      `Transferred ${newTasks.length} new tasks to ${targetMode} (${tasks.length - newTasks.length} duplicates skipped)`,
-      targetTasks,
-    );
   }
 
   // Method to handle mode switching with task retention
@@ -525,17 +520,7 @@ class TaskRetentionManager {
 
     // Only show the dialog if there are actually tasks to transfer
     if (this.currentTasks.length > 0) {
-      const shouldTransfer = await this.showRetentionDialog(targetMode);
-
-      if (shouldTransfer) {
-        console.log(
-          `${this.currentTasks.length} tasks transferred to ${targetMode}`,
-        );
-      } else {
-        console.log("User chose to start fresh in the target mode");
-      }
-    } else {
-      console.log("No tasks to transfer, proceeding directly");
+      await this.showRetentionDialog(targetMode);
     }
 
     // Navigate to target page
@@ -571,7 +556,6 @@ function addClassicTaskSaving() {
     });
 
     localStorage.setItem(CLASSIC_TASKS_KEY, JSON.stringify(taskItems));
-    console.log("Classic tasks saved to localStorage:", taskItems);
   }
 
   // Function to load classic tasks
@@ -614,9 +598,8 @@ function addClassicTaskSaving() {
         }
       });
 
-      console.log("Classic tasks loaded from localStorage:", taskItems);
     } catch (error) {
-      console.error("Error loading classic tasks:", error);
+      window.customodoroLogger.error("TASK_RETENTION_LOADING_CLASSIC_TASKS");
     }
   }
 
@@ -705,11 +688,8 @@ function setupIsolatedTaskDeletion() {
         // Save back to localStorage for current mode only
         localStorage.setItem(currentKey, JSON.stringify(updatedTasks));
 
-        console.log(
-          `Task "${taskText}" deleted from ${isReversePage ? "Reverse" : "Classic"} mode only.`,
-        );
       } catch (error) {
-        console.error("Error processing task deletion:", error);
+        window.customodoroLogger.error("TASK_RETENTION_PROCESSING_TASK_DELETION");
       }
     }
   });

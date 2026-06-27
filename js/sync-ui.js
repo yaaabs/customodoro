@@ -1,39 +1,30 @@
 // Sync UI Manager
 class SyncUI {
   constructor() {
-    console.log("SyncUI constructor starting...");
     this.elements = {};
     this.isInitialized = false;
 
     // Initialize when DOM is ready
     if (document.readyState === "loading") {
-      console.log("DOM still loading, waiting for DOMContentLoaded...");
       document.addEventListener("DOMContentLoaded", () => this.init());
     } else {
-      console.log("DOM already ready, initializing immediately...");
       this.init();
     }
   }
 
   // Initialize UI
   init() {
-    console.log("SyncUI.init() called, isInitialized:", this.isInitialized);
     if (this.isInitialized) return;
 
-    console.log("Caching elements...");
     this.cacheElements();
-    console.log("Setting up event listeners...");
     this.setupEventListeners();
-    console.log("Updating UI...");
     this.updateUI();
     this.isInitialized = true;
 
-    console.log("Sync UI initialized successfully");
   }
 
   // Cache DOM elements
   cacheElements() {
-    console.log("Caching DOM elements...");
     this.elements = {
       // States
       notLoggedIn: document.getElementById("sync-not-logged-in"),
@@ -66,12 +57,6 @@ class SyncUI {
       errorMessage: document.getElementById("sync-error-message"),
     };
 
-    console.log("Cached elements:", {
-      registerBtn: !!this.elements.registerBtn,
-      loginBtn: !!this.elements.loginBtn,
-      emailInput: !!this.elements.emailInput,
-      usernameInput: !!this.elements.usernameInput,
-    });
   }
 
   // Setup event listeners
@@ -79,21 +64,15 @@ class SyncUI {
     // Auth service events (with retry logic)
     if (window.authService) {
       window.authService.addEventListener((event, data) => {
-        console.log("SyncUI: Auth event received:", event, data);
         if (event === "login" || event === "logout" || event === "restore") {
           this.updateUI();
 
           // If restore event, ensure we stay in logged-in state
           if (event === "restore" && data) {
-            console.log("SyncUI: Handling auth restore, staying logged in");
             this.showLoggedInState();
           }
         }
       });
-    } else {
-      console.warn(
-        "SyncUI: authService not available during setup, will retry in updateUI",
-      );
     }
 
     // Sync manager events
@@ -105,27 +84,23 @@ class SyncUI {
 
     // Button events
     if (this.elements.registerBtn) {
-      console.log("Adding click listener to register button");
       this.elements.registerBtn.addEventListener("click", (e) => {
-        console.log("Register button clicked!", e);
         e.preventDefault();
         e.stopPropagation();
         this.handleRegister();
       });
     } else {
-      console.error("Register button not found!");
+      window.customodoroLogger.error("SYNC_UI_REGISTER_BUTTON_NOT_FOUND");
     }
 
     if (this.elements.loginBtn) {
-      console.log("Adding click listener to login button");
       this.elements.loginBtn.addEventListener("click", (e) => {
-        console.log("Login button clicked!", e);
         e.preventDefault();
         e.stopPropagation();
         this.handleLogin();
       });
     } else {
-      console.error("Login button not found!");
+      window.customodoroLogger.error("SYNC_UI_LOGIN_BUTTON_NOT_FOUND");
     }
 
     if (this.elements.manualSyncBtn) {
@@ -212,7 +187,6 @@ class SyncUI {
 
     // Check if auth service is available
     if (!window.authService) {
-      console.warn("SyncUI: authService not available yet, retrying...");
       setTimeout(() => this.updateUI(), 100);
       return;
     }
@@ -220,7 +194,6 @@ class SyncUI {
     const isLoggedIn = window.authService.isLoggedIn();
     const user = window.authService.getCurrentUser();
 
-    console.log("SyncUI: Updating UI - isLoggedIn:", isLoggedIn, "user:", user);
 
     // Emit auth state change event for header profile
     document.dispatchEvent(
@@ -397,9 +370,8 @@ class SyncUI {
 
   // Handle register
   async handleRegister() {
-    console.log("Register button clicked");
     if (!window.authService) {
-      console.error("AuthService not available");
+      window.customodoroLogger.error("SYNC_UI_AUTHSERVICE_NOT_AVAILABLE");
       this.showToast(
         "Sync service not available. Please refresh the page.",
         "error",
@@ -410,7 +382,6 @@ class SyncUI {
     const email = this.elements.emailInput?.value.trim();
     const username = this.elements.usernameInput?.value.trim();
 
-    console.log("Registration attempt:", { email, username });
 
     if (!email) {
       this.showToast("Please enter your email address", "error");
@@ -427,7 +398,6 @@ class SyncUI {
       const hasLocalData = this.hasSignificantLocalData();
       if (hasLocalData) {
         // Show confirmation modal before registering
-        console.log("✅ Showing sync confirmation modal for registration");
         this.showSyncConfirmModal(email, username, "register");
       } else {
         // No significant local data, ask for confirmation before registering
@@ -435,24 +405,19 @@ class SyncUI {
           "Are you sure you want to create an account and sync your data with this email?",
         );
         if (!confirmed) return;
-        console.log(
-          "⚡ User confirmed registration with no local data, proceeding...",
-        );
         await this.doRegister(email, username);
       }
     } catch (error) {
-      console.error("Error in registration flow:", error);
+      window.customodoroLogger.error("SYNC_UI_IN_REGISTRATION_FLOW");
       // Fallback: try register directly
-      console.log("Fallback: proceeding with direct registration");
       await this.doRegister(email, username);
     }
   }
 
   // Handle login
   async handleLogin() {
-    console.log("Login button clicked");
     if (!window.authService) {
-      console.error("AuthService not available");
+      window.customodoroLogger.error("SYNC_UI_AUTHSERVICE_NOT_AVAILABLE");
       this.showToast(
         "Sync service not available. Please refresh the page.",
         "error",
@@ -462,7 +427,6 @@ class SyncUI {
 
     const email = this.elements.emailInput?.value.trim();
 
-    console.log("Login attempt:", { email });
 
     if (!email) {
       this.showToast("Please enter your email address", "error");
@@ -477,24 +441,16 @@ class SyncUI {
     try {
       // Check if user has local data - if so, show confirmation modal
       const hasLocalData = this.hasSignificantLocalData();
-      console.log("🔍 Login flow debug:");
-      console.log("- User has significant local data:", hasLocalData);
-      console.log("- Will show confirmation modal:", hasLocalData);
 
       if (hasLocalData) {
-        console.log("✅ Showing sync confirmation modal for login");
         this.showSyncConfirmModal(email, "", "login");
       } else {
         // No local data, proceed directly
-        console.log(
-          "⚡ No significant local data, proceeding directly with login",
-        );
         await this.doLogin(email);
       }
     } catch (error) {
-      console.error("Error in login flow:", error);
+      window.customodoroLogger.error("SYNC_UI_IN_LOGIN_FLOW");
       // Fallback: try login directly
-      console.log("Fallback: proceeding with direct login");
       await this.doLogin(email);
     }
   }
@@ -505,7 +461,6 @@ class SyncUI {
       // If user is already logged in, don't show confirmation modal
       // This prevents the modal from showing when switching between accounts
       if (window.authService?.isLoggedIn()) {
-        console.log("User already logged in, skipping local data check");
         return false;
       }
 
@@ -513,7 +468,6 @@ class SyncUI {
       const hasUsedSync =
         localStorage.getItem("customodoro-has-used-sync") === "true";
       if (hasUsedSync) {
-        console.log("Browser has been used with sync before, skipping modal");
         return false;
       }
 
@@ -524,13 +478,11 @@ class SyncUI {
         return sum + (day.classic || 0) + (day.reverse || 0);
       }, 0);
 
-      console.log("Local data check - total sessions:", totalSessions);
 
       const hasSignificantData = totalSessions >= 1;
-      console.log("Has significant local data:", hasSignificantData);
       return hasSignificantData;
     } catch (error) {
-      console.warn("Error checking local data:", error);
+      window.customodoroLogger.error("SYNC_UI_CHECKING_LOCAL_DATA");
       return false;
     }
   } // Handle manual sync
@@ -540,7 +492,7 @@ class SyncUI {
     try {
       await window.syncManager.manualSync();
     } catch (error) {
-      console.error("Manual sync error:", error);
+      window.customodoroLogger.error("SYNC_UI_MANUAL_SYNC");
       // Error handling is done in sync event listener
     }
   }
@@ -553,7 +505,7 @@ class SyncUI {
       window.syncManager.exportData();
       this.showToast("📥 Data exported successfully!", "success");
     } catch (error) {
-      console.error("Export error:", error);
+      window.customodoroLogger.error("SYNC_UI_EXPORT");
       this.showToast("❌ Failed to export data", "error");
     }
   }
@@ -580,33 +532,24 @@ class SyncUI {
 
   // Set button loading state
   setButtonLoading(button, loading) {
-    console.log("setButtonLoading called:", { button: !!button, loading });
     if (!button) {
-      console.warn("setButtonLoading: button is null or undefined");
       return;
     }
 
     const textSpan = button.querySelector(".sync-btn-text");
     const spinnerSpan = button.querySelector(".sync-btn-spinner");
 
-    console.log("Button elements found:", {
-      textSpan: !!textSpan,
-      spinnerSpan: !!spinnerSpan,
-    });
 
     if (loading) {
-      console.log("Disabling button and showing spinner");
       button.disabled = true;
       if (textSpan) textSpan.style.display = "none";
       if (spinnerSpan) spinnerSpan.style.display = "inline-flex";
     } else {
-      console.log("Enabling button and hiding spinner");
       button.disabled = false;
       if (textSpan) textSpan.style.display = "inline";
       if (spinnerSpan) spinnerSpan.style.display = "none";
     }
 
-    console.log("Button state after change:", { disabled: button.disabled });
   }
 
   // Clear form
@@ -623,14 +566,12 @@ class SyncUI {
 
     // Basic regex check
     if (!emailRegex.test(email)) {
-      console.log("Email validation failed: Basic regex test");
       return false;
     }
 
     // Split email into local and domain parts
     const parts = email.split("@");
     if (parts.length !== 2) {
-      console.log("Email validation failed: Invalid @ structure");
       return false;
     }
 
@@ -638,73 +579,58 @@ class SyncUI {
 
     // Check local part (before @)
     if (!localPart || localPart.length < 1 || localPart.length > 64) {
-      console.log("Email validation failed: Invalid local part length");
       return false;
     }
 
     // Check domain part (after @)
     if (!domain || domain.length < 4 || domain.length > 255) {
-      console.log("Email validation failed: Invalid domain length");
       return false;
     }
 
     // Check for valid TLD (must have at least one dot and valid TLD)
     const domainParts = domain.split(".");
     if (domainParts.length < 2) {
-      console.log("Email validation failed: No TLD found");
       return false;
     }
 
     // Check TLD (last part)
     const tld = domainParts[domainParts.length - 1];
     if (!tld || tld.length < 2 || tld.length > 6) {
-      console.log("Email validation failed: Invalid TLD length");
       return false;
     }
 
     // TLD must be alphabetic only
     if (!/^[a-zA-Z]{2,6}$/.test(tld)) {
-      console.log(
-        "Email validation failed: TLD contains non-alphabetic characters",
-      );
       return false;
     }
 
     // Check for consecutive dots
     if (email.includes("..")) {
-      console.log("Email validation failed: Consecutive dots found");
       return false;
     }
 
     // Check for domain starting or ending with hyphen
     if (domain.startsWith("-") || domain.endsWith("-")) {
-      console.log("Email validation failed: Domain starts or ends with hyphen");
       return false;
     }
 
     // Check each domain part
     for (const part of domainParts) {
       if (!part || part.length === 0) {
-        console.log("Email validation failed: Empty domain part");
         return false;
       }
 
       // Domain parts cannot start or end with hyphen
       if (part.startsWith("-") || part.endsWith("-")) {
-        console.log(
-          "Email validation failed: Domain part starts or ends with hyphen",
-        );
         return false;
       }
     }
 
-    console.log("Email validation passed:", email);
     return true;
   }
 
   // Show sync confirmation modal
   showSyncConfirmModal(email, username, action) {
-    console.log("Showing sync confirmation modal for action:", action);
 
     // Remove any existing custom modal first
     const existingModal = document.getElementById("custom-sync-modal");
@@ -962,11 +888,9 @@ class SyncUI {
           e.stopPropagation();
           closeModal();
         });
-      } else {
-        console.warn("SyncUI: cancel button not found in sync modal");
       }
     } catch (err) {
-      console.error("Failed to attach cancel listener:", err);
+      window.customodoroLogger.error("SYNC_UI_FAILED_TO_ATTACH_CANCEL_LISTENER");
     }
 
     try {
@@ -975,7 +899,6 @@ class SyncUI {
         proceedBtn.addEventListener("click", async (e) => {
           e.preventDefault();
           e.stopPropagation();
-          console.log("User confirmed sync, proceeding with", action);
           try {
             // Close first to ensure UI responsiveness while async work runs
             closeModal();
@@ -985,16 +908,14 @@ class SyncUI {
               await this.doLogin(email);
             }
           } catch (err) {
-            console.error("Error during sync proceed action:", err);
+            window.customodoroLogger.error("SYNC_UI_DURING_SYNC_PROCEED_ACTION");
             // Show a non-blocking toast error if something bad happens
             this.showToast("❌ An error occurred. Please try again.", "error");
           }
         });
-      } else {
-        console.warn("SyncUI: proceed button not found in sync modal");
       }
     } catch (err) {
-      console.error("Failed to attach proceed listener:", err);
+      window.customodoroLogger.error("SYNC_UI_FAILED_TO_ATTACH_PROCEED_LISTENER");
     }
 
     // Close on background click
@@ -1006,7 +927,6 @@ class SyncUI {
       });
     }
 
-    console.log("Custom modal created and should be visible!");
   }
 
   // Get current data summary for sync confirmation modal
@@ -1026,7 +946,7 @@ class SyncUI {
           currentStreak = calculateCurrentStreak() || 0;
         }
       } catch (error) {
-        console.warn("Error getting streak data:", error);
+        window.customodoroLogger.error("SYNC_UI_GETTING_STREAK_DATA");
         currentStreak = 0;
       }
 
@@ -1045,7 +965,7 @@ class SyncUI {
           }, 0);
         }
       } catch (error) {
-        console.warn("Error getting focus points:", error);
+        window.customodoroLogger.error("SYNC_UI_GETTING_FOCUS_POINTS");
         totalPoints = 0;
       }
 
@@ -1058,15 +978,10 @@ class SyncUI {
           return sum + (day.classic || 0) + (day.reverse || 0);
         }, 0);
       } catch (error) {
-        console.warn("Error getting sessions count:", error);
+        window.customodoroLogger.error("SYNC_UI_GETTING_SESSIONS_COUNT");
         totalSessions = 0;
       }
 
-      console.log("Current data summary:", {
-        totalSessions,
-        currentStreak,
-        totalPoints,
-      });
 
       return {
         totalSessions,
@@ -1074,7 +989,7 @@ class SyncUI {
         totalPoints,
       };
     } catch (error) {
-      console.warn("Error getting current data summary:", error);
+      window.customodoroLogger.error("SYNC_UI_GETTING_CURRENT_DATA_SUMMARY");
       return {
         totalSessions: 0,
         currentStreak: 0,
@@ -1085,39 +1000,32 @@ class SyncUI {
 
   // Actually perform registration
   async doRegister(email, username) {
-    console.log("doRegister called with:", { email, username });
-    console.log("Setting register button to loading state...");
     this.setButtonLoading(this.elements.registerBtn, true);
 
     // Safety timeout to re-enable button after 10 seconds
     const timeoutId = setTimeout(() => {
-      console.log("Registration timeout - re-enabling button");
       this.setButtonLoading(this.elements.registerBtn, false);
     }, 10000);
 
     try {
-      console.log("Calling authService.register...");
       const result = await window.authService.register(email, username);
-      console.log("Registration result:", result);
 
       // Mark browser as having used sync
       this.markBrowserAsUsedWithSync();
 
       // Check if email verification is required
       if (result.needsVerification) {
-        console.log("Email verification required, showing verification modal");
         this.showEmailVerificationModal(email);
         this.showToast(
           "📧 Please check your email for a verification code",
           "info",
         );
       } else {
-        console.log("Registration completed successfully without verification");
         this.showToast("✅ Account created successfully!", "success");
         this.clearForm();
       }
     } catch (error) {
-      console.error("Registration error:", error);
+      window.customodoroLogger.error("SYNC_UI_REGISTRATION");
 
       // Enhanced error handling for specific cases
       let errorMessage = error.message;
@@ -1136,7 +1044,6 @@ class SyncUI {
 
       this.showToast("❌ " + errorMessage, "error");
     } finally {
-      console.log("Registration complete - re-enabling button");
       clearTimeout(timeoutId);
       this.setButtonLoading(this.elements.registerBtn, false);
     }
@@ -1286,12 +1193,9 @@ class SyncUI {
           e.stopPropagation();
           closeModal();
         });
-      else console.warn("SyncUI: verification cancel button not found");
+      else void 0;
     } catch (err) {
-      console.error(
-        "Failed to attach cancel listener to verification modal:",
-        err,
-      );
+      window.customodoroLogger.error("SYNC_UI_FAILED_TO_ATTACH_CANCEL_LISTENER_TO_VERIFI");
     }
 
     // Verify button
@@ -1313,17 +1217,15 @@ class SyncUI {
             closeModal();
             this.clearForm();
           } catch (error) {
-            console.error("Verification error:", error);
+            window.customodoroLogger.error("SYNC_UI_VERIFICATION");
             this.showToast("❌ " + error.message, "error");
             verifyBtn.textContent = "Verify";
             verifyBtn.disabled = false;
           }
         });
-      } else {
-        console.warn("SyncUI: verification verify button not found");
       }
     } catch (err) {
-      console.error("Failed to attach verification listener:", err);
+      window.customodoroLogger.error("SYNC_UI_FAILED_TO_ATTACH_VERIFICATION_LISTENER");
     }
 
     // Enter key to verify
@@ -1347,20 +1249,15 @@ class SyncUI {
 
   // Actually perform login
   async doLogin(email) {
-    console.log("doLogin called with:", { email });
-    console.log("Setting login button to loading state...");
     this.setButtonLoading(this.elements.loginBtn, true);
 
     // Safety timeout to re-enable button after 10 seconds
     const timeoutId = setTimeout(() => {
-      console.log("Login timeout - re-enabling button");
       this.setButtonLoading(this.elements.loginBtn, false);
     }, 10000);
 
     try {
-      console.log("Calling authService.login...");
       const result = await window.authService.login(email);
-      console.log("Login successful:", result);
 
       // Mark browser as having used sync
       this.markBrowserAsUsedWithSync();
@@ -1368,10 +1265,9 @@ class SyncUI {
       this.showToast("✅ Signed in successfully!", "success");
       this.clearForm();
     } catch (error) {
-      console.error("Login error:", error);
+      window.customodoroLogger.error("SYNC_UI_LOGIN");
       this.showToast("❌ " + error.message, "error");
     } finally {
-      console.log("Login complete - re-enabling button");
       clearTimeout(timeoutId);
       this.setButtonLoading(this.elements.loginBtn, false);
     }
@@ -1381,9 +1277,8 @@ class SyncUI {
   markBrowserAsUsedWithSync() {
     try {
       localStorage.setItem("customodoro-has-used-sync", "true");
-      console.log("✅ Marked browser as having used sync");
     } catch (error) {
-      console.warn("Failed to mark browser as used with sync:", error);
+      window.customodoroLogger.error("SYNC_UI_FAILED_TO_MARK_BROWSER_AS_USED_WITH_SYNC");
     }
   }
 
@@ -1422,6 +1317,4 @@ class SyncUI {
 }
 
 // Create global instance
-console.log("Creating SyncUI instance...");
 window.syncUI = new SyncUI();
-console.log("SyncUI created successfully:", window.syncUI);

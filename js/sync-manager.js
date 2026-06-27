@@ -58,13 +58,11 @@ class SyncManager {
       return;
     }
 
-    console.log("🔄 Performing auto-sync on page load...");
     try {
       // Only do a gentle sync - don't show loading states
       await this.pullDataFromServer();
-      console.log("✅ Page load auto-sync completed");
     } catch (error) {
-      console.warn("⚠️ Page load auto-sync failed (silent):", error);
+      window.customodoroLogger.error("SYNC_MANAGER_PAGE_LOAD_AUTO_SYNC_FAILED_SILENT");
       // Queue for later if failed
       this.queueSync(this.getCurrentLocalData());
     }
@@ -83,13 +81,11 @@ class SyncManager {
           this.isOnline &&
           !this.syncInProgress
         ) {
-          console.log("🔄 Background auto-sync triggered...");
           try {
             await this.pullDataFromServer();
             await this.pushDataToServer();
-            console.log("✅ Background auto-sync completed");
           } catch (error) {
-            console.warn("⚠️ Background auto-sync failed:", error);
+            window.customodoroLogger.error("SYNC_MANAGER_BACKGROUND_AUTO_SYNC_FAILED");
             // Queue for later if failed
             this.queueSync(this.getCurrentLocalData());
           }
@@ -98,7 +94,6 @@ class SyncManager {
       5 * 60 * 1000,
     ); // Every 5 minutes
 
-    console.log("🚀 Background auto-sync started (every 5 minutes)");
   }
 
   // Stop background auto-sync
@@ -106,7 +101,6 @@ class SyncManager {
     if (this.autoSyncInterval) {
       clearInterval(this.autoSyncInterval);
       this.autoSyncInterval = null;
-      console.log("⏹️ Background auto-sync stopped");
     }
   }
 
@@ -120,13 +114,11 @@ class SyncManager {
 
       // Auto-sync when coming back online
       if (window.authService?.isLoggedIn()) {
-        console.log("🌐 Device back online - triggering auto-sync...");
         setTimeout(async () => {
           try {
             await this.manualSync();
-            console.log("✅ Online auto-sync completed");
           } catch (error) {
-            console.warn("⚠️ Online auto-sync failed:", error);
+            window.customodoroLogger.error("SYNC_MANAGER_ONLINE_AUTO_SYNC_FAILED");
           }
         }, 1000); // Small delay to ensure connection is stable
       }
@@ -151,15 +143,11 @@ class SyncManager {
 
         if (timeSinceLastSync > 2 * 60 * 1000) {
           // 2 minutes
-          console.log(
-            "👀 Tab focused after 2+ minutes - triggering auto-sync...",
-          );
           setTimeout(async () => {
             try {
               await this.pullDataFromServer();
-              console.log("✅ Focus auto-sync completed");
             } catch (error) {
-              console.warn("⚠️ Focus auto-sync failed:", error);
+              window.customodoroLogger.error("SYNC_MANAGER_FOCUS_AUTO_SYNC_FAILED");
             }
           }, 500);
         }
@@ -175,7 +163,7 @@ class SyncManager {
         this.lastSyncTime = new Date(stored);
       }
     } catch (error) {
-      console.warn("Failed to load last sync time:", error);
+      window.customodoroLogger.error("SYNC_MANAGER_FAILED_TO_LOAD_LAST_SYNC_TIME");
     }
   }
 
@@ -188,7 +176,7 @@ class SyncManager {
         this.lastSyncTime.toISOString(),
       );
     } catch (error) {
-      console.warn("Failed to save last sync time:", error);
+      window.customodoroLogger.error("SYNC_MANAGER_FAILED_TO_SAVE_LAST_SYNC_TIME");
     }
   }
 
@@ -216,16 +204,9 @@ class SyncManager {
   // Perform initial sync after login
   async performInitialSync() {
     if (!window.authService || !window.authService.isLoggedIn()) {
-      console.log(
-        "SyncManager: Cannot perform initial sync - user not logged in",
-      );
       return;
     }
 
-    console.log("SyncManager: Starting initial sync...");
-    console.log(
-      "✅ Including productivity stats in streaks field for backend compatibility",
-    );
     this.notifyListeners("sync-start", { type: "initial" });
 
     try {
@@ -233,19 +214,12 @@ class SyncManager {
       const hasSignificantLocalData = this.hasSignificantLocalData(localData);
 
       if (hasSignificantLocalData) {
-        console.log(
-          "🛡️ Significant local data detected - ensuring it gets preserved",
-        );
 
         // First, push local data to server to ensure it's backed up
         try {
-          console.log(
-            "📤 Pushing local data to server first to prevent data loss...",
-          );
           await this.pushDataToServer();
-          console.log("✅ Local data successfully backed up to server");
         } catch (pushError) {
-          console.warn("⚠️ Failed to backup local data to server:", pushError);
+          window.customodoroLogger.error("SYNC_MANAGER_FAILED_TO_BACKUP_LOCAL_DATA_TO_SERVER");
           // Continue with pull, but be extra careful
         }
       }
@@ -254,55 +228,31 @@ class SyncManager {
       const hasAnyLocalData = this.hasAnyLocalUserData();
 
       if (hasAnyLocalData) {
-        console.log(
-          "🔍 Local user data detected - determining sync strategy...",
-        );
         // Check if this data belongs to current user or is contamination
         const isUserDataClean = await this.isLocalDataFromCurrentUser();
 
         if (!isUserDataClean) {
-          console.log(
-            "🚨 Cross-user data contamination detected! Clearing before sync...",
-          );
           this.clearLocalUserData();
 
           // Mark that we cleared contaminated data
-          console.log(
-            "✅ Contaminated data cleared - proceeding with clean sync",
-          );
-        } else {
-          console.log(
-            "✅ Local data belongs to current user - safe to proceed",
-          );
         }
       }
 
       // Now pull server data (but with protection against overwriting)
-      console.log("📥 Pulling data from server...");
       await this.pullDataFromServer();
-      console.log("SyncManager: Successfully pulled data from server");
 
       // Push any remaining local data that wasn't backed up yet
       if (hasSignificantLocalData) {
         try {
-          console.log("📤 Final push to ensure all local data is synced...");
           await this.pushDataToServer();
-          console.log("SyncManager: Successfully pushed final data to server");
         } catch (finalPushError) {
-          console.warn(
-            "⚠️ Final push failed, but initial sync completed:",
-            finalPushError,
-          );
+          window.customodoroLogger.error("SYNC_MANAGER_FINAL_PUSH_FAILED_BUT_INITIAL_SYNC_COMPLET");
         }
       }
 
       this.notifyListeners("sync-complete", { type: "initial" });
-      console.log("SyncManager: Initial sync completed successfully");
-      console.log(
-        "📊 Productivity stats synced successfully via streaks field workaround",
-      );
     } catch (error) {
-      console.error("Initial sync failed:", error);
+      window.customodoroLogger.error("SYNC_MANAGER_INITIAL_SYNC_FAILED");
       this.notifyListeners("sync-error", error);
 
       // If it's a network error or 400 error, queue for retry
@@ -310,7 +260,6 @@ class SyncManager {
         error.message.includes("Failed to fetch") ||
         error.message.includes("400")
       ) {
-        console.log("SyncManager: Queueing failed sync for retry");
         this.queueSync(this.getCurrentLocalData());
       }
     }
@@ -321,7 +270,6 @@ class SyncManager {
     const user = window.authService.getCurrentUser();
     if (!user) throw new Error("User not logged in");
 
-    console.log("Pulling data from server for user: [REDACTED]");
 
     const response = await fetch(
       `${this.baseURL}/api/user/${user.userId}/data`,
@@ -334,37 +282,23 @@ class SyncManager {
     const serverData = await response.json();
 
     if (serverData.data && this.hasSignificantServerData(serverData.data)) {
-      console.log("📥 Server has significant data, merging with local data");
       this.mergeServerData(serverData.data);
     } else if (serverData.data) {
-      console.log(
-        "⚠️ Server data exists but is empty/minimal - preserving local data",
-      );
       // Server has data structure but it's empty (new account)
       // Don't merge empty data over existing local data
       const localData = this.getCurrentLocalData();
       if (this.hasSignificantLocalData(localData)) {
-        console.log(
-          "🛡️ CRITICAL: Protecting existing local data from being overwritten by empty server data",
-        );
-        console.log(
-          "🛡️ Local data will be preserved and pushed to server instead",
-        );
         // Don't call mergeServerData to avoid wiping local data
         // Instead, push local data to server to populate the empty account
         try {
           await this.pushDataToServer();
-          console.log("✅ Local data successfully uploaded to server account");
         } catch (pushError) {
-          console.error("❌ Failed to backup local data to server:", pushError);
+          window.customodoroLogger.error("SYNC_MANAGER_FAILED_TO_BACKUP_LOCAL_DATA_TO_SERVER");
           throw new Error("Failed to preserve local data during sync");
         }
       } else {
-        console.log("📭 Both server and local data are empty, safe to proceed");
         this.mergeServerData(serverData.data);
       }
-    } else {
-      console.log("📭 No server data found, keeping local data intact");
     }
 
     return serverData;
@@ -381,7 +315,6 @@ class SyncManager {
       Array.isArray(serverData.sessions) &&
       serverData.sessions.length > 0
     ) {
-      console.log("✅ Server has sessions:", serverData.sessions.length);
       return true;
     }
 
@@ -391,7 +324,6 @@ class SyncManager {
       Array.isArray(serverData.tasks) &&
       serverData.tasks.length > 0
     ) {
-      console.log("✅ Server has tasks:", serverData.tasks.length);
       return true;
     }
 
@@ -401,7 +333,6 @@ class SyncManager {
       if (productivityStats && typeof productivityStats === "object") {
         const dayCount = Object.keys(productivityStats).length;
         if (dayCount > 0) {
-          console.log("✅ Server has productivity stats for", dayCount, "days");
           return true;
         }
       }
@@ -426,19 +357,16 @@ class SyncManager {
         });
 
         if (hasRealStreakData) {
-          console.log("✅ Server has streak data");
           return true;
         }
       }
     }
 
-    console.log("📭 Server data appears to be empty or insignificant");
     return false;
   }
 
   hasSignificantLocalData(localData) {
     if (!localData || typeof localData !== "object") {
-      console.log("📭 No local data structure");
       return false;
     }
 
@@ -448,7 +376,6 @@ class SyncManager {
       Array.isArray(localData.sessions) &&
       localData.sessions.length > 0
     ) {
-      console.log("✅ Local has sessions:", localData.sessions.length);
       return true;
     }
 
@@ -458,7 +385,6 @@ class SyncManager {
       Array.isArray(localData.tasks) &&
       localData.tasks.length > 0
     ) {
-      console.log("✅ Local has tasks:", localData.tasks.length);
       return true;
     }
 
@@ -469,7 +395,6 @@ class SyncManager {
     ) {
       const dayCount = Object.keys(localData.productivityStats).length;
       if (dayCount > 0) {
-        console.log("✅ Local has productivity stats for", dayCount, "days");
         return true;
       }
     }
@@ -482,12 +407,11 @@ class SyncManager {
       if (localProductivityStats) {
         const parsed = JSON.parse(localProductivityStats);
         if (parsed && Object.keys(parsed).length > 0) {
-          console.log("✅ Local has productivity stats in localStorage");
           return true;
         }
       }
     } catch (error) {
-      console.warn("Error checking localStorage productivity stats:", error);
+      window.customodoroLogger.error("SYNC_MANAGER_CHECKING_LOCALSTORAGE_PRODUCTIVITY_STATS");
     }
 
     // Check streaks
@@ -506,12 +430,10 @@ class SyncManager {
       );
 
       if (hasRealStreakData) {
-        console.log("✅ Local has streak data");
         return true;
       }
     }
 
-    console.log("📭 Local data appears to be empty or insignificant");
     return false;
   }
   async pushDataToServer() {
@@ -535,13 +457,6 @@ class SyncManager {
       streaks: streaksData,
     };
 
-    console.log("Pushing data to server for user: [REDACTED]");
-    console.log(
-      "✅ Sending only backend-accepted fields: sessions, tasks, settings, streaks",
-    );
-    console.log(
-      "✅ Productivity stats embedded in streaks.productivityStatsByDay",
-    );
 
     const response = await fetch(
       `${this.baseURL}/api/user/${user.userId}/sync`,
@@ -556,14 +471,14 @@ class SyncManager {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("Sync error response:", errorText);
-      console.error("Request failed - data redacted for security");
+      window.customodoroLogger.error("SYNC_MANAGER_SYNC_RESPONSE");
+      window.customodoroLogger.error("SYNC_MANAGER_REQUEST_FAILED_DATA_REDACTED_FOR_SECURITY");
 
       // Enhanced error analysis
       if (response.status === 400) {
-        console.error("🚨 BACKEND SCHEMA ERROR: Backend still rejecting data");
-        console.error("Current data keys:", Object.keys(cleanData));
-        console.error("This may require backend schema update");
+        window.customodoroLogger.error("SYNC_MANAGER_BACKEND_SCHEMA_BACKEND_STILL_REJECTING_DAT");
+        window.customodoroLogger.error("SYNC_MANAGER_CURRENT_DATA_KEYS");
+        window.customodoroLogger.error("SYNC_MANAGER_THIS_MAY_REQUIRE_BACKEND_SCHEMA_UPDATE");
       }
 
       throw new Error(`Failed to sync data: ${response.status} - ${errorText}`);
@@ -586,7 +501,7 @@ class SyncManager {
         data.sessions = JSON.parse(sessions);
       }
     } catch (error) {
-      console.warn("Failed to read sessions:", error);
+      window.customodoroLogger.error("SYNC_MANAGER_FAILED_TO_READ_SESSIONS");
     }
 
     // Tasks
@@ -596,7 +511,7 @@ class SyncManager {
         data.tasks = JSON.parse(tasks);
       }
     } catch (error) {
-      console.warn("Failed to read tasks:", error);
+      window.customodoroLogger.error("SYNC_MANAGER_FAILED_TO_READ_TASKS");
     }
 
     // Streaks (include basic streak data)
@@ -606,7 +521,7 @@ class SyncManager {
         data.streaks = JSON.parse(streaks);
       }
     } catch (error) {
-      console.warn("Failed to read streaks:", error);
+      window.customodoroLogger.error("SYNC_MANAGER_FAILED_TO_READ_STREAKS");
     }
 
     // Store productivity stats separately for embedding in streaks
@@ -616,7 +531,7 @@ class SyncManager {
         data.productivityStats = JSON.parse(productivityStats);
       }
     } catch (error) {
-      console.warn("Failed to read productivity stats:", error);
+      window.customodoroLogger.error("SYNC_MANAGER_FAILED_TO_READ_PRODUCTIVITY_STATS");
     }
 
     // NOTE: Deliberately NOT including 'stats' or other rejected fields
@@ -627,26 +542,16 @@ class SyncManager {
 
   // Merge server data with local data
   mergeServerData(serverData) {
-    console.log("Merging server data:", serverData);
-    console.log(
-      "✅ Merging productivity stats from streaks field for full sync functionality",
-    );
 
     // 🛡️ SAFETY CHECK: Don't merge empty data over existing data
     const protectFromEmptyMerge = (localData, serverData, dataType) => {
       if (!serverData) {
-        console.log(
-          `🛡️ Server data is null/undefined for ${dataType} - protecting local data`,
-        );
         return false; // Don't merge
       }
 
       // Handle arrays (sessions, tasks)
       if (Array.isArray(serverData) && serverData.length === 0) {
         if (localData && Array.isArray(localData) && localData.length > 0) {
-          console.log(
-            `🛡️ Protecting local ${dataType} from being overwritten by empty server array`,
-          );
           return false; // Don't merge
         }
       }
@@ -660,9 +565,6 @@ class SyncManager {
             typeof localData === "object" &&
             Object.keys(localData).length > 0
           ) {
-            console.log(
-              `🛡️ Protecting local ${dataType} from being overwritten by empty server object`,
-            );
             return false; // Don't merge
           }
         }
@@ -683,10 +585,9 @@ class SyncManager {
         ) {
           const merged = this.mergeSessions(localSessions, serverData.sessions);
           localStorage.setItem("customodoro-sessions", JSON.stringify(merged));
-          console.log("✅ Sessions merged successfully");
         }
       } catch (error) {
-        console.warn("Failed to merge sessions:", error);
+        window.customodoroLogger.error("SYNC_MANAGER_FAILED_TO_MERGE_SESSIONS");
       }
     }
 
@@ -700,10 +601,9 @@ class SyncManager {
         if (protectFromEmptyMerge(localTasks, serverData.tasks, "tasks")) {
           const merged = this.mergeTasks(localTasks, serverData.tasks);
           localStorage.setItem("customodoro-tasks", JSON.stringify(merged));
-          console.log("✅ Tasks merged successfully");
         }
       } catch (error) {
-        console.warn("Failed to merge tasks:", error);
+        window.customodoroLogger.error("SYNC_MANAGER_FAILED_TO_MERGE_TASKS");
       }
     }
 
@@ -735,31 +635,15 @@ class SyncManager {
                 "customodoroStatsByDay",
                 JSON.stringify(mergedProductivityStats),
               );
-              console.log(
-                "✅ Successfully merged productivity stats from server",
-              );
             } else if (localDayCount === 0) {
               // Both are empty - safe to merge empty
               localStorage.setItem(
                 "customodoroStatsByDay",
                 JSON.stringify(serverProductivityStats),
               );
-              console.log(
-                "✅ Initialized empty productivity stats from server",
-              );
             } else {
               // Server is empty but local has data - PROTECT LOCAL DATA
-              console.log(
-                "🛡️ CRITICAL: Protecting local productivity stats from empty server data",
-              );
-              console.log(
-                `🛡️ Local has ${localDayCount} days of data, server has ${serverDayCount} days`,
-              );
             }
-          } else {
-            console.log(
-              "🛡️ Server productivity stats are invalid - protecting local data",
-            );
           }
 
           // Remove from streaks before storing clean streaks data
@@ -791,9 +675,6 @@ class SyncManager {
             "customodoro-streaks",
             JSON.stringify(cleanStreaksData),
           );
-          console.log("✅ Streaks merged successfully");
-        } else {
-          console.log("🛡️ Protecting local streaks from empty server data");
         }
 
         // Update UI to reflect new streak data (debounced to prevent blocking)
@@ -815,14 +696,11 @@ class SyncManager {
           }, 150);
         }
       } catch (error) {
-        console.warn("Failed to merge streaks:", error);
+        window.customodoroLogger.error("SYNC_MANAGER_FAILED_TO_MERGE_STREAKS");
       }
     }
 
     // NOTE: Productivity stats now included in streaks field for backend compatibility
-    console.log(
-      "✅ Merged data from server including productivity stats via streaks field",
-    );
   } // Merge productivity stats intelligently (newer timestamps win)
   // Cap at 1440 minutes (24 hours) per day to prevent impossible values
   mergeProductivityStats(localStats, serverStats) {
@@ -862,17 +740,12 @@ class SyncManager {
 
         if (serverTimestamp > localTimestamp) {
           // Server data is newer, use it (capped)
-          console.log(`📊 Server data newer for ${dateKey}: using server data`);
           merged[dateKey] = capDayStats(serverDayStats);
         } else if (localTimestamp > serverTimestamp) {
           // Local data is newer, keep it (already capped from first pass)
-          console.log(`📊 Local data newer for ${dateKey}: keeping local data`);
           // merged[dateKey] already has capped local data
         } else {
           // Same timestamp or no timestamps - merge by taking higher values (capped)
-          console.log(
-            `📊 Same timestamp for ${dateKey}: merging by max values`,
-          );
           merged[dateKey] = {
             classic: Math.max(
               localDayStats.classic || 0,
@@ -902,7 +775,6 @@ class SyncManager {
       }
     });
 
-    console.log("✅ Productivity stats merged with conflict resolution");
     return merged;
   }
   mergeSessions(localSessions, serverSessions) {
@@ -1009,7 +881,7 @@ class SyncManager {
       await this.manualSync();
       this.syncQueue = []; // Clear queue on successful sync
     } catch (error) {
-      console.error("Failed to process sync queue:", error);
+      window.customodoroLogger.error("SYNC_MANAGER_FAILED_TO_PROCESS_SYNC_QUEUE");
     }
   }
 
@@ -1029,7 +901,7 @@ class SyncManager {
       try {
         callback(event, data);
       } catch (error) {
-        console.error("Sync listener error:", error);
+        window.customodoroLogger.error("SYNC_MANAGER_SYNC_LISTENER");
       }
     });
   }
@@ -1080,7 +952,7 @@ class SyncManager {
         isOnline: this.isOnline,
       };
     } catch (error) {
-      console.warn("Failed to get detailed sync stats:", error);
+      window.customodoroLogger.error("SYNC_MANAGER_FAILED_TO_GET_DETAILED_SYNC_STATS");
       return {
         sessionsSynced: 0,
         lastSync: this.lastSyncTime,
@@ -1168,9 +1040,6 @@ class SyncManager {
           Object.keys(localData.productivityStats).length > 0);
 
       if (hasSignificantData) {
-        console.log(
-          "🚨 Detected potential cross-user contamination: significant data exists within 30s of login",
-        );
         return false;
       }
     }
@@ -1180,7 +1049,6 @@ class SyncManager {
 
   // 🚨 SECURITY: Clear local user data to prevent contamination
   clearLocalUserData() {
-    console.log("🧹 Clearing potentially contaminated local user data...");
 
     // 🚨 COMPREHENSIVE LIST: Must match auth-service clearUserSessionData()
     const userDataKeys = [
@@ -1234,177 +1102,24 @@ class SyncManager {
     // Combine explicit keys with pattern matches
     const allKeysToRemove = [...userDataKeys, ...patternMatches];
 
-    console.log(
-      "🗑️ Keys to clear for contamination prevention:",
-      allKeysToRemove,
-    );
 
     allKeysToRemove.forEach((key) => {
       try {
         localStorage.removeItem(key);
-        console.log(`✅ Cleared: ${key}`);
       } catch (error) {
-        console.warn(`⚠️ Failed to clear ${key}:`, error);
+        window.customodoroLogger.error("SYNC_MANAGER_FAILED_TO_CLEAR_KEY");
       }
     });
 
     // 📱 MOBILE FIX: Also clear sessionStorage
     try {
-      console.log("🧹 Clearing sessionStorage for mobile compatibility...");
       sessionStorage.clear();
-      console.log("✅ SessionStorage cleared");
     } catch (error) {
-      console.warn("⚠️ Failed to clear sessionStorage:", error);
+      window.customodoroLogger.error("SYNC_MANAGER_FAILED_TO_CLEAR_SESSIONSTORAGE");
     }
 
-    console.log("🔒 Local user data cleared successfully");
   }
 }
-
-// Create global instance
-window.syncManager = new SyncManager();
-
-// 🧪 DEBUG: Global functions for testing cross-account contamination
-window.debugSyncContamination = function () {
-  console.log("\n=== 🔍 COMPREHENSIVE CONTAMINATION DEBUG ===");
-
-  // Check auth state
-  const currentUser = window.authService?.getCurrentUser();
-  console.log("🔍 SYNC CONTAMINATION DEBUG:");
-  console.log("Current User:", currentUser ? "[LOGGED IN]" : "Not logged in");
-  console.log("User ID:", currentUser?.userId ? "[REDACTED]" : "N/A");
-  console.log("Login Time:", currentUser?.loginTime ? "[REDACTED]" : "N/A");
-
-  // Check all potential contamination keys
-  const allUserDataKeys = [
-    "customodoroStatsByDay",
-    "customodoro-sessions",
-    "customodoro-tasks",
-    "customodoro-streaks",
-    "customodoro-last-sync",
-    "customodoroStats",
-    "reverseTasks",
-    "customodoro-has-used-sync",
-    "seenModalVersion",
-  ];
-
-  console.log("\n📊 CURRENT LOCALSTORAGE USER DATA:");
-  allUserDataKeys.forEach((key) => {
-    const data = localStorage.getItem(key);
-    if (data) {
-      try {
-        const parsed = JSON.parse(data);
-        const count = Array.isArray(parsed)
-          ? parsed.length
-          : typeof parsed === "object"
-            ? Object.keys(parsed).length
-            : "non-object";
-        console.log(`✅ ${key}: ${count} items`);
-      } catch {
-        console.log(`✅ ${key}: ${data.length} chars (non-JSON)`);
-      }
-    } else {
-      console.log(`❌ ${key}: empty`);
-    }
-  });
-
-  // Check pattern-based keys
-  console.log("\n🔍 PATTERN-BASED KEY SCAN:");
-  const patterns = ["customodoro-", "session-", "user-", "task-", "streak-"];
-  const allKeys = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if (key) allKeys.push(key);
-  }
-
-  patterns.forEach((pattern) => {
-    const matches = allKeys.filter((key) => key.startsWith(pattern));
-    if (matches.length > 0) {
-      console.log(`🎯 Keys starting with "${pattern}":`, matches);
-    }
-  });
-
-  // Sync manager state
-  const hasData = window.syncManager?.hasAnyLocalUserData();
-  console.log("\n🧪 CONTAMINATION ANALYSIS:");
-  console.log("Has Local Data:", hasData);
-  console.log(
-    'Data Clean Check: Use "await window.syncManager.isLocalDataFromCurrentUser()" separately',
-  );
-
-  console.log("\n💡 ACTIONS AVAILABLE:");
-  console.log("- debugClearContamination() - Clear all user data");
-  console.log("- debugTestContamination() - Simulate contamination");
-  console.log("=== END DEBUG ===\n");
-
-  return {
-    hasData,
-    currentUser,
-    allKeys: allKeys.filter((k) => patterns.some((p) => k.startsWith(p))),
-  };
-};
-
-window.debugClearContamination = function () {
-  console.log("🧹 MANUAL CONTAMINATION CLEANUP...");
-  window.syncManager?.clearLocalUserData();
-  console.log("✅ Manual cleanup complete");
-};
-
-// New: Test contamination simulation
-window.debugTestContamination = function () {
-  console.log("🧪 SIMULATING CONTAMINATION (for testing)...");
-
-  // Add fake user data to simulate contamination
-  localStorage.setItem("customodoroStats", JSON.stringify({ fake: "data" }));
-  localStorage.setItem(
-    "reverseTasks",
-    JSON.stringify([{ title: "Fake Task" }]),
-  );
-  localStorage.setItem("customodoro-has-used-sync", "true");
-
-  console.log(
-    "✅ Fake contamination data added. Run debugSyncContamination() to see it.",
-  );
-};
-
-// 📱 MOBILE FIX: Extra aggressive clearing for mobile browsers
-window.debugMobileClear = function () {
-  console.log("📱 MOBILE-SPECIFIC CONTAMINATION CLEANUP...");
-
-  // Clear localStorage
-  window.syncManager?.clearLocalUserData();
-
-  // Clear sessionStorage
-  try {
-    sessionStorage.clear();
-    console.log("✅ SessionStorage cleared");
-  } catch (e) {
-    console.warn("⚠️ SessionStorage clear failed:", e);
-  }
-
-  // Request service worker cache clear
-  if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
-    navigator.serviceWorker.controller.postMessage({
-      type: "CLEAR_USER_CACHE",
-      reason: "Mobile debug cleanup",
-    });
-    console.log("✅ Service worker cache clear requested");
-  }
-
-  // Force page reload for mobile
-  const isMobile =
-    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-      navigator.userAgent,
-    );
-  if (isMobile) {
-    console.log("📱 Mobile detected - will reload page in 2 seconds...");
-    setTimeout(() => {
-      window.location.reload(true);
-    }, 2000);
-  }
-
-  console.log("✅ Mobile cleanup complete");
-};
 
 // Create global instance
 window.syncManager = new SyncManager();

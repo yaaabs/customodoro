@@ -1,13 +1,4 @@
 // Add this at the top of your script.js (after DOM loads):
-console.debug("=== DEBUGGING CONTRIBUTION GRAPH CONNECTION ===");
-console.debug(
-  "addCustomodoroSession function exists:",
-  typeof window.addCustomodoroSession === "function",
-);
-console.debug(
-  "renderContributionGraph function exists:",
-  typeof window.renderContributionGraph === "function",
-);
 
 // DOM Elements
 const timerElement = document.getElementById("timer");
@@ -112,15 +103,11 @@ function initializeSoundSettings() {
   if (oldVolume && !localStorage.getItem("pomodoroVolume")) {
     localStorage.setItem("pomodoroVolume", oldVolume);
     localStorage.setItem("breakVolume", oldVolume);
-    console.log(
-      "Migrated old volume settings to separate Pomodoro/Break volumes",
-    );
   }
 
   if (oldAlarmSound && !localStorage.getItem("pomodoroSound")) {
     localStorage.setItem("pomodoroSound", oldAlarmSound);
     localStorage.setItem("breakSound", "bell.mp3"); // Default different sound for breaks
-    console.log("Migrated old alarm sound to separate Pomodoro/Break sounds");
   }
 
   // Get settings from separate localStorage keys
@@ -150,14 +137,6 @@ function initializeSoundSettings() {
   sounds.pomodoroComplete.volume = alarmEnabled ? pomodoroVolume : 0;
   sounds.breakComplete.volume = alarmEnabled ? breakVolume : 0;
 
-  console.log(`Sound settings initialized for Classic Timer:`, {
-    pomodoroVolume: pomodoroVolume,
-    breakVolume: breakVolume,
-    soundEffectsEnabled: soundEffectsEnabled,
-    alarmEnabled: alarmEnabled,
-    pomodoroSound: selectedPomodoroSound,
-    breakSound: selectedBreakSound,
-  });
 }
 
 // NEW: Function to specifically update the pomodoro alarm sound
@@ -170,7 +149,6 @@ function updatePomodoroAlarmSound(soundFileName) {
   const alarmEnabled = localStorage.getItem("alarm") !== "false";
   sounds.pomodoroComplete.volume = alarmEnabled ? volume : 0;
 
-  console.log(`Updated pomodoro alarm sound to: ${soundFileName}`);
 }
 
 // NEW: Function to specifically update the break alarm sound
@@ -183,7 +161,6 @@ function updateBreakAlarmSound(soundFileName) {
   const alarmEnabled = localStorage.getItem("alarm") !== "false";
   sounds.breakComplete.volume = alarmEnabled ? volume : 0;
 
-  console.log(`Updated break alarm sound to: ${soundFileName}`);
 }
 
 // Update sound volumes based on settings
@@ -215,14 +192,6 @@ function updateSoundVolumes() {
   sounds.pomodoroComplete.volume = alarmEnabled ? pomodoroVolume : 0;
   sounds.breakComplete.volume = alarmEnabled ? breakVolume : 0;
 
-  console.log("Classic Timer: Sound volumes updated:", {
-    pomodoroVolume: pomodoroVolume,
-    breakVolume: breakVolume,
-    soundEffectsEnabled: soundEffectsEnabled,
-    alarmEnabled: alarmEnabled,
-    pomodoroSound: selectedPomodoroSound,
-    breakSound: selectedBreakSound,
-  });
 }
 
 // Play sound with error handling and respect settings
@@ -234,13 +203,11 @@ function playSound(soundName) {
   if (soundName === "complete") {
     // For alarm sound
     if (localStorage.getItem("alarm") === "false") {
-      console.log("Alarm sounds disabled in settings");
       return;
     }
   } else {
     // For all other UI sounds
     if (localStorage.getItem("soundEffects") === "false") {
-      console.log("Sound effects disabled in settings");
       return;
     }
   }
@@ -253,7 +220,7 @@ function playSound(soundName) {
     if (soundName === "click") {
       const clone = sound.cloneNode();
       clone.volume = volume * 0.5;
-      clone.play().catch((err) => console.log("Audio playback disabled"));
+      clone.play().catch((err) => void 0);
     } else if (soundName === "complete") {
       // Make sure we're using the latest selected alarm sound
       const selectedAlarmSound =
@@ -263,15 +230,15 @@ function playSound(soundName) {
       }
       sound.volume = volume;
       sound.currentTime = 0;
-      sound.play().catch((err) => console.log("Audio playback disabled"));
+      sound.play().catch((err) => void 0);
     } else {
       // For other sounds
       sound.volume = volume * 0.6;
       sound.currentTime = 0;
-      sound.play().catch((err) => console.log("Audio playback disabled"));
+      sound.play().catch((err) => void 0);
     }
   } catch (error) {
-    console.error("Error playing sound:", error);
+    window.customodoroLogger.error("SCRIPT_PLAYING_SOUND");
   }
 }
 
@@ -295,10 +262,6 @@ function initializeTimerSoundSettings() {
     sound.loop = true;
   });
 
-  console.log(`Timer sound settings initialized:`, {
-    timerSoundType: timerSoundType,
-    volume: volume,
-  });
 }
 
 // Function to update timer sound type and volume
@@ -322,10 +285,6 @@ function updateTimerSound() {
     playTimerSound();
   }
 
-  console.log(`Timer sound updated:`, {
-    timerSoundType: timerSoundType,
-    volume: volume,
-  });
 }
 
 // Function to just update timer sound volume
@@ -344,7 +303,6 @@ function updateTimerSoundVolume() {
     sound.volume = volume;
   });
 
-  console.log(`Timer sound volume updated: ${volume}`);
 }
 
 // Play the selected timer sound
@@ -388,11 +346,9 @@ function playTimerSound() {
   // Start playing sound with error handling
   currentTimerSound.currentTime = 0;
   currentTimerSound.play().catch((err) => {
-    console.log("Timer sound playback error:", err);
     currentTimerSound = null;
   });
 
-  console.log(`Timer sound started: ${timerSoundType} at volume ${volume}`);
 }
 
 // Stop the currently playing timer sound
@@ -691,7 +647,6 @@ window.setBurnupTrackerEnabled = setBurnupTrackerEnabled;
 function updateFavicon(status) {
   const favicon = document.getElementById("favicon");
   if (!favicon) {
-    console.warn("Favicon element not found");
     return;
   }
 
@@ -855,15 +810,10 @@ function handleTimerCompletion() {
     completedPomodoros++;
     updateStats();
 
-    console.log("🎯 Pomodoro completed! Current mode:", currentMode);
-    console.log("🕐 Initial seconds:", initialSeconds);
-    console.log("⏱️ Current seconds remaining:", currentSeconds);
 
     const sessionMinutes = Math.floor(initialSeconds / 60);
-    console.log("📊 Session minutes to add:", sessionMinutes);
 
     if (typeof window.addCustomodoroSession === "function") {
-      console.log("✅ Adding session to contribution graph...");
 
       // MIDNIGHT: Use midnight splitter if available, otherwise fall back to standard
       if (typeof window.recordSessionWithMidnightSplit === "function") {
@@ -872,38 +822,30 @@ function handleTimerCompletion() {
         window.addCustomodoroSession("classic", sessionMinutes);
       }
 
-      console.log("✅ Session added successfully!");
 
       // Also manually trigger a re-render
       if (typeof window.renderContributionGraph === "function") {
         window.renderContributionGraph();
-        console.log("✅ Graph re-rendered!");
       }
 
       // Trigger automatic sync if user is logged in
       if (window.syncManager && window.authService?.isLoggedIn()) {
-        console.log("🔄 Triggering automatic sync after session...");
         try {
           // Use queueSync for consistency with other parts of the app
           window.syncManager.queueSync(
             window.syncManager.getCurrentLocalData(),
           );
-          console.log("✅ Auto-sync queued after session");
 
           // Update sync UI stats
           if (window.syncUI) {
             window.syncUI.updateStats();
           }
         } catch (error) {
-          console.warn("⚠️ Auto-sync failed after session:", error);
+          window.customodoroLogger.error("SCRIPT_AUTO_SYNC_FAILED_AFTER_SESSION");
         }
       }
     } else {
-      console.error("❌ addCustomodoroSession function not found!");
-      console.log(
-        "Available window functions:",
-        Object.keys(window).filter((key) => key.includes("custom")),
-      );
+      window.customodoroLogger.error("SCRIPT_ADDCUSTOMODOROSESSION_FUNCTION_NOT_FOUND");
     }
   }
 
@@ -1080,18 +1022,9 @@ function switchMode(mode, autoStart = false) {
         ? localStorage.getItem("autoPomodoro") === "true"
         : localStorage.getItem("autoBreak") === "true";
 
-    console.log("🔄 Auto-start check:", {
-      mode,
-      shouldAutoStart,
-      autoPomodoro: localStorage.getItem("autoPomodoro"),
-      autoBreak: localStorage.getItem("autoBreak"),
-    });
 
     if (shouldAutoStart) {
-      console.log("✅ Auto-starting timer for mode:", mode);
       setTimeout(toggleTimer, 500);
-    } else {
-      console.log("⏸️ Auto-start disabled for mode:", mode);
     }
   }
 }
@@ -1737,12 +1670,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 100); // Small delay to ensure DOM is fully ready
   }
 
-  console.log("Timer initialized with:", {
-    pomodoro: pomodoroTime,
-    short: shortBreakTime,
-    long: longBreakTime,
-    sessions: maxSessions,
-  });
 });
 
 // Lazy load images
@@ -1798,7 +1725,6 @@ function getAllAvailableDates() {
 // Utility: get last 12 months of dates, PH timezone
 function getDatesForHeatmap() {
   const todayPH = getPHToday();
-  console.log("Today PH:", formatDateKey(todayPH)); // Debug log
 
   const dates = [];
   let d = new Date(todayPH);
@@ -2060,12 +1986,9 @@ let showAllData = false;
 let selectedRange = showAllData ? "all" : "last12";
 
 function renderContributionGraph() {
-  const startTime = performance.now();
-  console.debug("🎨 Starting contribution graph render...");
   const container = document.getElementById("contribution-graph");
 
   const stats = getStats();
-  console.debug("Current stats:", stats); // Debug log
 
   let dates;
   if (selectedRange === "all") {
@@ -2085,16 +2008,6 @@ function renderContributionGraph() {
   }
 
   // Performance warning for large datasets
-  const statsCount = Object.keys(stats).length;
-  const datesCount = dates.length;
-
-  if (statsCount > 100 || datesCount > 365) {
-    console.warn(
-      `⚠️ Large dataset detected: ${statsCount} stat days, ${datesCount} graph days`,
-    );
-    console.warn("This may cause performance issues - consider optimizing");
-  }
-
   // STREAK! Duolingo-style streak calculation
   function calculateCurrentStreak() {
     const stats = getStats();
@@ -2109,41 +2022,26 @@ function renderContributionGraph() {
     let streak = 0;
     let d = new Date(today);
 
-    console.log("🔥 Calculating Duolingo streak from:", formatDateKey(today));
-    console.log("📊 Available stats keys:", Object.keys(stats));
-    console.log("📊 Raw stats data:", stats);
 
     // If today has activity, count today and go backward
     if (hasActivity(d)) {
-      console.log("✅ Today has activity, counting backward...");
       while (hasActivity(d)) {
         streak++;
-        console.log(
-          `  📈 Day ${formatDateKey(d)}: ${stats[formatDateKey(d)]?.total_minutes || 0} mins - Streak: ${streak}`,
-        );
         d.setDate(d.getDate() - 1);
       }
-      console.log("🎯 Final Duolingo streak:", streak);
       return streak;
     } else {
-      console.log("❌ Today has no activity, checking yesterday...");
       // Today has no activity, check if yesterday continues the streak
       d.setDate(d.getDate() - 1);
       if (hasActivity(d)) {
-        console.log("✅ Yesterday has activity, counting backward...");
         // Count streak up to yesterday
         while (hasActivity(d)) {
           streak++;
-          console.log(
-            `  📈 Day ${formatDateKey(d)}: ${stats[formatDateKey(d)]?.total_minutes || 0} mins - Streak: ${streak}`,
-          );
           d.setDate(d.getDate() - 1);
         }
-        console.log("🎯 Final Duolingo streak:", streak);
         return streak;
       } else {
         // Streak is broken
-        console.log("💥 No recent activity found");
         return 0;
       }
     }
@@ -2186,9 +2084,6 @@ function renderContributionGraph() {
     if (window.authService) {
       window.authService.addEventListener((event, data) => {
         if (event === "login" || event === "restore") {
-          console.log(
-            "🔥 Auth event detected, updating streak display in 500ms",
-          );
           setTimeout(() => {
             if (typeof renderStreakDisplay === "function") {
               renderStreakDisplay();
@@ -2202,7 +2097,6 @@ function renderContributionGraph() {
     if (window.syncManager) {
       window.syncManager.addEventListener((event, data) => {
         if (event === "sync-complete" || event === "initial-sync-complete") {
-          console.log("🔥 Sync event detected, updating streak display");
           setTimeout(() => {
             if (typeof renderStreakDisplay === "function") {
               renderStreakDisplay();
@@ -2221,10 +2115,8 @@ function renderContributionGraph() {
     maxMinutes = Math.max(maxMinutes, dayStats.total_minutes || 0);
   });
 
-  console.debug("Max minutes for scaling:", maxMinutes); // Debug log
   // Convert max minutes to Focus Points for color scaling (ensure at least 1 to show small activity)
   const maxPoints = Math.max(1, Math.ceil(maxMinutes / 5));
-  console.debug("Max focus points for scaling:", maxPoints);
 
   // Arrange dates into weeks (columns, oldest to newest, left to right)
   const weeks = [];
@@ -2366,9 +2258,6 @@ function renderContributionGraph() {
       // Store the original date object for tooltip
       dateMap.set(key, date);
 
-      console.debug(
-        `Date: ${key}, Minutes: ${minutes}, Points: ${points}, Color: ${color}`,
-      );
 
       const cellX = leftPad + x * (cellSize + cellGap);
       const cellY = topPad + y * (cellSize + cellGap);
@@ -2384,16 +2273,6 @@ function renderContributionGraph() {
   const svg = svgParts.join("");
 
   // Performance logging
-  const endTime = performance.now();
-  const duration = endTime - startTime;
-  console.debug(`🎨 Contribution graph rendered in ${duration.toFixed(2)}ms`);
-
-  if (duration > 50) {
-    console.warn(
-      `⚠️ Slow rendering detected: ${duration.toFixed(2)}ms (threshold: 50ms)`,
-    );
-  }
-
   // Legend (GitHub style with theme-appropriate empty color)
   const legend = `
     <div style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;color:${labelColor};">
@@ -2633,9 +2512,6 @@ function renderContributionGraph() {
           const month = dateObj.toLocaleString("en-US", { month: "long" });
           const dateStrWithSuffix = `${month} ${day}${getOrdinalSuffix(day)}`;
 
-          console.debug(
-            `Tooltip: Key=${dateKey}, Date=${dateObj}, Display=${dateStrWithSuffix}`,
-          ); // Debug
 
           // ...inside mouseenter event...
           const classicSessions = parseInt(d.classic) || 0;
@@ -2971,29 +2847,3 @@ window.renderContributionGraph = renderContributionGraph;
 window.addCustomodoroSession = function (type, minutes) {
   return window.timezoneManager.addCustomodoroSession(type, minutes);
 };
-
-// TESTING FUNCTION: Add test data for today
-window.addTestSession = function () {
-  window.addCustomodoroSession("classic", 1);
-  console.log("Added 1 minute test session for today");
-};
-
-// Add this anywhere in your script.js:
-window.testContributionConnection = function () {
-  console.log("🧪 Testing contribution connection...");
-  if (typeof window.addCustomodoroSession === "function") {
-    window.addCustomodoroSession("classic", 1);
-    console.log("✅ Test session added!");
-  } else {
-    console.error("❌ Function not available!");
-  }
-};
-
-// 4. LOAD ORDER CHECK - Add this to see script loading order:
-document.addEventListener("DOMContentLoaded", function () {
-  console.log("📄 Script.js DOM loaded");
-  console.log("🔗 Contribution functions available:", {
-    addSession: typeof window.addCustomodoroSession === "function",
-    renderGraph: typeof window.renderContributionGraph === "function",
-  });
-});

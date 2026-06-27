@@ -206,7 +206,6 @@
         ) {
           window.miniMusicPlayer.open();
         } else {
-          console.warn("Mini music player not available");
         }
 
         // Close the menu after action
@@ -224,7 +223,6 @@
         ) {
           window.cacheManager.clearCacheAndReload();
         } else {
-          console.warn("Cache manager not available");
           // Fallback - reload the page
           window.location.reload(true);
         }
@@ -260,11 +258,9 @@
               syncNavItem.classList.add("active");
               syncSection.classList.add("active");
 
-              console.log("Radial menu: Navigated to sync section");
             }
           }, 100);
         } else {
-          console.warn("Settings button not found");
         }
 
         // Close the menu after action

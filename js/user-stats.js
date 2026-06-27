@@ -3,8 +3,6 @@
 
 class UserStatsManager {
   constructor() {
-    this.debugMode = localStorage.getItem("userStatsDebug") === "true";
-
     this.initializeElements();
 
     // Setup event listeners first
@@ -39,8 +37,6 @@ class UserStatsManager {
 
     // Listen for auth state changes to update username
     document.addEventListener("authStateChanged", (event) => {
-      if (this.debugMode)
-        console.log("User Stats: Auth state changed:", event.detail);
       setTimeout(() => {
         this.updateUserTitle();
         this.updateStats(); // Full stats refresh on auth change
@@ -66,24 +62,17 @@ class UserStatsManager {
   getUserName() {
     // Check if user is logged in and get their actual name
     const isLoggedIn = window.authService && window.authService.isLoggedIn();
-    if (this.debugMode)
-      console.log("User Stats: Checking auth state - isLoggedIn:", isLoggedIn);
-
     if (isLoggedIn) {
       const headerUserName = document.getElementById("header-user-name");
       const userNameText = headerUserName
         ? headerUserName.textContent.trim()
         : "";
-      if (this.debugMode)
-        console.log("User Stats: Header user name:", userNameText);
-
       if (headerUserName && userNameText && userNameText !== "User") {
         return userNameText;
       }
     }
 
     // Fallback to "User" if not logged in or no name available
-    if (this.debugMode) console.log('User Stats: Using fallback name "User"');
     return "User";
   }
 
@@ -99,16 +88,10 @@ class UserStatsManager {
         const possessive = endsWithS ? `${userName}'` : `${userName}'s`;
         const newTitle = `📊 ${possessive} Stats`;
         this.elements.title.textContent = newTitle;
-        if (this.debugMode)
-          console.log("User Stats: Updated title to personalized:", newTitle);
       } else {
         const newTitle = `User's Stats`;
         this.elements.title.textContent = newTitle;
-        if (this.debugMode)
-          console.log("User Stats: Updated title to generic:", newTitle);
       }
-    } else {
-      console.warn("User Stats: Title element not found");
     }
   }
 
@@ -120,7 +103,7 @@ class UserStatsManager {
         return JSON.parse(statsData);
       }
     } catch (e) {
-      console.warn("Failed to parse customodoroStatsByDay:", e);
+      window.customodoroLogger.error("USER_STATS_FAILED_TO_PARSE_CUSTOMODOROSTATSBYDAY");
     }
 
     return {};
@@ -320,17 +303,8 @@ class UserStatsManager {
           reversePomodoros.toString();
       }
 
-      console.log("User stats updated:", {
-        userName: this.getUserName(),
-        isLoggedIn: window.authService && window.authService.isLoggedIn(),
-        totalFocusMinutes,
-        totalSessions,
-        classicPomodoros,
-        reversePomodoros,
-        mostProductiveDay,
-      });
     } catch (error) {
-      console.error("Error updating user stats:", error);
+      window.customodoroLogger.error("USER_STATS_UPDATING_USER_STATS");
     }
   }
 
@@ -363,92 +337,4 @@ function updateUserStats() {
 // Expose utility function globally
 if (typeof window !== "undefined") {
   window.updateUserStats = updateUserStats;
-
-  // Debug function to test authentication state
-  window.debugUserStats = function () {
-    console.log("=== USER STATS DEBUG ===");
-    console.log("Auth Service exists:", !!window.authService);
-    console.log(
-      "Is Logged In:",
-      window.authService && window.authService.isLoggedIn(),
-    );
-
-    const headerUserName = document.getElementById("header-user-name");
-    console.log("Header element exists:", !!headerUserName);
-    console.log(
-      "Header user name:",
-      headerUserName ? headerUserName.textContent.trim() : "N/A",
-    );
-
-    if (window.userStatsManager) {
-      console.log(
-        "Current user name from getUserName():",
-        window.userStatsManager.getUserName(),
-      );
-      window.userStatsManager.updateUserTitle();
-    }
-    console.log("=========================");
-  };
-
-  // Test function to simulate user login
-  window.simulateUserLogin = function (username = "John Doe") {
-    console.log("=== SIMULATING USER LOGIN ===");
-
-    // Update the header user name element
-    const headerUserName = document.getElementById("header-user-name");
-    if (headerUserName) {
-      headerUserName.textContent = username;
-      console.log("Updated header user name to:", username);
-    }
-
-    // Dispatch auth state changed event
-    document.dispatchEvent(
-      new CustomEvent("authStateChanged", {
-        detail: {
-          isLoggedIn: true,
-          user: {
-            username: username,
-            email: username.toLowerCase().replace(" ", ".") + "@example.com",
-          },
-        },
-      }),
-    );
-
-    console.log("Dispatched authStateChanged event");
-    console.log("===============================");
-  };
-
-  // Test function to simulate user logout
-  window.simulateUserLogout = function () {
-    console.log("=== SIMULATING USER LOGOUT ===");
-
-    // Reset the header user name element
-    const headerUserName = document.getElementById("header-user-name");
-    if (headerUserName) {
-      headerUserName.textContent = "User";
-      console.log("Reset header user name to: User");
-    }
-
-    // Dispatch auth state changed event
-    document.dispatchEvent(
-      new CustomEvent("authStateChanged", {
-        detail: {
-          isLoggedIn: false,
-          user: null,
-        },
-      }),
-    );
-
-    console.log("Dispatched authStateChanged event");
-    console.log("================================");
-  };
-
-  // Enable/disable debug mode
-  window.toggleUserStatsDebug = function (enable = true) {
-    localStorage.setItem("userStatsDebug", enable.toString());
-    if (window.userStatsManager) {
-      window.userStatsManager.debugMode = enable;
-    }
-    console.log("User Stats Debug Mode:", enable ? "ENABLED" : "DISABLED");
-  };
 }

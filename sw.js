@@ -1,5 +1,20 @@
-const CACHE_NAME = "customodoro-static-v7.4.13"; // Bump to v7.4.13
+const CACHE_NAME = "customodoro-static-v7.4.14"; // Bump to v7.4.14
 const ASSETS_CACHE = "customodoro-assets-v6.2.2"; // Bump to v6.2.2
+const swLogger = (() => {
+  const nativeError = console.error.bind(console);
+  const emittedErrors = new Set();
+  return Object.freeze({
+    error(code) {
+      if (
+        /^[A-Z][A-Z0-9_]{2,63}$/.test(code) &&
+        !emittedErrors.has(code)
+      ) {
+        emittedErrors.add(code);
+        nativeError(`[Customodoro SW] ${code}`);
+      }
+    },
+  });
+})();
 const urlsToCache = [
   // ═══════════════════════════════════════════════════════════════════
   // HTML Pages
@@ -35,6 +50,7 @@ const urlsToCache = [
   // ═══════════════════════════════════════════════════════════════════
   // JavaScript Files (All core functionality)
   // ═══════════════════════════════════════════════════════════════════
+  "/js/app-logger.js",
   "/js/script.js",
   "/js/reversePomodoro.js",
   "/js/offline-sync.js",
@@ -76,7 +92,6 @@ let isFirstInstall = false;
 
 // Install: cache only the HTML essentials
 self.addEventListener("install", (event) => {
-  console.log("🔧 Service Worker v7.4.12 installing...");
 
   // Check if this is a first install
   event.waitUntil(
@@ -84,20 +99,17 @@ self.addEventListener("install", (event) => {
       .keys()
       .then((cacheNames) => {
         isFirstInstall = cacheNames.length === 0;
-        console.log("📦 Existing caches:", cacheNames);
         return caches.open(CACHE_NAME);
       })
       .then(async (cache) => {
         try {
           await cache.addAll(urlsToCache);
-          console.log("✅ HTML cached successfully in", CACHE_NAME);
         } catch (err) {
-          console.warn("⚠️ Failed to cache core HTML", err);
+          swLogger.error("SW_FAILED_TO_CACHE_CORE_HTML");
         }
       })
       .then(() => {
         // Force skip waiting to activate immediately - AGGRESSIVE UPDATE
-        console.log("⚡ Force skipping waiting...");
         return self.skipWaiting();
       }),
   );
@@ -105,7 +117,6 @@ self.addEventListener("install", (event) => {
 
 // Activate: clean up old caches and notify clients
 self.addEventListener("activate", (event) => {
-  console.log("🚀 Service Worker v7.4.12 activating...");
 
   event.waitUntil(
     // Clean up old caches
@@ -116,35 +127,28 @@ self.addEventListener("activate", (event) => {
           (key) => key !== CACHE_NAME && key !== ASSETS_CACHE,
         );
 
-        console.log("🗑️ Old caches to delete:", oldCaches);
 
         return Promise.all(
           oldCaches.map((key) => {
-            console.log("🗑️ Deleting old cache:", key);
             return caches.delete(key);
           }),
         );
       })
       .then(() => {
-        console.log("✅ Activated and old caches cleared");
 
         // Always notify about updates (removed isFirstInstall check for aggressive updates)
         return self.clients.matchAll().then((clients) => {
-          console.log("👥 Found clients:", clients.length);
           clients.forEach((client) => {
-            console.log("📤 Sending immediate update notification to client");
             client.postMessage({
               type: "NEW_VERSION_AVAILABLE",
               message: "A new version is available",
               forceUpdate: true, // Add flag for immediate updates
             });
           });
-          console.log("� Notified all clients about update");
         });
       })
       .then(() => {
         // Force claim all clients immediately
-        console.log("🎯 Taking control of all clients");
         return self.clients.claim();
       }),
   );
@@ -153,7 +157,6 @@ self.addEventListener("activate", (event) => {
 // Handle messages from main thread
 self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "HARD_REFRESH") {
-    console.log("💥 Hard refresh requested");
 
     // Clear all caches for hard refresh
     event.waitUntil(
@@ -162,7 +165,6 @@ self.addEventListener("message", (event) => {
         .then((cacheNames) => {
           return Promise.all(
             cacheNames.map((cacheName) => {
-              console.log("🗑️ Deleting cache:", cacheName);
               return caches.delete(cacheName);
             }),
           );
@@ -183,7 +185,6 @@ self.addEventListener("message", (event) => {
 
   // 📱 MOBILE FIX: Handle user cache clearing for logout
   if (event.data && event.data.type === "CLEAR_USER_CACHE") {
-    console.log("🧹 User cache clear requested (mobile logout)");
 
     // Clear caches that might contain user-specific data
     event.waitUntil(
@@ -198,11 +199,9 @@ self.addEventListener("message", (event) => {
               name.includes("data"),
           );
 
-          console.log("🗑️ Clearing user-specific caches:", userCaches);
 
           return Promise.all(
             userCaches.map((cacheName) => {
-              console.log("🗑️ Deleting user cache:", cacheName);
               return caches.delete(cacheName);
             }),
           );
@@ -223,7 +222,6 @@ self.addEventListener("message", (event) => {
 
   // Handle skip waiting message
   if (event.data && event.data.type === "SKIP_WAITING") {
-    console.log("⚡ Skip waiting requested");
     self.skipWaiting();
   }
 });

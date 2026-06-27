@@ -1638,7 +1638,7 @@
         });
       }
     } catch (focusErr) {
-      console.warn("Failed to compute Focus Points badge:", focusErr);
+      window.customodoroLogger.error("DATABASE_ACHIEVEMENTS_FAILED_TO_COMPUTE_FOCUS_POINTS_BADGE");
     }
 
     // Render badges (monthly first, then streaks sorted ascending)

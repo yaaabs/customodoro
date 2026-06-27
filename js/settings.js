@@ -104,7 +104,7 @@
         window.bgmPlayer.saveState();
       }
     } catch (error) {
-      console.error("Error saving BGM state:", error);
+      window.customodoroLogger.error("SETTINGS_SAVING_BGM_STATE");
     }
 
     // Always close the modal, even if there was an error
@@ -193,7 +193,7 @@
       closeSettings();
       showToast("Settings saved successfully!");
     } catch (error) {
-      console.error("Error saving settings:", error);
+      window.customodoroLogger.error("SETTINGS_SAVING_SETTINGS");
       // Make sure modal closes even if there's an error
       settingsModal.classList.remove("show");
       showToast("There was an error saving settings.");
@@ -426,7 +426,6 @@
           "--color-theme-bg",
           colorTheme,
         );
-        console.log("Color theme applied:", colorTheme);
 
         // Force theme-manager to update the color theme visibility
         if (window.colorTheme && window.colorTheme.updateColorThemeVisibility) {
@@ -443,7 +442,6 @@
           defaultColor,
         );
         localStorage.setItem("colorThemeBackground", defaultColor);
-        console.log("Default color theme applied:", defaultColor);
 
         // Force theme-manager to update the color theme visibility
         if (window.colorTheme && window.colorTheme.updateColorThemeVisibility) {
@@ -466,7 +464,7 @@
       } else {
         // No custom theme saved, fallback to light theme
         document.body.classList.add("theme-light");
-        console.error("No custom theme found, falling back to light theme");
+        window.customodoroLogger.error("SETTINGS_NO_CUSTOM_THEME_FOUND_FALLING_BACK_TO_LIGH");
 
         // Update the selector to match actual theme
         const themeSelector = document.getElementById("theme-selector");
@@ -503,13 +501,12 @@
         document.body.classList.add("theme-yourname");
         // Hide loading indicator
         if (toast) toast.classList.remove("show");
-        console.log("Nature theme image loaded successfully");
       };
 
       // If image fails to load, fall back to light theme and show error
       preloadImg.onerror = function () {
         document.body.classList.add("theme-light");
-        console.error("Failed to load yourname theme image");
+        window.customodoroLogger.error("SETTINGS_FAILED_TO_LOAD_YOURNAME_THEME_IMAGE");
         // Show error message
         if (toast) {
           toast.textContent =
@@ -540,13 +537,12 @@
         document.body.classList.add("theme-rain");
         // Hide loading indicator
         if (toast) toast.classList.remove("show");
-        console.log("Rain theme image loaded successfully");
       };
 
       // If image fails to load, fall back to light theme and show error
       preloadImg.onerror = function () {
         document.body.classList.add("theme-light");
-        console.error("Failed to load rain theme image");
+        window.customodoroLogger.error("SETTINGS_FAILED_TO_LOAD_RAIN_THEME_IMAGE");
         // Show error message
         if (toast) {
           toast.textContent =
@@ -623,10 +619,6 @@
       localStorage.setItem("autoPomodoro", autoPomoToggle.checked);
     }
 
-    console.log("Auto-start settings saved (shared):", {
-      autoBreak: autoBreakToggle ? autoBreakToggle.checked : "N/A",
-      autoPomodoro: autoPomoToggle ? autoPomoToggle.checked : "N/A",
-    });
   }
 
   // Load Auto Start Settings from shared keys
@@ -643,10 +635,6 @@
       autoPomoToggle.checked = localStorage.getItem("autoPomodoro") !== "false";
     }
 
-    console.log("Auto-start settings loaded (shared):", {
-      autoBreak: autoBreakToggle ? autoBreakToggle.checked : "N/A",
-      autoPomodoro: autoPomoToggle ? autoPomoToggle.checked : "N/A",
-    });
   }
 
   function saveLockedInModeSettings() {
@@ -881,12 +869,6 @@
     const newSessionsCount =
       parseInt(localStorage.getItem("sessionsCount")) || 4;
 
-    console.log("Applying new settings:", {
-      pomodoro: newPomodoroTime,
-      short: newShortBreakTime,
-      long: newLongBreakTime,
-      sessions: newSessionsCount,
-    });
 
     // Update global variables - these must be updated for any mode
     window.pomodoroTime = newPomodoroTime;
@@ -1017,12 +999,6 @@
     localStorage.setItem("longBreakTime", longBreakTime);
     localStorage.setItem("sessionsCount", sessionsCount);
 
-    console.log("Saved settings:", {
-      pomodoro: pomodoroTime,
-      short: shortBreakTime,
-      long: longBreakTime,
-      sessions: sessionsCount,
-    });
   }
 
   // Load Pomodoro settings
@@ -1110,7 +1086,7 @@
     );
 
     if (!soundEffectsToggle || !alarmToggle) {
-      console.error("Sound setting elements not found");
+      window.customodoroLogger.error("SETTINGS_SOUND_SETTING_ELEMENTS_NOT_FOUND");
       return;
     }
 
@@ -1143,20 +1119,6 @@
       localStorage.setItem("timerSoundVolume", timerSoundVolumeSlider.value);
     }
 
-    console.log(`Sound settings saved (separate):`, {
-      pomodoroVolume: pomodoroVolumeSlider ? pomodoroVolumeSlider.value : "N/A",
-      breakVolume: breakVolumeSlider ? breakVolumeSlider.value : "N/A",
-      soundEffects: soundEffectsToggle.checked,
-      alarm: alarmToggle.checked,
-      pomodoroSound: pomodoroSoundSelector
-        ? pomodoroSoundSelector.value
-        : "N/A",
-      breakSound: breakSoundSelector ? breakSoundSelector.value : "N/A",
-      timerSound: timerSoundSelector ? timerSoundSelector.value : "N/A",
-      timerSoundVolume: timerSoundVolumeSlider
-        ? timerSoundVolumeSlider.value
-        : "N/A",
-    });
 
     // Update sound volumes immediately
     if (typeof window.updateSoundVolumes === "function") {
@@ -1180,27 +1142,19 @@
     if (oldVolume && !localStorage.getItem("pomodoroVolume")) {
       localStorage.setItem("pomodoroVolume", oldVolume);
       localStorage.setItem("breakVolume", oldVolume);
-      console.log(
-        "Settings: Migrated old volume settings to separate Pomodoro/Break volumes",
-      );
     } else if (!localStorage.getItem("pomodoroVolume")) {
       // Set defaults if no migration is needed
       localStorage.setItem("pomodoroVolume", "60");
       localStorage.setItem("breakVolume", "60");
-      console.log("Settings: Set default Pomodoro/Break volumes to 60%");
     }
 
     if (oldAlarmSound && !localStorage.getItem("pomodoroSound")) {
       localStorage.setItem("pomodoroSound", oldAlarmSound);
       localStorage.setItem("breakSound", "bell.mp3"); // Default different sound for breaks
-      console.log(
-        "Settings: Migrated old alarm sound to separate Pomodoro/Break sounds",
-      );
     } else if (!localStorage.getItem("pomodoroSound")) {
       // Set defaults if no migration is needed
       localStorage.setItem("pomodoroSound", "bell.mp3");
       localStorage.setItem("breakSound", "bell.mp3");
-      console.log("Settings: Set default Pomodoro/Break sounds to bell.mp3");
     }
 
     const pomodoroVolumeSlider = document.getElementById(
@@ -1282,20 +1236,6 @@
         (localStorage.getItem("timerSoundVolume") || 60) + "%";
     }
 
-    console.log(`Sound settings loaded (separate):`, {
-      pomodoroVolume: pomodoroVolumeSlider ? pomodoroVolumeSlider.value : "N/A",
-      breakVolume: breakVolumeSlider ? breakVolumeSlider.value : "N/A",
-      soundEffects: soundEffectsEnabled,
-      alarm: alarmEnabled,
-      pomodoroSound: pomodoroSoundSelector
-        ? pomodoroSoundSelector.value
-        : "N/A",
-      breakSound: breakSoundSelector ? breakSoundSelector.value : "N/A",
-      timerSound: timerSoundSelector ? timerSoundSelector.value : "N/A",
-      timerSoundVolume: timerSoundVolumeSlider
-        ? timerSoundVolumeSlider.value
-        : "N/A",
-    });
 
     // Apply settings immediately after loading
     if (typeof window.updateSoundVolumes === "function") {
@@ -1357,21 +1297,6 @@
         window.updateTimerSound();
       }
 
-      console.log(`Sounds updated directly with separate settings:`, {
-        pomodoroSound: selectedPomodoroSound,
-        breakSound: selectedBreakSound,
-        pomodoroVolume: pomodoroVolume,
-        breakVolume: breakVolume,
-        clickVolume: window.sounds.click ? window.sounds.click.volume : "N/A",
-        startVolume: window.sounds.start ? window.sounds.start.volume : "N/A",
-        pauseVolume: window.sounds.pause ? window.sounds.pause.volume : "N/A",
-        pomodoroCompleteVolume: window.sounds.pomodoroComplete
-          ? window.sounds.pomodoroComplete.volume
-          : "N/A",
-        breakCompleteVolume: window.sounds.breakComplete
-          ? window.sounds.breakComplete.volume
-          : "N/A",
-      });
     }
   }
 
@@ -1434,7 +1359,7 @@
       if (volume > 0) {
         currentTestSound
           .play()
-          .catch((err) => console.log("Audio playback disabled"));
+          .catch((err) => void 0);
       }
     } else if (type === "breakComplete") {
       // Check if End of Session Alarm is enabled
@@ -1463,7 +1388,7 @@
       if (volume > 0) {
         currentTestSound
           .play()
-          .catch((err) => console.log("Audio playback disabled"));
+          .catch((err) => void 0);
       }
     } else if (type === "timer") {
       // For testing timer sounds
@@ -1509,7 +1434,6 @@
 
       if (volume > 0) {
         currentTimerSound.play().catch((err) => {
-          console.log("Audio playback disabled:", err);
           showToast("Failed to play audio. Check browser permissions.");
         });
 
@@ -1975,7 +1899,7 @@
           if (currentTestSound.volume > 0) {
             currentTestSound
               .play()
-              .catch((err) => console.log("Audio playback disabled"));
+              .catch((err) => void 0);
           }
         }, 150); // Small delay to debounce
       });
@@ -2022,7 +1946,7 @@
           if (currentTestSound.volume > 0) {
             currentTestSound
               .play()
-              .catch((err) => console.log("Audio playback disabled"));
+              .catch((err) => void 0);
           }
         }, 150); // Small delay to debounce
       });

@@ -14,14 +14,7 @@ class DatabaseLeaderboard {
     this.usersCachePromise = null;
     this.cacheTtlMs = 60000;
     this.usersCacheTtlMs = 120000;
-    this.debugEnabled = false;
     this.init();
-  }
-
-  debugLog(...args) {
-    if (this.debugEnabled) {
-      console.log(...args);
-    }
   }
 
   init() {
@@ -29,12 +22,10 @@ class DatabaseLeaderboard {
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtc215a3p2d3V5YW5rdmx6c2lmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MzY2MzUsImV4cCI6MjA3MDQxMjYzNX0.-PTqdJ3jsx7E2lghELJPo5Yo7zgjLzb0Mbaa5tLrUPg';
     
     if (SUPABASE_URL === 'YOUR_SUPABASE_PROJECT_URL' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY') {
-      console.warn('🔧 Please configure your Supabase credentials in database-leaderboard.js');
       return;
     }
 
     this.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    this.debugLog('🔗 Supabase client initialized successfully');
     this.getCurrentUser();
   }
 
@@ -134,7 +125,7 @@ class DatabaseLeaderboard {
   // Get real leaderboard data from database with optimized approach
   async getLeaderboard(category, period = 'all_time', maxUsers = 20) {
     if (!this.supabase) {
-      console.error('Supabase not initialized');
+      window.customodoroLogger.error("DATABASE_LEADERBOARD_SUPABASE_NOT_INITIALIZED");
       return { rankings: [], highlightedUser: null, totalCount: 0 };
     }
 
@@ -142,12 +133,10 @@ class DatabaseLeaderboard {
     const cacheKey = `${category}_${period}_${maxUsers}`;
     if (this.cache[cacheKey] && 
         (Date.now() - this.cache[cacheKey].timestamp) < this.cacheTtlMs) {
-      this.debugLog(`📋 Using cached leaderboard data for ${cacheKey}`);
       return this.cache[cacheKey].data;
     }
 
     try {
-      this.debugLog(`📊 Fetching leaderboard: ${category}/${period} (top ${maxUsers})`);
       
       // Use client-side processing (server-side RPC optimization disabled)
       // Note: You can create 'get_leaderboard_optimized' RPC function in Supabase for better performance
@@ -166,7 +155,6 @@ class DatabaseLeaderboard {
           );
 
           if (!optimizedError && optimizedData) {
-            this.debugLog(`✅ Successfully fetched optimized leaderboard: ${optimizedData.length} users`);
             
             // Format the data to match our expected structure
             const formattedData = {
@@ -187,7 +175,6 @@ class DatabaseLeaderboard {
             return formattedData;
           }
         } catch (rpcError) {
-          this.debugLog('📋 RPC not available, falling back to client-side processing');
         }
       }
 
@@ -195,7 +182,7 @@ class DatabaseLeaderboard {
       return await this.getFallbackLeaderboard(category, period, maxUsers);
       
     } catch (error) {
-      console.error('Error fetching leaderboard:', error);
+      window.customodoroLogger.error("DATABASE_LEADERBOARD_FETCHING_LEADERBOARD");
       return { rankings: [], highlightedUser: null, totalCount: 0 };
     }
   }
@@ -246,7 +233,7 @@ class DatabaseLeaderboard {
       
       return result;
     } catch (error) {
-      console.error('Error in fallback leaderboard calculation:', error);
+      window.customodoroLogger.error("DATABASE_LEADERBOARD_IN_FALLBACK_LEADERBOARD_CALCULATION");
       return { rankings: [], highlightedUser: null, totalCount: 0 };
     }
   }
@@ -317,7 +304,7 @@ class DatabaseLeaderboard {
       const user = users.find((entry) => entry.user_id === userId);
       return user ? this.buildUserStatsFromRecord(user, period) : null;
     } catch (error) {
-      console.error('Error calculating user stats:', error);
+      window.customodoroLogger.error("DATABASE_LEADERBOARD_CALCULATING_USER_STATS");
       return null;
     }
   }
@@ -377,7 +364,6 @@ class DatabaseLeaderboard {
           startIndex += batchSize;
 
           if (allUsers.length >= limit) {
-            this.debugLog(`📋 Limiting to ${limit} users for performance`);
             hasMoreUsers = false;
           }
         }
@@ -403,7 +389,7 @@ class DatabaseLeaderboard {
     }
 
     if (!this.supabase) {
-      console.error('❌ Supabase not initialized');
+      window.customodoroLogger.error("DATABASE_LEADERBOARD_SUPABASE_NOT_INITIALIZED");
       return {
         years: [],
         participantCounts: {},
@@ -454,7 +440,7 @@ class DatabaseLeaderboard {
       this.monthlyHistoryCacheTime = Date.now();
       return overview;
     } catch (error) {
-      console.error('❌ Error building monthly history overview:', error);
+      window.customodoroLogger.error("DATABASE_LEADERBOARD_BUILDING_MONTHLY_HISTORY_OVERVIEW");
       return {
         years: [],
         participantCounts: {},
@@ -633,7 +619,7 @@ class DatabaseLeaderboard {
 
   async getMonthlyWinners(year, month) {
     if (!this.supabase) {
-      console.error('❌ Supabase not initialized');
+      window.customodoroLogger.error("DATABASE_LEADERBOARD_SUPABASE_NOT_INITIALIZED");
       return null;
     }
 
@@ -643,7 +629,6 @@ class DatabaseLeaderboard {
     }
 
     try {
-      this.debugLog(`🏆 Fetching monthly winners for ${range.startKey} to ${range.endKey}`);
       const allUsers = await this.getAllLeaderboardUsers();
 
       const monthStats = [];
@@ -776,10 +761,9 @@ class DatabaseLeaderboard {
         generatedAt: new Date().toISOString()
       };
 
-      this.debugLog(`🏆 Monthly winners ready for ${result.month} ${result.year}`);
       return result;
     } catch (error) {
-      console.error('❌ Error fetching monthly winners:', error);
+      window.customodoroLogger.error("DATABASE_LEADERBOARD_FETCHING_MONTHLY_WINNERS");
       return null;
     }
   }
@@ -933,7 +917,7 @@ class DatabaseLeaderboardModal {
       
       return dynamicBadges;
     } catch (error) {
-      console.error('Error calculating dynamic badges:', error);
+      window.customodoroLogger.error("DATABASE_LEADERBOARD_CALCULATING_DYNAMIC_BADGES");
       return this.userBadges; // Fallback to static badges
     }
   }
@@ -1219,7 +1203,7 @@ class DatabaseLeaderboardModal {
       }
       this.ensureHistoryMonthsState();
     } catch (error) {
-      console.error('❌ Failed to initialize monthly history:', error);
+      window.customodoroLogger.error("DATABASE_LEADERBOARD_FAILED_TO_INITIALIZE_MONTHLY_HISTORY");
       this.showToast('❌ Failed to load monthly winners history');
     }
   }
@@ -1380,7 +1364,7 @@ class DatabaseLeaderboardModal {
       }
       this.renderHistoryPreview(winners);
     } catch (error) {
-      console.error('Failed to load history preview:', error);
+      window.customodoroLogger.error("DATABASE_LEADERBOARD_FAILED_TO_LOAD_HISTORY_PREVIEW");
       this.renderHistoryEmptyState('History unavailable', 'We could not load the monthly winners preview right now.');
     }
   }
@@ -1472,7 +1456,7 @@ class DatabaseLeaderboardModal {
 
       this.showToast(`✅ Downloaded monthly-winners-${year}-${monthLabel}.csv`);
     } catch (error) {
-      console.error('❌ Failed to download winners CSV:', error);
+      window.customodoroLogger.error("DATABASE_LEADERBOARD_FAILED_TO_DOWNLOAD_WINNERS_CSV");
       if (content) {
         content.innerHTML = originalContent;
       }
@@ -1716,12 +1700,12 @@ class DatabaseLeaderboardModal {
     Promise.all([
       this.leaderboard.getLeaderboard(category, period, this.MAX_LEADERBOARD_USERS)
         .catch(error => {
-          console.error('Leaderboard data fetch error:', error);
+          window.customodoroLogger.error("DATABASE_LEADERBOARD_LEADERBOARD_DATA_FETCH");
           return { rankings: [], highlightedUser: null, totalCount: 0, error: true };
         }),
       this.calculateDynamicBadges()
         .catch(error => {
-          console.error('Badge calculation error:', error);
+          window.customodoroLogger.error("DATABASE_LEADERBOARD_BADGE_CALCULATION");
           return this.userBadges;
         })
     ])
@@ -1751,7 +1735,7 @@ class DatabaseLeaderboardModal {
     .catch(error => {
       if (!this.isCurrentLeaderboardLoad(loadId, category, period)) return;
 
-      console.error('Error loading leaderboard:', error);
+      window.customodoroLogger.error("DATABASE_LEADERBOARD_LOADING_LEADERBOARD");
       content.innerHTML = `
         <div class="leaderboard-error">
           <h3>Connection Error</h3>

@@ -17,10 +17,6 @@ class TimezoneManager {
     this.isMigrated = localStorage.getItem("customodoroTimezoneV2") === "true";
     this.migrationLog = [];
 
-    console.log("🌍 TimezoneManager initialized:", {
-      userTimezone: this.userTimezone,
-      isMigrated: this.isMigrated,
-    });
   }
 
   /**
@@ -30,10 +26,9 @@ class TimezoneManager {
   detectTimezone() {
     try {
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      console.log("✅ Detected timezone:", timezone);
       return timezone;
     } catch (error) {
-      console.warn("⚠️ Timezone detection failed, defaulting to UTC:", error);
+      window.customodoroLogger.error("TIMEZONE_MANAGER_TIMEZONE_DETECTION_FAILED_DEFAULTING_TO_UT");
       return "UTC";
     }
   }
@@ -76,11 +71,9 @@ class TimezoneManager {
    */
   migrateOldData() {
     if (this.isMigrated) {
-      console.log("✅ Data already migrated, skipping...");
       return;
     }
 
-    console.log("🔄 Starting timezone migration...");
     const stats = JSON.parse(
       localStorage.getItem("customodoroStatsByDay") || "{}",
     );
@@ -131,16 +124,13 @@ class TimezoneManager {
           status: "success",
         });
 
-        console.log(
-          `📅 Migrated: ${oldKey} (GMT+8) → ${newKey} (${this.userTimezone})`,
-        );
       } catch (error) {
         this.migrationLog.push({
           oldKey,
           error: error.message,
           status: "failed",
         });
-        console.error(`❌ Failed to migrate ${oldKey}:`, error);
+        window.customodoroLogger.error("TIMEZONE_MANAGER_FAILED_TO_MIGRATE_OLDKEY");
       }
     });
 
@@ -152,11 +142,6 @@ class TimezoneManager {
 
     this.isMigrated = true;
 
-    console.log("✅ Migration complete!", {
-      entriesMigrated: Object.keys(oldStats).length,
-      newDataKeys: Object.keys(newStats).length,
-      timezone: this.userTimezone,
-    });
 
     return {
       success: true,
@@ -195,12 +180,6 @@ class TimezoneManager {
   addCustomodoroSession(type, minutes) {
     const MAX_DAILY_MINUTES = 1440; // 24 hours = 1440 minutes
     const key = this.formatDateKey(this.getUserToday());
-    console.log("📝 Adding session:", {
-      type,
-      minutes,
-      dateKey: key,
-      timezone: this.userTimezone,
-    });
 
     const stats = this.getStats();
     if (!stats[key]) {
@@ -213,9 +192,6 @@ class TimezoneManager {
 
     let minutesToAdd = minutes;
     if (remainingCapacity <= 0) {
-      console.warn(
-        `⚠️ Daily cap reached (${MAX_DAILY_MINUTES} mins). Session not recorded.`,
-      );
       return {
         success: false,
         reason: "daily_cap_reached",
@@ -226,9 +202,6 @@ class TimezoneManager {
     }
 
     if (minutes > remainingCapacity) {
-      console.warn(
-        `⚠️ Capping session from ${minutes} to ${remainingCapacity} mins to stay within daily limit.`,
-      );
       minutesToAdd = remainingCapacity;
     }
 
@@ -244,7 +217,6 @@ class TimezoneManager {
     const wasCapped = minutesToAdd < minutes;
 
     localStorage.setItem("customodoroStatsByDay", JSON.stringify(stats));
-    console.log("✅ Session added:", stats[key]);
 
     // Trigger UI updates
     if (typeof window.renderContributionGraph === "function") {
@@ -264,18 +236,16 @@ class TimezoneManager {
 
     // Trigger automatic sync if user is logged in
     if (window.syncManager && window.authService?.isLoggedIn()) {
-      console.log("🔄 Triggering automatic sync after session...");
       try {
         // Use queueSync with current data - this method exists and handles online/offline
         window.syncManager.queueSync(window.syncManager.getCurrentLocalData());
-        console.log("✅ Auto-sync queued after session");
 
         // Update sync UI stats
         if (window.syncUI) {
           window.syncUI.updateStats();
         }
       } catch (error) {
-        console.warn("⚠️ Auto-sync failed after session:", error);
+        window.customodoroLogger.error("TIMEZONE_MANAGER_AUTO_SYNC_FAILED_AFTER_SESSION");
       }
     }
 
@@ -300,10 +270,7 @@ window.timezoneManager = new TimezoneManager();
 
 // Run migration on app load
 document.addEventListener("DOMContentLoaded", function () {
-  const result = window.timezoneManager.migrateOldData();
-  if (result) {
-    console.log("🎉 Timezone migration completed:", result);
-  }
+  window.timezoneManager.migrateOldData();
 });
 
 // ============================================
@@ -337,26 +304,3 @@ function getStats() {
 window.addCustomodoroSession = function (type, minutes) {
   return window.timezoneManager.addCustomodoroSession(type, minutes);
 };
-
-// ============================================
-// TESTING & DEBUGGING
-// ============================================
-
-window.testTimezoneManager = function () {
-  console.group("🧪 Timezone Manager Test");
-  console.log("Current timezone:", window.timezoneManager.userTimezone);
-  console.log(
-    "Today:",
-    window.timezoneManager.formatDateKey(window.timezoneManager.getUserToday()),
-  );
-  console.log("Migration status:", window.timezoneManager.isMigrated);
-  console.log("Migration report:", window.timezoneManager.getMigrationReport());
-  console.groupEnd();
-};
-
-window.testTimezoneAddSession = function () {
-  const result = window.timezoneManager.addCustomodoroSession("classic", 25);
-  console.log("Test session result:", result);
-};
-
-console.log("✅ TimezoneManager loaded successfully");

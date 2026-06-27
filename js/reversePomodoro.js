@@ -52,17 +52,11 @@ function initializeSoundSettings() {
   if (oldVolume && !localStorage.getItem("pomodoroVolume")) {
     localStorage.setItem("pomodoroVolume", oldVolume);
     localStorage.setItem("breakVolume", oldVolume);
-    console.log(
-      "Reverse Timer: Migrated old volume settings to separate Pomodoro/Break volumes",
-    );
   }
 
   if (oldAlarmSound && !localStorage.getItem("pomodoroSound")) {
     localStorage.setItem("pomodoroSound", oldAlarmSound);
     localStorage.setItem("breakSound", "bell.mp3"); // Default different sound for breaks
-    console.log(
-      "Reverse Timer: Migrated old alarm sound to separate Pomodoro/Break sounds",
-    );
   }
 
   const pomodoroVolume = localStorage.getItem("pomodoroVolume")
@@ -90,14 +84,6 @@ function initializeSoundSettings() {
   sounds.pomodoroComplete.volume = alarmEnabled ? pomodoroVolume : 0;
   sounds.breakComplete.volume = alarmEnabled ? breakVolume : 0;
 
-  console.log(`Sound settings initialized for Reverse Timer:`, {
-    pomodoroVolume: pomodoroVolume,
-    breakVolume: breakVolume,
-    soundEffectsEnabled: soundEffectsEnabled,
-    alarmEnabled: alarmEnabled,
-    pomodoroSound: selectedPomodoroSound,
-    breakSound: selectedBreakSound,
-  });
 }
 
 // Initialize timer sound settings
@@ -115,10 +101,6 @@ function initializeTimerSoundSettings() {
     }
   });
 
-  console.log(`Timer sound settings initialized:`, {
-    timerSoundType: timerSoundType,
-    volume: volume,
-  });
 }
 
 // Function to specifically update the pomodoro alarm sound
@@ -133,9 +115,6 @@ function updatePomodoroAlarmSound(soundFileName) {
   const alarmEnabled = localStorage.getItem("alarm") !== "false";
   sounds.pomodoroComplete.volume = alarmEnabled ? pomodoroVolume : 0;
 
-  console.log(
-    `Reverse Timer: Updated pomodoro alarm sound to: ${soundFileName}`,
-  );
 }
 
 // Function to specifically update the break alarm sound
@@ -150,7 +129,6 @@ function updateBreakAlarmSound(soundFileName) {
   const alarmEnabled = localStorage.getItem("alarm") !== "false";
   sounds.breakComplete.volume = alarmEnabled ? breakVolume : 0;
 
-  console.log(`Reverse Timer: Updated break alarm sound to: ${soundFileName}`);
 }
 
 // Function to update timer sound type and volume
@@ -176,10 +154,6 @@ function updateTimerSound() {
     playTimerSound();
   }
 
-  console.log(`Timer sound updated:`, {
-    timerSoundType: timerSoundType,
-    volume: volume,
-  });
 }
 
 // Function to just update timer sound volume
@@ -200,7 +174,6 @@ function updateTimerSoundVolume() {
     }
   });
 
-  console.log(`Timer sound volume updated: ${volume}`);
 }
 
 // Play the selected timer sound
@@ -237,7 +210,6 @@ function playTimerSound() {
 
   // Guard: if the selected timer sound isn't available (disabled), abort gracefully
   if (!currentTimerSound || typeof currentTimerSound.play !== "function") {
-    console.warn("Timer sound not available or disabled:", timerSoundType);
     currentTimerSound = null;
     return;
   }
@@ -252,15 +224,12 @@ function playTimerSound() {
   try {
     currentTimerSound.currentTime = 0;
     currentTimerSound.play().catch((err) => {
-      console.log("Timer sound playback error:", err);
       currentTimerSound = null;
     });
   } catch (err) {
-    console.log("Timer sound playback error:", err);
     currentTimerSound = null;
   }
 
-  console.log(`Timer sound started: ${timerSoundType} at volume ${volume}`);
 }
 
 // Stop the currently playing timer sound
@@ -293,7 +262,6 @@ function playSound(soundName) {
   ) {
     // For alarm sounds
     if (localStorage.getItem("alarm") === "false") {
-      console.log("Alarm sounds disabled in settings");
       return;
     }
 
@@ -320,7 +288,6 @@ function playSound(soundName) {
   } else {
     // For all other UI sounds
     if (localStorage.getItem("soundEffects") === "false") {
-      console.log("Sound effects disabled in settings");
       return;
     }
   }
@@ -330,14 +297,14 @@ function playSound(soundName) {
     if (soundName === "click") {
       const clone = sound.cloneNode();
       clone.volume = sound.volume;
-      clone.play().catch((err) => console.log("Audio playback disabled"));
+      clone.play().catch((err) => void 0);
     } else {
       // For other sounds, reset and play
       sound.currentTime = 0;
-      sound.play().catch((err) => console.log("Audio playback disabled"));
+      sound.play().catch((err) => void 0);
     }
   } catch (error) {
-    console.error("Error playing sound:", error);
+    window.customodoroLogger.error("REVERSEPOMODORO_PLAYING_SOUND");
   }
 }
 
@@ -378,7 +345,6 @@ let currentFocusedTaskElement = null;
 function updateFavicon(status) {
   const favicon = document.getElementById("favicon");
   if (!favicon) {
-    console.warn("Favicon element not found");
     return;
   }
 
@@ -996,16 +962,9 @@ function completeSessionLegacy(playSound = true) {
 
   // Auto-start the break if enabled in settings - Fixed logic
   const autoBreaks = localStorage.getItem("autoBreak") === "true";
-  console.log("🔄 Auto-break check:", {
-    autoBreaks,
-    setting: localStorage.getItem("autoBreak"),
-  });
 
   if (earnedBreakTime > 0 && autoBreaks) {
-    console.log("✅ Auto-starting break timer");
     setTimeout(() => toggleTimer(), 500);
-  } else {
-    console.log("⏸️ Auto-break disabled or no break time earned");
   }
 }
 
@@ -1087,7 +1046,7 @@ function completeSession(playSound = true, options = {}) {
         switchMode("reverse");
       }
     } catch (error) {
-      console.error("Reverse session transition failed:", error);
+      window.customodoroLogger.error("REVERSEPOMODORO_REVERSE_SESSION_TRANSITION_FAILED");
       currentMode = "reverse";
       reverseTab.classList.add("active");
       breakTab.classList.remove("active");
@@ -1115,7 +1074,7 @@ function completeSession(playSound = true, options = {}) {
         }
       }
     } catch (error) {
-      console.error("Reverse session recording failed:", error);
+      window.customodoroLogger.error("REVERSEPOMODORO_REVERSE_SESSION_RECORDING_FAILED");
     }
 
     try {
@@ -1126,7 +1085,7 @@ function completeSession(playSound = true, options = {}) {
         }
       }
     } catch (error) {
-      console.warn("Reverse auto-sync failed after session:", error);
+      window.customodoroLogger.error("REVERSEPOMODORO_REVERSE_AUTO_SYNC_FAILED_AFTER_SESSION");
     }
 
     try {
@@ -1150,7 +1109,7 @@ function completeSession(playSound = true, options = {}) {
         }
       }
     } catch (error) {
-      console.error("Reverse completion notification failed:", error);
+      window.customodoroLogger.error("REVERSEPOMODORO_REVERSE_COMPLETION_NOTIFICATION_FAILED");
     }
 
     try {
@@ -1160,7 +1119,7 @@ function completeSession(playSound = true, options = {}) {
           : `${completionMessage} Keep going!`,
       );
     } catch (error) {
-      console.error("Reverse completion toast failed:", error);
+      window.customodoroLogger.error("REVERSEPOMODORO_REVERSE_COMPLETION_TOAST_FAILED");
     }
   } finally {
     isSessionTransitioning = false;
@@ -1187,13 +1146,13 @@ function completeBreak() {
     try {
       playSound("breakComplete");
     } catch (error) {
-      console.error("Break completion sound failed:", error);
+      window.customodoroLogger.error("REVERSEPOMODORO_BREAK_COMPLETION_SOUND_FAILED");
     }
 
     try {
       showBreakReadinessConfirmation("Break time is over! Ready to work again?");
     } catch (error) {
-      console.error("Break readiness confirmation failed:", error);
+      window.customodoroLogger.error("REVERSEPOMODORO_BREAK_READINESS_CONFIRMATION_FAILED");
     }
 
     try {
@@ -1208,13 +1167,13 @@ function completeBreak() {
         }
       }
     } catch (error) {
-      console.error("Break completion notification failed:", error);
+      window.customodoroLogger.error("REVERSEPOMODORO_BREAK_COMPLETION_NOTIFICATION_FAILED");
     }
 
     try {
       showToast("Break time is over! Ready to work again?");
     } catch (error) {
-      console.error("Break completion toast failed:", error);
+      window.customodoroLogger.error("REVERSEPOMODORO_BREAK_COMPLETION_TOAST_FAILED");
     }
   } finally {
     isBreakTransitioning = false;
@@ -1339,12 +1298,6 @@ function switchMode(mode, autoStart = false) {
       currentSeconds > 0 &&
       localStorage.getItem("autoBreak") === "true";
 
-    console.log("Reverse auto-start check:", {
-      mode,
-      shouldAutoStart,
-      autoBreak: localStorage.getItem("autoBreak"),
-      currentSeconds,
-    });
 
     if (shouldAutoStart) {
       setTimeout(() => {
@@ -1394,7 +1347,6 @@ function saveTasks() {
   });
 
   localStorage.setItem("reverseTasks", JSON.stringify(taskItems));
-  console.log("Tasks saved to localStorage:", taskItems);
 }
 
 function loadTasks() {
@@ -1407,9 +1359,8 @@ function loadTasks() {
         createTaskElement(task.text, task.completed, task.description);
       });
       updateUnfinishedTasks();
-      console.log("Tasks loaded from localStorage:", taskItems);
     } catch (error) {
-      console.error("Error loading tasks from localStorage:", error);
+      window.customodoroLogger.error("REVERSEPOMODORO_LOADING_TASKS_FROM_LOCALSTORAGE");
     }
   }
 }
@@ -1726,19 +1677,6 @@ function updateSoundVolumes() {
   sounds.pomodoroComplete.volume = alarmEnabled ? pomodoroVolume : 0;
   sounds.breakComplete.volume = alarmEnabled ? breakVolume : 0;
 
-  console.log("Reverse Timer: Sound volumes updated:", {
-    pomodoroVolume: pomodoroVolume,
-    breakVolume: breakVolume,
-    soundEffectsEnabled: soundEffectsEnabled,
-    alarmEnabled: alarmEnabled,
-    pomodoroSound: selectedPomodoroSound,
-    breakSound: selectedBreakSound,
-    clickVolume: sounds.click.volume,
-    startVolume: sounds.start.volume,
-    pauseVolume: sounds.pause.volume,
-    pomodoroCompleteVolume: sounds.pomodoroComplete.volume,
-    breakCompleteVolume: sounds.breakComplete.volume,
-  });
 }
 
 // Expose the updateAlarmSound functions for settings.js
@@ -2015,7 +1953,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // Load focused task after tasks are loaded
   loadFocusedTask();
 
-  console.log("Reverse timer initialized");
 
   // Clear any running timers from other pages
   clearInterval(timerInterval);
@@ -2190,7 +2127,6 @@ function getAllAvailableDates() {
 // Utility: get last 12 months of dates, PH timezone
 function getDatesForHeatmap() {
   const todayPH = getPHToday();
-  console.log("Today PH:", formatDateKey(todayPH)); // Debug log
 
   const dates = [];
   let d = new Date(todayPH);
@@ -2444,12 +2380,9 @@ let showAllData = false;
 let selectedRange = showAllData ? "all" : "last12";
 
 function renderContributionGraph() {
-  const startTime = performance.now();
-  console.debug("🎨 Starting contribution graph render...");
   const container = document.getElementById("contribution-graph");
 
   const stats = getStats();
-  console.debug("Current stats:", stats); // Debug log
 
   let dates;
   if (selectedRange === "all") {
@@ -2469,16 +2402,6 @@ function renderContributionGraph() {
   }
 
   // Performance warning for large datasets
-  const statsCount = Object.keys(stats).length;
-  const datesCount = dates.length;
-
-  if (statsCount > 100 || datesCount > 365) {
-    console.warn(
-      `⚠️ Large dataset detected: ${statsCount} stat days, ${datesCount} graph days`,
-    );
-    console.warn("This may cause performance issues - consider optimizing");
-  }
-
   // STREAK! Duolingo-style streak display
   function calculateCurrentStreak() {
     const stats = getStats();
@@ -2491,38 +2414,24 @@ function renderContributionGraph() {
       return stats[key] && stats[key].total_minutes > 0;
     }
 
-    console.log("🔥 Calculating Duolingo streak from:", formatDateKey(today));
-    console.log("📊 Available stats keys:", Object.keys(stats));
-    console.log("📊 Raw stats data:", stats);
 
     if (hasActivity(d)) {
-      console.log("✅ Today has activity, counting backward...");
       while (hasActivity(d)) {
         streak++;
-        console.log(
-          `  📈 Day ${formatDateKey(d)}: ${stats[formatDateKey(d)]?.total_minutes || 0} mins - Streak: ${streak}`,
-        );
         d.setDate(d.getDate() - 1);
       }
     } else {
-      console.log("❌ Today has no activity, checking yesterday...");
       d.setDate(d.getDate() - 1);
       if (hasActivity(d)) {
-        console.log("✅ Yesterday has activity, counting backward...");
         while (hasActivity(d)) {
           streak++;
-          console.log(
-            `  📈 Day ${formatDateKey(d)}: ${stats[formatDateKey(d)]?.total_minutes || 0} mins - Streak: ${streak}`,
-          );
           d.setDate(d.getDate() - 1);
         }
       } else {
-        console.log("💥 No recent activity found");
         streak = 0;
       }
     }
 
-    console.log("🎯 Final Duolingo streak:", streak);
     return streak;
   }
 
@@ -2564,9 +2473,6 @@ function renderContributionGraph() {
     if (window.authService) {
       window.authService.addEventListener((event, data) => {
         if (event === "login" || event === "restore") {
-          console.log(
-            "🔥 Auth event detected, updating streak display in 500ms",
-          );
           setTimeout(() => {
             if (typeof renderStreakDisplay === "function") {
               renderStreakDisplay();
@@ -2580,7 +2486,6 @@ function renderContributionGraph() {
     if (window.syncManager) {
       window.syncManager.addEventListener((event, data) => {
         if (event === "sync-complete" || event === "initial-sync-complete") {
-          console.log("🔥 Sync event detected, updating streak display");
           setTimeout(() => {
             if (typeof renderStreakDisplay === "function") {
               renderStreakDisplay();
@@ -2599,10 +2504,8 @@ function renderContributionGraph() {
     maxMinutes = Math.max(maxMinutes, dayStats.total_minutes || 0);
   });
 
-  console.debug("Max minutes for scaling:", maxMinutes); // Debug log
   // Convert max minutes to Focus Points for color scaling (ensure at least 1 to show small activity)
   const maxPoints = Math.max(1, Math.ceil(maxMinutes / 5));
-  console.debug("Max focus points for scaling:", maxPoints);
 
   // Arrange dates into weeks (columns, oldest to newest, left to right)
   const weeks = [];
@@ -2742,9 +2645,6 @@ function renderContributionGraph() {
       // Store the original date object for tooltip
       dateMap.set(key, date);
 
-      console.debug(
-        `Date: ${key}, Minutes: ${minutes}, Points: ${points}, Color: ${color}`,
-      );
 
       const cellX = leftPad + x * (cellSize + cellGap);
       const cellY = topPad + y * (cellSize + cellGap);
@@ -2998,9 +2898,6 @@ function renderContributionGraph() {
           const month = dateObj.toLocaleString("en-US", { month: "long" });
           const dateStrWithSuffix = `${month} ${day}${getOrdinalSuffix(day)}`;
 
-          console.debug(
-            `Tooltip: Key=${dateKey}, Date=${dateObj}, Display=${dateStrWithSuffix}`,
-          ); // Debug
 
           const classicSessions = parseInt(d.classic) || 0;
           const reverseSessions = parseInt(d.reverse) || 0;
@@ -3300,18 +3197,6 @@ function renderContributionGraph() {
   }
 
   // Performance logging
-  const endTime = performance.now();
-  const renderTime = endTime - startTime;
-  console.debug(`🎨 Contribution graph rendered in ${renderTime.toFixed(2)}ms`);
-
-  if (renderTime > 50) {
-    console.warn("⚠️ Slow rendering detected:", {
-      renderTime: `${renderTime.toFixed(2)}ms`,
-      statsCount,
-      datesCount,
-      suggestion: "Consider optimizing for large datasets",
-    });
-  }
 }
 
 // Sync graph with theme changes
@@ -3344,31 +3229,6 @@ window.addCustomodoroSession = function (type, minutes) {
   return window.timezoneManager.addCustomodoroSession(type, minutes);
 };
 
-// TESTING FUNCTION: Add test data for today
-window.addTestSession = function () {
-  window.addCustomodoroSession("classic", 1);
-  console.log("Added 1 minute test session for today");
-};
-
-// Add this anywhere in your script.js:
-window.testContributionConnection = function () {
-  console.log("🧪 Testing contribution connection...");
-  if (typeof window.addCustomodoroSession === "function") {
-    window.addCustomodoroSession("classic", 1);
-    console.log("✅ Test session added!");
-  } else {
-    console.error("❌ Function not available!");
-  }
-};
-
-// 4. LOAD ORDER CHECK - Add this to see script loading order:
-document.addEventListener("DOMContentLoaded", function () {
-  console.log("📄 Script.js DOM loaded");
-  console.log("🔗 Contribution functions available:", {
-    addSession: typeof window.addCustomodoroSession === "function",
-    renderGraph: typeof window.renderContributionGraph === "function",
-  });
-});
 
 document.addEventListener("DOMContentLoaded", function () {
   if (window.renderContributionGraph) {

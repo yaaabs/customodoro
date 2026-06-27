@@ -4,7 +4,6 @@
  */
 class HeaderProfile {
   constructor() {
-    console.log("HeaderProfile: Initializing...");
     this.userProfile = document.getElementById("user-profile");
     this.userName = document.getElementById("header-user-name");
     this.syncStatus = document.getElementById("header-sync-status");
@@ -12,14 +11,6 @@ class HeaderProfile {
     this.syncBtn = document.getElementById("header-sync-btn");
     this.logoutBtn = document.getElementById("header-logout-btn");
 
-    console.log("HeaderProfile: Elements found:", {
-      userProfile: !!this.userProfile,
-      userName: !!this.userName,
-      syncStatus: !!this.syncStatus,
-      syncIndicator: !!this.syncIndicator,
-      syncBtn: !!this.syncBtn,
-      logoutBtn: !!this.logoutBtn,
-    });
 
     this.init();
   }
@@ -36,13 +27,11 @@ class HeaderProfile {
 
     // Listen for auth state changes
     document.addEventListener("authStateChanged", (event) => {
-      console.log("HeaderProfile: Auth state changed:", event.detail);
       this.updateDisplay(event.detail);
     });
 
     // Listen for sync status changes
     document.addEventListener("syncStatusChanged", (event) => {
-      console.log("HeaderProfile: Sync status changed:", event.detail);
       this.updateSyncStatus(event.detail);
     });
 
@@ -51,7 +40,6 @@ class HeaderProfile {
   }
 
   async checkAuthState() {
-    console.log("HeaderProfile: Checking auth state...");
     let retryCount = 0;
     const maxRetries = 20; // Increased retries
 
@@ -59,10 +47,6 @@ class HeaderProfile {
       try {
         if (window.authService) {
           const currentUser = window.authService.getCurrentUser();
-          console.log(
-            "HeaderProfile: User authentication status:",
-            currentUser ? "Logged in" : "Not logged in",
-          );
           if (currentUser) {
             this.updateDisplay({
               isLoggedIn: true,
@@ -74,22 +58,17 @@ class HeaderProfile {
           }
           return true; // Success
         } else {
-          console.warn(
-            `HeaderProfile: authService not available yet, retry ${retryCount + 1}/${maxRetries}`,
-          );
           retryCount++;
           if (retryCount < maxRetries) {
             setTimeout(doCheck, 250); // Faster retries
           } else {
-            console.error(
-              "HeaderProfile: Failed to find authService after maximum retries",
-            );
+            window.customodoroLogger.error("HEADER_PROFILE_HEADERPROFILE_FAILED_TO_FIND_AUTHSERVICE_A");
             this.hide();
           }
           return false;
         }
       } catch (error) {
-        console.warn("HeaderProfile: Auth check failed:", error);
+        window.customodoroLogger.error("HEADER_PROFILE_HEADERPROFILE_AUTH_CHECK_FAILED");
         this.hide();
         return true; // Stop retrying on error
       }
@@ -174,18 +153,15 @@ class HeaderProfile {
   }
 
   openSyncSettings() {
-    console.log("HeaderProfile: Opening sync settings...");
 
     // Open settings modal and navigate to sync section
     const settingsBtn = document.getElementById("settings-btn");
     if (settingsBtn) {
-      console.log("HeaderProfile: Found settings button, clicking...");
       settingsBtn.click();
 
       // Wait for modal to open, then navigate to sync section using direct class manipulation
       // (same reliable method as mini music player)
       setTimeout(() => {
-        console.log("HeaderProfile: Navigating to sync section...");
 
         const navItems = document.querySelectorAll(".settings-nav-item");
         const syncNavItem = document.querySelector(
@@ -193,11 +169,6 @@ class HeaderProfile {
         );
         const syncSection = document.getElementById("sync-section");
 
-        console.log("HeaderProfile: Found elements:", {
-          navItems: navItems.length,
-          syncNavItem: !!syncNavItem,
-          syncSection: !!syncSection,
-        });
 
         if (syncNavItem && syncSection) {
           // Remove active from all nav items and sections
@@ -210,41 +181,26 @@ class HeaderProfile {
           syncNavItem.classList.add("active");
           syncSection.classList.add("active");
 
-          console.log(
-            "HeaderProfile: Successfully navigated to Sync Account section",
-          );
 
           // Additional verification
           setTimeout(() => {
-            if (syncSection.classList.contains("active")) {
-              console.log(
-                "HeaderProfile: ✅ Sync section is now active and visible",
-              );
-            } else {
-              console.warn("HeaderProfile: ⚠️ Sync section activation failed");
+            if (!syncSection.classList.contains("active")) {
+              window.customodoroLogger.error("HEADER_PROFILE_HEADERPROFILE_SYNC_SECTION_ACTIVATION_FAIL");
             }
           }, 100);
         } else {
-          console.error("HeaderProfile: Required elements not found");
+          window.customodoroLogger.error("HEADER_PROFILE_HEADERPROFILE_REQUIRED_ELEMENTS_NOT_FOUND");
 
           // Fallback: try clicking the nav item if direct manipulation fails
           if (syncNavItem) {
-            console.log("HeaderProfile: Trying fallback click method...");
             syncNavItem.click();
           } else {
             // Debug: List all available data-section elements
             const allSections = document.querySelectorAll("[data-section]");
-            console.log(
-              "HeaderProfile: Available sections:",
-              Array.from(allSections).map((el) =>
-                el.getAttribute("data-section"),
-              ),
-            );
           }
         }
       }, 400); // Keep the timeout for modal to fully load
     } else {
-      console.warn("HeaderProfile: Settings button not found");
 
       // Debug: Try to find settings button with alternative selectors
       const altSettingsSelectors = [
@@ -255,9 +211,6 @@ class HeaderProfile {
       for (const selector of altSettingsSelectors) {
         const altBtn = document.querySelector(selector);
         if (altBtn) {
-          console.log(
-            `HeaderProfile: Found alternative settings button: ${selector}`,
-          );
           altBtn.click();
           break;
         }
@@ -272,7 +225,7 @@ class HeaderProfile {
           await window.authService.logout();
         }
       } catch (error) {
-        console.error("Logout failed:", error);
+        window.customodoroLogger.error("HEADER_PROFILE_LOGOUT_FAILED");
         alert("Failed to sign out. Please try again.");
       }
     }

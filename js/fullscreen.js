@@ -72,7 +72,7 @@
               updateRadialMenuIcon(true);
             })
             .catch((err) => {
-              console.error("Error attempting to enable fullscreen:", err);
+              window.customodoroLogger.error("FULLSCREEN_ATTEMPTING_TO_ENABLE_FULLSCREEN");
               showToast(
                 "Failed to enter fullscreen mode. Try tapping the button again.",
               );
@@ -98,7 +98,7 @@
               updateRadialMenuIcon(false);
             })
             .catch((err) => {
-              console.error("Error attempting to exit fullscreen:", err);
+              window.customodoroLogger.error("FULLSCREEN_ATTEMPTING_TO_EXIT_FULLSCREEN");
               showToast(
                 "Failed to exit fullscreen. Try using your device's back button.",
               );
@@ -112,7 +112,7 @@
         }
       }
     } catch (error) {
-      console.error("Fullscreen toggle error:", error);
+      window.customodoroLogger.error("FULLSCREEN_FULLSCREEN_TOGGLE");
       showToast(
         "Fullscreen toggle failed. Try using your device's back button to exit.",
       );
@@ -164,7 +164,6 @@
   function showToast(message) {
     const toast = document.getElementById("toast");
     if (!toast) {
-      console.log(message);
       return;
     }
 

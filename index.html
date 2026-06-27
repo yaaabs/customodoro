@@ -2459,40 +2459,41 @@
     <!-- UPDATE!) -->
 
     <!-- Timezone Manager - MUST load before script.js -->
-    <script src="js/timezone-manager.js?v=1.0.0"></script>
-    <script src="js/midnight-splitter.js?v=1.0.0"></script>
+    <script src="js/app-logger.js?v=1.0.0"></script>
+    <script src="js/timezone-manager.js?v=1.0.1"></script>
+    <script src="js/midnight-splitter.js?v=1.0.1"></script>
 
-    <script src="js/script.js?v=2.10.2"></script>
+    <script src="js/script.js?v=2.10.3"></script>
 
-    <script src="js/auth-service.js?v=1.0.0" defer></script>
-    <script src="js/sync-manager.js?v=1.2.0" defer></script>
-    <script src="js/sync-ui.js?v=1.1.0" defer></script>
-    <script src="js/header-profile.js?v=1.0.0" defer></script>
+    <script src="js/auth-service.js?v=1.0.1" defer></script>
+    <script src="js/sync-manager.js?v=1.2.1" defer></script>
+    <script src="js/sync-ui.js?v=1.1.1" defer></script>
+    <script src="js/header-profile.js?v=1.0.1" defer></script>
 
-    <script src="js/task-retention.js?v=1.0.0" defer></script>
+    <script src="js/task-retention.js?v=1.0.1" defer></script>
 
-    <script src="js/settings.js?v=2.6.5" defer></script>
+    <script src="js/settings.js?v=2.6.6" defer></script>
 
-    <script src="js/fullscreen.js?v=2.3.5" defer></script>
-    <script src="js/lockedin-mode.js?v=2.3.6" defer></script>
+    <script src="js/fullscreen.js?v=2.3.6" defer></script>
+    <script src="js/lockedin-mode.js?v=2.3.7" defer></script>
     <script src="js/locked-in-info-modal.js?v=2.3.5" defer></script>
     <script src="js/focus-mode.js?v=2.3.5" defer></script>
-    <script src="js/radial-menu.js?v=2.3.6" defer></script>
+    <script src="js/radial-menu.js?v=2.3.7" defer></script>
 
-    <script src="js/bgm-player.js?v=2.3.6" defer></script>
+    <script src="js/bgm-player.js?v=2.3.7" defer></script>
     <script src="js/mini-music-player.js?v=2.3.6" defer></script>
 
     <script src="js/about-modal.js?v=2.3.5" defer></script>
-    <script src="js/theme-manager.js?v=2.6.2" defer></script>
+    <script src="js/theme-manager.js?v=2.6.3" defer></script>
 
-    <script src="js/leaderboard-integration.js?v=1.0.1" defer></script>
-    <script src="js/database-leaderboard.js?v=2.2.1" defer></script>
-    <script src="js/user-stats.js?v=1.0.0" defer></script>
+    <script src="js/leaderboard-integration.js?v=1.0.2" defer></script>
+    <script src="js/database-leaderboard.js?v=2.2.2" defer></script>
+    <script src="js/user-stats.js?v=1.0.1" defer></script>
     <script src="js/most-used-pomodoro.js?v=1.0.2" defer></script>
     <script src="js/copyright-year.js?v=1.0.0" defer></script>
 
     <!-- Achievements loader (manual) -->
-    <script src="js/database-achievements.js" defer></script>
+    <script src="js/database-achievements.js?v=1.0.1" defer></script>
     <script>
       (function initAchievementsModule() {
         function initAchievementsWhenReady() {
@@ -2514,17 +2515,14 @@
                 try {
                   loadAchievements("achievements-container");
                 } catch (err) {
-                  console.warn("Achievements init failed", err);
+                  window.customodoroLogger.error("INDEX_ACHIEVEMENTS_INIT_FAILED");
                 }
               } else if (attempts >= maxAttempts) {
                 clearInterval(poll);
-                console.warn(
-                  "Achievements init: loader not available (timed out)",
-                );
               }
             }, 100);
           } catch (e) {
-            console.warn("Achievements init failed", e);
+            window.customodoroLogger.error("INDEX_ACHIEVEMENTS_INIT_FAILED");
           }
         }
 
@@ -2551,7 +2549,7 @@
                 try {
                   initAchievementsWhenReady();
                 } catch (e) {
-                  console.warn(e);
+                  window.customodoroLogger.error("INDEX_ACHIEVEMENTS_REFRESH_FAILED");
                 }
               }
             });
@@ -2569,12 +2567,11 @@
         navigator.serviceWorker
           .register("/sw.js")
           .then((registration) => {
-            console.log("✅ Service Worker registered:", registration);
 
             // Check for updates immediately and every 30 seconds
             const checkForUpdates = () => {
-              registration.update().then(() => {
-                console.log("🔍 Checked for updates");
+              registration.update().catch(() => {
+                window.customodoroLogger.error("INDEX_SERVICE_WORKER_UPDATE_CHECK_FAILED");
               });
             };
 
@@ -2586,21 +2583,16 @@
 
             // Listen for service worker updates
             registration.addEventListener("updatefound", () => {
-              console.log("🔄 New service worker found, installing...");
               const newWorker = registration.installing;
 
               if (newWorker) {
                 newWorker.addEventListener("statechange", () => {
-                  console.log("🔄 New SW state:", newWorker.state);
 
                   if (
                     newWorker.state === "installed" &&
                     navigator.serviceWorker.controller
                   ) {
                     // New service worker is ready!
-                    console.log(
-                      "🎉 New service worker ready - showing update prompt",
-                    );
                     showUpdatePrompt();
                   }
                 });
@@ -2608,17 +2600,15 @@
             });
           })
           .catch((error) => {
-            console.error("❌ Service Worker registration failed:", error);
+            window.customodoroLogger.error("INDEX_SERVICE_WORKER_REGISTRATION_FAILED");
           });
 
         // Listen for messages from service worker
         navigator.serviceWorker.addEventListener("message", (event) => {
           if (event.data && event.data.type === "NEW_VERSION_AVAILABLE") {
-            console.log("📨 Update message received from SW");
 
             // Check if it's a force update (for immediate updates)
             if (event.data.forceUpdate) {
-              console.log("⚡ Force update detected - auto-refreshing...");
               // Show brief notification before refresh
               const notification = document.createElement("div");
               notification.style.cssText = `
@@ -2644,7 +2634,6 @@
           }
 
           if (event.data && event.data.type === "FORCE_RELOAD") {
-            console.log("🔄 Force reload message received");
             // Perform hard refresh - clears all caches and reloads
             window.location.reload(true);
           }
@@ -2652,7 +2641,6 @@
 
         // Also listen for controller changes (when new SW takes over)
         navigator.serviceWorker.addEventListener("controllerchange", () => {
-          console.log("🔄 Service worker controller changed - reloading");
           window.location.reload();
         });
       }
@@ -2830,7 +2818,6 @@
             }
           });
 
-          console.log("💾 Backing up user data...", Object.keys(preservedData));
 
           // Clear all storage
           localStorage.clear();
@@ -2841,12 +2828,8 @@
             localStorage.setItem(key, preservedData[key]);
           });
 
-          console.log(
-            "✅ User data restored successfully!",
-            Object.keys(preservedData),
-          );
         } catch (e) {
-          console.error("❌ Storage operation failed:", e);
+          window.customodoroLogger.error("INDEX_STORAGE_OPERATION_FAILED");
           // Even if storage fails, still proceed with refresh
         }
 

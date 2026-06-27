@@ -2,7 +2,6 @@
 // Connects the leaderboard button with the database modal
 
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("🔗 Leaderboard integration initializing...");
 
   // Initialize database leaderboard automatically with retry mechanism
   let initRetryCount = 0;
@@ -11,19 +10,13 @@ document.addEventListener("DOMContentLoaded", function () {
   function tryInitLeaderboard() {
     if (typeof window.initDatabaseLeaderboard === "function") {
       window.initDatabaseLeaderboard();
-      console.log("🔗 Database leaderboard auto-initialized");
       setupLeaderboardButton();
     } else {
       initRetryCount++;
       if (initRetryCount <= maxInitRetries) {
-        console.log(
-          `🔄 Retrying leaderboard init (${initRetryCount}/${maxInitRetries})...`,
-        );
         setTimeout(tryInitLeaderboard, 200 * initRetryCount);
       } else {
-        console.warn(
-          "⚠️ Failed to initialize database leaderboard after retries",
-        );
+        window.customodoroLogger.error("LEADERBOARD_INTEGRATION_FAILED_TO_INITIALIZE_DATABASE_LEADERBOA");
         setupLeaderboardButton(); // Still try to set up the button
       }
     }
@@ -44,19 +37,15 @@ document.addEventListener("DOMContentLoaded", function () {
         // Remove any existing listeners to prevent duplicates
         leaderboardBtn.removeEventListener("click", handleLeaderboardClick);
         leaderboardBtn.addEventListener("click", handleLeaderboardClick);
-        console.log("✅ Leaderboard button listener attached successfully");
 
         // Setup mobile tip functionality
         setupMobileTip();
       } else {
         buttonRetryCount++;
         if (buttonRetryCount <= maxButtonRetries) {
-          console.log(
-            `🔄 Retrying button setup (${buttonRetryCount}/${maxButtonRetries})...`,
-          );
           setTimeout(trySetupButton, 100 * buttonRetryCount);
         } else {
-          console.error("❌ Leaderboard button not found after retries");
+          window.customodoroLogger.error("LEADERBOARD_INTEGRATION_LEADERBOARD_BUTTON_NOT_FOUND_AFTER_RETR");
         }
       }
     }
@@ -108,11 +97,9 @@ document.addEventListener("DOMContentLoaded", function () {
     document.body.appendChild(tip);
 
     // NO AUTO-HIDE - stays permanent until user clicks leaderboard
-    console.log("💬 Permanent mobile leaderboard tip displayed");
   }
 
   function handleLeaderboardClick() {
-    console.log("🏆 Leaderboard button clicked");
 
     // Mark that user has seen and interacted with leaderboard
     localStorage.setItem("hasSeenLeaderboardTip", "true");
@@ -152,14 +139,10 @@ document.addEventListener("DOMContentLoaded", function () {
       } else if (window.leaderboardModal && window.leaderboardModal.show) {
         window.leaderboardModal.show();
       } else {
-        console.warn("Database leaderboard not available");
-        console.log(
-          "Available globals:",
-          Object.keys(window).filter((k) => k.includes("leader")),
-        );
+        window.customodoroLogger.error("LEADERBOARD_INTEGRATION_DATABASE_LEADERBOARD_NOT_AVAILABLE");
       }
     } catch (error) {
-      console.error("Error in leaderboard click handler:", error);
+      window.customodoroLogger.error("LEADERBOARD_INTEGRATION_IN_LEADERBOARD_CLICK_HANDLER");
     }
   }
 
@@ -194,5 +177,3 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
-
-console.log("🏆 Leaderboard integration loaded with enhanced error handling");

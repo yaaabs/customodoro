@@ -25,7 +25,7 @@
         ...savedOptions,
       };
     } catch (error) {
-      console.warn("Unable to load Locked In Mode visibility options:", error);
+      window.customodoroLogger.error("LOCKEDIN_MODE_UNABLE_TO_LOAD_LOCKED_IN_MODE_VISIBILITY_O");
       return { ...lockedInVisibilityDefaults };
     }
   }
@@ -258,9 +258,6 @@
     // Set up the toggle in theme settings
     setupLockedInModeToggle();
 
-    console.log("Locked In Mode initialized:", {
-      enabled: isLockedInModeEnabled,
-    });
   }
 
   // Set up the locked in mode toggle in theme settings
@@ -339,7 +336,6 @@
         activateLockedInMode();
       }, 1000); // 1-second delay
 
-      console.log("Locked In Mode will activate in 1 second");
       return;
     }
 
@@ -411,7 +407,6 @@
       overlay.setAttribute("data-theme", currentTheme[0]);
     }
 
-    console.log("Locked In Mode activated");
   }
 
   // Exit locked in mode
@@ -493,7 +488,6 @@
       toggle.checked = enabled;
     });
 
-    console.log("Locked In Mode setting changed:", enabled);
   }
 
   function isLockedInActive() {

@@ -12,10 +12,6 @@ class MidnightSessionSplitter {
     this.accumulatedSessions = [];
     this.enabled = localStorage.getItem("midnightSplitterEnabled") !== "false"; // Default enabled
 
-    console.log(
-      "🌙 MidnightSessionSplitter initialized (enabled:",
-      this.enabled + ")",
-    );
   }
 
   /**
@@ -30,13 +26,8 @@ class MidnightSessionSplitter {
         window.timezoneManager?.getUserToday() || new Date();
       this.accumulatedSessions = [];
 
-      console.log("▶️ Session started:", {
-        mode,
-        startTime: new Date(this.sessionStartTime).toISOString(),
-        startDate: this.formatDateKeySafe(this.sessionStartDate),
-      });
     } catch (error) {
-      console.error("❌ Error starting session tracking:", error);
+      window.customodoroLogger.error("MIDNIGHT_SPLITTER_STARTING_SESSION_TRACKING");
       this.resetSession(); // Reset on error
     }
   }
@@ -53,7 +44,6 @@ class MidnightSessionSplitter {
         return window.timezoneManager.formatDateKey(date);
       }
     } catch (e) {
-      console.warn("Timezone manager not available, using fallback");
     }
 
     // Fallback to basic formatting
@@ -97,7 +87,7 @@ class MidnightSessionSplitter {
         return crossings;
       }
     } catch (error) {
-      console.error("❌ Error detecting midnight crossings:", error);
+      window.customodoroLogger.error("MIDNIGHT_SPLITTER_DETECTING_MIDNIGHT_CROSSINGS");
     }
 
     return [];
@@ -109,7 +99,6 @@ class MidnightSessionSplitter {
   splitSession(totalMinutes, mode) {
     // SAFETY: If not enabled or no start time, return single segment
     if (!this.enabled || !this.sessionStartTime) {
-      console.log("⚠️ Splitter not active, using standard recording");
       return [
         {
           date: this.formatDateKeySafe(
@@ -140,7 +129,6 @@ class MidnightSessionSplitter {
       }
 
       // Session crossed midnight - split it
-      console.log("🌙 Midnight crossing detected! Splitting session...");
 
       const segments = [];
       let currentTimestamp = this.sessionStartTime;
@@ -164,9 +152,6 @@ class MidnightSessionSplitter {
           });
 
           remainingMinutes -= segmentMinutes;
-          console.log(
-            `📅 Segment ${index + 1}: ${segmentMinutes} mins on ${this.formatDateKeySafe(currentDate)}`,
-          );
         }
 
         currentTimestamp = crossing.timestamp;
@@ -183,9 +168,6 @@ class MidnightSessionSplitter {
           segmentIndex: segments.length,
         });
 
-        console.log(
-          `📅 Final segment: ${remainingMinutes} mins on ${this.formatDateKeySafe(currentDate)}`,
-        );
       }
 
       return segments.length > 0
@@ -199,7 +181,7 @@ class MidnightSessionSplitter {
             },
           ];
     } catch (error) {
-      console.error("❌ Error splitting session:", error);
+      window.customodoroLogger.error("MIDNIGHT_SPLITTER_SPLITTING_SESSION");
       // SAFETY FALLBACK: Return single segment if error occurs
       return [
         {
@@ -221,7 +203,6 @@ class MidnightSessionSplitter {
    */
   recordSession(mode, totalMinutes) {
     if (!this.enabled) {
-      console.log("⚠️ Midnight splitter disabled, using standard recording");
       // Fallback to standard recording
       if (typeof window.addCustomodoroSession === "function") {
         return window.addCustomodoroSession(mode, totalMinutes);
@@ -232,12 +213,6 @@ class MidnightSessionSplitter {
     try {
       const segments = this.splitSession(totalMinutes, mode);
 
-      console.log("💾 Recording session:", {
-        mode,
-        totalMinutes,
-        segments: segments.length,
-        split: segments.length > 1,
-      });
 
       // Record each segment
       const MAX_DAILY_MINUTES = 1440; // 24 hours cap
@@ -263,17 +238,11 @@ class MidnightSessionSplitter {
           const remainingCapacity = MAX_DAILY_MINUTES - currentMinutes;
 
           if (remainingCapacity <= 0) {
-            console.warn(
-              `⚠️ Daily cap reached for ${dateKey}. Segment skipped.`,
-            );
             return; // Skip this segment
           }
 
           let minutesToAdd = segment.minutes;
           if (segment.minutes > remainingCapacity) {
-            console.warn(
-              `⚠️ Capping segment from ${segment.minutes} to ${remainingCapacity} mins for ${dateKey}.`,
-            );
             minutesToAdd = remainingCapacity;
           }
 
@@ -299,9 +268,8 @@ class MidnightSessionSplitter {
           }
 
           localStorage.setItem("customodoroStatsByDay", JSON.stringify(stats));
-          console.log(`  ✅ Recorded ${minutesToAdd} mins to ${segment.date}`);
         } catch (segmentError) {
-          console.error("❌ Error recording segment:", segmentError);
+          window.customodoroLogger.error("MIDNIGHT_SPLITTER_RECORDING_SEGMENT");
         }
       });
 
@@ -327,7 +295,7 @@ class MidnightSessionSplitter {
           );
           if (window.syncUI) window.syncUI.updateStats();
         } catch (syncError) {
-          console.warn("⚠️ Auto-sync failed:", syncError);
+          window.customodoroLogger.error("MIDNIGHT_SPLITTER_AUTO_SYNC_FAILED");
         }
       }
 
@@ -338,9 +306,8 @@ class MidnightSessionSplitter {
         split: segments.length > 1,
       };
     } catch (error) {
-      console.error("❌ Fatal error in recordSession:", error);
+      window.customodoroLogger.error("MIDNIGHT_SPLITTER_IN_RECORDSESSION");
       // CRITICAL SAFETY FALLBACK: Use old recording method
-      console.log("🔄 Falling back to standard recording method");
       if (typeof window.addCustomodoroSession === "function") {
         return window.addCustomodoroSession(mode, totalMinutes);
       }
@@ -387,7 +354,6 @@ class MidnightSessionSplitter {
   setEnabled(enabled) {
     this.enabled = enabled;
     localStorage.setItem("midnightSplitterEnabled", enabled.toString());
-    console.log("🌙 Midnight splitter", enabled ? "ENABLED" : "DISABLED");
   }
 }
 
@@ -413,7 +379,6 @@ window.recordSessionWithMidnightSplit = function (mode, minutes) {
   }
   // SAFETY: Fallback to old method
   if (typeof window.addCustomodoroSession === "function") {
-    console.log("⚠️ Using fallback recording (splitter not available)");
     return window.addCustomodoroSession(mode, minutes);
   }
   return { success: false, error: "No recording method available" };
@@ -427,5 +392,3 @@ window.resetMidnightTracking = function () {
     window.midnightSplitter.resetSession();
   }
 };
-
-console.log("✅ MidnightSessionSplitter loaded successfully");

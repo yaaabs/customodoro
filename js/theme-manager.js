@@ -226,9 +226,8 @@
   function saveCustomTheme(dataUrl) {
     try {
       localStorage.setItem(CUSTOM_THEME_STORAGE_KEY, dataUrl);
-      console.log("Custom theme saved successfully");
     } catch (error) {
-      console.error("Error saving custom theme:", error);
+      window.customodoroLogger.error("THEME_MANAGER_SAVING_CUSTOM_THEME");
 
       // If it's a quota exceeded error, notify the user
       if (
@@ -638,7 +637,6 @@
     // Update color theme visibility
     updateColorThemeVisibility();
 
-    console.log("Color theme applied:", color);
   }
 
   // Reset color theme to default
@@ -661,18 +659,15 @@
   // Update color theme selector visibility
   function updateColorThemeVisibility() {
     if (!colorThemeSelector) {
-      console.warn("Color theme selector not found");
       return;
     }
 
     if (themeSelector && themeSelector.value === "color") {
       colorThemeSelector.style.display = "block";
       colorThemeSelector.classList.add("show");
-      console.log("Color theme selector shown");
     } else {
       colorThemeSelector.style.display = "none";
       colorThemeSelector.classList.remove("show");
-      console.log("Color theme selector hidden");
     }
   }
 
@@ -680,7 +675,6 @@
   function showToast(message) {
     const toast = document.getElementById("toast");
     if (!toast) {
-      console.log(message);
       return;
     }
 
@@ -757,11 +751,6 @@
     updateColorThemeVisibility,
     // Test function for debugging
     testColorThemeVisibility: function () {
-      console.log(
-        "Theme selector value:",
-        themeSelector ? themeSelector.value : "not found",
-      );
-      console.log("Color theme selector element:", colorThemeSelector);
       updateColorThemeVisibility();
     },
   };

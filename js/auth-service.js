@@ -1,12 +1,10 @@
 // Authentication Service
 class AuthService {
   constructor() {
-    console.log("AuthService constructor starting...");
     this.baseURL = "https://customodoro-backend.onrender.com";
     this.currentUser = null;
     this.listeners = new Set();
 
-    console.log("AuthService initialized with baseURL:", this.baseURL);
 
     // Initialize from localStorage
     this.loadStoredAuth();
@@ -14,16 +12,12 @@ class AuthService {
     // Add error handler for browser extension conflicts
     this.addErrorHandlers();
 
-    console.log("AuthService constructor completed");
   }
 
   // Add error handlers for browser extension conflicts
   addErrorHandlers() {
     window.addEventListener("error", (event) => {
       if (event.message && event.message.includes("message channel closed")) {
-        console.warn(
-          "Browser extension conflict detected, continuing normally",
-        );
         event.preventDefault();
         return false;
       }
@@ -35,9 +29,6 @@ class AuthService {
         event.reason.message &&
         event.reason.message.includes("message channel closed")
       ) {
-        console.warn(
-          "Browser extension promise rejection, continuing normally",
-        );
         event.preventDefault();
         return false;
       }
@@ -50,11 +41,10 @@ class AuthService {
       const storedAuth = localStorage.getItem("customodoro-auth");
       if (storedAuth) {
         this.currentUser = JSON.parse(storedAuth);
-        console.log("AuthService: Loaded stored auth - User authenticated");
 
         // Validate stored auth data
         if (!this.currentUser.userId || !this.currentUser.email) {
-          console.warn("AuthService: Invalid stored auth data, clearing");
+          window.customodoroLogger.error("AUTH_SERVICE_AUTHSERVICE_INVALID_STORED_AUTH_DATA_CLEAR");
           this.clearAuth();
           return;
         }
@@ -63,11 +53,10 @@ class AuthService {
         // Use setTimeout to ensure other components are initialized
         setTimeout(() => {
           this.notifyListeners("restore", this.currentUser);
-          console.log("AuthService: Notified components of restored session");
         }, 100);
       }
     } catch (error) {
-      console.warn("Failed to load stored auth:", error);
+      window.customodoroLogger.error("AUTH_SERVICE_FAILED_TO_LOAD_STORED_AUTH");
       localStorage.removeItem("customodoro-auth");
       this.currentUser = null;
     }
@@ -103,9 +92,6 @@ class AuthService {
 
   // Clear user-specific session data on logout to prevent cross-account data bleeding
   clearUserSessionData() {
-    console.log(
-      "🧹 Clearing user session data to prevent cross-account contamination...",
-    );
 
     // 🚨 COMPREHENSIVE LIST: All keys that contain user-specific data (NOT settings/preferences)
     const sessionDataKeys = [
@@ -159,42 +145,35 @@ class AuthService {
     // Combine explicit keys with pattern matches
     const allKeysToRemove = [...sessionDataKeys, ...patternMatches];
 
-    console.log("🗑️ Keys to remove:", allKeysToRemove);
 
     // Clear all identified session data
     allKeysToRemove.forEach((key) => {
       try {
         localStorage.removeItem(key);
-        console.log(`✅ Cleared session data: ${key}`);
       } catch (error) {
-        console.warn(`⚠️ Failed to clear ${key}:`, error);
+        window.customodoroLogger.error("AUTH_SERVICE_FAILED_TO_CLEAR_KEY");
       }
     });
 
     // 📱 MOBILE FIX: Also clear sessionStorage for mobile browsers
     try {
-      console.log("🧹 Clearing sessionStorage for mobile compatibility...");
       sessionStorage.clear();
-      console.log("✅ SessionStorage cleared");
     } catch (error) {
-      console.warn("⚠️ Failed to clear sessionStorage:", error);
+      window.customodoroLogger.error("AUTH_SERVICE_FAILED_TO_CLEAR_SESSIONSTORAGE");
     }
 
     // 📱 MOBILE FIX: Request service worker cache clearing for mobile
     if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
       try {
-        console.log("🧹 Requesting service worker cache clear for mobile...");
         navigator.serviceWorker.controller.postMessage({
           type: "CLEAR_USER_CACHE",
           reason: "User logout - prevent cross-account contamination",
         });
-        console.log("✅ Service worker cache clear requested");
       } catch (error) {
-        console.warn("⚠️ Failed to request service worker cache clear:", error);
+        window.customodoroLogger.error("AUTH_SERVICE_FAILED_TO_REQUEST_SERVICE_WORKER_CACHE_CLE");
       }
     }
 
-    console.log("🔒 User session data cleared - ready for next user login");
   }
 
   // Get current user
@@ -209,25 +188,10 @@ class AuthService {
 
   // Register new user with email verification
   async register(email, username = "", userData = null) {
-    console.log("AuthService.register called with:", {
-      email,
-      username,
-      hasUserData: !!userData,
-    });
     try {
       let dataToSend = userData;
       if (!dataToSend && window.syncManager) {
-        console.log(
-          "🛡️ Getting local data to prevent data loss during registration",
-        );
         dataToSend = window.syncManager.getCurrentLocalData();
-
-        // Double-check if we have significant local data
-        if (window.syncManager.hasSignificantLocalData(dataToSend)) {
-          console.log(
-            "🛡️ CRITICAL: Significant local data detected - including in registration",
-          );
-        }
       }
 
       const requestBody = {
@@ -237,8 +201,6 @@ class AuthService {
         requireVerification: true, // Request email verification
       };
 
-      console.log("Registering user with email verification");
-      console.log("Sending request to:", `${this.baseURL}/api/register`);
 
       const response = await fetch(`${this.baseURL}/api/register`, {
         method: "POST",
@@ -248,20 +210,18 @@ class AuthService {
         body: JSON.stringify(requestBody),
       });
 
-      console.log("Registration response status:", response.status);
 
       if (!response.ok) {
         const errorData = await response
           .json()
           .catch(() => ({ error: "Registration failed" }));
-        console.error("Registration failed:", errorData);
+        window.customodoroLogger.error("AUTH_SERVICE_REGISTRATION_FAILED");
         throw new Error(
           errorData.error || `Registration failed: ${response.status}`,
         );
       }
 
       const responseData = await response.json();
-      console.log("Registration successful - User created");
 
       // If verification is required, return verification info
       if (responseData.requiresVerification) {
@@ -286,14 +246,13 @@ class AuthService {
 
       return responseData;
     } catch (error) {
-      console.error("Registration error:", error);
+      window.customodoroLogger.error("AUTH_SERVICE_REGISTRATION");
       throw error;
     }
   }
 
   // Verify email with code
   async verifyEmail(email, code) {
-    console.log("AuthService.verifyEmail called with:", { email, code: "***" });
     try {
       const response = await fetch(`${this.baseURL}/api/verify-email`, {
         method: "POST",
@@ -314,7 +273,6 @@ class AuthService {
       }
 
       const responseData = await response.json();
-      console.log("Email verification successful");
 
       // Save authentication data after successful verification
       this.saveAuth({
@@ -327,19 +285,16 @@ class AuthService {
 
       return responseData;
     } catch (error) {
-      console.error("Email verification error:", error);
+      window.customodoroLogger.error("AUTH_SERVICE_EMAIL_VERIFICATION");
       throw error;
     }
   } // Login existing user
   async login(email) {
-    console.log("AuthService.login called with:", { email });
     try {
       const requestBody = {
         email: email.trim().toLowerCase(),
       };
 
-      console.log("Logging in user...");
-      console.log("Sending request to:", `${this.baseURL}/api/login`);
 
       const response = await fetch(`${this.baseURL}/api/login`, {
         method: "POST",
@@ -349,18 +304,16 @@ class AuthService {
         body: JSON.stringify(requestBody),
       });
 
-      console.log("Login response status:", response.status);
 
       if (!response.ok) {
         const errorData = await response
           .json()
           .catch(() => ({ error: "Login failed" }));
-        console.error("Login failed:", errorData);
+        window.customodoroLogger.error("AUTH_SERVICE_LOGIN_FAILED");
         throw new Error(errorData.error || `Login failed: ${response.status}`);
       }
 
       const responseData = await response.json();
-      console.log("Login successful");
 
       // Save authentication data - Fix to use proper server response structure
       this.saveAuth({
@@ -372,7 +325,7 @@ class AuthService {
 
       return responseData;
     } catch (error) {
-      console.error("Login error:", error);
+      window.customodoroLogger.error("AUTH_SERVICE_LOGIN");
       throw error;
     }
   }
@@ -388,9 +341,6 @@ class AuthService {
         navigator.userAgent,
       );
     if (isMobile) {
-      console.log(
-        "📱 Mobile logout detected - forcing page reload for complete cleanup",
-      );
       setTimeout(() => {
         window.location.reload(true); // Force reload from server
       }, 500); // Small delay to ensure cleanup completes
@@ -414,12 +364,11 @@ class AuthService {
             data[key] = value;
           }
         } catch (error) {
-          console.warn(`Failed to read localStorage key: ${key}`, error);
+          window.customodoroLogger.error("AUTH_SERVICE_FAILED_TO_READ_LOCALSTORAGE_KEY_KEY");
         }
       }
     }
 
-    console.log("Collected localStorage data:", Object.keys(data));
     return data;
   }
 
@@ -439,13 +388,11 @@ class AuthService {
       try {
         callback(event, data);
       } catch (error) {
-        console.error("Auth listener error:", error);
+        window.customodoroLogger.error("AUTH_SERVICE_AUTH_LISTENER");
       }
     });
   }
 }
 
 // Create global instance
-console.log("Creating AuthService instance...");
 window.authService = new AuthService();
-console.log("AuthService created successfully:", window.authService);
