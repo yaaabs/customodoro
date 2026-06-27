@@ -259,12 +259,12 @@ describe("Customodoro timer regression tests", () => {
     harness.evaluate("window.lockedInMode.enter()");
 
     assert.deepEqual(
-      harness.evaluate(`({
+      JSON.parse(harness.evaluate(`JSON.stringify({
         buttons: document.querySelector(".lockedin-mode-overlay").dataset.showButtons,
         progress: document.querySelector(".lockedin-mode-overlay").dataset.showProgress,
         session: document.querySelector(".lockedin-mode-overlay").dataset.showSession,
         exit: document.querySelector(".lockedin-mode-overlay").dataset.showExit,
-      })`),
+      })`)),
       {
         buttons: "false",
         progress: "false",

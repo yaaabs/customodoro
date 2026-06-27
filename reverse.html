@@ -201,7 +201,7 @@
 
     <link rel="stylesheet" href="css/features.css?v=1.0.5" />
 
-    <link rel="stylesheet" href="css/utilities.css?v=1.0.3" />
+    <link rel="stylesheet" href="css/utilities.css?v=1.0.6" />
 
     <!-- Supabase Client -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
@@ -733,32 +733,63 @@
 
       <section class="seo-content" aria-label="About Reverse Pomodoro Timer">
         <div class="seo-content-inner">
-          <h2>Reverse Pomodoro Timer</h2>
-          <p>
-            Customodoro's Reverse Pomodoro Timer is a count-up focus timer for
-            people who prefer to start working without a fixed countdown. Work
-            freely, stop when your focus naturally ends, then earn break time
-            based on how long you worked.
-          </p>
+          <div class="seo-content-intro">
+            <span class="seo-content-eyebrow">Follow your flow</span>
+            <h2>Reverse Pomodoro Timer</h2>
+            <p>
+              Start focusing without committing to a fixed countdown. The timer
+              counts up while you work, then turns your focus time into an
+              earned break when you are ready to stop.
+            </p>
+          </div>
 
-          <h3>Reverse Pomodoro and Flowmodoro</h3>
-          <p>
-            This approach is also commonly called Flowmodoro. Customodoro uses
-            the name Reverse Pomodoro Timer because the timer reverses the usual
-            Pomodoro flow: instead of counting down first, it counts up and
-            calculates an earned break afterward.
-          </p>
+          <details class="seo-content-details">
+            <summary>
+              <span>How Reverse Pomodoro works</span>
+              <span class="seo-summary-icon" aria-hidden="true"></span>
+            </summary>
 
-          <h3>When to use Reverse Pomodoro</h3>
-          <ul>
-            <li>When a fixed 25-minute countdown feels too rigid</li>
-            <li>When you want to protect a flow state once it starts</li>
-            <li>When you prefer earned breaks based on actual focus time</li>
-            <li>When you want a gentler alternative to classic Pomodoro</li>
-          </ul>
+            <div class="seo-content-expanded">
+              <div class="seo-content-column">
+                <h3>Reverse Pomodoro and Flowmodoro</h3>
+                <p>
+                  Reverse Pomodoro is also commonly called Flowmodoro. Instead
+                  of choosing a session length first, you protect your natural
+                  flow state and take a proportional break afterward.
+                </p>
 
-          <p><a href="/">Use Classic Pomodoro Timer</a></p>
-          <p><a href="/pomodoro">Learn more about the Pomodoro Technique</a></p>
+                <h3>When it works well</h3>
+                <ul class="seo-feature-list">
+                  <li>A fixed 25-minute countdown feels too rigid</li>
+                  <li>You want to protect a flow state once it starts</li>
+                  <li>You prefer breaks based on actual focus time</li>
+                  <li>You want a gentler way to begin difficult tasks</li>
+                </ul>
+              </div>
+
+              <div class="seo-content-column">
+                <h3>Frequently asked questions</h3>
+                <dl class="seo-faq-list">
+                  <dt>What is Reverse Pomodoro?</dt>
+                  <dd>
+                    It is Customodoro's count-up focus mode. Work freely, then
+                    earn break time based on how long you focused.
+                  </dd>
+
+                  <dt>Is it the same as Flowmodoro?</dt>
+                  <dd>
+                    Yes. Both names describe working with a count-up timer
+                    before taking a break based on your focus duration.
+                  </dd>
+                </dl>
+              </div>
+            </div>
+
+            <div class="seo-content-actions">
+              <a href="/">Use Classic Pomodoro</a>
+              <a href="/pomodoro">Learn the Pomodoro Technique</a>
+            </div>
+          </details>
         </div>
       </section>
 
@@ -2400,7 +2431,7 @@
     <script src="js/timezone-manager.js?v=1.0.0"></script>
     <script src="js/midnight-splitter.js?v=1.0.0"></script>
 
-    <script src="js/reversePomodoro.js?v=2.10.2"></script>
+    <script src="js/reversePomodoro.js?v=2.10.3"></script>
 
     <script src="js/auth-service.js?v=1.0.0" defer></script>
     <script src="js/sync-manager.js?v=1.2.0" defer></script>

@@ -462,16 +462,16 @@ function updateButtonDisplay() {
       break;
 
     case "running":
-      // State 2: [STOP] [PAUSE] [Reset]
-      stopButton.style.display = "inline-block";
+      // State 2: [PAUSE] [STOP] [Reset]
       pauseButton.style.display = "inline-block";
+      stopButton.style.display = "inline-block";
       resetButton.style.display = "inline-block";
       break;
 
     case "paused":
-      // State 3: [STOP] [RESUME] [Reset]
-      stopButton.style.display = "inline-block";
+      // State 3: [RESUME] [STOP] [Reset]
       resumeButton.style.display = "inline-block";
+      stopButton.style.display = "inline-block";
       resetButton.style.display = "inline-block";
       break;
 

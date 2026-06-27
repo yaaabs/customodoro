@@ -39,7 +39,7 @@ class FakeClassList {
   }
 
   _sync() {
-    this.element.className = Array.from(this.classes).join(" ");
+    this.element._className = Array.from(this.classes).join(" ");
   }
 
   setFromString(value) {
@@ -110,8 +110,24 @@ class FakeElement extends FakeEventTarget {
     this.offsetWidth = 320;
     this.offsetHeight = 32;
     this._innerHTML = "";
-    this.className = "";
+    this._className = "";
     this.classList = new FakeClassList(this);
+  }
+
+  set className(value) {
+    this._className = String(value || "");
+    if (this.classList) {
+      this.classList.classes = new Set(
+        this._className
+          .split(/\s+/)
+          .map((item) => item.trim())
+          .filter(Boolean),
+      );
+    }
+  }
+
+  get className() {
+    return this._className;
   }
 
   set innerHTML(value) {
