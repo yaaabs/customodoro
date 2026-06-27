@@ -78,7 +78,7 @@
           "@id": "https://customodoro.vercel.app/pomodoro"
         },
         "headline": "Practical Guide to the Pomodoro Technique",
-        "description": "Comprehensive guide to mastering the Pomodoro Technique for enhanced productivity and focus",
+        "description": "A practical, evidence-aware guide to the Pomodoro Technique: what it means, how the complete method works, and when to adapt it.",
         "image": "https://customodoro.vercel.app/favicon/android-chrome-512x512.png",
         "author": {
           "@type": "Person",
@@ -93,7 +93,7 @@
           }
         },
         "datePublished": "2025-08-02",
-        "dateModified": "2025-08-02"
+        "dateModified": "2026-06-27"
       }
     </script>
 
@@ -125,7 +125,8 @@
     <!-- Essential CSS -->
     <link rel="stylesheet" href="css/style.css?v=2.3.6" />
     <link rel="stylesheet" href="css/features.css?v=1.0.0" />
-    <link rel="stylesheet" href="css/utilities.css?v=1.0.4" />
+    <link rel="stylesheet" href="css/utilities.css?v=1.0.6" />
+    <link rel="stylesheet" href="css/pomodoro-guide.css?v=1.0.4" />
   </head>
   <body class="pomodoro-mode">
     <script>
@@ -157,194 +158,247 @@
       })();
     </script>
 
-    <div class="container">
-      <header>
+    <a class="guide-skip-link" href="#guide-content">Skip to article</a>
+    <div class="container guide-page">
+      <header class="guide-header">
         <h1 class="app-title">Customodoro Timer</h1>
-        <br />
-        <div class="switch-mode">
-          <a href="./" class="switch-btn">Switch to Classic Pomodoro ⏱️</a>
-          <a href="/reverse" class="switch-btn">Try Reverse Pomodoro ⏱️</a>
-        </div>
-        <style>
-          .switch-mode {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-          }
-          @media (max-width: 600px) {
-            .switch-mode {
-              flex-direction: column;
-              align-items: stretch;
-              gap: 0.5rem;
-            }
-            .switch-mode .switch-btn {
-              width: 100%;
-              text-align: center;
-            }
-          }
-        </style>
+        <nav class="guide-nav" aria-label="Timer options">
+          <a class="guide-back-link" href="/">
+            <span aria-hidden="true">←</span>
+            Classic Pomodoro
+          </a>
+          <a href="/reverse">Try Reverse Pomodoro</a>
+        </nav>
       </header>
 
-      <main
-        class="pomodoro-article"
-        style="
-          max-width: 720px;
-          margin: 2rem auto;
-          padding: 1.5rem;
-          color: white;
-        "
-      >
-        <h2 class="article-title">🍅 What is the Pomodoro Technique?</h2>
-        <blockquote class="featured-quote">
-          "The secret to effective time management is thinking in tomatoes
-          rather than hours. It may seem silly initially, but millions of people
-          swear by the life-changing power of the Pomodoro Technique. (Pomodoro
-          is Italian for tomato. 🍅)"
-        </blockquote>
-        <p class="article-text">
-          This time management method alternates focused work sessions (called
-          "pomodoros") with frequent short breaks. By breaking
-          your workday into strategic 25-minute focus blocks, you can maintain
-          high concentration and prevent mental fatigue.
-        </p>
-        <p class="article-text">
-          The technique is beautifully simple yet powerful: work for 25 minutes,
-          then take a 5-minute break. After completing four pomodoros, reward
-          yourself with a longer 15-30 minute break. This rhythm helps your
-          brain stay fresh and motivated throughout the day.
-        </p>
-        <h3 class="section-title">✨ How Customodoro Enhances Your Focus</h3>
-        <p class="article-text">
-          Customodoro takes the classic Pomodoro Technique to the next level. We
-          understand that everyone works differently, so we've made every aspect
-          customizable:
-        </p>
-        <ul class="feature-list">
-          <li>Adjust session lengths to match your natural focus rhythm</li>
-          <li>Customize break durations for optimal recovery</li>
-          <li>Track your progress with beautiful visualizations</li>
-          <li>Try Reverse Pomodoro for a gentler approach to productivity</li>
-        </ul>
-        <br />
-        <a href="./" class="back-to-timer-btn">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
-          Back to Timer
-        </a>
+      <main id="guide-content" class="pomodoro-guide">
+        <article>
+          <header class="guide-hero">
+            <p class="guide-kicker">Pomodoro Technique guide</p>
+            <h1>
+              <span class="guide-title-line">What is the Pomodoro</span>
+              <span>Technique?</span>
+            </h1>
+            <p class="guide-lede">
+              The Pomodoro Technique is not a race to squeeze more work into
+              every minute. It is a practical system for choosing one task,
+              protecting your attention, resting deliberately, and learning how
+              much effort your work actually takes.
+            </p>
+          </header>
 
-        <section
-          class="articles-section"
-          role="complementary"
-          aria-label="Additional Pomodoro Technique Resources"
-        >
-          <h2 style="font-size: 1.8rem; margin: 3rem 0 2rem">
-            📚 Explore More Resources
-          </h2>
-          <div class="articles-grid">
-            <div class="article-card">
-              <h3>✅ Pomodoro Overview by Todoist</h3>
-              <p>
-                Discover how Todoist breaks down the Pomodoro Technique into
-                actionable steps for modern productivity enhancement.
-              </p>
-              <a
-                href="https://www.todoist.com/productivity-methods/pomodoro-technique"
-                target="_blank"
-                rel="noopener"
-                class="visit-article-btn"
-              >
-                Visit Article
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-              </a>
-            </div>
+          <div class="guide-layout">
+            <aside class="guide-toc" aria-label="On this page">
+              <p>On this page</p>
+              <nav>
+                <a href="#meaning">The real meaning</a>
+                <a href="#how-it-works">How it works</a>
+                <a href="#why-it-helps">Why it can help</a>
+                <a href="#evidence">What research says</a>
+                <a href="#adapt">Make it work for you</a>
+                <a href="#sources">Sources</a>
+              </nav>
+            </aside>
 
-            <div class="article-card">
-              <h3>🧠 Scientific Analysis by VeryWellMind</h3>
-              <p>
-                Explore the psychological benefits and scientific research
-                behind the Pomodoro Technique's effectiveness.
-              </p>
-              <a
-                href="https://www.verywellmind.com/pomodoro-technique-history-steps-benefits-and-drawbacks-6892111"
-                target="_blank"
-                rel="noopener"
-                class="visit-article-btn"
-              >
-                Visit Article
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-              </a>
-            </div>
+            <div class="guide-article-body">
+              <section id="meaning" class="guide-section">
+                <p class="guide-section-label">The idea</p>
+                <h2>Work with time, not against it</h2>
+                <p>
+                  Francesco Cirillo developed the technique as a university
+                  student in the late 1980s, using a tomato-shaped kitchen timer.
+                  “Pomodoro” is Italian for tomato, but the timer is only the
+                  visible part of the method.
+                </p>
+                <p>
+                  The complete system combines focused intervals with daily
+                  planning, interruption management, effort estimation, and a
+                  record of completed sessions. A Pomodoro gives a task a clear
+                  beginning and end. That boundary makes “work on this project”
+                  feel more concrete: choose the next action, protect it for one
+                  interval, then stop and recover.
+                </p>
+                <aside class="guide-callout">
+                  <strong>The useful shift</strong>
+                  <p>
+                    Do not ask, “Can I finish everything?” Ask, “Can I give one
+                    important task my full attention for the next 25 minutes?”
+                  </p>
+                </aside>
+              </section>
 
-            <div class="article-card">
-              <h3>📖 Pomodoro History on Wikipedia</h3>
-              <p>
-                Learn about the origins, development, and global impact of the
-                Pomodoro Technique since its creation.
-              </p>
-              <a
-                href="https://en.wikipedia.org/wiki/Pomodoro_Technique"
-                target="_blank"
-                rel="noopener"
-                class="visit-article-btn"
-              >
-                Visit Article
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-              </a>
+              <section id="how-it-works" class="guide-section">
+                <p class="guide-section-label">The classic cycle</p>
+                <h2>One task. One timer. One intentional break.</h2>
+                <div class="guide-cycle" aria-label="The four stages of a Pomodoro cycle">
+                  <div class="guide-cycle-step">
+                    <span>01</span>
+                    <h3>Choose</h3>
+                    <p>Write down one specific task or next action.</p>
+                  </div>
+                  <div class="guide-cycle-step">
+                    <span>02</span>
+                    <h3>Focus</h3>
+                    <p>Set 25 minutes and work only on that task.</p>
+                  </div>
+                  <div class="guide-cycle-step">
+                    <span>03</span>
+                    <h3>Record</h3>
+                    <p>When the timer rings, mark the interval complete.</p>
+                  </div>
+                  <div class="guide-cycle-step">
+                    <span>04</span>
+                    <h3>Recover</h3>
+                    <p>Take about 5 minutes away from the task.</p>
+                  </div>
+                </div>
+                <p>
+                  After four focus intervals, take a longer break—commonly
+                  15–30 minutes. If an interruption appears, write it down and
+                  return to the task when possible. The record is not a score;
+                  it becomes feedback for planning future work.
+                </p>
+              </section>
+
+              <section id="why-it-helps" class="guide-section">
+                <p class="guide-section-label">The practical value</p>
+                <h2>What the timer is actually doing for you</h2>
+                <div class="guide-principles">
+                  <div>
+                    <h3>Reduces the cost of starting</h3>
+                    <p>
+                      A bounded session is psychologically smaller than an
+                      undefined afternoon of work. You only commit to the next
+                      interval.
+                    </p>
+                  </div>
+                  <div>
+                    <h3>Makes distractions visible</h3>
+                    <p>
+                      Capturing interruptions instead of following them helps
+                      reveal where your attention tends to leak.
+                    </p>
+                  </div>
+                  <div>
+                    <h3>Turns effort into planning data</h3>
+                    <p>
+                      Counting completed intervals gives you a simple unit for
+                      estimating similar tasks later.
+                    </p>
+                  </div>
+                  <div>
+                    <h3>Builds recovery into the plan</h3>
+                    <p>
+                      Breaks are scheduled rather than postponed until you are
+                      already exhausted.
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              <section id="evidence" class="guide-section">
+                <p class="guide-section-label">Research, without the hype</p>
+                <h2>Useful structure, not a universal rule</h2>
+                <p>
+                  Research supports the broader value of breaks, but it does not
+                  prove that 25 minutes is an ideal biological attention span.
+                  A 2022 meta-analysis of 22 experimental and quasi-experimental
+                  studies found that micro-breaks improved vigor and reduced
+                  fatigue. Performance effects were smaller and depended on
+                  factors such as break length and task type.
+                </p>
+                <p>
+                  A 2025 study of 94 university students compared Pomodoro,
+                  Flowtime, and self-regulated breaks during a two-hour study
+                  session. It found no overall differences in productivity,
+                  task completion, flow, fatigue, or motivation. That is a useful
+                  reminder: a timer can provide structure, but the best break
+                  pattern still depends on the person and the work.
+                </p>
+                <div class="guide-evidence-note">
+                  <strong>Bottom line</strong>
+                  <p>
+                    Use Pomodoro as a repeatable experiment. Keep it when it
+                    helps you begin, focus, and recover. Adjust it when the timer
+                    repeatedly breaks useful concentration.
+                  </p>
+                </div>
+              </section>
+
+              <section id="adapt" class="guide-section">
+                <p class="guide-section-label">Make the method yours</p>
+                <h2>The numbers are defaults; feedback is the point</h2>
+                <p>
+                  Begin with 25 minutes of focus and a 5-minute break for a few
+                  days. Then adjust one variable at a time. Longer intervals may
+                  suit writing or programming; shorter intervals may lower the
+                  barrier to starting a difficult task.
+                </p>
+                <div class="guide-fit-grid">
+                  <div>
+                    <h3>Classic Pomodoro fits when…</h3>
+                    <ul>
+                      <li>You delay starting large or ambiguous tasks.</li>
+                      <li>Notifications and side quests fragment your work.</li>
+                      <li>You forget to pause until fatigue is obvious.</li>
+                      <li>You want better estimates for repeatable work.</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h3>Try a flexible timer when…</h3>
+                    <ul>
+                      <li>A timer alarm routinely interrupts valuable flow.</li>
+                      <li>Your work has unpredictable natural stopping points.</li>
+                      <li>You need breaks proportional to actual focus time.</li>
+                      <li>A rigid schedule adds pressure instead of clarity.</li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="guide-choice">
+                  <div>
+                    <span>Ready to try it?</span>
+                    <h3>Choose the structure that matches today’s work.</h3>
+                  </div>
+                  <div class="guide-choice-actions">
+                    <a class="guide-button guide-button-primary" href="/">Classic Timer</a>
+                    <a class="guide-button guide-button-secondary" href="/reverse">Reverse Timer</a>
+                  </div>
+                </div>
+              </section>
+
+              <section id="sources" class="guide-section guide-sources">
+                <p class="guide-section-label">References and further reading</p>
+                <h2>Go to the source</h2>
+                <ol>
+                  <li>
+                    <a href="https://www.pomodorotechnique.com/" target="_blank" rel="noopener noreferrer">
+                      The official Pomodoro Technique website
+                    </a>
+                    <span>Francesco Cirillo’s overview of the complete method.</span>
+                  </li>
+                  <li>
+                    <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9432722/" target="_blank" rel="noopener noreferrer">
+                      Albulescu et al. (2022), PLOS ONE
+                    </a>
+                    <span>A systematic review and meta-analysis of micro-breaks, well-being, and performance.</span>
+                  </li>
+                  <li>
+                    <a href="https://pubmed.ncbi.nlm.nih.gov/40723645/" target="_blank" rel="noopener noreferrer">
+                      Smits, Wenzel, and de Bruin (2025)
+                    </a>
+                    <span>A direct comparison of Pomodoro, Flowtime, and self-regulated study breaks.</span>
+                  </li>
+                  <li>
+                    <a href="https://www.apa.org/research/action/multitask" target="_blank" rel="noopener noreferrer">
+                      American Psychological Association: task switching
+                    </a>
+                    <span>A research overview explaining the costs of repeatedly switching between tasks.</span>
+                  </li>
+                </ol>
+              </section>
             </div>
           </div>
-        </section>
+        </article>
       </main>
       <!-- UPDATE!) -->
       <footer class="footer">
