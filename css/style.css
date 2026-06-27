@@ -3959,10 +3959,10 @@ body.theme-rain #add-task-btn.secondary-btn:hover {
     max-width: 100%;
   }
 
-  /* Small visual tweak to increase spacing between blocks if date wraps to multiple lines */
+  /* Keep all three cards balanced even when the emphasized current streak is taller. */
   .streak-stats-content {
     gap: 20px;
-    align-items: flex-start;
+    align-items: stretch;
   }
 
   .streak-stats-block {
