@@ -1,4 +1,4 @@
-const CACHE_NAME = "customodoro-static-v7.4.14"; // Bump to v7.4.14
+const CACHE_NAME = "customodoro-static-v7.5.2";
 const ASSETS_CACHE = "customodoro-assets-v6.2.2"; // Bump to v6.2.2
 const swLogger = (() => {
   const nativeError = console.error.bind(console);
@@ -21,8 +21,11 @@ const urlsToCache = [
   // ═══════════════════════════════════════════════════════════════════
   "/",
   "/index.html",
+  "/reverse",
   "/reverse.html",
+  "/pomodoro",
   "/pomodoro.html",
+  "/feedback",
   "/feedback.html",
 
   // ═══════════════════════════════════════════════════════════════════
@@ -53,8 +56,6 @@ const urlsToCache = [
   "/js/app-logger.js",
   "/js/script.js",
   "/js/reversePomodoro.js",
-  "/js/offline-sync.js",
-  "/js/offline-fallback-ui.js",
   "/js/about-modal.js",
   "/js/auth-service.js",
   "/js/bgm-player.js",
@@ -87,30 +88,44 @@ const urlsToCache = [
   "/audio/Alert Sounds/level_up.mp3",
   "/audio/Alert Sounds/message_alert.mp3",
 ];
+const corePathnames = new Set(
+  urlsToCache.map((url) => new URL(url, self.location.origin).pathname),
+);
+const requiredPrecacheUrls = [
+  "/",
+  "/index.html",
+  "/reverse",
+  "/reverse.html",
+  "/manifest.json",
+  "/css/style.css",
+  "/css/features.css",
+  "/js/app-logger.js",
+  "/js/timezone-manager.js",
+  "/js/midnight-splitter.js",
+  "/js/script.js",
+  "/js/reversePomodoro.js",
+  "/js/lockedin-mode.js",
+  "/js/settings.js",
+  "/js/auth-service.js",
+  "/js/sync-manager.js",
+];
 
-let isFirstInstall = false;
-
-// Install: cache only the HTML essentials
+// Install: require the timer shell, then cache secondary assets independently.
 self.addEventListener("install", (event) => {
-
-  // Check if this is a first install
   event.waitUntil(
-    caches
-      .keys()
-      .then((cacheNames) => {
-        isFirstInstall = cacheNames.length === 0;
-        return caches.open(CACHE_NAME);
-      })
+    caches.open(CACHE_NAME)
       .then(async (cache) => {
-        try {
-          await cache.addAll(urlsToCache);
-        } catch (err) {
-          swLogger.error("SW_FAILED_TO_CACHE_CORE_HTML");
+        await Promise.all(requiredPrecacheUrls.map((url) => cache.add(url)));
+
+        const optionalUrls = urlsToCache.filter(
+          (url) => !requiredPrecacheUrls.includes(url),
+        );
+        const results = await Promise.allSettled(
+          optionalUrls.map((url) => cache.add(url)),
+        );
+        if (results.some((result) => result.status === "rejected")) {
+          swLogger.error("SW_FAILED_TO_CACHE_OPTIONAL_ASSET");
         }
-      })
-      .then(() => {
-        // Force skip waiting to activate immediately - AGGRESSIVE UPDATE
-        return self.skipWaiting();
       }),
   );
 });
@@ -142,7 +157,7 @@ self.addEventListener("activate", (event) => {
             client.postMessage({
               type: "NEW_VERSION_AVAILABLE",
               message: "A new version is available",
-              forceUpdate: true, // Add flag for immediate updates
+              forceUpdate: false,
             });
           });
         });
@@ -236,6 +251,25 @@ self.addEventListener("fetch", (event) => {
       fetch(request)
         .then((response) => response)
         .catch(() => caches.match(request)),
+    );
+    return;
+  }
+
+  // Serve verified same-origin core files from the precache, including
+  // cache-busted URLs such as /js/script.js?v=2.10.5.
+  const requestUrl = new URL(request.url);
+  if (
+    request.method === "GET" &&
+    requestUrl.origin === self.location.origin &&
+    corePathnames.has(requestUrl.pathname)
+  ) {
+    event.respondWith(
+      caches.match(request, { ignoreSearch: true }).then((cachedResponse) => {
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        return fetch(request);
+      }),
     );
     return;
   }

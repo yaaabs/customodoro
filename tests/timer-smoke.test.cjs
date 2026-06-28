@@ -117,11 +117,94 @@ describe("Customodoro smoke tests", () => {
     harness.evaluate("clearInterval(timerInterval)");
     mock.timers.tick(60_000);
     harness.evaluate("updateTimerFromTimestamp()");
-    mock.timers.tick(600);
 
     assert.equal(harness.evaluate("currentMode"), "shortBreak");
     assert.equal(harness.evaluate("isRunning"), true);
     assert.equal(harness.evaluate("startButton.textContent"), "PAUSE");
+    assert.equal(harness.evaluate("currentSeconds"), 120);
+  });
+
+  test("classic completion is recorded once across repeated restore events", () => {
+    const harness = setupClassicHarness({
+      pomodoroTime: "1",
+      shortBreakTime: "2",
+      longBreakTime: "3",
+      sessionsCount: "4",
+      autoBreak: "true",
+      autoPomodoro: "false",
+    });
+
+    harness.evaluate("toggleTimer()");
+    harness.evaluate("clearInterval(timerInterval)");
+    mock.timers.tick(60_000);
+    harness.dispatch("document", "visibilitychange");
+    harness.dispatch("window", "focus");
+    harness.dispatch("window", "pageshow");
+
+    assert.equal(harness.evaluate("completedPomodoros"), 1);
+    assert.equal(harness.evaluate("window.__sessions.length"), 1);
+    assert.equal(harness.evaluate("currentMode"), "shortBreak");
+    assert.equal(harness.evaluate("isRunning"), true);
+  });
+
+  test("classic phase transition survives a local session side-effect failure", () => {
+    const harness = setupClassicHarness({
+      pomodoroTime: "1",
+      shortBreakTime: "2",
+      sessionsCount: "4",
+      autoBreak: "true",
+    });
+    harness.evaluate(`
+      window.addCustomodoroSession = function () {
+        throw new Error("simulated storage failure");
+      };
+    `);
+
+    harness.evaluate("toggleTimer()");
+    harness.evaluate("clearInterval(timerInterval)");
+    mock.timers.tick(60_000);
+    harness.evaluate("updateTimerFromTimestamp()");
+
+    assert.equal(harness.evaluate("currentMode"), "shortBreak");
+    assert.equal(harness.evaluate("isRunning"), true);
+    assert.equal(harness.evaluate("completedPomodoros"), 1);
+  });
+
+  test("classic completion guard resets after a phase-transition exception", () => {
+    const harness = setupClassicHarness({
+      pomodoroTime: "1",
+      shortBreakTime: "1",
+      sessionsCount: "4",
+      autoBreak: "true",
+      autoPomodoro: "false",
+    });
+    harness.evaluate(`
+      window.lockedInMode = {
+        isActive() { return true; },
+        update() { throw new Error("simulated Locked-In render failure"); },
+      };
+      toggleTimer();
+      clearInterval(timerInterval);
+    `);
+    mock.timers.tick(60_000);
+
+    assert.throws(
+      () => harness.evaluate("updateTimerFromTimestamp()"),
+      /simulated Locked-In render failure/,
+    );
+    assert.equal(harness.evaluate("isCompletingTimer"), false);
+
+    harness.evaluate(`
+      window.lockedInMode = { isActive() { return false; } };
+      resetTimer();
+      toggleTimer();
+      clearInterval(timerInterval);
+    `);
+    mock.timers.tick(60_000);
+    harness.evaluate("updateTimerFromTimestamp()");
+
+    assert.equal(harness.evaluate("currentMode"), "pomodoro");
+    assert.equal(harness.evaluate("isCompletingTimer"), false);
   });
 
   test("classic pause and resume preserve elapsed time", () => {

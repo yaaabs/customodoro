@@ -46,6 +46,7 @@ let currentSeconds = pomodoroTime * 60;
 let initialSeconds = currentSeconds;
 let timerInterval = null;
 let isRunning = false;
+let isCompletingTimer = false;
 let currentSession = 1;
 let completedPomodoros = 0;
 let hasUnsavedTasks = false;
@@ -670,6 +671,10 @@ function updateFavicon(status) {
 
 // New timestamp-based timer update function for accurate time tracking
 function updateTimerFromTimestamp() {
+  if (!isRunning || !Number.isFinite(timerEndTime)) {
+    return;
+  }
+
   const now = Date.now();
 
   if (currentMode === "pomodoro") {
@@ -796,79 +801,89 @@ function toggleTimer() {
 
 // Handle timer completion - centralized logic to prevent duplication
 function handleTimerCompletion() {
-  // Stop the timer
-  clearInterval(timerInterval);
-  isRunning = false;
-  startButton.textContent = "START";
-  updateFavicon("paused");
+  if (isCompletingTimer || !isRunning) {
+    return;
+  }
+  isCompletingTimer = true;
 
-  // Hide burn-up tracker when timer completes
-  hideBurnupTracker();
+  try {
+    // Stop the timer
+    clearInterval(timerInterval);
+    isRunning = false;
+    startButton.textContent = "START";
+    updateFavicon("paused");
 
-  // For pomodoro mode, increment counter and add session
-  if (currentMode === "pomodoro") {
-    completedPomodoros++;
-    updateStats();
+    // Hide burn-up tracker when timer completes
+    hideBurnupTracker();
 
+    // For pomodoro mode, increment counter and add session
+    if (currentMode === "pomodoro") {
+      completedPomodoros++;
+      try {
+        updateStats();
 
-    const sessionMinutes = Math.floor(initialSeconds / 60);
+        const sessionMinutes = Math.floor(initialSeconds / 60);
 
-    if (typeof window.addCustomodoroSession === "function") {
-
-      // MIDNIGHT: Use midnight splitter if available, otherwise fall back to standard
-      if (typeof window.recordSessionWithMidnightSplit === "function") {
-        window.recordSessionWithMidnightSplit("classic", sessionMinutes);
-      } else {
-        window.addCustomodoroSession("classic", sessionMinutes);
-      }
-
-
-      // Also manually trigger a re-render
-      if (typeof window.renderContributionGraph === "function") {
-        window.renderContributionGraph();
-      }
-
-      // Trigger automatic sync if user is logged in
-      if (window.syncManager && window.authService?.isLoggedIn()) {
-        try {
-          // Use queueSync for consistency with other parts of the app
-          window.syncManager.queueSync(
-            window.syncManager.getCurrentLocalData(),
-          );
-
-          // Update sync UI stats
-          if (window.syncUI) {
-            window.syncUI.updateStats();
+        if (typeof window.addCustomodoroSession === "function") {
+          // MIDNIGHT: Use midnight splitter if available, otherwise fall back to standard
+          if (typeof window.recordSessionWithMidnightSplit === "function") {
+            window.recordSessionWithMidnightSplit("classic", sessionMinutes);
+          } else {
+            window.addCustomodoroSession("classic", sessionMinutes);
           }
-        } catch (error) {
-          window.customodoroLogger.error("SCRIPT_AUTO_SYNC_FAILED_AFTER_SESSION");
+
+          // Also manually trigger a re-render
+          if (typeof window.renderContributionGraph === "function") {
+            window.renderContributionGraph();
+          }
+
+          // Queue the latest local snapshot. The sync manager persists it while offline.
+          if (window.syncManager && window.authService?.isLoggedIn()) {
+            window.syncManager.queueSync(
+              window.syncManager.getCurrentLocalData(),
+            );
+
+            if (window.syncUI) {
+              window.syncUI.updateStats();
+            }
+          }
+        } else {
+          window.customodoroLogger.error("SCRIPT_ADDCUSTOMODOROSESSION_FUNCTION_NOT_FOUND");
         }
+      } catch (error) {
+        window.customodoroLogger?.error?.("SCRIPT_SESSION_SIDE_EFFECT_FAILED");
+      }
+    }
+
+    // Notifications are optional UI side effects and must not block phase changes.
+    try {
+      playNotification();
+      showToast(getCompletionMessage());
+    } catch (error) {
+      window.customodoroLogger?.error?.(
+        "SCRIPT_COMPLETION_NOTIFICATION_FAILED",
+      );
+    }
+
+    // Move to next timer phase with auto-start
+    if (currentMode === "pomodoro") {
+      if (completedPomodoros % maxSessions === 0) {
+        switchMode("longBreak", true);
+      } else {
+        switchMode("shortBreak", true);
       }
     } else {
-      window.customodoroLogger.error("SCRIPT_ADDCUSTOMODOROSESSION_FUNCTION_NOT_FOUND");
+      if (currentMode === "longBreak") {
+        currentSession = 1;
+      } else {
+        currentSession++;
+      }
+      switchMode("pomodoro", true);
     }
+    updateSessionDots();
+  } finally {
+    isCompletingTimer = false;
   }
-
-  // Show notification
-  playNotification();
-  showToast(getCompletionMessage());
-
-  // Move to next timer phase with auto-start
-  if (currentMode === "pomodoro") {
-    if (completedPomodoros % maxSessions === 0) {
-      switchMode("longBreak", true);
-    } else {
-      switchMode("shortBreak", true);
-    }
-  } else {
-    if (currentMode === "longBreak") {
-      currentSession = 1;
-    } else {
-      currentSession++;
-    }
-    switchMode("pomodoro", true);
-  }
-  updateSessionDots();
 }
 
 // Reset the current timer - modified to be more robust
@@ -1014,7 +1029,20 @@ function switchMode(mode, autoStart = false) {
   updateTimerDisplay();
   progressBar.style.width = "0%";
 
-  // Auto-start if requested - Fixed settings check
+  // Keep the active Locked-In overlay synchronized with the committed phase.
+  if (window.lockedInMode && window.lockedInMode.isActive()) {
+    document.body.classList.add("lockedin-mode-active");
+    const minutes = Math.floor(currentSeconds / 60);
+    const seconds = currentSeconds % 60;
+    window.lockedInMode.update(
+      `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`,
+      0,
+      getLockedInPrimaryButtonText(),
+      sessionText?.textContent,
+    );
+  }
+
+  // Start synchronously so mobile background throttling cannot strand a phase.
   if (autoStart) {
     // Check if auto start is enabled based on the mode
     const shouldAutoStart =
@@ -1024,7 +1052,7 @@ function switchMode(mode, autoStart = false) {
 
 
     if (shouldAutoStart) {
-      setTimeout(toggleTimer, 500);
+      toggleTimer();
     }
   }
 }

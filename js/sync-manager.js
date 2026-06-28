@@ -2,8 +2,10 @@
 class SyncManager {
   constructor() {
     this.baseURL = "https://customodoro-backend.onrender.com";
+    this.pendingSyncStorageKey = "customodoro-pending-sync";
     this.isOnline = navigator.onLine;
     this.syncQueue = [];
+    this.nextSyncRevision = 0;
     this.lastSyncTime = null;
     this.syncInProgress = false;
     this.listeners = new Set();
@@ -11,6 +13,7 @@ class SyncManager {
 
     // Initialize
     this.loadLastSyncTime();
+    this.loadSyncQueue();
     this.setupEventListeners();
 
     // Auto-sync when user logs in (setup listener when auth service is ready)
@@ -29,6 +32,7 @@ class SyncManager {
           this.startAutoSync(); // Start background auto-sync
         } else if (event === "logout") {
           this.stopAutoSync(); // Stop background auto-sync
+          this.clearSyncQueue();
         } else if (event === "restore" && data) {
           // User restored session on page load - perform auto-sync
           this.performAutoSyncOnLoad();
@@ -46,7 +50,11 @@ class SyncManager {
     // Auto-sync on page load if user is already logged in
     setTimeout(() => {
       if (window.authService?.isLoggedIn()) {
-        this.performAutoSyncOnLoad();
+        if (this.syncQueue.length > 0) {
+          this.processSyncQueue();
+        } else {
+          this.performAutoSyncOnLoad();
+        }
         this.startAutoSync();
       }
     }, 1000); // Give time for auth service to initialize
@@ -110,13 +118,19 @@ class SyncManager {
     window.addEventListener("online", () => {
       this.isOnline = true;
       this.notifyListeners("connection", true);
-      this.processSyncQueue();
 
       // Auto-sync when coming back online
       if (window.authService?.isLoggedIn()) {
         setTimeout(async () => {
           try {
-            await this.manualSync();
+            if (this.syncQueue.length > 0) {
+              const processed = await this.processSyncQueue();
+              if (!processed) {
+                await this.manualSync();
+              }
+            } else {
+              await this.manualSync();
+            }
           } catch (error) {
             window.customodoroLogger.error("SYNC_MANAGER_ONLINE_AUTO_SYNC_FAILED");
           }
@@ -177,6 +191,60 @@ class SyncManager {
       );
     } catch (error) {
       window.customodoroLogger.error("SYNC_MANAGER_FAILED_TO_SAVE_LAST_SYNC_TIME");
+    }
+  }
+
+  loadSyncQueue() {
+    try {
+      const stored = JSON.parse(
+        localStorage.getItem(this.pendingSyncStorageKey) || "null",
+      );
+      if (
+        stored &&
+        typeof stored === "object" &&
+        typeof stored.userId === "string" &&
+        stored.userId &&
+        stored.data &&
+        typeof stored.data === "object" &&
+        !Array.isArray(stored.data)
+      ) {
+        const revision =
+          Number.isSafeInteger(stored.revision) && stored.revision > 0
+            ? stored.revision
+            : 1;
+        this.syncQueue = [{ ...stored, revision }];
+        this.nextSyncRevision = revision;
+        this.saveSyncQueue();
+      } else {
+        localStorage.removeItem(this.pendingSyncStorageKey);
+      }
+    } catch (error) {
+      localStorage.removeItem(this.pendingSyncStorageKey);
+      window.customodoroLogger.error("SYNC_MANAGER_FAILED_TO_LOAD_PENDING_SYNC");
+    }
+  }
+
+  saveSyncQueue() {
+    try {
+      if (this.syncQueue.length === 0) {
+        localStorage.removeItem(this.pendingSyncStorageKey);
+        return;
+      }
+      localStorage.setItem(
+        this.pendingSyncStorageKey,
+        JSON.stringify(this.syncQueue[this.syncQueue.length - 1]),
+      );
+    } catch (error) {
+      window.customodoroLogger.error("SYNC_MANAGER_FAILED_TO_SAVE_PENDING_SYNC");
+    }
+  }
+
+  clearSyncQueue() {
+    this.syncQueue = [];
+    try {
+      localStorage.removeItem(this.pendingSyncStorageKey);
+    } catch (error) {
+      window.customodoroLogger.error("SYNC_MANAGER_FAILED_TO_CLEAR_PENDING_SYNC");
     }
   }
 
@@ -860,29 +928,78 @@ class SyncManager {
 
   // Queue data for sync (for when offline)
   queueSync(data) {
-    this.syncQueue.push({
+    const user = window.authService?.getCurrentUser();
+    if (!user?.userId || !data || typeof data !== "object") {
+      return false;
+    }
+
+    // The backend accepts a full latest-state snapshot. Replacing the pending
+    // item avoids replaying stale snapshots after a long offline period.
+    const revision = this.nextSyncRevision + 1;
+    this.nextSyncRevision = revision;
+    this.syncQueue = [{
+      userId: user.userId,
+      revision,
       timestamp: new Date().toISOString(),
       data: data,
-    });
+    }];
+    this.saveSyncQueue();
 
     // Try to process queue if online
     if (this.isOnline) {
       this.processSyncQueue();
     }
+    return true;
   }
 
   // Process sync queue
   async processSyncQueue() {
     if (this.syncQueue.length === 0 || this.syncInProgress || !this.isOnline) {
-      return;
+      return false;
     }
 
-    try {
-      await this.manualSync();
-      this.syncQueue = []; // Clear queue on successful sync
-    } catch (error) {
-      window.customodoroLogger.error("SYNC_MANAGER_FAILED_TO_PROCESS_SYNC_QUEUE");
+    const user = window.authService?.getCurrentUser();
+    let pending = this.syncQueue[this.syncQueue.length - 1];
+    if (!user?.userId) {
+      return false;
     }
+    if (pending.userId !== user.userId) {
+      this.clearSyncQueue();
+      return false;
+    }
+
+    while (
+      pending &&
+      this.isOnline &&
+      window.authService?.getCurrentUser()?.userId === pending.userId
+    ) {
+      const processedRevision = pending.revision;
+
+      try {
+        await this.manualSync();
+      } catch (error) {
+        window.customodoroLogger?.error?.(
+          "SYNC_MANAGER_FAILED_TO_PROCESS_SYNC_QUEUE",
+        );
+        return false;
+      }
+
+      const latest = this.syncQueue[this.syncQueue.length - 1];
+      if (
+        latest &&
+        latest.userId === pending.userId &&
+        latest.revision === processedRevision
+      ) {
+        this.clearSyncQueue();
+        return true;
+      }
+
+      // A newer local snapshot arrived during the request. Keep it durable
+      // and immediately synchronize that revision before clearing the queue.
+      pending = latest;
+    }
+
+    return false;
   }
 
   // Add event listener

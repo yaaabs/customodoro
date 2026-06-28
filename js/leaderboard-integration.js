@@ -165,7 +165,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Listen for sync events to refresh leaderboard
   if (window.syncManager) {
     window.syncManager.addEventListener((event, data) => {
-      if (event === "sync_complete" || event === "data_updated") {
+      if (event === "sync-complete" || event === "data_updated") {
         // Refresh leaderboard data if modal is open
         if (window.leaderboardModal && window.leaderboardModal.isVisible) {
           setTimeout(() => {

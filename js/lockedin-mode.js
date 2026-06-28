@@ -14,16 +14,23 @@
     exit: true,
   };
 
+  function normalizeLockedInVisibilityOptions(options) {
+    return Object.keys(lockedInVisibilityDefaults).reduce((normalized, key) => {
+      normalized[key] =
+        typeof options?.[key] === "boolean"
+          ? options[key]
+          : lockedInVisibilityDefaults[key];
+      return normalized;
+    }, {});
+  }
+
   function getLockedInVisibilityOptions() {
     try {
       const savedOptions = JSON.parse(
         localStorage.getItem(LOCKED_IN_VISIBILITY_STORAGE_KEY) || "{}",
       );
 
-      return {
-        ...lockedInVisibilityDefaults,
-        ...savedOptions,
-      };
+      return normalizeLockedInVisibilityOptions(savedOptions);
     } catch (error) {
       window.customodoroLogger.error("LOCKEDIN_MODE_UNABLE_TO_LOAD_LOCKED_IN_MODE_VISIBILITY_O");
       return { ...lockedInVisibilityDefaults };
@@ -149,22 +156,26 @@
       </div>
       <div class="lockedin-mode-session" id="lockedin-mode-session" data-lockedin-control="session">#1</div>
       <div class="lockedin-mode-panel" aria-label="Locked In Mode display options">
-        <div class="lockedin-mode-panel-title">Display</div>
+        <div class="lockedin-mode-panel-title">DISPLAY</div>
         <label>
           <input type="checkbox" value="buttons" data-lockedin-visibility />
-          Timer buttons
+          <span class="lockedin-checkbox-visual" aria-hidden="true"></span>
+          <span>Timer Buttons</span>
         </label>
         <label>
           <input type="checkbox" value="progress" data-lockedin-visibility />
-          Progress bar
+          <span class="lockedin-checkbox-visual" aria-hidden="true"></span>
+          <span>Progress Bar</span>
         </label>
         <label>
           <input type="checkbox" value="session" data-lockedin-visibility />
-          Session number
+          <span class="lockedin-checkbox-visual" aria-hidden="true"></span>
+          <span>Session number</span>
         </label>
         <label>
           <input type="checkbox" value="exit" data-lockedin-visibility />
-          Exit link
+          <span class="lockedin-checkbox-visual" aria-hidden="true"></span>
+          <span>Exit Locked In Mode</span>
         </label>
       </div>
       <button class="lockedin-mode-exit" id="lockedin-mode-exit" data-lockedin-control="exit">Exit Locked In Mode</button>
@@ -374,7 +385,6 @@
 
     if (sessionText && lockedInModeSession) {
       lockedInModeSession.textContent = sessionText.textContent;
-      lockedInModeSession.style.display = ""; // Make sure it's visible
     } else if (lockedInModeSession) {
       // Hide session info for reverse timer
       lockedInModeSession.style.display = "none";
@@ -468,7 +478,6 @@
 
     if (lockedInModeSession && sessionText) {
       lockedInModeSession.textContent = sessionText;
-      lockedInModeSession.style.display = ""; // Make it visible
     }
   }
 
