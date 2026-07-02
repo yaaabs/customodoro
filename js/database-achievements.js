@@ -339,6 +339,14 @@
         description: "Crowned for earning the highest Focus Points in May.",
         date: "2026-06-01",
       },
+
+      // Focus King Badge for June
+      {
+        title: "Focus King",
+        icon: "images/badges/custom-badges/2026-06/june-focus-points.webp",
+        description: "Crowned for earning the highest Focus Points in June.",
+        date: "2026-07-01",
+      },
     ],
     //================================================================//
 
@@ -371,6 +379,31 @@
         icon: "images/badges/custom-badges/2026-05/may-session.png",
         description: "Recognized for completing the most sessions in May.",
         date: "2026-06-01",
+      },
+
+      // Overall Champion Badge for June
+      {
+        title: "Overall Champion",
+        icon: "images/badges/custom-badges/2026-06/june-champion.webp",
+        description:
+          "Awarded for being the top overall performer with the highest average across all categories in June.",
+        date: "2026-07-01",
+      },
+
+      // Streak Legend Badge for June
+      {
+        title: "Streak Legend",
+        icon: "images/badges/custom-badges/2026-06/june-streak.webp",
+        description: "Honored for holding the longest streak in June.",
+        date: "2026-07-01",
+      },
+
+      // Session Master Badge for June
+      {
+        title: "Session Master",
+        icon: "images/badges/custom-badges/2026-06/june-session.webp",
+        description: "Recognized for completing the most sessions in June.",
+        date: "2026-07-01",
       },
     ],
     //================================================================//
