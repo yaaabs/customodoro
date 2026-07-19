@@ -18,14 +18,12 @@ class DatabaseLeaderboard {
   }
 
   init() {
-    const SUPABASE_URL = 'https://tmsmykzvwuyankvlzsif.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtc215a3p2d3V5YW5rdmx6c2lmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ4MzY2MzUsImV4cCI6MjA3MDQxMjYzNX0.-PTqdJ3jsx7E2lghELJPo5Yo7zgjLzb0Mbaa5tLrUPg';
-    
-    if (SUPABASE_URL === 'YOUR_SUPABASE_PROJECT_URL' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY') {
+    // Shared client from js/supabase-client.js (staging/prod by hostname)
+    if (!window.supabaseClient) {
       return;
     }
 
-    this.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    this.supabase = window.supabaseClient;
     this.getCurrentUser();
   }
 
@@ -349,7 +347,7 @@ class DatabaseLeaderboard {
 
       while (hasMoreUsers) {
         const { data: userBatch, error } = await this.supabase
-          .from('users')
+          .from('leaderboard_public')
           .select('user_id, username, data')
           .range(startIndex, startIndex + batchSize - 1);
 

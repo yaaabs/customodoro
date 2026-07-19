@@ -1,84 +1,55 @@
+// Inline info disclosure for settings.
+// The ⓘ icons expand a short explainer panel directly under their setting
+// (id `${iconId}-panel`) instead of opening a modal on top of the settings
+// modal. Only one panel is open at a time; toggling is keyboard-accessible.
 document.addEventListener("DOMContentLoaded", function () {
-  // Define all modals and their corresponding elements
-  const infoModals = [
-    {
-      infoIcon: "lockedin-mode-info",
-      modalOverlay: "lockedin-info-modal-overlay",
-      closeButton: "lockedin-info-modal-close",
-      confirmButton: "lockedin-info-close-btn",
-    },
-    {
-      infoIcon: "auto-break-info",
-      modalOverlay: "auto-break-modal-overlay",
-      closeButton: "auto-break-modal-close",
-      confirmButton: "auto-break-close-btn",
-    },
-    {
-      infoIcon: "auto-pomodoro-info",
-      modalOverlay: "auto-pomodoro-modal-overlay",
-      closeButton: "auto-pomodoro-modal-close",
-      confirmButton: "auto-pomodoro-close-btn",
-    },
-    {
-      infoIcon: "burnup-tracker-info",
-      modalOverlay: "burnup-tracker-modal-overlay",
-      closeButton: "burnup-tracker-modal-close",
-      confirmButton: "burnup-tracker-close-btn",
-    },
-    {
-      infoIcon: "tracker-design-info",
-      modalOverlay: "tracker-design-info-modal-overlay",
-      closeButton: "tracker-design-info-modal-close",
-      confirmButton: "tracker-design-info-close-btn",
-    },
+  const iconIds = [
+    "lockedin-mode-info",
+    "auto-break-info",
+    "auto-pomodoro-info",
+    "burnup-tracker-info",
+    "tracker-design-info",
   ];
 
-  // Set up event listeners for all modals
-  infoModals.forEach((modal) => {
-    const infoIcon = document.getElementById(modal.infoIcon);
-    const modalOverlay = document.getElementById(modal.modalOverlay);
-    const closeBtn = document.getElementById(modal.closeButton);
-    const confirmBtn = document.getElementById(modal.confirmButton);
+  const pairs = [];
+  iconIds.forEach((id) => {
+    const icon = document.getElementById(id);
+    const panel = document.getElementById(id + "-panel");
+    if (!icon || !panel) return;
 
-    if (infoIcon && modalOverlay) {
-      // Function to open this specific modal
-      function openModal() {
-        // Close any other open modals first
-        infoModals.forEach((m) => {
-          const overlay = document.getElementById(m.modalOverlay);
-          if (overlay) {
-            overlay.classList.remove("active");
-          }
-        });
+    // Promote the decorative span to a real toggle button (a11y)
+    icon.setAttribute("role", "button");
+    icon.setAttribute("tabindex", "0");
+    icon.setAttribute("aria-expanded", "false");
+    icon.setAttribute("aria-controls", id + "-panel");
 
-        // Open this modal
-        modalOverlay.classList.add("active");
-        document.body.style.overflow = "hidden"; // Prevent scrolling
+    pairs.push({ icon, panel });
+  });
+
+  function closeAll() {
+    pairs.forEach(({ icon, panel }) => {
+      panel.classList.remove("show");
+      icon.setAttribute("aria-expanded", "false");
+    });
+  }
+
+  pairs.forEach(({ icon, panel }) => {
+    const toggle = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const willOpen = !panel.classList.contains("show");
+      closeAll();
+      if (willOpen) {
+        panel.classList.add("show");
+        icon.setAttribute("aria-expanded", "true");
       }
+    };
 
-      // Function to close this specific modal
-      function closeModal() {
-        modalOverlay.classList.remove("active");
-        document.body.style.overflow = ""; // Restore scrolling
+    icon.addEventListener("click", toggle);
+    icon.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        toggle(event);
       }
-
-      // Set up event listeners
-      infoIcon.addEventListener("click", openModal);
-
-      if (closeBtn) {
-        closeBtn.addEventListener("click", closeModal);
-      }
-
-      if (confirmBtn) {
-        confirmBtn.addEventListener("click", closeModal);
-      }
-
-      // Close when clicking outside modal content
-      modalOverlay.addEventListener("click", function (event) {
-        if (event.target === modalOverlay) {
-          closeModal();
-        }
-      });
-    }
+    });
   });
 });

@@ -56,12 +56,16 @@
 
 .settings-content {
   background: #1a1a1a;
-  width: 90%;
-  max-width: 800px;
+  width: 92%;
+  max-width: 960px;
   border-radius: 16px;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
   overflow: hidden;
   animation: modalFadeIn 0.3s ease;
+  /* Stable height: the modal doesn't jump between sections, and the
+     body area gets a predictable region to scroll inside. Generous on
+     desktop — screen space is there to be used. */
+  height: min(780px, 88vh);
   max-height: 90vh;
   display: flex;
   flex-direction: row;
@@ -81,22 +85,34 @@
 
 /* Left navigation panel */
 .settings-sidebar {
-  width: 200px;
+  width: 196px;
   background-color: #111111;
-  padding: 25px 0;
+  padding: 18px 0;
   display: flex;
   flex-direction: column;
 }
 
 .settings-nav-item {
-  padding: 14px 20px;
-  font-size: 16px;
+  padding: 11px 18px;
+  font-size: 15px;
   font-weight: 500;
   color: #bbb;
   cursor: pointer;
   transition: all 0.2s ease;
   border-left: 3px solid transparent;
   letter-spacing: 0.3px;
+  /* Label + badge always share one line */
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.settings-nav-item .new-tag,
+.settings-nav-item .beta-tag,
+.settings-nav-item .bug-tag {
+  font-size: 10px;
+  padding: 2px 6px;
+  margin-left: 6px;
 }
 
 .settings-nav-item.active {
@@ -120,7 +136,7 @@
 }
 
 .settings-header {
-  padding: 20px 25px;
+  padding: 14px 22px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -129,7 +145,7 @@
 }
 
 .settings-title {
-  font-size: 22px;
+  font-size: 19px;
   font-weight: 600;
   color: #ffffff;
   margin: 0;
@@ -152,12 +168,49 @@
 }
 
 .settings-body {
-  padding: 25px;
+  padding: 24px 32px;
   overflow-y: auto;
   flex: 1;
   min-height: 0; /* allow it to shrink if needed */
   background-color: #1a1a1a;
   color: #ddd;
+  /* Slim, unobtrusive scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+  /* Scroll shadows: a soft fade appears at whichever edge has more
+     content, so users can SEE there's something to scroll to */
+  background:
+    linear-gradient(#1a1a1a 30%, rgba(26, 26, 26, 0)) center top,
+    linear-gradient(rgba(26, 26, 26, 0), #1a1a1a 70%) center bottom,
+    radial-gradient(farthest-side at 50% 0, rgba(0, 0, 0, 0.45), transparent)
+      center top,
+    radial-gradient(
+        farthest-side at 50% 100%,
+        rgba(0, 0, 0, 0.45),
+        transparent
+      )
+      center bottom;
+  background-color: #1a1a1a;
+  background-repeat: no-repeat;
+  background-size:
+    100% 40px,
+    100% 40px,
+    100% 14px,
+    100% 14px;
+  background-attachment: local, local, scroll, scroll;
+}
+
+.settings-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.settings-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 4px;
+}
+
+.settings-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 @media (orientation: portrait) {
@@ -189,11 +242,11 @@
 }
 
 .settings-section-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   color: #ffffff;
-  margin-bottom: 25px;
-  padding-bottom: 10px;
+  margin-bottom: 18px;
+  padding-bottom: 8px;
   border-bottom: 1px solid #333;
   letter-spacing: 0.3px;
 }
@@ -202,8 +255,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 20px;
+  margin-bottom: 14px;
+  padding-bottom: 14px;
   border-bottom: 1px solid #333;
 }
 
@@ -319,7 +372,7 @@
 }
 
 .settings-footer {
-  padding: 16px 25px;
+  padding: 12px 22px;
   border-top: 1px solid #333;
   background-color: #1a1a1a;
   display: flex;
@@ -332,11 +385,11 @@
   background-color: rgba(255, 64, 64, 0.1);
   border: 1px solid #ff4040;
   color: #ff4040;
-  font-size: 16px;
-  padding: 12px 20px;
+  font-size: 15px;
+  padding: 10px 16px;
   cursor: pointer;
   transition: all 0.2s ease;
-  border-radius: 6px;
+  border-radius: 8px;
   margin-right: auto; /* Push to the left */
 }
 
@@ -352,9 +405,9 @@
   background-color: #333;
   color: #ddd;
   border: none;
-  padding: 12px 24px;
+  padding: 10px 20px;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -372,9 +425,9 @@
   background-color: #8b5fbf;
   color: white;
   border: none;
-  padding: 12px 24px;
+  padding: 10px 20px;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -987,7 +1040,9 @@ input:checked + .slider-toggle:before {
   .settings-content {
     flex-direction: column;
     width: 95%;
-    max-height: 85vh; /* Prevent modal from being too tall */
+    /* dvh tracks the real visible viewport on mobile (URL bar aware) */
+    height: 85dvh;
+    max-height: 85dvh;
   }
 
   .settings-sidebar {
@@ -1027,7 +1082,11 @@ input:checked + .slider-toggle:before {
 
   .settings-main {
     order: 2;
-    max-height: calc(85vh - 50px); /* Account for sidebar height */
+    /* Fill whatever height the sidebar leaves — a hard max-height here
+       is what used to strand the footer above the screen bottom */
+    flex: 1;
+    min-height: 0;
+    max-height: none;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -1057,8 +1116,8 @@ input:checked + .slider-toggle:before {
 @media (max-width: 576px) {
   .settings-content {
     width: 100%;
-    height: 100%;
-    max-height: 100%;
+    height: 100dvh; /* true full screen — footer lands on the real bottom */
+    max-height: 100dvh;
     border-radius: 0; /* Full screen on very small devices */
   }
 
@@ -2211,12 +2270,20 @@ body.theme-color .settings-note {
   ======================================== */
 
 /* Sync Hero Section */
+/* In the wide desktop modal, keep the account UI at a comfortable
+   reading width and centered, instead of stretching edge to edge */
+.sync-not-logged-in,
+.sync-logged-in {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
 .sync-hero {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
-  padding: 20px;
+  gap: 14px;
+  margin-bottom: 16px;
+  padding: 14px 16px;
   background: rgba(139, 95, 191, 0.1);
   border-radius: 12px;
   border: 1px solid rgba(139, 95, 191, 0.2);
@@ -2228,7 +2295,15 @@ body.theme-color .settings-note {
 }
 
 .sync-hero-icon svg {
-  animation: rotate 2s linear infinite;
+  width: 32px;
+  height: 32px;
+  animation: rotate 3s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sync-hero-icon svg {
+    animation: none;
+  }
 }
 
 @keyframes rotate {
@@ -2241,42 +2316,56 @@ body.theme-color .settings-note {
 }
 
 .sync-hero-title {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 600;
   color: #fff;
-  margin: 0 0 8px 0;
+  margin: 0 0 3px 0;
 }
 
 .sync-hero-description {
-  font-size: 14px;
-  color: #ccc;
+  font-size: 13px;
+  color: #bbb;
   margin: 0;
   line-height: 1.4;
 }
 
 /* Sync Benefits */
 .sync-benefits {
-  margin-bottom: 32px;
+  margin-bottom: 20px;
 }
 
 .sync-benefit {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 12px;
-  padding: 12px 0;
+  padding: 5px 0;
 }
 
 .sync-benefit-icon {
-  font-size: 20px;
-  width: 32px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
   flex-shrink: 0;
 }
 
+.sync-step-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(139, 95, 191, 0.18);
+  color: #b795dd;
+  font-size: 12px;
+  font-weight: 600;
+}
+
 .sync-benefit-text {
-  color: #ddd;
-  font-size: 14px;
+  color: #ccc;
+  font-size: 13.5px;
+  line-height: 1.45;
 }
 
 /* Sync Form */
@@ -2323,6 +2412,153 @@ body.theme-color .settings-note {
   font-size: 12px;
   color: #999;
   margin-top: 6px;
+}
+
+/* Inline field validation (toasts hide behind the settings modal) */
+.sync-form-input.sync-input-error {
+  border-color: #e53935;
+  background: rgba(229, 57, 53, 0.08);
+  box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.12);
+  animation: syncFieldShake 0.3s ease;
+}
+
+@keyframes syncFieldShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.sync-field-error {
+  font-size: 13px;
+  color: #ff6b6b;
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+/* Two-door entry: "I'm new" vs "I already have an account" */
+.sync-auth-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.sync-choice-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 16px 18px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.sync-choice-btn:hover {
+  border-color: #8b5fbf;
+  background: rgba(139, 95, 191, 0.12);
+  transform: translateY(-1px);
+}
+
+.sync-choice-btn:active {
+  transform: translateY(0);
+}
+
+.sync-choice-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(139, 95, 191, 0.14);
+  color: #a983d4;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.sync-choice-btn:hover .sync-choice-icon {
+  background: rgba(139, 95, 191, 0.28);
+  color: #c4a5e8;
+}
+
+.sync-choice-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.sync-choice-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.sync-choice-sub {
+  font-size: 12.5px;
+  color: #aaa;
+  line-height: 1.4;
+}
+
+.sync-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #8b5fbf;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 4px 4px 0;
+  margin-bottom: 12px;
+  text-align: left;
+  transition: color 0.2s ease;
+}
+
+.sync-back-btn svg {
+  width: 17px;
+  height: 17px;
+  stroke: currentColor;
+  fill: none;
+}
+
+.sync-back-btn:hover {
+  color: #9d71d0;
+}
+
+.sync-back-btn:focus-visible {
+  outline: 2px solid #8b5fbf;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Collapsed optional display-name field (progressive disclosure) */
+.sync-optional-toggle {
+  background: none;
+  border: none;
+  color: #8b5fbf;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  margin: -8px 0 16px;
+  text-align: left;
+  transition: color 0.2s ease;
+}
+
+.sync-optional-toggle:hover {
+  color: #9d71d0;
+  text-decoration: underline;
+}
+
+.sync-optional-hint {
+  color: #888;
+  font-weight: 400;
 }
 
 /* Sync Buttons */
@@ -2422,6 +2658,11 @@ body.theme-color .settings-note {
   background: rgba(255, 193, 7, 0.1);
   border-radius: 8px;
   border: 1px solid rgba(255, 193, 7, 0.2);
+}
+
+.sync-privacy-icon svg {
+  display: block;
+  color: #ffc107;
 }
 
 .sync-privacy-icon {
@@ -3594,4 +3835,1189 @@ body.lockedin-mode-active #user-profile .user-actions {
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 5px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   SETTINGS REDESIGN (v3.8) — macOS-on-desktop / iOS-on-mobile
+   Card grammar + icon-chip nav + drill-down. Tokens derive from the
+   existing dark-modal palette (#1a1a1a shell) and the single #8b5fbf accent.
+   ══════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --set-card-bg: #202020;
+  --set-card-border: #2e2e2e;
+  --set-hairline: #2a2a2a;
+  --set-group-header: #8a8a8a;
+  --set-row-label: #e8e8e8;
+  --set-row-sub: #9a9a9a;
+  --set-accent: #8b5fbf;
+}
+
+/* ── Sidebar: icon-chip navigation ─────────────────────────────────── */
+.settings-sidebar {
+  width: 212px;
+  gap: 2px;
+  padding: 14px 10px;
+}
+
+.settings-nav-item {
+  gap: 11px;
+  padding: 9px 10px;
+  border-left: none;
+  border-radius: 10px;
+  letter-spacing: 0.1px;
+  color: #cfcfcf;
+}
+
+.settings-nav-item.active {
+  border-left: none;
+  background-color: rgba(139, 95, 191, 0.16);
+  color: #fff;
+}
+
+.settings-nav-item:hover:not(.active) {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+/* Badges no longer live in the nav */
+.settings-nav-item .new-tag,
+.settings-nav-item .beta-tag,
+.settings-nav-item .bug-tag {
+  display: none;
+}
+
+.settings-nav-chip {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--set-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.settings-nav-chip svg {
+  width: 16px;
+  height: 16px;
+  stroke: #fff;
+  fill: none;
+}
+
+.settings-nav-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.settings-nav-name {
+  font-size: 14.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.settings-nav-hint {
+  font-size: 12px;
+  color: var(--set-row-sub);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* Value hints show on the roomier mobile root list, not the narrow rail */
+  display: none;
+}
+
+.settings-nav-chevron {
+  flex: 0 0 auto;
+  color: #666;
+  display: none;
+}
+
+/* Sidebar search (macOS signature) */
+.settings-search {
+  position: relative;
+  margin: 0 4px 12px;
+}
+
+.settings-search input {
+  width: 100%;
+  background: #202020;
+  border: 1px solid #333;
+  color: #eee;
+  border-radius: 8px;
+  padding: 8px 10px 8px 30px;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.settings-search input:focus {
+  outline: none;
+  border-color: var(--set-accent);
+  box-shadow: 0 0 0 2px rgba(139, 95, 191, 0.25);
+}
+
+.settings-search svg {
+  position: absolute;
+  left: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 15px;
+  height: 15px;
+  stroke: #777;
+  fill: none;
+  pointer-events: none;
+}
+
+.settings-sidebar-title {
+  display: none;
+}
+
+/* ── Pane header shows the active SECTION name (not "Settings") ─────── */
+.settings-active-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+  letter-spacing: 0.2px;
+}
+
+.settings-mobile-back {
+  display: none;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: var(--set-accent);
+  font-size: 15px;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 4px 6px 4px 0;
+}
+
+.settings-mobile-back svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  fill: none;
+}
+
+/* ── Group cards (the row grammar) ─────────────────────────────────── */
+.settings-body {
+  padding-top: 20px;
+  padding-bottom: 24px;
+}
+
+.settings-section {
+  margin-bottom: 0;
+  max-width: 640px;
+}
+
+/* Old per-section <h3> title is replaced by the pane header */
+.settings-section > .settings-section-title {
+  display: none;
+}
+
+.settings-group {
+  margin-bottom: 24px;
+}
+
+.settings-group:last-child {
+  margin-bottom: 4px;
+}
+
+.settings-group-header {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.3px;
+  color: var(--set-group-header);
+  margin: 0 0 8px 4px;
+  padding: 0;
+  border: none;
+}
+
+.settings-card {
+  background: var(--set-card-bg);
+  border: 1px solid var(--set-card-border);
+  border-radius: 12px;
+  padding: 2px 16px;
+}
+
+.settings-caption {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--set-group-header);
+  margin: 8px 4px 0;
+}
+
+/* Rows inside a card: hairlines are INSET (card padding pushes them in) */
+.settings-card .settings-row {
+  margin: 0;
+  padding: 13px 0;
+  border-bottom: none;
+  min-height: 48px;
+  gap: 16px;
+}
+
+.settings-card .settings-row + .settings-row {
+  border-top: 1px solid var(--set-hairline);
+}
+
+.settings-card .settings-row:last-child {
+  padding-bottom: 13px;
+}
+
+.settings-card .settings-label {
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--set-row-label);
+}
+
+.settings-row-sub {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 400;
+  color: var(--set-row-sub);
+  margin-top: 2px;
+  letter-spacing: 0.1px;
+}
+
+/* Consistent control widths tame the ragged right edge */
+.settings-card .select-wrapper {
+  width: 220px;
+  max-width: 55%;
+}
+
+/* Full-bleed rows (tracker design cards, uploader) opt out of the flex row */
+.settings-card .settings-row.tracker-design-row {
+  display: block;
+  padding: 14px 0;
+}
+
+/* ── Danger group (destructive actions live here, always confirm) ──── */
+.settings-danger-group .settings-group-header {
+  color: #c96a6a;
+}
+
+.settings-danger-card {
+  background: rgba(217, 24, 2, 0.06);
+  border-color: rgba(217, 24, 2, 0.3);
+}
+
+.settings-danger-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 13px 0;
+}
+
+.settings-danger-text {
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--set-row-label);
+}
+
+.settings-danger-btn {
+  background-color: rgba(217, 24, 2, 0.12);
+  border: 1px solid rgba(217, 24, 2, 0.55);
+  color: #e8695a;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  padding: 9px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.settings-danger-btn:hover {
+  background-color: rgba(217, 24, 2, 0.2);
+}
+
+.settings-danger-btn:active {
+  transform: translateY(1px);
+}
+
+/* ── Contextual footer: instant-apply means no Save button ─────────── */
+.settings-footer {
+  justify-content: flex-end;
+  padding: 12px 24px;
+}
+
+.settings-done-btn {
+  background-color: var(--set-accent);
+  color: #fff;
+  border: none;
+  padding: 10px 26px;
+  border-radius: 8px;
+  font-size: 14.5px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.settings-done-btn:hover {
+  background-color: #9d71d0;
+}
+
+.settings-done-btn:active {
+  transform: translateY(1px);
+}
+
+/* ── Accessibility: focus rings on new controls ───────────────────── */
+.settings-nav-item:focus-visible,
+.settings-done-btn:focus-visible,
+.settings-danger-btn:focus-visible,
+.settings-mobile-back:focus-visible {
+  outline: 2px solid var(--set-accent);
+  outline-offset: 2px;
+}
+
+/* ══ MOBILE: iOS full-screen page + drill-down ═════════════════════ */
+@media (max-width: 768px) {
+  .settings-content {
+    flex-direction: row; /* screens sit side-by-side, we slide between them */
+    width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .settings-modal.show {
+    padding: 0;
+  }
+
+  /* Root screen = the section list */
+  .settings-sidebar {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 0 14px calc(14px + env(safe-area-inset-bottom));
+    background-color: #161616;
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1;
+  }
+
+  .settings-sidebar-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: #161616;
+    padding: 18px 4px 12px;
+    padding-top: calc(18px + env(safe-area-inset-top));
+    margin-bottom: 4px;
+    z-index: 2;
+  }
+
+  .settings-sidebar-title h2 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: #fff;
+  }
+
+  .settings-root-close {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 30px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+  }
+
+  .settings-search {
+    margin: 0 4px 16px;
+  }
+
+  .settings-search input {
+    padding: 11px 12px 11px 34px;
+    font-size: 15px;
+  }
+
+  /* Nav items become full iOS-style rows with hint + chevron */
+  .settings-nav-item {
+    padding: 13px 12px;
+    border-radius: 12px;
+    background-color: #202020;
+    margin-bottom: 8px;
+    min-height: 56px;
+  }
+
+  .settings-nav-item.active,
+  .settings-nav-item:hover:not(.active) {
+    background-color: #202020;
+  }
+
+  .settings-nav-hint {
+    display: block;
+  }
+
+  .settings-nav-chevron {
+    display: block;
+  }
+
+  .settings-nav-chip {
+    width: 30px;
+    height: 30px;
+  }
+
+  /* Detail screen = one section, parked off-canvas until drilled into */
+  .settings-main {
+    position: absolute;
+    inset: 0;
+    order: 0;
+    width: 100%;
+    max-height: none;
+    transform: translateX(100%);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 3;
+    background-color: #1a1a1a;
+  }
+
+  .settings-content.show-detail .settings-sidebar {
+    transform: translateX(-24%);
+  }
+
+  .settings-content.show-detail .settings-main {
+    transform: translateX(0);
+  }
+
+  .settings-header {
+    padding: 14px 16px;
+    padding-top: calc(14px + env(safe-area-inset-top));
+    gap: 8px;
+  }
+
+  .settings-mobile-back {
+    display: flex;
+  }
+
+  .settings-close {
+    display: none; /* root screen has its own close; detail uses back */
+  }
+
+  .settings-body {
+    padding: 16px 16px calc(24px + env(safe-area-inset-bottom));
+  }
+
+  .settings-section {
+    max-width: none;
+  }
+
+  /* Keep rows horizontal inside cards — cards handle layout now */
+  .settings-card .settings-row {
+    flex-direction: row;
+    align-items: center;
+    min-height: 52px;
+  }
+
+  .settings-card .settings-label {
+    margin-bottom: 0;
+    width: auto;
+  }
+
+  .settings-card .select-wrapper {
+    width: auto;
+    max-width: 52%;
+  }
+
+  .settings-footer {
+    display: none; /* Done lives in the root header on mobile */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settings-sidebar,
+  .settings-main {
+    transition: none;
+  }
+}
+
+/* Full-width rows inside cards: multi-button and radio-card rows stack */
+.settings-card .settings-row.sound-test-row {
+  display: block;
+}
+.settings-card .settings-row.sound-test-row .settings-label {
+  margin-bottom: 10px;
+}
+.settings-card .settings-row.sound-test-row .sound-test-buttons {
+  margin-top: 0;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   SETTINGS REDESIGN — feedback pass (v3.8.1)
+   Full-screen on desktop, flatter cards (less box-in-box), no dropdown
+   text overlap.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Flatter cards: drop the outer outline so groups read by fill + spacing,
+   not stacked boxes. Hairlines still separate rows inside. */
+.settings-card {
+  border: none;
+  padding: 2px 18px;
+}
+.settings-group {
+  margin-bottom: 28px;
+}
+.settings-danger-card {
+  border: 1px solid rgba(217, 24, 2, 0.3);
+}
+
+/* Dropdowns never let their text run under the arrow or the next control */
+.sound-selector,
+.theme-selector {
+  padding-right: 30px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Desktop: full-screen modal, readable content column centered ──── */
+@media (min-width: 769px) {
+  .settings-modal.show {
+    padding: 0;
+  }
+
+  .settings-content {
+    width: 100%;
+    max-width: none;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  /* Base caps main at 90vh — let it fill the full-screen shell */
+  .settings-main {
+    max-height: 100vh;
+  }
+
+  .settings-sidebar {
+    width: 248px;
+    padding: 16px 12px;
+  }
+
+  .settings-header {
+    padding: 18px 40px;
+  }
+
+  .settings-body {
+    padding: 28px 40px 32px;
+  }
+
+  /* Keep a comfortable measure and centre it in the wide pane */
+  .settings-section {
+    max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .settings-footer {
+    padding: 14px 40px;
+  }
+}
+
+/* ── Mobile: a touch more air, tighter label/control balance ────────── */
+@media (max-width: 768px) {
+  .settings-group {
+    margin-bottom: 22px;
+  }
+
+  /* Short labels stay on one line; let the control give up width first */
+  .settings-card .settings-label {
+    min-width: 0;
+  }
+
+  .settings-card .select-wrapper {
+    max-width: 56%;
+    flex: 0 0 auto;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   SETTINGS REDESIGN — feedback pass 2 (v3.8.2)
+   Modal above the floating menu, slimmer web footer with Done aligned to
+   the content column, balanced auth-choice buttons.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Sit above the floating radial "+" menu (its container is z-index:1000) */
+.settings-modal {
+  z-index: 1100;
+}
+
+/* Auth-choice buttons balance: align the icon to the title, not the middle,
+   so one- and two-line cards read evenly */
+.sync-choice-btn {
+  align-items: flex-start;
+}
+.sync-choice-icon {
+  margin-top: 1px;
+}
+
+@media (min-width: 769px) {
+  /* Slimmer footer; keep Done aligned with the centered content column */
+  .settings-footer {
+    padding: 10px 40px;
+    width: 100%;
+    max-width: 760px; /* 680 content + 40 padding each side */
+    margin: 0 auto;
+  }
+
+  .settings-done-btn {
+    padding: 9px 30px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   SETTINGS REDESIGN — feedback pass 3 (v3.8.3)
+   Reclaim vertical space: no web footer, tight header→content gap,
+   compact steppers so duration labels stay on one line.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* Kill the top scroll-shadow band + trim top padding — that was the empty
+   gap under the header on both web and mobile. Solid body, content sits up. */
+.settings-body {
+  background: #1a1a1a;
+  padding-top: 6px;
+}
+
+/* Compact steppers give the label room to stay on one line */
+.time-btn {
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+}
+.time-input {
+  width: 50px;
+  height: 32px;
+  margin: 0 7px;
+  font-size: 15px;
+}
+.settings-card .settings-label {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.settings-card .time-input-group {
+  flex: 0 0 auto;
+}
+
+/* ── Desktop ────────────────────────────────────────────────────────── */
+@media (min-width: 769px) {
+  /* Done is redundant (× in the header closes) — drop the whole footer */
+  .settings-footer {
+    display: none;
+  }
+  .settings-header {
+    padding: 12px 40px;
+  }
+  .settings-body {
+    padding-top: 10px;
+  }
+}
+
+/* ── Mobile: even smaller steppers, tighter top ─────────────────────── */
+@media (max-width: 768px) {
+  .settings-header {
+    padding: 10px 16px;
+    padding-top: calc(10px + env(safe-area-inset-top));
+  }
+  .settings-body {
+    padding-top: 8px;
+  }
+  .time-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 15px;
+  }
+  .time-input {
+    width: 46px;
+    height: 30px;
+    margin: 0 5px;
+  }
+  .settings-card .settings-row {
+    gap: 10px;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   SETTINGS REDESIGN — feedback pass 4 (v3.8.4)
+   Fix mobile: controls no longer force 100% width (which collapsed labels
+   to one word per line); tracker-design radios stay on the left; flatter
+   nesting. Higher .settings-card specificity beats the legacy mobile rules.
+   ══════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  /* THE stacking fix: inside cards, controls take their natural width so the
+     label keeps the rest of the row (1 line for short, ≤2 for long). */
+  .settings-card .time-input-group,
+  .settings-card .volume-container {
+    width: auto;
+    margin-top: 0;
+    flex: 0 0 auto;
+  }
+  .settings-card .select-wrapper {
+    width: auto;
+    max-width: 52%;
+    margin-top: 0;
+    flex: 0 0 auto;
+  }
+  .settings-card .settings-label {
+    width: auto;
+    margin-bottom: 0;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  /* Compact slider so the volume label isn't crushed */
+  .settings-card .volume-slider {
+    width: 96px;
+  }
+  .settings-card .volume-percentage {
+    min-width: 34px;
+    text-align: right;
+  }
+
+  /* ── Burn-up tracker: flatten the inner box, keep it clean ────────── */
+  .settings-card .tracker-design-selector {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 10px 0 0;
+    width: 100%;
+  }
+}
+
+/* Tracker design cards: radio ALWAYS on the left (web + mobile), proper
+   left-aligned hierarchy — overrides the old ≤480 column/center rule. */
+.settings-card .tracker-design-option {
+  flex-direction: row;
+  align-items: center;
+  text-align: left;
+}
+.settings-card .option-content {
+  flex-direction: row;
+  align-items: center;
+}
+@media (max-width: 560px) {
+  /* The mini-tracker preview is decorative — hide it on phones so the
+     radio + label read as a clean iOS-style choice row */
+  .settings-card .preview-mini-tracker {
+    display: none;
+  }
+  .settings-card .option-content {
+    gap: 0;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   EMAIL VERIFICATION (OTP) MODAL — v3.8.5
+   Dark system design (Inter, single #8b5fbf accent, SVG icon). Replaces the
+   old inline-styled white/Arial dialog. Sits below the toast so "code sent"
+   notices land on top.
+   ══════════════════════════════════════════════════════════════════════ */
+.otp-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1300; /* above settings (1100), below toast (top-most) */
+}
+
+.otp-modal-card {
+  width: 100%;
+  max-width: 400px;
+  background: #1a1a1a;
+  border: 1px solid #2e2e2e;
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  padding: 28px 26px;
+  color: #fff;
+  text-align: center;
+  animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.otp-icon {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 16px;
+  border-radius: 14px;
+  background: rgba(139, 95, 191, 0.15);
+  border: 1px solid rgba(139, 95, 191, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8b5fbf;
+}
+.otp-icon svg {
+  width: 26px;
+  height: 26px;
+  stroke: currentColor;
+  fill: none;
+}
+
+.otp-title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0 0 6px;
+}
+.otp-subtitle {
+  font-size: 14px;
+  color: #9a9a9a;
+  line-height: 1.5;
+  margin: 0 0 4px;
+}
+.otp-email {
+  font-size: 14px;
+  font-weight: 600;
+  color: #c4a5e8;
+  word-break: break-all;
+  margin: 0 0 20px;
+}
+
+.otp-notice {
+  background: rgba(139, 95, 191, 0.12);
+  border: 1px solid rgba(139, 95, 191, 0.3);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #d9c7ef;
+  line-height: 1.45;
+  text-align: left;
+  margin: 0 0 16px;
+}
+
+.otp-error {
+  display: none;
+  background: rgba(217, 24, 2, 0.1);
+  border: 1px solid rgba(217, 24, 2, 0.4);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #ef8a7d;
+  line-height: 1.45;
+  text-align: left;
+  margin: 0 0 14px;
+}
+.otp-error.show {
+  display: block;
+}
+
+.otp-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 14px;
+  background: #202020;
+  border: 2px solid #333;
+  border-radius: 10px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: 10px;
+  font-feature-settings: "tnum";
+  margin-bottom: 18px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.otp-input::placeholder {
+  letter-spacing: 2px;
+  font-size: 16px;
+  font-weight: 400;
+  color: #666;
+}
+.otp-input:focus {
+  outline: none;
+  border-color: #8b5fbf;
+  box-shadow: 0 0 0 3px rgba(139, 95, 191, 0.25);
+}
+.otp-input.error {
+  border-color: #d91802;
+}
+
+.otp-actions {
+  display: flex;
+  gap: 10px;
+}
+.otp-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+.otp-btn:active {
+  transform: translateY(1px);
+}
+.otp-btn-primary {
+  background: #8b5fbf;
+  color: #fff;
+}
+.otp-btn-primary:hover {
+  background: #9d71d0;
+}
+.otp-btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ddd;
+}
+.otp-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.otp-resend {
+  display: block;
+  margin: 16px auto 0;
+  padding: 6px;
+  background: none;
+  border: none;
+  color: #8b5fbf;
+  font-family: inherit;
+  font-size: 13.5px;
+  cursor: pointer;
+}
+.otp-resend:hover:not(:disabled) {
+  text-decoration: underline;
+}
+.otp-resend:disabled {
+  color: #666;
+  cursor: default;
+}
+
+.otp-hint {
+  font-size: 12px;
+  color: #777;
+  line-height: 1.5;
+  margin: 14px 0 0;
+}
+
+.otp-btn:focus-visible,
+.otp-resend:focus-visible,
+.otp-input:focus-visible {
+  outline: 2px solid #8b5fbf;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .otp-modal-card {
+    animation: none;
+  }
+}
+
+/* ── Test Sounds preview: cleaner 2-col grid on web (mobile stays 1-col) ── */
+@media (min-width: 769px) {
+  .settings-card .sound-test-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    max-width: 100%;
+  }
+  .settings-card .sound-test-btn {
+    background: #202020;
+    border: 1px solid #333;
+    gap: 8px;
+    font-weight: 500;
+  }
+  .settings-card .sound-test-btn:hover {
+    background: rgba(139, 95, 191, 0.12);
+    border-color: rgba(139, 95, 191, 0.5);
+    color: #fff;
+  }
+  .settings-card .sound-test-btn svg {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 auto;
+    stroke: #8b5fbf;
+    fill: none;
+  }
+}
+
+/* Test-sound buttons: label + inline SVG speaker (replaces the 🔊 emoji) */
+.sound-test-btn {
+  gap: 8px;
+}
+.sound-test-btn svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  stroke: #8b5fbf;
+  fill: none;
+}
+
+/* ── Sign-in / sync confirmation modal (reuses the .otp-modal overlay) ── */
+.sync-confirm-card {
+  max-width: 460px;
+  text-align: left;
+}
+.sync-confirm-card .otp-icon {
+  margin: 0 auto 14px;
+}
+.sync-confirm-title {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-align: center;
+  margin: 0 0 6px;
+}
+.sync-confirm-email {
+  font-size: 13px;
+  color: #9a9a9a;
+  text-align: center;
+  word-break: break-all;
+  margin: 0 0 18px;
+}
+.sync-confirm-note {
+  border-radius: 8px;
+  padding: 11px 13px;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0 0 16px;
+}
+.sync-confirm-note.is-critical {
+  background: rgba(217, 24, 2, 0.1);
+  border: 1px solid rgba(217, 24, 2, 0.4);
+  color: #ef8a7d;
+}
+.sync-confirm-note.is-warning {
+  background: rgba(191, 140, 0, 0.12);
+  border: 1px solid rgba(191, 140, 0, 0.4);
+  color: #e0b34d;
+}
+.sync-confirm-note.is-info {
+  background: rgba(139, 95, 191, 0.12);
+  border: 1px solid rgba(139, 95, 191, 0.3);
+  color: #d9c7ef;
+}
+.sync-confirm-summary {
+  background: #202020;
+  border: 1px solid #2e2e2e;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin: 0 0 20px;
+}
+.sync-confirm-summary-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  color: #8a8a8a;
+  margin: 0 0 10px;
+}
+.sync-confirm-stats {
+  display: flex;
+  gap: 10px;
+}
+.sync-confirm-stat {
+  flex: 1;
+  text-align: center;
+}
+.sync-confirm-stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  font-feature-settings: "tnum";
+}
+.sync-confirm-stat-label {
+  font-size: 11px;
+  color: #9a9a9a;
+  margin-top: 2px;
+}
+.sync-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.sync-confirm-actions .otp-btn {
+  flex: 0 0 auto;
+  padding: 11px 20px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   SETTINGS REDESIGN — feedback pass 5 (v3.8.6)
+   Fix the two-line label (sub-text was rendering beside the label because
+   .settings-label is display:flex for info-icons) and keep the toggle from
+   shrinking on mobile.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* A label with a sublabel stacks vertically (main text over the muted line),
+   left-aligned — instead of the flex row used for info-icon labels. */
+.settings-card .settings-label:has(.settings-row-sub) {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+}
+
+/* Toggle keeps its full 50×26 pill — never squished by a long label */
+.settings-card .toggle-switch {
+  flex: 0 0 auto;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   INLINE INFO DISCLOSURE (v3.8.8)
+   The ⓘ icons expand a short explainer INLINE under the setting instead of
+   opening a modal-over-a-modal. Contextual, keyboard-accessible, no z-index
+   wars. Replaces the old .lockedin-info-modal-overlay explainers.
+   ══════════════════════════════════════════════════════════════════════ */
+.info-icon {
+  /* the span behaves as a real toggle button */
+  padding: 0;
+  flex: 0 0 auto;
+}
+.info-icon[aria-expanded="true"] {
+  background: rgba(139, 95, 191, 0.45);
+  border-color: rgba(139, 95, 191, 0.7);
+  color: #fff;
+}
+.info-icon:focus-visible {
+  outline: 2px solid #8b5fbf;
+  outline-offset: 2px;
+}
+
+.settings-info-panel {
+  display: none;
+  margin: 2px 0 10px;
+  padding: 10px 12px;
+  background: rgba(139, 95, 191, 0.1);
+  border: 1px solid rgba(139, 95, 191, 0.25);
+  border-radius: 8px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #cbb8e0;
+}
+.settings-info-panel.show {
+  display: block;
+  animation: fadeIn 0.2s ease;
+}
+/* A row following an open panel keeps its inset separator */
+.settings-card .settings-info-panel + .settings-row {
+  border-top: 1px solid var(--set-hairline);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settings-info-panel.show {
+    animation: none;
+  }
 }

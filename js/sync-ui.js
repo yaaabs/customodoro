@@ -21,6 +21,41 @@ class SyncUI {
     this.updateUI();
     this.isInitialized = true;
 
+    // Legacy-session check runs after authService finishes its async
+    // session restore (which is what detects a pre-Supabase login)
+    setTimeout(() => this.maybeShowLegacyNotice(), 800);
+  }
+
+  // Users signed in under the old backend see a gentle one-time prompt to
+  // re-verify their email. Local data is NEVER touched by this path.
+  maybeShowLegacyNotice() {
+    if (!window.authService?.hasLegacySession?.()) {
+      const stale = document.getElementById("sync-legacy-notice");
+      if (stale) stale.remove();
+      return;
+    }
+
+    const container = this.elements.notLoggedIn;
+    if (!container || document.getElementById("sync-legacy-notice")) return;
+
+    const notice = document.createElement("div");
+    notice.id = "sync-legacy-notice";
+    notice.style.cssText =
+      "background: rgba(33,150,243,0.12); border: 1px solid #2196f3; " +
+      "border-radius: 8px; padding: 12px 14px; margin-bottom: 14px; " +
+      "font-size: 13px; line-height: 1.5;";
+    notice.innerHTML =
+      "<strong>Sync upgraded.</strong> Sign-ins now use a 6-digit email code. " +
+      "Verify your email below to continue syncing — your data is safe and waiting.";
+    container.insertBefore(notice, container.firstChild);
+
+    // Legacy users obviously "already have an account" — skip the choice
+    // screen and land on the sign-in form with their email prefilled
+    this.showFormStep("existing");
+    const legacyEmail = window.authService.getLegacyEmail();
+    if (this.elements.emailInput && !this.elements.emailInput.value && legacyEmail) {
+      this.elements.emailInput.value = legacyEmail;
+    }
   }
 
   // Cache DOM elements
@@ -33,7 +68,16 @@ class SyncUI {
 
       // Form elements
       emailInput: document.getElementById("sync-email-input"),
+      emailError: document.getElementById("sync-email-error"),
       usernameInput: document.getElementById("sync-username-input"),
+      usernameGroup: document.getElementById("sync-username-group"),
+
+      // Two-step flow: choice screen → form
+      authChoice: document.getElementById("sync-auth-choice"),
+      authForm: document.getElementById("sync-auth-form"),
+      choiceExisting: document.getElementById("sync-choice-existing"),
+      choiceNew: document.getElementById("sync-choice-new"),
+      backBtn: document.getElementById("sync-back-btn"),
 
       // Buttons
       registerBtn: document.getElementById("sync-register-btn"),
@@ -66,6 +110,7 @@ class SyncUI {
       window.authService.addEventListener((event, data) => {
         if (event === "login" || event === "logout" || event === "restore") {
           this.updateUI();
+          this.maybeShowLegacyNotice();
 
           // If restore event, ensure we stay in logged-in state
           if (event === "restore" && data) {
@@ -82,15 +127,14 @@ class SyncUI {
       });
     }
 
-    // Button events
+    // Button events — one unified "Continue with Email" button
+    // (the old separate register button no longer exists in the markup)
     if (this.elements.registerBtn) {
       this.elements.registerBtn.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        this.handleRegister();
+        this.handleLogin();
       });
-    } else {
-      window.customodoroLogger.error("SYNC_UI_REGISTER_BUTTON_NOT_FOUND");
     }
 
     if (this.elements.loginBtn) {
@@ -127,11 +171,12 @@ class SyncUI {
       );
     }
 
-    // Form submission
+    // Form submission — Enter anywhere in the form triggers the same
+    // unified continue-with-email flow as the button
     if (this.elements.emailInput) {
       this.elements.emailInput.addEventListener("keypress", (e) => {
         if (e.key === "Enter") {
-          this.handleRegister();
+          this.handleLogin();
         }
       });
     }
@@ -139,10 +184,96 @@ class SyncUI {
     if (this.elements.usernameInput) {
       this.elements.usernameInput.addEventListener("keypress", (e) => {
         if (e.key === "Enter") {
-          this.handleRegister();
+          this.handleLogin();
         }
       });
     }
+
+    // Two-door entry: pick "existing" or "new", then see a tailored form
+    if (this.elements.choiceExisting) {
+      this.elements.choiceExisting.addEventListener("click", () =>
+        this.showFormStep("existing"),
+      );
+    }
+    if (this.elements.choiceNew) {
+      this.elements.choiceNew.addEventListener("click", () =>
+        this.showFormStep("new"),
+      );
+    }
+    if (this.elements.backBtn) {
+      this.elements.backBtn.addEventListener("click", () =>
+        this.showChoiceStep(),
+      );
+    }
+
+    // Clear inline validation as soon as the user starts fixing the field
+    if (this.elements.emailInput) {
+      this.elements.emailInput.addEventListener("input", () =>
+        this.clearEmailError(),
+      );
+    }
+  }
+
+  // Step 2: the email form, tailored to the door the user picked.
+  // Both modes run the exact same OTP flow underneath — only the wording
+  // and visible fields differ.
+  showFormStep(mode) {
+    this.authMode = mode;
+
+    if (this.elements.authChoice) {
+      this.elements.authChoice.style.display = "none";
+    }
+    if (this.elements.authForm) {
+      this.elements.authForm.style.display = "block";
+    }
+    if (this.elements.usernameGroup) {
+      this.elements.usernameGroup.style.display =
+        mode === "new" ? "block" : "none";
+    }
+
+    const textSpan = this.elements.loginBtn?.querySelector(".sync-btn-text");
+    if (textSpan) {
+      textSpan.textContent =
+        mode === "new" ? "Create My Account" : "Send My Sign-In Code";
+    }
+
+    this.clearEmailError();
+    this.elements.emailInput?.focus();
+  }
+
+  // Step 1: back to the choice screen (misclick-friendly)
+  showChoiceStep() {
+    this.authMode = null;
+    if (this.elements.authForm) {
+      this.elements.authForm.style.display = "none";
+    }
+    if (this.elements.authChoice) {
+      this.elements.authChoice.style.display = "flex";
+    }
+    this.clearEmailError();
+  }
+
+  // Inline email validation — toasts render behind the settings modal,
+  // so errors belong right under the field they refer to
+  showEmailError(message) {
+    if (this.elements.emailError) {
+      this.elements.emailError.textContent = message;
+      this.elements.emailError.style.display = "block";
+    }
+    if (this.elements.emailInput) {
+      this.elements.emailInput.classList.remove("sync-input-error");
+      // Re-trigger the shake animation on repeat errors
+      void this.elements.emailInput.offsetWidth;
+      this.elements.emailInput.classList.add("sync-input-error");
+      this.elements.emailInput.focus();
+    }
+  }
+
+  clearEmailError() {
+    if (this.elements.emailError) {
+      this.elements.emailError.style.display = "none";
+    }
+    this.elements.emailInput?.classList.remove("sync-input-error");
   }
 
   // Handle sync events
@@ -158,7 +289,7 @@ class SyncUI {
         this.setButtonLoading(this.elements.manualSyncBtn, false);
         this.updateStats();
         // Productivity stats now sync via streaks field workaround
-        this.showToast("✅ All data synced successfully!", "success");
+        this.showToast("All data synced successfully", "success");
         break;
 
       case "sync-error":
@@ -172,7 +303,7 @@ class SyncUI {
             "Backend schema limitation detected. Some data may remain local-only.";
         }
 
-        this.showToast("❌ Sync failed: " + errorMessage, "error");
+        this.showToast("Sync failed: " + errorMessage, "error");
         break;
 
       case "connection":
@@ -219,6 +350,17 @@ class SyncUI {
     if (this.elements.notLoggedIn)
       this.elements.notLoggedIn.style.display = "block";
     if (this.elements.loggedIn) this.elements.loggedIn.style.display = "none";
+
+    // Fresh visit (or just logged out): start from the choice screen —
+    // unless a legacy session already fast-tracked into the form
+    if (!this.authMode) {
+      this.showChoiceStep();
+    }
+
+    // Keep the settings "Account & Sync" value hint in sync
+    if (typeof window.updateSettingsNavHints === "function") {
+      window.updateSettingsNavHints();
+    }
   }
 
   // Show logged in state
@@ -230,6 +372,11 @@ class SyncUI {
     this.updateUserInfo();
     this.updateStats();
     this.updateSyncStatusFromManager();
+
+    // Keep the settings "Account & Sync" value hint in sync
+    if (typeof window.updateSettingsNavHints === "function") {
+      window.updateSettingsNavHints();
+    }
   }
 
   // Show error state
@@ -427,16 +574,17 @@ class SyncUI {
 
     const email = this.elements.emailInput?.value.trim();
 
-
     if (!email) {
-      this.showToast("Please enter your email address", "error");
+      this.showEmailError("Please enter your email address");
       return;
     }
 
     if (!this.isValidEmail(email)) {
-      this.showToast("Please enter a valid email address", "error");
+      this.showEmailError("That doesn't look like a valid email address");
       return;
     }
+
+    this.clearEmailError();
 
     try {
       // Check if user has local data - if so, show confirmation modal
@@ -503,10 +651,10 @@ class SyncUI {
 
     try {
       window.syncManager.exportData();
-      this.showToast("📥 Data exported successfully!", "success");
+      this.showToast("Data exported successfully", "success");
     } catch (error) {
       window.customodoroLogger.error("SYNC_UI_EXPORT");
-      this.showToast("❌ Failed to export data", "error");
+      this.showToast("Failed to export data", "error");
     }
   }
 
@@ -520,7 +668,7 @@ class SyncUI {
       )
     ) {
       window.authService.logout();
-      this.showToast("👋 Signed out successfully", "success");
+      this.showToast("Signed out successfully", "success");
     }
   }
 
@@ -668,166 +816,74 @@ class SyncUI {
       warningMessage = "You have some local data.";
     }
 
-    // Determine warning level
+    // Build a single, tone-appropriate note (no emoji, design-system colors)
+    const actionVerb = action === "register" ? "Creating" : "Signing into";
     let warningHTML = "";
     if (warningLevel === "critical") {
       warningHTML = `
-        <div style="
-          background: #f8d7da !important;
-          border: 1px solid #f5c6cb !important;
-          color: #721c24 !important;
-          padding: 15px !important;
-          border-radius: 5px !important;
-          margin: 20px 0 !important;
-          font-size: 14px !important;
-        ">
-          <strong>🚨 CRITICAL WARNING:</strong> ${warningMessage} ${action === "register" ? "Creating" : "Signing into"} this account will sync your data to the cloud.
-        </div>
-        
-        <!--
-        <div style="
-          background: #d4edda !important;
-          border: 1px solid #c3e6cb !important;
-          color: #155724 !important;
-          padding: 15px !important;
-          border-radius: 5px !important;
-          margin: 20px 0 !important;
-          font-size: 14px !important;
-        ">
-          <strong>✅ Data Protection:</strong> Your existing progress will be preserved and uploaded to your account. Please review the current data summary first.
-        </div>
-        -->
-      `;
+        <div class="sync-confirm-note is-critical">
+          <strong>Heads up:</strong> ${warningMessage} ${actionVerb} this
+          account will sync your data to the cloud.
+        </div>`;
     } else if (hasSignificantData) {
       warningHTML = `
-        <div style="
-          background: #fff3cd !important;
-          border: 1px solid #ffeaa7 !important;
-          color: #856404 !important;
-          padding: 15px !important;
-          border-radius: 5px !important;
-          margin: 20px 0 !important;
-          font-size: 14px !important;
-        ">
-          <strong>⚠️ Important:</strong> ${warningMessage} ${action === "register" ? "Creating" : "Signing into"} this account will sync your data to the cloud. If this is not your first time using sync, please review the current data summary below if it matches your current data.
-        </div>
-        
-        <!--
-        <div style="
-          background: #d4edda !important;
-          border: 1px solid #c3e6cb !important;
-          color: #155724 !important;
-          padding: 15px !important;
-          border-radius: 5px !important;
-          margin: 20px 0 !important;
-          font-size: 14px !important;
-        ">
-          <strong>✅ Data Protection:</strong> Your existing progress will be preserved and uploaded to your account.
-        </div>
-        -->
-      `;
+        <div class="sync-confirm-note is-warning">
+          <strong>Important:</strong> ${warningMessage} ${actionVerb} this
+          account will sync your data to the cloud. If this isn't your first
+          time using sync, check that the summary below matches your data.
+        </div>`;
     } else {
       warningHTML = `
-        <div style="
-          background: #e2e3e5 !important;
-          border: 1px solid #d6d8db !important;
-          color: #383d41 !important;
-          padding: 15px !important;
-          border-radius: 5px !important;
-          margin: 20px 0 !important;
-          font-size: 14px !important;
-        ">
-          <strong>ℹ️ No existing data found.</strong> You're starting fresh!
-        </div>
-      `;
+        <div class="sync-confirm-note is-info">
+          No existing data found. You're starting fresh.
+        </div>`;
     }
 
-    // Create a completely custom modal that bypasses existing styles
+    const safeEmail = String(email).replace(
+      /[&<>"]/g,
+      (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c],
+    );
+    const iconSvg = hasSignificantData
+      ? `<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>`
+      : `<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path><path d="M12 16V9m0 0-2.5 2.5M12 9l2.5 2.5"></path></svg>`;
+
     const modalHTML = `
-      <div id="custom-sync-modal" style="
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
-        background: rgba(0, 0, 0, 0.9) !important;
-        z-index: 2147483647 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        font-family: Arial, sans-serif !important;
-      ">
-        <div style="
-          background: white !important;
-          border-radius: 8px !important;
-          padding: 30px !important;
-          max-width: 500px !important;
-          width: 90% !important;
-          box-shadow: 0 20px 40px rgba(0,0,0,0.5) !important;
-          color: black !important;
-          text-align: left !important;
-        ">
-          <h2 style="margin: 0 0 20px 0 !important; color: #333 !important; font-size: 24px !important;">
-            ${hasSignificantData ? "🛡️" : "🔄"} ${action === "register" ? "Create Account" : "Sign In"} & Sync Data
+      <div id="custom-sync-modal" class="otp-modal" role="dialog" aria-modal="true" aria-labelledby="sync-confirm-title">
+        <div class="otp-modal-card sync-confirm-card">
+          <div class="otp-icon" aria-hidden="true">${iconSvg}</div>
+
+          <h2 class="sync-confirm-title" id="sync-confirm-title">
+            ${action === "register" ? "Create account &amp; sync" : "Sign in &amp; sync"}
           </h2>
-          
-          <p style="margin: 0 0 15px 0 !important; color: #555 !important; font-size: 16px !important;">
-            <strong>Email:</strong> ${email}
-          </p>
-          
+          <p class="sync-confirm-email">${safeEmail}</p>
+
           ${warningHTML}
-          
-          <div style="
-            background: #f8f9fa !important;
-            padding: 15px !important;
-            border-radius: 5px !important;
-            margin: 20px 0 !important;
-            border: 1px solid #dee2e6 !important;
-          ">
-            <p style="margin: 0 0 10px 0 !important; font-weight: bold !important; color: #333 !important;">Current Data Summary:</p>
-            <ul style="margin: 0 0 0 20px !important; color: #555 !important; font-size: 14px !important;">
-              <li>Sessions: ${currentData.totalSessions}</li>
-              <li>Current Streak: ${currentData.currentStreak}</li>
-              <li>Focus Points: ${currentData.totalPoints}</li>
-            </ul>
+
+          <div class="sync-confirm-summary">
+            <p class="sync-confirm-summary-title">Data on this device</p>
+            <div class="sync-confirm-stats">
+              <div class="sync-confirm-stat">
+                <div class="sync-confirm-stat-value">${currentData.totalSessions}</div>
+                <div class="sync-confirm-stat-label">Sessions</div>
+              </div>
+              <div class="sync-confirm-stat">
+                <div class="sync-confirm-stat-value">${currentData.currentStreak}</div>
+                <div class="sync-confirm-stat-label">Streak</div>
+              </div>
+              <div class="sync-confirm-stat">
+                <div class="sync-confirm-stat-value">${currentData.totalPoints}</div>
+                <div class="sync-confirm-stat-label">Focus points</div>
+              </div>
+            </div>
           </div>
-          
-          <!--
-          <p style="margin: 0 0 10px 0 !important; color: #555 !important; font-size: 14px !important;">This will:</p>
-          <ul style="margin: 0 0 20px 20px !important; color: #555 !important; font-size: 14px !important;">
-            <li>${hasSignificantData ? "Upload your current stats, streaks, and sessions to the cloud" : "Initialize your account with empty data"}</li>
-            <li>Link this browser's data to your account permanently</li>
-            <li>Allow you to access this data from other devices</li>
-            ${hasSignificantData ? "<li>Keep your existing progress safe in the cloud</li>" : ""}
-          </ul>
-          -->
-          
-          <div style="
-            display: flex !important;
-            justify-content: flex-end !important;
-            gap: 10px !important;
-            margin-top: 30px !important;
-          ">
-            <button id="custom-sync-cancel" style="
-              background: #6c757d !important;
-              color: white !important;
-              border: none !important;
-              padding: 12px 20px !important;
-              border-radius: 5px !important;
-              cursor: pointer !important;
-              font-size: 14px !important;
-              font-weight: 500 !important;
-            ">Cancel</button>
-            <button id="custom-sync-proceed" style="
-              background: ${hasSignificantData ? "#28a745" : "#007bff"} !important;
-              color: white !important;
-              border: none !important;
-              padding: 12px 20px !important;
-              border-radius: 5px !important;
-              cursor: pointer !important;
-              font-size: 14px !important;
-              font-weight: 500 !important;
-            ">${hasSignificantData ? "✅ Yes, Sync My Data" : "Continue"}</button>
+
+          <div class="sync-confirm-actions">
+            <button id="custom-sync-cancel" class="otp-btn otp-btn-secondary">
+              Cancel
+            </button>
+            <button id="custom-sync-proceed" class="otp-btn otp-btn-primary">
+              ${hasSignificantData ? "Yes, sync my data" : "Continue"}
+            </button>
           </div>
         </div>
       </div>
@@ -910,7 +966,7 @@ class SyncUI {
           } catch (err) {
             window.customodoroLogger.error("SYNC_UI_DURING_SYNC_PROCEED_ACTION");
             // Show a non-blocking toast error if something bad happens
-            this.showToast("❌ An error occurred. Please try again.", "error");
+            this.showToast("An error occurred. Please try again.", "error");
           }
         });
       }
@@ -1008,41 +1064,18 @@ class SyncUI {
     }, 10000);
 
     try {
-      const result = await window.authService.register(email, username);
+      // Passwordless flow: request a 6-digit code (creates the account
+      // automatically if the email is new; username rides along for it)
+      await window.authService.requestOtp(email, username);
 
       // Mark browser as having used sync
       this.markBrowserAsUsedWithSync();
 
-      // Check if email verification is required
-      if (result.needsVerification) {
-        this.showEmailVerificationModal(email);
-        this.showToast(
-          "📧 Please check your email for a verification code",
-          "info",
-        );
-      } else {
-        this.showToast("✅ Account created successfully!", "success");
-        this.clearForm();
-      }
+      this.showEmailVerificationModal(email);
+      this.showToast("We emailed you a 6-digit sign-in code", "info");
     } catch (error) {
       window.customodoroLogger.error("SYNC_UI_REGISTRATION");
-
-      // Enhanced error handling for specific cases
-      let errorMessage = error.message;
-      if (
-        errorMessage.includes("User already exists") ||
-        errorMessage.includes("already exists")
-      ) {
-        errorMessage =
-          "This email is already registered. Please use the Login option instead.";
-      } else if (errorMessage.includes("Invalid email")) {
-        errorMessage = "Please enter a valid email address.";
-      } else if (errorMessage.includes("409")) {
-        errorMessage =
-          "This email is already registered. Please try logging in instead.";
-      }
-
-      this.showToast("❌ " + errorMessage, "error");
+      this.showEmailError(error.message);
     } finally {
       clearTimeout(timeoutId);
       this.setButtonLoading(this.elements.registerBtn, false);
@@ -1050,91 +1083,62 @@ class SyncUI {
   }
 
   // Show email verification modal
-  showEmailVerificationModal(email) {
+  showEmailVerificationModal(email, notice = null) {
     // Remove any existing verification modal
     const existingModal = document.getElementById("email-verification-modal");
     if (existingModal) {
       existingModal.remove();
     }
 
+    const safeEmail = String(email).replace(
+      /[&<>"]/g,
+      (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c],
+    );
+
     const modalHTML = `
-      <div id="email-verification-modal" style="
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
-        background: rgba(0, 0, 0, 0.9) !important;
-        z-index: 2147483647 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        font-family: Arial, sans-serif !important;
-      ">
-        <div style="
-          background: white !important;
-          border-radius: 8px !important;
-          padding: 30px !important;
-          max-width: 400px !important;
-          width: 90% !important;
-          box-shadow: 0 20px 40px rgba(0,0,0,0.5) !important;
-          color: black !important;
-          text-align: center !important;
-        ">
-          <h2 style="margin: 0 0 20px 0 !important; color: #333 !important; font-size: 24px !important;">
-            📧 Email Verification
-          </h2>
-          
-          <p style="margin: 0 0 20px 0 !important; color: #555 !important; font-size: 16px !important;">
-            We've sent a verification code to:
-          </p>
-          
-          <p style="margin: 0 0 20px 0 !important; color: #333 !important; font-weight: bold !important; font-size: 16px !important;">
-            ${email}
-          </p>
-          
-          <input type="text" id="verification-code-input" placeholder="Enter verification code" style="
-            width: 100% !important;
-            padding: 12px !important;
-            border: 2px solid #ddd !important;
-            border-radius: 5px !important;
-            font-size: 16px !important;
-            text-align: center !important;
-            letter-spacing: 2px !important;
-            margin-bottom: 20px !important;
-            box-sizing: border-box !important;
-          ">
-          
-          <div style="
-            display: flex !important;
-            justify-content: space-between !important;
-            gap: 10px !important;
-          ">
-            <button id="verification-cancel" style="
-              background: #6c757d !important;
-              color: white !important;
-              border: none !important;
-              padding: 12px 20px !important;
-              border-radius: 5px !important;
-              cursor: pointer !important;
-              font-size: 14px !important;
-              flex: 1 !important;
-            ">Cancel</button>
-            
-            <button id="verification-verify" style="
-              background: #28a745 !important;
-              color: white !important;
-              border: none !important;
-              padding: 12px 20px !important;
-              border-radius: 5px !important;
-              cursor: pointer !important;
-              font-size: 14px !important;
-              flex: 1 !important;
-            ">Verify</button>
+      <div id="email-verification-modal" class="otp-modal" role="dialog" aria-modal="true" aria-labelledby="otp-title">
+        <div class="otp-modal-card">
+          <div class="otp-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+              <path d="m3 7 9 6 9-6"></path>
+            </svg>
           </div>
-          
-          <p style="margin: 20px 0 0 0 !important; color: #666 !important; font-size: 12px !important;">
-            Check your spam folder if you don't see the email
+
+          <h2 class="otp-title" id="otp-title">Enter your sign-in code</h2>
+          <p class="otp-subtitle">We sent a 6-digit code to</p>
+          <p class="otp-email">${safeEmail}</p>
+
+          ${notice ? `<p class="otp-notice">${notice}</p>` : ""}
+
+          <p id="verification-error" class="otp-error" role="alert"></p>
+
+          <input
+            type="text"
+            id="verification-code-input"
+            class="otp-input"
+            placeholder="000000"
+            maxlength="6"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            autocomplete="one-time-code"
+            aria-label="6-digit verification code"
+          />
+
+          <div class="otp-actions">
+            <button id="verification-cancel" class="otp-btn otp-btn-secondary">
+              Cancel
+            </button>
+            <button id="verification-verify" class="otp-btn otp-btn-primary">
+              Verify
+            </button>
+          </div>
+
+          <button id="verification-resend" class="otp-resend">Resend code</button>
+
+          <p class="otp-hint">
+            The code expires in 10 minutes. Check your spam folder if you don't
+            see the email.
           </p>
         </div>
       </div>
@@ -1146,7 +1150,66 @@ class SyncUI {
     const codeInput = document.getElementById("verification-code-input");
     const cancelBtn = document.getElementById("verification-cancel");
     const verifyBtn = document.getElementById("verification-verify");
+    const resendBtn = document.getElementById("verification-resend");
+    const errorEl = document.getElementById("verification-error");
     const contentWrapper = modal?.querySelector("div");
+
+    // Errors show INSIDE the modal — toasts render behind its overlay
+    const showModalError = (message) => {
+      if (errorEl) {
+        errorEl.textContent = message;
+        errorEl.classList.add("show");
+      }
+      if (codeInput) {
+        codeInput.classList.add("error");
+        codeInput.focus();
+        codeInput.select();
+      }
+    };
+    const clearModalError = () => {
+      if (errorEl) errorEl.classList.remove("show");
+      if (codeInput) codeInput.classList.remove("error");
+    };
+
+    // Resend cooldown (matches the SMTP 60s per-user minimum interval).
+    // Starts counting the moment the modal opens — a code was JUST sent,
+    // so an instantly-clickable Resend would only trip the rate limit.
+    const startResendCooldown = (seconds) => {
+      if (!resendBtn) return;
+      let secondsLeft = seconds;
+      // Styling (muted, no underline) is handled by .otp-resend:disabled in CSS
+      resendBtn.disabled = true;
+      resendBtn.textContent = `Resend code (${secondsLeft}s)`;
+      const countdown = setInterval(() => {
+        secondsLeft--;
+        if (secondsLeft <= 0 || !document.body.contains(resendBtn)) {
+          clearInterval(countdown);
+          resendBtn.disabled = false;
+          resendBtn.textContent = "Resend code";
+        } else {
+          resendBtn.textContent = `Resend code (${secondsLeft}s)`;
+        }
+      }, 1000);
+    };
+
+    startResendCooldown(60);
+
+    if (resendBtn) {
+      resendBtn.addEventListener("click", async () => {
+        if (resendBtn.disabled) return;
+        resendBtn.disabled = true;
+        clearModalError();
+        try {
+          await window.authService.requestOtp(email);
+          if (codeInput) codeInput.value = "";
+          this.showToast("New code sent", "info");
+          startResendCooldown(60);
+        } catch (error) {
+          resendBtn.disabled = false;
+          showModalError(error.message);
+        }
+      });
+    }
 
     // Make modal content scrollable on small viewports and prevent background clicks
     if (contentWrapper) {
@@ -1211,14 +1274,15 @@ class SyncUI {
           try {
             verifyBtn.textContent = "Verifying...";
             verifyBtn.disabled = true;
+            clearModalError();
 
             await window.authService.verifyEmail(email, code);
-            this.showToast("✅ Email verified successfully!", "success");
+            this.showToast("Signed in successfully", "success");
             closeModal();
             this.clearForm();
           } catch (error) {
             window.customodoroLogger.error("SYNC_UI_VERIFICATION");
-            this.showToast("❌ " + error.message, "error");
+            showModalError(error.message);
             verifyBtn.textContent = "Verify";
             verifyBtn.disabled = false;
           }
@@ -1232,6 +1296,16 @@ class SyncUI {
     if (codeInput) {
       codeInput.addEventListener("keypress", (e) => {
         if (e.key === "Enter") {
+          verifyBtn?.click();
+        }
+      });
+
+      // Digits only, and auto-verify the moment all 6 are in —
+      // one less tap, especially with email apps' code autofill
+      codeInput.addEventListener("input", () => {
+        clearModalError();
+        codeInput.value = codeInput.value.replace(/\D/g, "").slice(0, 6);
+        if (codeInput.value.length === 6 && !verifyBtn?.disabled) {
           verifyBtn?.click();
         }
       });
@@ -1257,16 +1331,32 @@ class SyncUI {
     }, 10000);
 
     try {
-      const result = await window.authService.login(email);
+      // Passwordless flow: request a 6-digit code, then verify in the modal.
+      // The chosen door (new vs existing) decides how strictly we send.
+      const username = this.elements.usernameInput?.value.trim() || "";
+      const result = await window.authService.requestOtp(
+        email,
+        username,
+        this.authMode || "auto",
+      );
 
       // Mark browser as having used sync
       this.markBrowserAsUsedWithSync();
 
-      this.showToast("✅ Signed in successfully!", "success");
-      this.clearForm();
+      // Picked "I'm new here" but the email already has an account?
+      // Be honest about it — the code signs them into the EXISTING account.
+      let notice = null;
+      if (this.authMode === "new" && result.existingAccount) {
+        notice =
+          "Good news — this email already has an account! We sent a sign-in code instead. Entering it signs you into your existing account.";
+      }
+
+      this.showEmailVerificationModal(email, notice);
+      this.showToast("We emailed you a 6-digit code", "info");
     } catch (error) {
       window.customodoroLogger.error("SYNC_UI_LOGIN");
-      this.showToast("❌ " + error.message, "error");
+      // Inline, under the field — toasts hide behind the settings modal
+      this.showEmailError(error.message);
     } finally {
       clearTimeout(timeoutId);
       this.setButtonLoading(this.elements.loginBtn, false);

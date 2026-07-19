@@ -9,6 +9,23 @@
 
   // Navigation Elements
   const navItems = document.querySelectorAll(".settings-nav-item");
+  const settingsContent = settingsModal
+    ? settingsModal.querySelector(".settings-content")
+    : null;
+
+  // Information architecture: one nav item can reveal several section blocks
+  // (Auto Start merged into Timer, Background Music merged into Sound).
+  const SECTION_MAP = {
+    timer: ["timer-section", "auto-section"],
+    sound: ["sound-section", "bgm-section"],
+    productivity: ["productivity-section"],
+    theme: ["theme-section"],
+    sync: ["sync-section"],
+  };
+
+  function isMobileSettings() {
+    return window.matchMedia("(max-width: 768px)").matches;
+  }
 
   // Check if we're on the reverse timer page
   const isReversePage = document.body.classList.contains("reverse-mode");
@@ -28,10 +45,13 @@
     document.body.classList.add("modal-open");
     loadSettings();
 
-    // Ensure the first tab is active
+    // Desktop opens straight into the first section; mobile lands on the
+    // root list (drilling into a section is an explicit tap).
     if (navItems.length > 0) {
-      activateTab(navItems[0]);
+      activateTab(navItems[0], false);
+      closeDetail();
     }
+    updateNavHints();
 
     // Make sure locked in mode toggle is visible and properly set
     setTimeout(function () {
@@ -60,6 +80,20 @@
       }
     }, 100);
   }
+
+  // Public API: open settings straight to a section (used by the radial
+  // menu and header-profile "Sync Account" shortcuts). Handles the pane
+  // title and the mobile drill-in that raw class toggling would miss.
+  window.openSettingsSection = function (sectionKey) {
+    openSettings();
+    const item = document.querySelector(
+      '.settings-nav-item[data-section="' + sectionKey + '"]',
+    );
+    if (item) {
+      // Let openSettings' own first-tab activation settle, then drill in
+      setTimeout(() => activateTab(item, true), 0);
+    }
+  };
 
   // Function to stop any currently playing test sounds
   function stopTestSound() {
@@ -109,6 +143,7 @@
 
     // Always close the modal, even if there was an error
     settingsModal.classList.remove("show");
+    closeDetail();
 
     document.body.classList.remove("modal-open");
   }
@@ -117,13 +152,21 @@
   function setupTabNavigation() {
     navItems.forEach((item) => {
       item.addEventListener("click", () => {
-        activateTab(item);
+        activateTab(item, true);
+      });
+      // Nav rows are role="button" — keyboard-activate them
+      item.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          activateTab(item, true);
+        }
       });
     });
   }
 
-  // Activate tab and show corresponding section
-  function activateTab(item) {
+  // Activate tab and show corresponding section(s). `drill` = true when the
+  // user tapped a nav row (on mobile that slides into the detail subpage).
+  function activateTab(item, drill) {
     // Remove active class from all nav items and sections
     navItems.forEach((nav) => nav.classList.remove("active"));
     document.querySelectorAll(".settings-section").forEach((section) => {
@@ -133,23 +176,54 @@
     // Add active class to clicked item
     item.classList.add("active");
 
-    // Show corresponding section
+    // Reveal every section block mapped to this nav item
     const sectionId = item.dataset.section;
-    const section = document.getElementById(sectionId + "-section");
-    if (section) {
-      section.classList.add("active");
+    const ids = SECTION_MAP[sectionId] || [sectionId + "-section"];
+    ids.forEach((id) => {
+      const section = document.getElementById(id);
+      if (section) section.classList.add("active");
+    });
 
-      // If opening BGM section, ensure player is properly initialized
-      if (
-        sectionId === "bgm" &&
-        window.bgmPlayer &&
-        typeof window.bgmPlayer.refreshUI === "function"
-      ) {
-        setTimeout(() => {
-          window.bgmPlayer.refreshUI();
-        }, 100);
-      }
+    // Pane header shows the active section name (macOS pattern)
+    const titleEl = document.getElementById("settings-active-title");
+    if (titleEl) titleEl.textContent = item.dataset.title || "Settings";
+
+    // Background Music now lives under Sound & Music — refresh its player UI
+    if (
+      ids.includes("bgm-section") &&
+      window.bgmPlayer &&
+      typeof window.bgmPlayer.refreshUI === "function"
+    ) {
+      setTimeout(() => {
+        window.bgmPlayer.refreshUI();
+      }, 100);
     }
+
+    // New detail always starts scrolled to the top
+    const body = settingsModal
+      ? settingsModal.querySelector(".settings-body")
+      : null;
+    if (body) body.scrollTop = 0;
+
+    // Mobile drill-down: slide the detail subpage in
+    if (drill && isMobileSettings()) {
+      openDetail();
+    }
+  }
+
+  // ── Mobile drill-down (iOS pattern) ──────────────────────────────────
+  function openDetail() {
+    if (!settingsContent) return;
+    settingsContent.classList.add("show-detail");
+    try {
+      history.pushState({ settingsDetail: true }, "");
+    } catch (e) {
+      /* history unavailable — back button still works via the header */
+    }
+  }
+
+  function closeDetail() {
+    if (settingsContent) settingsContent.classList.remove("show-detail");
   }
 
   // Save settings and apply them immediately
@@ -984,6 +1058,9 @@
     ) {
       window.lockedInMode.setup();
     }
+
+    // Refresh the value hints on the (mobile) section list
+    updateNavHints();
   }
 
   // Save Pomodoro settings
@@ -1509,6 +1586,7 @@
 
         // Update the volume in localStorage
         localStorage.setItem("timerSoundVolume", timerSoundVolumeSlider.value);
+        notifySaved("Volume updated");
 
         // Update active timer sound volume if running
         if (typeof window.updateTimerSoundVolume === "function") {
@@ -1535,6 +1613,7 @@
 
         // Save to localStorage
         localStorage.setItem("timerSound", selectedSound);
+        notifySaved("Sound updated");
 
         // Update active timer sound if running
         if (typeof window.updateTimerSound === "function") {
@@ -1558,6 +1637,126 @@
       });
     }
   });
+
+  // ── Instant apply: persist timer durations and reflect them live ─────
+  function persistAndApplyTimer() {
+    try {
+      if (isReversePage) {
+        saveReverseSettings();
+      } else {
+        savePomodoroSettings();
+      }
+      applySettingsToTimer();
+      if (isReversePage && typeof window.updateInfoSection === "function") {
+        window.updateInfoSection();
+      }
+      forceTimerReset();
+      updateNavHints();
+      notifySaved("Timer updated");
+    } catch (e) {
+      window.customodoroLogger.error("SETTINGS_INSTANT_APPLY_TIMER");
+    }
+  }
+
+  // ── Value hints shown on the mobile root list (iOS "Wi-Fi · Home-5G") ─
+  function themeLabel(val) {
+    const map = {
+      light: "Light",
+      dark: "Dark",
+      rain: "Man in the Rain",
+      yourname: "君の名は",
+      color: "Color",
+      custom: "Custom",
+    };
+    return map[val] || "Light";
+  }
+
+  function setHint(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text || "";
+  }
+
+  function updateNavHints() {
+    try {
+      if (isReversePage) {
+        const mx = localStorage.getItem("reverseMaxTime") || 60;
+        setHint("nav-hint-timer", "Max " + mx + " min");
+      } else {
+        const p = localStorage.getItem("pomodoroTime") || 25;
+        const s = localStorage.getItem("shortBreakTime") || 5;
+        const l = localStorage.getItem("longBreakTime") || 15;
+        setHint("nav-hint-timer", p + " · " + s + " · " + l + " min");
+      }
+
+      const alarmOn = localStorage.getItem("alarm") !== "false";
+      const musicOn = localStorage.getItem("bgmEnabled") === "true";
+      setHint(
+        "nav-hint-sound",
+        (alarmOn ? "Alerts on" : "Alerts off") + (musicOn ? " · Music" : ""),
+      );
+
+      const burnOn = localStorage.getItem("burnupTrackerEnabled") !== "false";
+      setHint("nav-hint-productivity", burnOn ? "On" : "Off");
+
+      setHint(
+        "nav-hint-theme",
+        themeLabel(localStorage.getItem("siteTheme") || "light"),
+      );
+
+      let acct = "Not signed in";
+      if (
+        window.authService &&
+        typeof window.authService.isLoggedIn === "function" &&
+        window.authService.isLoggedIn()
+      ) {
+        const u =
+          typeof window.authService.getCurrentUser === "function"
+            ? window.authService.getCurrentUser()
+            : null;
+        acct = u && u.email ? u.email : "Signed in";
+      }
+      setHint("nav-hint-sync", acct);
+    } catch (e) {
+      /* hints are cosmetic — never let them break settings */
+    }
+  }
+  // Let the sync UI refresh the account hint after auth state changes
+  window.updateSettingsNavHints = updateNavHints;
+
+  // ── Sidebar search: filter the section list by matching content ──────
+  function setupSettingsSearch() {
+    const input = document.getElementById("settings-search-input");
+    if (!input) return;
+
+    input.addEventListener("input", () => {
+      const q = input.value.trim().toLowerCase();
+      let firstMatch = null;
+
+      navItems.forEach((item) => {
+        const sid = item.dataset.section;
+        const ids = SECTION_MAP[sid] || [sid + "-section"];
+        const name = (
+          item.querySelector(".settings-nav-name")?.textContent || ""
+        ).toLowerCase();
+
+        let match = !q || name.includes(q);
+        if (!match) {
+          match = ids.some((id) => {
+            const sec = document.getElementById(id);
+            return sec && sec.textContent.toLowerCase().includes(q);
+          });
+        }
+
+        item.style.display = match ? "" : "none";
+        if (match && !firstMatch) firstMatch = item;
+      });
+
+      // Jump straight to the sole/first match on desktop so rows are visible
+      if (q && firstMatch && !isMobileSettings()) {
+        activateTab(firstMatch, false);
+      }
+    });
+  }
 
   // Handle increment/decrement buttons
   function setupTimeControls() {
@@ -1646,6 +1845,7 @@
         minusBtn.addEventListener("click", () => {
           const currentValue = parseInt(input.value) || control.min;
           input.value = Math.max(control.min, currentValue - 1);
+          persistAndApplyTimer(); // instant apply
         });
       }
 
@@ -1653,10 +1853,11 @@
         plusBtn.addEventListener("click", () => {
           const currentValue = parseInt(input.value) || control.min;
           input.value = Math.min(control.max, currentValue + 1);
+          persistAndApplyTimer(); // instant apply
         });
       }
 
-      // Validate inputs directly
+      // Validate inputs directly, then apply live
       if (input) {
         input.addEventListener("blur", () => {
           const currentValue = parseInt(input.value) || control.min;
@@ -1664,6 +1865,10 @@
             control.min,
             Math.min(control.max, currentValue),
           );
+          persistAndApplyTimer();
+        });
+        input.addEventListener("change", () => {
+          persistAndApplyTimer();
         });
       }
     });
@@ -1770,6 +1975,17 @@
     }
   }
 
+  // Instant-apply confirmation: a debounced toast so the user feels the
+  // change landed. Debouncing coalesces rapid input (slider drags, repeated
+  // stepper taps) into a single "saved" notice.
+  let savedToastTimeout = null;
+  function notifySaved(message) {
+    if (savedToastTimeout) clearTimeout(savedToastTimeout);
+    savedToastTimeout = setTimeout(() => {
+      showToast(message || "Settings saved");
+    }, 350);
+  }
+
   // Add keyboard shortcuts for the settings modal
   document.addEventListener("keydown", function (e) {
     // If settings modal is open (has 'show' class)
@@ -1779,17 +1995,20 @@
         closeSettings();
       }
 
-      // ENTER key - save settings
+      // ENTER key - settings apply instantly, so Enter just closes the modal
       if (e.key === "Enter") {
-        // Only trigger save if not in a text input to avoid conflicts
+        // Don't hijack Enter while typing in a text/number field
         const activeElement = document.activeElement;
         const isInput =
           activeElement.tagName === "INPUT" &&
           (activeElement.type === "text" || activeElement.type === "number");
+        const isNavItem =
+          activeElement.classList &&
+          activeElement.classList.contains("settings-nav-item");
 
-        if (!isInput) {
+        if (!isInput && !isNavItem) {
           e.preventDefault();
-          saveSettings();
+          closeSettings();
         }
       }
     }
@@ -1809,6 +2028,38 @@
   if (closeSettingsBtn) {
     closeSettingsBtn.addEventListener("click", closeSettings);
   }
+
+  // Mobile root header close (× on the section list)
+  const rootCloseBtn = document.getElementById("settings-root-close");
+  if (rootCloseBtn) {
+    rootCloseBtn.addEventListener("click", closeSettings);
+  }
+
+  // Mobile back button — pop the detail subpage back to the root list
+  const mobileBackBtn = document.getElementById("settings-mobile-back");
+  if (mobileBackBtn) {
+    mobileBackBtn.addEventListener("click", () => {
+      if (settingsContent && settingsContent.classList.contains("show-detail")) {
+        // Prefer the history entry we pushed so the URL stays clean
+        try {
+          history.back();
+        } catch (e) {
+          closeDetail();
+        }
+      }
+    });
+  }
+
+  // Browser/OS back gesture: first pop closes the detail, not the whole app
+  window.addEventListener("popstate", () => {
+    if (
+      settingsModal.classList.contains("show") &&
+      settingsContent &&
+      settingsContent.classList.contains("show-detail")
+    ) {
+      closeDetail();
+    }
+  });
 
   if (saveBtn) {
     saveBtn.addEventListener("click", saveSettings);
@@ -1830,6 +2081,95 @@
 
   // Setup time controls
   setupTimeControls();
+
+  // Setup sidebar search
+  setupSettingsSearch();
+
+  // Instant apply: toggles and selectors take effect immediately (no Save)
+  setupInstantApply();
+
+  function setupInstantApply() {
+    const bind = (id, handler) => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener("change", handler);
+    };
+
+    const bindWithToast = (id, handler, message) =>
+      bind(id, () => {
+        handler();
+        notifySaved(message);
+      });
+
+    bindWithToast(
+      "auto-break-toggle",
+      saveAutoStartSettings,
+      "Auto-start updated",
+    );
+    bindWithToast(
+      "auto-pomodoro-toggle",
+      saveAutoStartSettings,
+      "Auto-start updated",
+    );
+
+    bindWithToast(
+      "alarm-toggle",
+      () => {
+        const t = document.getElementById("alarm-toggle");
+        localStorage.setItem("alarm", t.checked);
+        updateSoundsDirectly();
+        updateNavHints();
+      },
+      "Sound settings saved",
+    );
+    bindWithToast(
+      "sound-effects-toggle",
+      () => {
+        const t = document.getElementById("sound-effects-toggle");
+        localStorage.setItem("soundEffects", t.checked);
+        updateSoundsDirectly();
+      },
+      "Sound settings saved",
+    );
+
+    bind("theme-selector", () => {
+      const sel = document.getElementById("theme-selector");
+      // "Custom" with no uploaded image: don't apply (it would error and
+      // revert) — theme-manager reveals the uploader; applying happens once
+      // the user uploads and hits Preview. No toast, since nothing applied.
+      if (
+        sel &&
+        sel.value === "custom" &&
+        !localStorage.getItem("customThemeBackground")
+      ) {
+        updateNavHints();
+        return;
+      }
+      saveThemeSettings();
+      updateNavHints();
+      notifySaved("Theme updated");
+    });
+    bindWithToast(
+      "lockedin-mode-toggle",
+      saveLockedInModeSettings,
+      "Settings saved",
+    );
+    bindWithToast(
+      "burnup-tracker-toggle",
+      () => {
+        saveBurnupTrackerSettings();
+        updateNavHints();
+      },
+      "Settings saved",
+    );
+
+    // Keep the Timer hint fresh as durations are typed
+    ["pomodoro-time", "short-break-time", "long-break-time", "sessions-count", "max-time"].forEach(
+      (id) => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("input", updateNavHints);
+      },
+    );
+  }
 
   // Initialize settings on page load
   document.addEventListener("DOMContentLoaded", () => {
@@ -1865,6 +2205,7 @@
 
         // Immediately update the volume in localStorage
         localStorage.setItem("pomodoroVolume", pomodoroVolumeSlider.value);
+        notifySaved("Volume updated");
 
         // Clear any pending timeouts to avoid multiple sounds playing
         if (volumeChangeTimeout) {
@@ -1912,6 +2253,7 @@
 
         // Immediately update the volume in localStorage
         localStorage.setItem("breakVolume", breakVolumeSlider.value);
+        notifySaved("Volume updated");
 
         // Clear any pending timeouts to avoid multiple sounds playing
         if (volumeChangeTimeout) {
@@ -1962,6 +2304,7 @@
       pomodoroSoundSelector.addEventListener("change", function () {
         localStorage.setItem("pomodoroSound", pomodoroSoundSelector.value);
         updateSoundsDirectly();
+        notifySaved("Sound updated");
       });
     }
 
@@ -1969,6 +2312,7 @@
       breakSoundSelector.addEventListener("change", function () {
         localStorage.setItem("breakSound", breakSoundSelector.value);
         updateSoundsDirectly();
+        notifySaved("Sound updated");
       });
     }
   });
@@ -1982,18 +2326,6 @@
     );
     const trackerDesignOptions = document.querySelectorAll(
       ".tracker-design-option",
-    );
-    const trackerDesignInfoIcon = document.getElementById(
-      "tracker-design-info",
-    );
-    const trackerDesignInfoModal = document.getElementById(
-      "tracker-design-info-modal-overlay",
-    );
-    const trackerDesignInfoClose = document.getElementById(
-      "tracker-design-info-modal-close",
-    );
-    const trackerDesignInfoCloseBtn = document.getElementById(
-      "tracker-design-info-close-btn",
     );
 
     // Load saved design preference
@@ -2031,6 +2363,8 @@
 
           // Also update any existing trackers on the page
           updateAllTrackers(this.value);
+
+          if (typeof notifySaved === "function") notifySaved("Design updated");
         }
       });
     });
@@ -2049,33 +2383,8 @@
       });
     });
 
-    // Handle info modal
-    if (trackerDesignInfoIcon && trackerDesignInfoModal) {
-      trackerDesignInfoIcon.addEventListener("click", function () {
-        trackerDesignInfoModal.style.display = "flex";
-      });
-    }
-
-    if (trackerDesignInfoClose && trackerDesignInfoModal) {
-      trackerDesignInfoClose.addEventListener("click", function () {
-        trackerDesignInfoModal.style.display = "none";
-      });
-    }
-
-    if (trackerDesignInfoCloseBtn && trackerDesignInfoModal) {
-      trackerDesignInfoCloseBtn.addEventListener("click", function () {
-        trackerDesignInfoModal.style.display = "none";
-      });
-    }
-
-    // Close modal when clicking outside
-    if (trackerDesignInfoModal) {
-      trackerDesignInfoModal.addEventListener("click", function (e) {
-        if (e.target === this) {
-          this.style.display = "none";
-        }
-      });
-    }
+    // The "?" explainer is now an inline disclosure panel handled by
+    // js/locked-in-info-modal.js — no modal-over-modal here anymore.
 
     // Apply keyboard accessibility
     trackerDesignRadios.forEach((radio) => {

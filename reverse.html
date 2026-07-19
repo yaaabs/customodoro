@@ -21,7 +21,7 @@
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="css/style.css?v=3.9.5" />
+    <link rel="stylesheet" href="css/style.css?v=3.9.6" />
 
     <!-- ═══════════════════════════════════════════════════════════════════════════════
        SEO META TAGS
@@ -199,12 +199,12 @@
 
     <link rel="stylesheet" href="css/media-players.css?v=1.0.1" />
 
-    <link rel="stylesheet" href="css/features.css?v=1.0.7" />
+    <link rel="stylesheet" href="css/features.css?v=1.3.8" />
 
     <link rel="stylesheet" href="css/utilities.css?v=1.0.6" />
 
     <!-- Supabase Client -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2.45.4"></script>
 
     <script>
       // Function to load deferred CSS files
@@ -985,39 +985,155 @@
     <!-- Settings Modal -->
     <div class="settings-modal" id="settings-modal">
       <div class="settings-content">
-        <!-- Add sidebar navigation -->
+        <!-- Sidebar navigation (macOS pattern) / root list (iOS pattern) -->
         <div class="settings-sidebar">
-          <div class="settings-nav-item active" data-section="timer">
-            Reverse Timer
+          <div class="settings-sidebar-title">
+            <h2>Settings</h2>
+            <button
+              class="settings-root-close"
+              id="settings-root-close"
+              aria-label="Close settings"
+            >
+              &times;
+            </button>
           </div>
-          <div class="settings-nav-item" data-section="sound">Sound</div>
-          <div class="settings-nav-item" data-section="auto">Auto Start</div>
-          <div class="settings-nav-item" data-section="productivity">
-            Productivity <span class="bug-tag">BUG</span>
+          <div class="settings-search">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            <input
+              type="text"
+              id="settings-search-input"
+              placeholder="Search settings"
+              aria-label="Search settings"
+              autocomplete="off"
+            />
           </div>
-          <div class="settings-nav-item" data-section="bgm">
-            Music <span class="beta-tag">BETA</span>
+
+          <div
+            class="settings-nav-item active"
+            data-section="timer"
+            data-title="Reverse Timer"
+            role="button"
+            tabindex="0"
+          >
+            <span class="settings-nav-chip">
+              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"></circle>
+                <polyline points="12 7 12 12 15 14"></polyline>
+              </svg>
+            </span>
+            <span class="settings-nav-label">
+              <span class="settings-nav-name">Reverse Timer</span>
+              <span class="settings-nav-hint" id="nav-hint-timer"></span>
+            </span>
+            <svg class="settings-nav-chevron" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
           </div>
-          <div class="settings-nav-item" data-section="theme">
-            Theme <span class="new-tag">NEW</span>
+
+          <div
+            class="settings-nav-item"
+            data-section="sound"
+            data-title="Sound &amp; Music"
+            role="button"
+            tabindex="0"
+          >
+            <span class="settings-nav-chip">
+              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 5 6 9H2v6h4l5 4V5z"></path>
+                <path d="M15.5 8.5a5 5 0 0 1 0 7"></path>
+                <path d="M18.5 5.5a9 9 0 0 1 0 13"></path>
+              </svg>
+            </span>
+            <span class="settings-nav-label">
+              <span class="settings-nav-name">Sound &amp; Music</span>
+              <span class="settings-nav-hint" id="nav-hint-sound"></span>
+            </span>
+            <svg class="settings-nav-chevron" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
           </div>
-          <div class="settings-nav-item" data-section="sync">
-            Sync Data<span class="new-tag">NEW</span>
+
+          <div
+            class="settings-nav-item"
+            data-section="productivity"
+            data-title="Productivity"
+            role="button"
+            tabindex="0"
+          >
+            <span class="settings-nav-chip">
+              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="6" y1="20" x2="6" y2="15"></line>
+                <line x1="12" y1="20" x2="12" y2="9"></line>
+                <line x1="18" y1="20" x2="18" y2="4"></line>
+              </svg>
+            </span>
+            <span class="settings-nav-label">
+              <span class="settings-nav-name">Productivity</span>
+              <span class="settings-nav-hint" id="nav-hint-productivity"></span>
+            </span>
+            <svg class="settings-nav-chevron" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </div>
+
+          <div
+            class="settings-nav-item"
+            data-section="theme"
+            data-title="Appearance"
+            role="button"
+            tabindex="0"
+          >
+            <span class="settings-nav-chip">
+              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3s6 6.5 6 10.5a6 6 0 0 1-12 0C6 9.5 12 3 12 3z"></path>
+              </svg>
+            </span>
+            <span class="settings-nav-label">
+              <span class="settings-nav-name">Appearance</span>
+              <span class="settings-nav-hint" id="nav-hint-theme"></span>
+            </span>
+            <svg class="settings-nav-chevron" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </div>
+
+          <div
+            class="settings-nav-item"
+            data-section="sync"
+            data-title="Account &amp; Sync"
+            role="button"
+            tabindex="0"
+          >
+            <span class="settings-nav-chip">
+              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
+              </svg>
+            </span>
+            <span class="settings-nav-label">
+              <span class="settings-nav-name">Account &amp; Sync</span>
+              <span class="settings-nav-hint" id="nav-hint-sync"></span>
+            </span>
+            <svg class="settings-nav-chevron" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
           </div>
         </div>
 
         <div class="settings-main">
           <div class="settings-header">
-            <h2 class="settings-title">Settings</h2>
+            <button
+              class="settings-mobile-back"
+              id="settings-mobile-back"
+              aria-label="Back to settings list"
+            >
+              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              Settings
+            </button>
+            <h2 class="settings-active-title" id="settings-active-title">Reverse Timer</h2>
             <button class="settings-close" id="settings-close">&times;</button>
           </div>
 
           <div class="settings-body">
             <!-- Reverse Timer Settings Section -->
             <div class="settings-section active" id="timer-section">
-              <h3 class="settings-section-title">Reverse Timer Settings</h3>
+              <div class="settings-group">
+                <h3 class="settings-group-header">Break logic</h3>
+                <div class="settings-card">
               <div class="settings-row">
-                <div class="settings-label">Break Logic Mode</div>
+                <div class="settings-label">Break logic mode</div>
                 <div class="select-wrapper">
                   <select class="theme-selector" id="break-logic-mode-selector">
                     <option value="default">Standard 1hr (Default)</option>
@@ -1025,8 +1141,13 @@
                   </select>
                 </div>
               </div>
+                </div>
+              </div>
+              <div class="settings-group">
+                <h3 class="settings-group-header">Max work time</h3>
+                <div class="settings-card">
               <div class="settings-row">
-                <div class="settings-label">Max Work Time (minutes)</div>
+                <div class="settings-label">Max work time (minutes)</div>
                 <div class="time-input-group">
                   <button class="time-btn" id="max-time-minus-btn">-</button>
                   <input
@@ -1040,6 +1161,15 @@
                   <button class="time-btn" id="max-time-plus-btn">+</button>
                 </div>
               </div>
+                </div>
+                <p class="settings-caption">
+                  Max work time is fixed at 60 min in Standard mode; switch to
+                  Custom (Dynamic) to change it.
+                </p>
+              </div>
+              <div class="settings-group">
+                <h3 class="settings-group-header">Break durations</h3>
+                <div class="settings-card">
               <div class="settings-row">
                 <div class="settings-label" id="break1-label">
                   Break Time (5-20 mins work)
@@ -1125,14 +1255,17 @@
                   <button class="time-btn" id="break5-plus-btn">+</button>
                 </div>
               </div>
+                </div>
+              </div>
             </div>
 
             <!-- Sound Settings Section -->
             <div class="settings-section" id="sound-section">
-              <h3 class="settings-section-title">Sound Settings</h3>
-
-              <div class="settings-row">
-                <div class="settings-label">Select Session Alert Sound:</div>
+              <div class="settings-group">
+                <h3 class="settings-group-header">Alert sounds</h3>
+                <div class="settings-card">
+                  <div class="settings-row">
+                    <div class="settings-label">Session alert sound</div>
                 <div class="select-wrapper">
                   <select class="sound-selector" id="pomodoro-sound-selector">
                     <option value="bell.mp3">Bell (Default)</option>
@@ -1189,8 +1322,13 @@
                   </div>
                 </div>
               </div>
+                </div>
+              </div>
+              <div class="settings-group">
+                <h3 class="settings-group-header">Ambient &amp; feedback</h3>
+                <div class="settings-card">
               <div class="settings-row">
-                <div class="settings-label">Select Timer Sound:</div>
+                <div class="settings-label">Timer sound</div>
                 <div class="select-wrapper">
                   <select class="sound-selector" id="timer-sound-selector">
                     <option value="none">None (Default)</option>
@@ -1237,31 +1375,44 @@
                   <span class="slider-toggle"></span>
                 </label>
               </div>
+                </div>
+              </div>
+              <div class="settings-group">
+                <h3 class="settings-group-header">Preview</h3>
+                <div class="settings-card">
               <div class="settings-row sound-test-row">
-                <div class="settings-label">Test Sounds</div>
+                <div class="settings-label">Test sounds</div>
                 <div class="sound-test-buttons">
                   <button class="sound-test-btn" id="test-click-sound">
-                    UI Sound 🔊
+                    <span>UI Sound</span>
+                    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path></svg>
                   </button>
                   <button class="sound-test-btn" id="test-pomodoro-sound">
-                    Session Alert 🔊
+                    <span>Session Alert</span>
+                    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path></svg>
                   </button>
                   <button class="sound-test-btn" id="test-break-sound">
-                    Break Alert 🔊
+                    <span>Break Alert</span>
+                    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path></svg>
                   </button>
                   <button class="sound-test-btn" id="test-timer-sound">
-                    Timer Sound 🔊
+                    <span>Timer Sound</span>
+                    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path></svg>
                   </button>
+                </div>
+              </div>
                 </div>
               </div>
             </div>
 
-            <!-- Auto Start Section -->
+            <!-- Behavior (merged Auto Start) — shown under Timer -->
             <div class="settings-section" id="auto-section">
-              <h3 class="settings-section-title">Auto Start</h3>
+              <div class="settings-group">
+                <h3 class="settings-group-header">Behavior</h3>
+                <div class="settings-card">
               <div class="settings-row">
                 <div class="settings-label">
-                  Auto-start Breaks
+                  Auto-start breaks
                   <span class="info-icon" id="auto-break-info">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -1285,19 +1436,42 @@
                   <span class="slider-toggle"></span>
                 </label>
               </div>
+              <div class="settings-info-panel" id="auto-break-info-panel">
+                Automatically starts your break timer the moment a focus
+                session ends, so you actually take the breaks you earned.
+              </div>
+                </div>
+                <p class="settings-caption">
+                  If auto-start stops working, toggle the switch off and back
+                  on to reset the feature.
+                </p>
+              </div>
 
-              <div class="settings-note" style="margin-top: 16px">
-                <strong>💡 Troubleshooting:</strong> If auto-start isn't
-                working, try toggling the switch off and back on, then click
-                "Save changes" to reset the feature.
+              <div class="settings-group settings-danger-group">
+                <h3 class="settings-group-header">Reset</h3>
+                <div class="settings-card settings-danger-card">
+                  <div class="settings-danger-row">
+                    <span class="settings-danger-text"
+                      >Reset all settings to defaults</span
+                    >
+                    <button
+                      class="settings-danger-btn"
+                      id="reset-settings-btn"
+                    >
+                      Reset all
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
             <!-- Productivity Section -->
             <div class="settings-section" id="productivity-section">
-              <h3 class="settings-section-title">Productivity</h3>
+              <div class="settings-group">
+                <h3 class="settings-group-header">Burn-up tracker</h3>
+                <div class="settings-card">
               <div class="settings-row">
                 <div class="settings-label">
-                  Enable Burn-Up Time Tracker
+                  Enable tracker
                   <span class="info-icon" id="burnup-tracker-info">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -1321,6 +1495,10 @@
                   <span class="slider-toggle"></span>
                 </label>
               </div>
+              <div class="settings-info-panel" id="burnup-tracker-info-panel">
+                Shows a live burn-up bar of time worked against your target
+                during each session, so progress is visible at a glance.
+              </div>
               <!-- Burn-Up Tracker Design Selector -->
               <div class="settings-row tracker-design-row">
                 <div class="settings-label">
@@ -1342,6 +1520,11 @@
                       <line x1="12" y1="8" x2="12.01" y2="8"></line>
                     </svg>
                   </span>
+                </div>
+
+                <div class="settings-info-panel" id="tracker-design-info-panel">
+                  Choose how the burn-up tracker looks: match your current
+                  theme, or lock it to a dark or transparent style.
                 </div>
 
                 <div class="tracker-design-selector">
@@ -1442,13 +1625,17 @@
                   </div>
                 </div>
               </div>
+                </div>
+              </div>
             </div>
 
-            <!-- BGM Settings Section -->
+            <!-- Background Music (merged into Sound & Music) -->
             <div class="settings-section" id="bgm-section">
-              <h3 class="settings-section-title">Background Music</h3>
+              <div class="settings-group">
+                <h3 class="settings-group-header">Background music</h3>
+                <div class="settings-card">
               <div class="settings-row">
-                <div class="settings-label">Enable Background Music</div>
+                <div class="settings-label">Enable background music</div>
                 <label class="toggle-switch">
                   <input type="checkbox" id="bgm-toggle" checked />
                   <span class="slider-toggle"></span>
@@ -1486,7 +1673,11 @@
                   </div>
                 </div>
               </div>
+                </div>
+              </div>
 
+              <div class="settings-group">
+                <h3 class="settings-group-header">Player</h3>
               <!-- Track List Section -->
               <div class="bgm-track-list-section">
                 <div class="track-list-header">
@@ -1635,11 +1826,14 @@
                   <div class="bgm-equalizer-bar"></div>
                 </div>
               </div>
+              </div>
             </div>
 
-            <!-- Theme Section -->
+            <!-- Appearance (Theme) Section -->
             <div class="settings-section" id="theme-section">
-              <h3 class="settings-section-title">Theme Settings</h3>
+              <div class="settings-group">
+                <h3 class="settings-group-header">Theme</h3>
+                <div class="settings-card">
               <div class="settings-row">
                 <div class="settings-label">Select theme</div>
                 <div class="select-wrapper">
@@ -1655,7 +1849,7 @@
               </div>
               <div class="settings-row">
                 <div class="settings-label">
-                  Locked In Mode when running
+                  Locked-in mode
                   <span class="info-icon" id="lockedin-mode-info">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -1679,6 +1873,15 @@
                   <span class="slider-toggle"></span>
                 </label>
               </div>
+                  <div class="settings-info-panel" id="lockedin-mode-info-panel">
+                    A distraction-free dark environment that activates when the
+                    timer starts, hiding everything but the essentials. Pairs
+                    well with fullscreen.
+                  </div>
+                </div>
+              </div>
+
+              <div class="settings-group">
               <div class="theme-uploader">
                 <div class="upload-container">
                   <div class="upload-icon">📷</div>
@@ -1810,12 +2013,11 @@
                   environment.
                 </div>
               </div>
+              </div>
             </div>
 
-            <!-- Sync Account Section -->
+            <!-- Account & Sync Section -->
             <div class="settings-section" id="sync-section">
-              <h3 class="settings-section-title">Sync Account</h3>
-
               <!-- Not Logged In State -->
               <div class="sync-not-logged-in" id="sync-not-logged-in">
                 <div class="sync-hero">
@@ -1852,27 +2054,103 @@
 
                 <div class="sync-benefits">
                   <div class="sync-benefit">
-                    <div class="sync-benefit-icon">1️⃣</div>
+                    <div class="sync-benefit-icon">
+                      <span class="sync-step-num">1</span>
+                    </div>
                     <div class="sync-benefit-text">
-                      Register your email on your PC/Laptop to upload your
-                      current stats
+                      Sign in on this device to back up your progress
                     </div>
                   </div>
                   <div class="sync-benefit">
-                    <div class="sync-benefit-icon">2️⃣</div>
+                    <div class="sync-benefit-icon">
+                      <span class="sync-step-num">2</span>
+                    </div>
                     <div class="sync-benefit-text">
-                      Sign in with the same email on your iPad/Phone
+                      Use the same email on your phone or tablet
                     </div>
                   </div>
                   <div class="sync-benefit">
-                    <div class="sync-benefit-icon">3️⃣</div>
+                    <div class="sync-benefit-icon">
+                      <span class="sync-step-num">3</span>
+                    </div>
                     <div class="sync-benefit-text">
-                      Your data automatically syncs after each session!
+                      Your data syncs automatically after every session
                     </div>
                   </div>
                 </div>
 
-                <div class="sync-auth-form">
+                <div class="sync-auth-choice" id="sync-auth-choice">
+                  <button
+                    type="button"
+                    class="sync-choice-btn"
+                    id="sync-choice-existing"
+                  >
+                    <span class="sync-choice-icon">
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </svg>
+                    </span>
+                    <span class="sync-choice-text">
+                      <span class="sync-choice-title"
+                        >I already have an account</span
+                      >
+                      <span class="sync-choice-sub"
+                        >Sign back in and pick up right where you left
+                        off.</span
+                      >
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    class="sync-choice-btn"
+                    id="sync-choice-new"
+                  >
+                    <span class="sync-choice-icon">
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      >
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <line x1="19" y1="8" x2="19" y2="14" />
+                        <line x1="22" y1="11" x2="16" y2="11" />
+                      </svg>
+                    </span>
+                    <span class="sync-choice-text">
+                      <span class="sync-choice-title">I'm new here</span>
+                      <span class="sync-choice-sub"
+                        >Back up your progress and sync across devices.</span
+                      >
+                    </span>
+                  </button>
+                </div>
+
+                <div
+                  class="sync-auth-form"
+                  id="sync-auth-form"
+                  style="display: none"
+                >
+                  <button type="button" class="sync-back-btn" id="sync-back-btn">
+                    <svg viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    Back
+                  </button>
+
                   <div class="sync-form-group">
                     <label class="sync-form-label">Email Address</label>
                     <input
@@ -1881,48 +2159,40 @@
                       id="sync-email-input"
                       placeholder="Enter your email address"
                     />
+                    <div
+                      class="sync-field-error"
+                      id="sync-email-error"
+                      style="display: none"
+                    ></div>
                     <div class="sync-form-note">
-                      We'll use this to identify your account. No password
-                      required!
+                      We'll email you a 6-digit code. No password needed!
                     </div>
                   </div>
 
-                  <div class="sync-form-group">
-                    <label class="sync-form-label"
-                      >Display Name (Optional)</label
-                    >
+                  <div
+                    class="sync-form-group"
+                    id="sync-username-group"
+                    style="display: none"
+                  >
+                    <label class="sync-form-label">Display Name</label>
                     <input
                       type="text"
                       class="sync-form-input"
                       id="sync-username-input"
                       placeholder="How should we call you?"
                     />
+                    <div class="sync-form-note">
+                      Shown on the leaderboard. You can leave this empty.
+                    </div>
                   </div>
 
                   <div class="sync-form-actions">
                     <button
                       class="sync-btn sync-btn-primary"
-                      id="sync-register-btn"
-                    >
-                      <span class="sync-btn-text">Create Account & Sync</span>
-                      <span class="sync-btn-spinner" style="display: none">
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                        >
-                          <path d="M21 12a9 9 0 11-6.219-8.56" />
-                        </svg>
-                      </span>
-                    </button>
-                    <button
-                      class="sync-btn sync-btn-secondary"
                       id="sync-login-btn"
+                      style="width: 100%"
                     >
-                      <span class="sync-btn-text">Sign In</span>
+                      <span class="sync-btn-text">Send My Code</span>
                       <span class="sync-btn-spinner" style="display: none">
                         <svg
                           width="16"
@@ -1940,7 +2210,21 @@
                 </div>
 
                 <div class="sync-privacy-note">
-                  <div class="sync-privacy-icon">🔒</div>
+                  <div class="sync-privacy-icon">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                  </div>
                   <div class="sync-privacy-text">
                     Your data is stored securely and never shared with third
                     parties.
@@ -2043,10 +2327,8 @@
           </div>
 
           <div class="settings-footer">
-            <button class="reset-btn" id="reset-settings-btn">Reset all</button>
-            <button class="close-btn" id="close-settings-btn">Close</button>
-            <button class="save-btn" id="save-settings-btn">
-              Save changes
+            <button class="settings-done-btn" id="close-settings-btn">
+              Done
             </button>
           </div>
         </div>
@@ -2099,283 +2381,6 @@
             id="motivational-alert-btn"
           >
             OK, let me try again
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Sync Data Confirmation Modal -->
-    <div
-      class="lockedin-info-modal-overlay"
-      id="sync-confirm-modal-overlay"
-      style="display: none"
-    >
-      <div class="lockedin-info-modal">
-        <div class="lockedin-info-modal-header">
-          <h3 class="lockedin-info-modal-title">⚠️ Sync Your Data</h3>
-          <button
-            class="lockedin-info-modal-close"
-            id="sync-confirm-modal-close"
-          >
-            &times;
-          </button>
-        </div>
-        <div class="lockedin-info-modal-content">
-          <p>
-            <strong
-              >Are you sure you want to sync your data to this account?</strong
-            >
-          </p>
-
-          <p>This will:</p>
-          <ul>
-            <li>
-              Upload your current stats, streaks, and sessions to the cloud
-            </li>
-            <li>Link this browser's data to your account permanently</li>
-            <li>Allow you to access this data from other devices</li>
-          </ul>
-
-          <div
-            class="settings-note"
-            style="
-              background-color: #fff3cd;
-              border: 1px solid #ffeaa7;
-              color: #856404;
-              padding: 10px;
-              border-radius: 5px;
-              margin: 15px 0;
-            "
-          >
-            <p>
-              <strong>⚠️ Important:</strong> Make sure you're using the correct
-              email address. Once synced, this data will be associated with this
-              account.
-            </p>
-          </div>
-
-          <div
-            style="
-              margin: 20px 0;
-              padding: 15px;
-              background-color: #f8f9fa;
-              border-radius: 5px;
-            "
-          >
-            <p><strong>Current Data Summary:</strong></p>
-            <ul>
-              <li id="sync-confirm-sessions">Sessions: Loading...</li>
-              <li id="sync-confirm-streak">Current Streak: Loading...</li>
-              <li id="sync-confirm-points">Focus Points: Loading...</li>
-            </ul>
-          </div>
-        </div>
-        <div class="lockedin-info-modal-footer">
-          <button
-            class="lockedin-info-btn"
-            id="sync-confirm-cancel"
-            style="background-color: #6c757d; margin-right: 10px"
-          >
-            Cancel
-          </button>
-          <button
-            class="lockedin-info-btn"
-            id="sync-confirm-proceed"
-            style="background-color: #28a745"
-          >
-            Yes, Sync My Data
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Auto-start Breaks Info Modal -->
-    <div class="lockedin-info-modal-overlay" id="auto-break-modal-overlay">
-      <div class="lockedin-info-modal">
-        <div class="lockedin-info-modal-header">
-          <h3 class="lockedin-info-modal-title">Auto-start Breaks</h3>
-          <button class="lockedin-info-modal-close" id="auto-break-modal-close">
-            &times;
-          </button>
-        </div>
-        <div class="lockedin-info-modal-content">
-          <p>
-            <strong>What is it?</strong> Automatically starts your earned break
-            timer when a work session ends.
-          </p>
-
-          <p><strong>Benefits:</strong></p>
-          <ul>
-            <li>Ensures you take proper breaks between work sessions</li>
-            <li>Maintains your productivity rhythm</li>
-            <li>No need to manually start break timers</li>
-          </ul>
-
-          <div class="settings-note">
-            <p>
-              <strong>💡 Tip:</strong> In Reverse mode, you earn longer breaks
-              by working longer. Auto-start makes sure you receive your
-              well-deserved break time!
-            </p>
-          </div>
-        </div>
-        <div class="lockedin-info-modal-footer">
-          <button class="lockedin-info-btn" id="auto-break-close-btn">
-            Got it
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Locked In Mode Info Modal -->
-    <div class="lockedin-info-modal-overlay" id="lockedin-info-modal-overlay">
-      <div class="lockedin-info-modal">
-        <div class="lockedin-info-modal-header">
-          <h3 class="lockedin-info-modal-title">Locked In Mode</h3>
-          <button
-            class="lockedin-info-modal-close"
-            id="lockedin-info-modal-close"
-          >
-            &times;
-          </button>
-        </div>
-        <div class="lockedin-info-modal-content">
-          <p>
-            <strong>What is it?</strong> A distraction-free, dark environment
-            that activates automatically when your timer starts.
-          </p>
-
-          <p><strong>Benefits:</strong></p>
-          <ul>
-            <li>Minimalist interface shows only essential timer info</li>
-            <li>Hides distracting elements for maximum focus</li>
-            <li>Creates a calm, productive workspace</li>
-          </ul>
-
-          <div class="settings-note">
-            <p>
-              <strong>💡 Pro Tip:</strong> Use Locked In Mode with fullscreen
-              (F11 or fullscreen button) for the ultimate distraction-free
-              experience that covers your entire screen!
-            </p>
-          </div>
-        </div>
-        <div class="lockedin-info-modal-footer">
-          <button class="lockedin-info-btn" id="lockedin-info-close-btn">
-            Got it
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tracker Design Info Modal -->
-    <div
-      class="lockedin-info-modal-overlay"
-      id="tracker-design-info-modal-overlay"
-    >
-      <div class="lockedin-info-modal">
-        <div class="lockedin-info-modal-header">
-          <h3 class="lockedin-info-modal-title">Tracker Design Styles</h3>
-          <button
-            class="lockedin-info-modal-close"
-            id="tracker-design-info-modal-close"
-          >
-            &times;
-          </button>
-        </div>
-        <div class="lockedin-info-modal-content">
-          <p>
-            <strong
-              >Choose your preferred visual style for the Burn-Up
-              Tracker:</strong
-            >
-          </p>
-
-          <div class="tracker-design-explanation">
-            <div class="design-option-explanation">
-              <h4>🎨 Match Theme (Default)</h4>
-              <p>
-                Automatically adapts to your selected theme colors and style.
-              </p>
-            </div>
-
-            <div class="design-option-explanation">
-              <h4>☀️ Light Solid</h4>
-              <p>
-                Clean, minimalistic design with solid light colors - perfect for
-                bright environments.
-              </p>
-            </div>
-
-            <div class="design-option-explanation">
-              <h4>🌙 Dark Gradient</h4>
-              <p>
-                Professional dark style with subtle gradients - ideal for
-                low-light conditions.
-              </p>
-            </div>
-
-            <div class="design-option-explanation">
-              <h4>✨ Transparent Glass</h4>
-              <p>
-                Modern glassmorphism effect with transparency and blur - stylish
-                and contemporary.
-              </p>
-            </div>
-          </div>
-
-          <div class="settings-note">
-            <p>
-              <strong>💡 Pro Tip:</strong> Your chosen design will persist
-              across sessions and work independently of theme changes!
-            </p>
-          </div>
-        </div>
-        <div class="lockedin-info-modal-footer">
-          <button class="lockedin-info-btn" id="tracker-design-info-close-btn">
-            Got it
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Burn-Up Tracker Info Modal -->
-    <div class="lockedin-info-modal-overlay" id="burnup-tracker-modal-overlay">
-      <div class="lockedin-info-modal">
-        <div class="lockedin-info-modal-header">
-          <h3 class="lockedin-info-modal-title">Burn-Up Time Tracker</h3>
-          <button
-            class="lockedin-info-modal-close"
-            id="burnup-tracker-modal-close"
-          >
-            &times;
-          </button>
-        </div>
-        <div class="lockedin-info-modal-content">
-          <p>
-            <strong>What is it?</strong> A visual progress tracker that shows
-            "Time Spent vs. Planned" during active timer sessions.
-          </p>
-
-          <p><strong>Benefits:</strong></p>
-          <ul>
-            <li>Improves time estimation awareness</li>
-            <li>Provides visual feedback on your progress</li>
-            <li>Helps maintain focus by showing work accomplished</li>
-            <li>Works with both Pomodoro and Reverse timer modes</li>
-          </ul>
-
-          <div class="settings-note">
-            <p>
-              <strong>💡 Pro Tip:</strong> Use the Burn-Up Tracker to get better
-              at estimating how long tasks really take and improve your planning
-              skills!
-            </p>
-          </div>
-        </div>
-        <div class="lockedin-info-modal-footer">
-          <button class="lockedin-info-btn" id="burnup-tracker-close-btn">
-            Got it
           </button>
         </div>
       </div>
@@ -2434,29 +2439,30 @@
 
     <script src="js/reversePomodoro.js?v=2.10.4"></script>
 
-    <script src="js/auth-service.js?v=1.0.1" defer></script>
-    <script src="js/sync-manager.js?v=1.3.1" defer></script>
-    <script src="js/sync-ui.js?v=1.1.1" defer></script>
-    <script src="js/header-profile.js?v=1.0.1" defer></script>
+    <script src="js/supabase-client.js?v=1.0.0" defer></script>
+    <script src="js/auth-service.js?v=2.0.0" defer></script>
+    <script src="js/sync-manager.js?v=2.0.0" defer></script>
+    <script src="js/sync-ui.js?v=2.2.0" defer></script>
+    <script src="js/header-profile.js?v=1.0.2" defer></script>
 
     <script src="js/task-retention.js?v=1.0.1" defer></script>
 
-    <script src="js/settings.js?v=2.6.6" defer></script>
+    <script src="js/settings.js?v=2.7.4" defer></script>
 
     <script src="js/fullscreen.js?v=2.3.6" defer></script>
     <script src="js/lockedin-mode.js?v=2.3.9" defer></script>
-    <script src="js/locked-in-info-modal.js?v=2.3.5" defer></script>
+    <script src="js/locked-in-info-modal.js?v=2.3.6" defer></script>
     <script src="js/focus-mode.js?v=2.3.5" defer></script>
-    <script src="js/radial-menu.js?v=2.3.7" defer></script>
+    <script src="js/radial-menu.js?v=2.3.8" defer></script>
 
     <script src="js/bgm-player.js?v=2.3.7" defer></script>
     <script src="js/mini-music-player.js?v=2.3.6" defer></script>
 
     <script src="js/about-modal.js?v=2.3.5" defer></script>
-    <script src="js/theme-manager.js?v=2.6.3" defer></script>
+    <script src="js/theme-manager.js?v=2.6.4" defer></script>
 
     <script src="js/leaderboard-integration.js?v=1.0.3" defer></script>
-    <script src="js/database-leaderboard.js?v=2.2.2" defer></script>
+    <script src="js/database-leaderboard.js?v=3.0.0" defer></script>
     <script src="js/user-stats.js?v=1.0.1" defer></script>
     <script src="js/most-used-pomodoro.js?v=1.0.2" defer></script>
     <script src="js/copyright-year.js?v=1.0.0" defer></script>

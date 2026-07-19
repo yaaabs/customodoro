@@ -1161,7 +1161,10 @@ body.theme-color .footer-divider {
   padding: 12px 20px;
   border-radius: 8px;
   font-size: 16px;
-  z-index: 1000;
+  /* Toast is the top-most surface — above every modal (settings 1100,
+     verify/OTP 1300, update dialogs 12000, etc.) so notifications are
+     never hidden behind an open dialog. */
+  z-index: 2147483647;
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;

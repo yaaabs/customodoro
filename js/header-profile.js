@@ -153,68 +153,22 @@ class HeaderProfile {
   }
 
   openSyncSettings() {
+    // Open settings straight to the Account & Sync section
+    if (typeof window.openSettingsSection === "function") {
+      window.openSettingsSection("sync");
+      return;
+    }
 
-    // Open settings modal and navigate to sync section
+    // Fallback if the settings module hasn't exposed its API yet
     const settingsBtn = document.getElementById("settings-btn");
     if (settingsBtn) {
       settingsBtn.click();
-
-      // Wait for modal to open, then navigate to sync section using direct class manipulation
-      // (same reliable method as mini music player)
       setTimeout(() => {
-
-        const navItems = document.querySelectorAll(".settings-nav-item");
         const syncNavItem = document.querySelector(
           '.settings-nav-item[data-section="sync"]',
         );
-        const syncSection = document.getElementById("sync-section");
-
-
-        if (syncNavItem && syncSection) {
-          // Remove active from all nav items and sections
-          navItems.forEach((item) => item.classList.remove("active"));
-          document.querySelectorAll(".settings-section").forEach((section) => {
-            section.classList.remove("active");
-          });
-
-          // Activate sync section directly (same as mini music player)
-          syncNavItem.classList.add("active");
-          syncSection.classList.add("active");
-
-
-          // Additional verification
-          setTimeout(() => {
-            if (!syncSection.classList.contains("active")) {
-              window.customodoroLogger.error("HEADER_PROFILE_HEADERPROFILE_SYNC_SECTION_ACTIVATION_FAIL");
-            }
-          }, 100);
-        } else {
-          window.customodoroLogger.error("HEADER_PROFILE_HEADERPROFILE_REQUIRED_ELEMENTS_NOT_FOUND");
-
-          // Fallback: try clicking the nav item if direct manipulation fails
-          if (syncNavItem) {
-            syncNavItem.click();
-          } else {
-            // Debug: List all available data-section elements
-            const allSections = document.querySelectorAll("[data-section]");
-          }
-        }
-      }, 400); // Keep the timeout for modal to fully load
-    } else {
-
-      // Debug: Try to find settings button with alternative selectors
-      const altSettingsSelectors = [
-        "#settingsBtn",
-        ".settings-btn",
-        '[data-action="settings"]',
-      ];
-      for (const selector of altSettingsSelectors) {
-        const altBtn = document.querySelector(selector);
-        if (altBtn) {
-          altBtn.click();
-          break;
-        }
-      }
+        if (syncNavItem) syncNavItem.click();
+      }, 300);
     }
   }
 

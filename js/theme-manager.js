@@ -292,7 +292,7 @@
       // Apply the custom theme
       applyCustomTheme();
 
-      showToast('Custom theme applied. Click "Save changes" to keep it.');
+      showToast("Custom theme applied.");
     } else {
       showToast("No custom theme available. Please upload an image first.");
     }

@@ -234,33 +234,12 @@
     document
       .getElementById("radial-sync-btn")
       .addEventListener("click", function () {
-        // Open settings modal and navigate to sync section (same as header sync button)
-        const settingsBtn = document.getElementById("settings-btn");
-        if (settingsBtn) {
-          settingsBtn.click();
-
-          // Wait for modal to open, then navigate to sync section
-          setTimeout(() => {
-            const navItems = document.querySelectorAll(".settings-nav-item");
-            const syncNavItem = document.querySelector(
-              '.settings-nav-item[data-section="sync"]',
-            );
-            const syncSection = document.getElementById("sync-section");
-
-            if (syncNavItem && syncSection) {
-              // Remove active class from all nav items and sections
-              navItems.forEach((item) => item.classList.remove("active"));
-              document
-                .querySelectorAll(".settings-section")
-                .forEach((section) => section.classList.remove("active"));
-
-              // Add active class to sync nav item and section
-              syncNavItem.classList.add("active");
-              syncSection.classList.add("active");
-
-            }
-          }, 100);
+        // Open settings straight to the Account & Sync section
+        if (typeof window.openSettingsSection === "function") {
+          window.openSettingsSection("sync");
         } else {
+          const settingsBtn = document.getElementById("settings-btn");
+          if (settingsBtn) settingsBtn.click();
         }
 
         // Close the menu after action

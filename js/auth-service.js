@@ -1,17 +1,20 @@
 // Authentication Service
+// Backed by Supabase Auth (passwordless email OTP). The Supabase session is
+// the source of truth; the "customodoro-auth" localStorage blob is kept only
+// as a fast-paint mirror in the same shape the rest of the app expects:
+// { userId, email, username, createdAt, loginTime, authProvider }
 class AuthService {
   constructor() {
-    this.baseURL = "https://customodoro-backend.onrender.com";
     this.currentUser = null;
     this.listeners = new Set();
-
-
-    // Initialize from localStorage
-    this.loadStoredAuth();
+    this.legacyAuth = null; // pre-Supabase localStorage session, if any
+    this.pendingUsername = null; // display name captured before OTP verify
 
     // Add error handler for browser extension conflicts
     this.addErrorHandlers();
 
+    // Initialize from the Supabase session (async)
+    this.initSession();
   }
 
   // Add error handlers for browser extension conflicts
@@ -35,34 +38,262 @@ class AuthService {
     });
   }
 
-  // Load stored authentication data
-  loadStoredAuth() {
+  // Restore the session from Supabase on page load
+  async initSession() {
+    if (!window.supabaseClient) {
+      window.customodoroLogger.error("AUTH_SERVICE_SUPABASE_CLIENT_MISSING");
+      return;
+    }
+
     try {
-      const storedAuth = localStorage.getItem("customodoro-auth");
-      if (storedAuth) {
-        this.currentUser = JSON.parse(storedAuth);
+      const {
+        data: { session },
+      } = await window.supabaseClient.auth.getSession();
 
-        // Validate stored auth data
-        if (!this.currentUser.userId || !this.currentUser.email) {
-          window.customodoroLogger.error("AUTH_SERVICE_AUTHSERVICE_INVALID_STORED_AUTH_DATA_CLEAR");
-          this.clearAuth();
-          return;
-        }
-
-        // Trigger event to notify other components that user is logged in
-        // Use setTimeout to ensure other components are initialized
-        setTimeout(() => {
-          this.notifyListeners("restore", this.currentUser);
-        }, 100);
+      if (session) {
+        await this.restoreFromSession(session);
+      } else {
+        this.detectLegacySession();
       }
+
+      // Keep in sync with token refreshes and sign-outs from other tabs
+      window.supabaseClient.auth.onAuthStateChange((event) => {
+        if (event === "SIGNED_OUT" && this.currentUser) {
+          this.clearAuth();
+        }
+      });
     } catch (error) {
       window.customodoroLogger.error("AUTH_SERVICE_FAILED_TO_LOAD_STORED_AUTH");
-      localStorage.removeItem("customodoro-auth");
-      this.currentUser = null;
     }
   }
 
-  // Save authentication data
+  async restoreFromSession(session) {
+    try {
+      const profile = await this.ensureProfile(session);
+      this.currentUser = {
+        userId: profile.user_id,
+        email: profile.email,
+        username: profile.username,
+        createdAt: profile.created_at,
+        authProvider: "supabase",
+      };
+      localStorage.setItem(
+        "customodoro-auth",
+        JSON.stringify(this.currentUser),
+      );
+
+      // Use setTimeout to ensure other components are initialized
+      setTimeout(() => {
+        this.notifyListeners("restore", this.currentUser);
+      }, 100);
+    } catch (error) {
+      // Network hiccup: fall back to the mirror so the UI still paints,
+      // Supabase session remains valid and sync will retry on its own.
+      const mirror = this.readStoredMirror();
+      if (mirror && mirror.authProvider === "supabase") {
+        this.currentUser = mirror;
+        setTimeout(() => {
+          this.notifyListeners("restore", this.currentUser);
+        }, 100);
+      } else {
+        window.customodoroLogger.error("AUTH_SERVICE_PROFILE_RESTORE_FAILED");
+      }
+    }
+  }
+
+  // A "legacy" session is the old backend's localStorage blob with no
+  // Supabase session behind it. We keep it (and all local data) untouched
+  // and let the UI prompt the user to verify their email once.
+  detectLegacySession() {
+    const mirror = this.readStoredMirror();
+    if (mirror && mirror.authProvider !== "supabase") {
+      this.legacyAuth = mirror;
+    }
+  }
+
+  readStoredMirror() {
+    try {
+      const stored = localStorage.getItem("customodoro-auth");
+      return stored ? JSON.parse(stored) : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  hasLegacySession() {
+    return this.legacyAuth !== null && this.currentUser === null;
+  }
+
+  getLegacyEmail() {
+    return this.legacyAuth ? this.legacyAuth.email : null;
+  }
+
+  // Fetch this user's profile row (created/linked by the DB trigger).
+  // Small retry in case the trigger commit races the first select.
+  async ensureProfile(session) {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const { data, error } = await window.supabaseClient
+        .from("users")
+        .select("user_id, email, username, created_at")
+        .eq("auth_id", session.user.id)
+        .maybeSingle();
+
+      if (data) return data;
+      if (error) {
+        window.customodoroLogger.error("AUTH_SERVICE_PROFILE_FETCH_FAILED");
+        throw new Error("Could not load your account. Please try again.");
+      }
+      // Row not there yet — wait for the trigger and retry
+      await new Promise((resolve) => setTimeout(resolve, 700));
+    }
+    throw new Error("Account setup is taking longer than expected. Please try again.");
+  }
+
+  // Step 1 of sign-in: email the user a 6-digit code.
+  // mode "existing": only send if the account exists (no silent signup);
+  // mode "new": probe first — if the account exists, send a SIGN-IN code
+  //             and report it, instead of pretending to register;
+  // mode "auto": create-or-signin silently (legacy banner path).
+  async requestOtp(email, username = "", mode = "auto") {
+    const normalizedEmail = email.trim().toLowerCase();
+    this.pendingUsername = username.trim() || null;
+
+    const send = (shouldCreateUser, includeUsername) => {
+      const options = { shouldCreateUser };
+      if (includeUsername && this.pendingUsername) {
+        // The DB trigger reads this for brand-new accounts
+        options.data = { username: this.pendingUsername };
+      }
+      return window.supabaseClient.auth.signInWithOtp({
+        email: normalizedEmail,
+        options,
+      });
+    };
+
+    if (mode === "existing") {
+      const { error } = await send(false, false);
+      if (error) {
+        window.customodoroLogger.error("AUTH_SERVICE_OTP_REQUEST_FAILED");
+        if (this.isNoAccountError(error)) {
+          const err = new Error(
+            'No account found with this email. Double-check it, or go back and choose "I\'m new here".',
+          );
+          err.code = "no_account";
+          throw err;
+        }
+        throw new Error(this.friendlyAuthError(error));
+      }
+      return { email: normalizedEmail, needsVerification: true, existingAccount: true };
+    }
+
+    if (mode === "new") {
+      // Probe without creating: success means the account already exists
+      // (and the sign-in code is already on its way)
+      const probe = await send(false, false);
+      if (!probe.error) {
+        return { email: normalizedEmail, needsVerification: true, existingAccount: true };
+      }
+      if (!this.isNoAccountError(probe.error)) {
+        window.customodoroLogger.error("AUTH_SERVICE_OTP_REQUEST_FAILED");
+        throw new Error(this.friendlyAuthError(probe.error));
+      }
+      // Genuinely new — create the account and send the code
+      const { error } = await send(true, true);
+      if (error) {
+        window.customodoroLogger.error("AUTH_SERVICE_OTP_REQUEST_FAILED");
+        throw new Error(this.friendlyAuthError(error));
+      }
+      return { email: normalizedEmail, needsVerification: true, existingAccount: false };
+    }
+
+    const { error } = await send(true, true);
+    if (error) {
+      window.customodoroLogger.error("AUTH_SERVICE_OTP_REQUEST_FAILED");
+      throw new Error(this.friendlyAuthError(error));
+    }
+    return { email: normalizedEmail, needsVerification: true };
+  }
+
+  // Supabase's "refuse to send without signup" error — our only (and
+  // deliberate) signal that no account exists for an email
+  isNoAccountError(error) {
+    const message = ((error && error.message) || "").toLowerCase();
+    return (
+      (error && error.code) === "otp_disabled" ||
+      message.includes("signups not allowed") ||
+      message.includes("user not found")
+    );
+  }
+
+  // Step 2 of sign-in: exchange the emailed code for a session.
+  async verifyOtp(email, code) {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const { data, error } = await window.supabaseClient.auth.verifyOtp({
+      email: normalizedEmail,
+      token: code.trim(),
+      type: "email",
+    });
+
+    if (error || !data.session) {
+      window.customodoroLogger.error("AUTH_SERVICE_EMAIL_VERIFICATION");
+      throw new Error(this.friendlyAuthError(error));
+    }
+
+    const profile = await this.ensureProfile(data.session);
+    this.legacyAuth = null;
+    this.pendingUsername = null;
+
+    this.saveAuth({
+      userId: profile.user_id,
+      email: profile.email,
+      username: profile.username,
+      createdAt: profile.created_at,
+      authProvider: "supabase",
+    });
+
+    return profile;
+  }
+
+  // Kept as an alias: the verification modal calls verifyEmail(email, code)
+  async verifyEmail(email, code) {
+    return this.verifyOtp(email, code);
+  }
+
+  friendlyAuthError(error) {
+    const message = (error && error.message) || "";
+    const code = (error && error.code) || "";
+
+    // Supabase intentionally returns the same error for wrong AND expired
+    // codes (so attackers can't tell how close they are) — say both.
+    if (
+      code === "otp_expired" ||
+      message.includes("expired") ||
+      message.includes("invalid")
+    ) {
+      return "That code is invalid or has expired. Double-check the 6 digits, or tap Resend for a fresh one.";
+    }
+    if (code === "over_email_send_rate_limit" || message.includes("rate limit")) {
+      return "Too many emails requested. Please wait a minute and try again.";
+    }
+    if (message.toLowerCase().includes("error sending")) {
+      // SMTP delivery failure — Supabase accepted the request but the mail
+      // provider refused to send
+      let hint =
+        "We couldn't send the email right now. Please try again in a moment.";
+      if (window.supabaseEnv === "staging") {
+        hint +=
+          " (Staging note: Resend test mode only delivers to the email address you signed up to Resend with — other addresses are rejected until a domain is verified.)";
+      }
+      return hint;
+    }
+    if (message.includes("Failed to fetch") || message.includes("NetworkError")) {
+      return "No connection. Check your internet and try again.";
+    }
+    return message || "Sign-in failed. Please try again.";
+  }
+
+  // Save authentication data (mirror only — Supabase holds the real session)
   saveAuth(userData) {
     // Add login timestamp for contamination detection
     const userDataWithTimestamp = {
@@ -139,7 +370,8 @@ class AuthService {
       (key) =>
         additionalPatterns.some((pattern) => key.startsWith(pattern)) &&
         !sessionDataKeys.includes(key) &&
-        key !== "customodoro-auth", // Don't clear auth here (handled separately)
+        key !== "customodoro-auth" && // Don't clear auth here (handled separately)
+        !key.startsWith("sb-"), // Supabase session storage (handled by signOut)
     );
 
     // Combine explicit keys with pattern matches
@@ -186,152 +418,16 @@ class AuthService {
     return this.currentUser !== null;
   }
 
-  // Register new user with email verification
-  async register(email, username = "", userData = null) {
-    try {
-      let dataToSend = userData;
-      if (!dataToSend && window.syncManager) {
-        dataToSend = window.syncManager.getCurrentLocalData();
-      }
-
-      const requestBody = {
-        email: email.trim().toLowerCase(),
-        username: username.trim() || email.split("@")[0],
-        data: dataToSend || this.getLocalStorageData(),
-        requireVerification: true, // Request email verification
-      };
-
-
-      const response = await fetch(`${this.baseURL}/api/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-
-      if (!response.ok) {
-        const errorData = await response
-          .json()
-          .catch(() => ({ error: "Registration failed" }));
-        window.customodoroLogger.error("AUTH_SERVICE_REGISTRATION_FAILED");
-        throw new Error(
-          errorData.error || `Registration failed: ${response.status}`,
-        );
-      }
-
-      const responseData = await response.json();
-
-      // If verification is required, return verification info
-      if (responseData.requiresVerification) {
-        return {
-          ...responseData,
-          needsVerification: true,
-          email: requestBody.email,
-          message: "Please check your email for a verification code",
-        };
-      }
-
-      // Save authentication data if no verification needed
-      this.saveAuth({
-        userId: responseData.userId,
-        email: requestBody.email,
-        username: responseData.user?.username || requestBody.username,
-        createdAt:
-          responseData.user?.createdAt ||
-          responseData.createdAt ||
-          new Date().toISOString(),
-      });
-
-      return responseData;
-    } catch (error) {
-      window.customodoroLogger.error("AUTH_SERVICE_REGISTRATION");
-      throw error;
-    }
-  }
-
-  // Verify email with code
-  async verifyEmail(email, code) {
-    try {
-      const response = await fetch(`${this.baseURL}/api/verify-email`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email.trim().toLowerCase(),
-          code: code.trim(),
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response
-          .json()
-          .catch(() => ({ error: "Verification failed" }));
-        throw new Error(errorData.error || "Invalid verification code");
-      }
-
-      const responseData = await response.json();
-
-      // Save authentication data after successful verification
-      this.saveAuth({
-        userId: responseData.userId,
-        email: email.trim().toLowerCase(),
-        username: responseData.user?.username || responseData.username,
-        createdAt: responseData.user?.createdAt || responseData.createdAt,
-        verified: true,
-      });
-
-      return responseData;
-    } catch (error) {
-      window.customodoroLogger.error("AUTH_SERVICE_EMAIL_VERIFICATION");
-      throw error;
-    }
-  } // Login existing user
-  async login(email) {
-    try {
-      const requestBody = {
-        email: email.trim().toLowerCase(),
-      };
-
-
-      const response = await fetch(`${this.baseURL}/api/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-
-      if (!response.ok) {
-        const errorData = await response
-          .json()
-          .catch(() => ({ error: "Login failed" }));
-        window.customodoroLogger.error("AUTH_SERVICE_LOGIN_FAILED");
-        throw new Error(errorData.error || `Login failed: ${response.status}`);
-      }
-
-      const responseData = await response.json();
-
-      // Save authentication data - Fix to use proper server response structure
-      this.saveAuth({
-        userId: responseData.userId,
-        email: requestBody.email,
-        username: responseData.user?.username || responseData.username,
-        createdAt: responseData.user?.createdAt || responseData.createdAt,
-      });
-
-      return responseData;
-    } catch (error) {
-      window.customodoroLogger.error("AUTH_SERVICE_LOGIN");
-      throw error;
-    }
-  }
-
   // Logout user
-  logout() {
+  async logout() {
+    try {
+      if (window.supabaseClient) {
+        await window.supabaseClient.auth.signOut();
+      }
+    } catch (error) {
+      window.customodoroLogger.error("AUTH_SERVICE_SIGNOUT_FAILED");
+    }
+
     this.clearAuth();
 
     // 📱 MOBILE FIX: Force page reload on mobile browsers after logout
@@ -345,31 +441,6 @@ class AuthService {
         window.location.reload(true); // Force reload from server
       }, 500); // Small delay to ensure cleanup completes
     }
-  }
-
-  // Get current localStorage data for migration
-  getLocalStorageData() {
-    const data = {};
-
-    // Collect all customodoro-related data from localStorage
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith("customodoro-")) {
-        try {
-          const value = localStorage.getItem(key);
-          // Try to parse as JSON, fallback to string
-          try {
-            data[key] = JSON.parse(value);
-          } catch {
-            data[key] = value;
-          }
-        } catch (error) {
-          window.customodoroLogger.error("AUTH_SERVICE_FAILED_TO_READ_LOCALSTORAGE_KEY_KEY");
-        }
-      }
-    }
-
-    return data;
   }
 
   // Add event listener

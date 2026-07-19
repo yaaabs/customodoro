@@ -1,0 +1,17 @@
+# Files excluded from the Vercel deployment (kept in git for the team).
+# The deployed site only needs the runtime assets — HTML/CSS/JS, audio,
+# images, favicon, manifest, sw.js, and the SEO/verification files.
+
+# Planning & agent docs
+docs/
+AGENTS.md
+CLAUDE.md
+LEARN.md
+
+# Tests & tooling
+tests/
+.claude/
+
+# Local/dev artifacts
+*.log
+*.tmp

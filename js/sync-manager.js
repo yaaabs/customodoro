@@ -1,7 +1,6 @@
 // Sync Manager
 class SyncManager {
   constructor() {
-    this.baseURL = "https://customodoro-backend.onrender.com";
     this.pendingSyncStorageKey = "customodoro-pending-sync";
     this.isOnline = navigator.onLine;
     this.syncQueue = [];
@@ -338,16 +337,23 @@ class SyncManager {
     const user = window.authService.getCurrentUser();
     if (!user) throw new Error("User not logged in");
 
+    const {
+      data: { session },
+    } = await window.supabaseClient.auth.getSession();
+    if (!session) throw new Error("User not logged in");
 
-    const response = await fetch(
-      `${this.baseURL}/api/user/${user.userId}/data`,
-    );
+    const { data: row, error } = await window.supabaseClient
+      .from("users")
+      .select("data")
+      .eq("auth_id", session.user.id)
+      .maybeSingle();
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch user data: ${response.status}`);
+    if (error) {
+      throw new Error(`Failed to fetch user data: ${error.message}`);
     }
 
-    const serverData = await response.json();
+    // Same shape the old backend returned: { data: {...} }
+    const serverData = { data: row ? row.data : null };
 
     if (serverData.data && this.hasSignificantServerData(serverData.data)) {
       this.mergeServerData(serverData.data);
@@ -510,8 +516,9 @@ class SyncManager {
 
     const localData = this.getCurrentLocalData();
 
-    // BACKEND COMPATIBILITY: Only send the 4 fields backend accepts
-    // Backend schema ONLY accepts: sessions, tasks, settings, streaks
+    // DATA SHAPE COMPATIBILITY: keep the exact shape the leaderboard and
+    // admin dashboard read from users.data: sessions, tasks, streaks
+    // (with productivity stats tunneled inside streaks)
     const streaksData = {
       ...(localData.streaks || {}),
 
@@ -526,36 +533,36 @@ class SyncManager {
     };
 
 
-    const response = await fetch(
-      `${this.baseURL}/api/user/${user.userId}/sync`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(cleanData),
-      },
-    );
+    const {
+      data: { session },
+    } = await window.supabaseClient.auth.getSession();
+    if (!session) throw new Error("User not logged in");
 
-    if (!response.ok) {
-      const errorText = await response.text();
+    const nowIso = new Date().toISOString();
+
+    // .select().single() makes "0 rows updated" (missing/unlinked profile
+    // row) an explicit error instead of a silent no-op
+    const { data: updated, error } = await window.supabaseClient
+      .from("users")
+      .update({
+        data: cleanData,
+        last_modified: nowIso,
+        last_synced_at: nowIso,
+      })
+      .eq("auth_id", session.user.id)
+      .select("user_id")
+      .single();
+
+    if (error || !updated) {
       window.customodoroLogger.error("SYNC_MANAGER_SYNC_RESPONSE");
-      window.customodoroLogger.error("SYNC_MANAGER_REQUEST_FAILED_DATA_REDACTED_FOR_SECURITY");
-
-      // Enhanced error analysis
-      if (response.status === 400) {
-        window.customodoroLogger.error("SYNC_MANAGER_BACKEND_SCHEMA_BACKEND_STILL_REJECTING_DAT");
-        window.customodoroLogger.error("SYNC_MANAGER_CURRENT_DATA_KEYS");
-        window.customodoroLogger.error("SYNC_MANAGER_THIS_MAY_REQUIRE_BACKEND_SCHEMA_UPDATE");
-      }
-
-      throw new Error(`Failed to sync data: ${response.status} - ${errorText}`);
+      throw new Error(
+        `Failed to sync data: ${error ? error.message : "no profile row found"}`,
+      );
     }
 
-    const result = await response.json();
     this.saveLastSyncTime();
 
-    return result;
+    return { success: true, userId: updated.user_id };
   }
 
   // Get current local data (backend-safe version)

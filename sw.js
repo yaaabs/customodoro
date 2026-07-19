@@ -1,5 +1,5 @@
-const CACHE_NAME = "customodoro-static-v7.5.2";
-const ASSETS_CACHE = "customodoro-assets-v6.2.2"; // Bump to v6.2.2
+const CACHE_NAME = "customodoro-static-v8.9.0"; // Supabase auth migration
+const ASSETS_CACHE = "customodoro-assets-v7.0.0";
 const swLogger = (() => {
   const nativeError = console.error.bind(console);
   const emittedErrors = new Set();
@@ -57,6 +57,7 @@ const urlsToCache = [
   "/js/script.js",
   "/js/reversePomodoro.js",
   "/js/about-modal.js",
+  "/js/supabase-client.js",
   "/js/auth-service.js",
   "/js/bgm-player.js",
   "/js/copyright-year.js",
@@ -106,6 +107,7 @@ const requiredPrecacheUrls = [
   "/js/reversePomodoro.js",
   "/js/lockedin-mode.js",
   "/js/settings.js",
+  "/js/supabase-client.js",
   "/js/auth-service.js",
   "/js/sync-manager.js",
 ];
