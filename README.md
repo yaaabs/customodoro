@@ -193,13 +193,15 @@ feedback.html              Feedback page
 css/                       Shared and feature styles
 js/                        Timers, settings, sync, stats, audio, and UI
 tests/                     Browser harness and timer tests
-extensions/pomodoro/       Separate browser extension
+docs/                      Agent docs, Supabase migration notes, and SQL
 manifest.json / sw.js      PWA metadata and service worker
 robots.txt / sitemap.xml   Search crawl signals
 ```
 
 For deeper implementation details, see
-[`architecture/FRONTEND_ARCHITECTURE.md`](architecture/FRONTEND_ARCHITECTURE.md).
+[`docs/agent/ARCHITECTURE.md`](docs/agent/ARCHITECTURE.md).
+
+AI coding agents: start with [`AGENTS.md`](AGENTS.md).
 
 > [!NOTE]
 > Customodoro is installable and caches selected static assets, but the current
