@@ -149,12 +149,10 @@ class AuthService {
     throw new Error("Account setup is taking longer than expected. Please try again.");
   }
 
-  // Step 1 of sign-in: email the user a 6-digit code.
-  // mode "existing": only send if the account exists (no silent signup);
-  // mode "new": probe first — if the account exists, send a SIGN-IN code
-  //             and report it, instead of pretending to register;
-  // mode "auto": create-or-signin silently (legacy banner path).
-  async requestOtp(email, username = "", mode = "auto") {
+  // Step 1: send a 6-digit code. Existing and new emails use the same flow.
+  // A new Supabase identity may be created for a new email, but it cannot get
+  // a signed-in session or access synced data until its code is verified.
+  async requestOtp(email, username = "") {
     const normalizedEmail = email.trim().toLowerCase();
     this.pendingUsername = username.trim() || null;
 
@@ -170,59 +168,12 @@ class AuthService {
       });
     };
 
-    if (mode === "existing") {
-      const { error } = await send(false, false);
-      if (error) {
-        window.customodoroLogger.error("AUTH_SERVICE_OTP_REQUEST_FAILED");
-        if (this.isNoAccountError(error)) {
-          const err = new Error(
-            'No account found with this email. Double-check it, or go back and choose "I\'m new here".',
-          );
-          err.code = "no_account";
-          throw err;
-        }
-        throw new Error(this.friendlyAuthError(error));
-      }
-      return { email: normalizedEmail, needsVerification: true, existingAccount: true };
-    }
-
-    if (mode === "new") {
-      // Probe without creating: success means the account already exists
-      // (and the sign-in code is already on its way)
-      const probe = await send(false, false);
-      if (!probe.error) {
-        return { email: normalizedEmail, needsVerification: true, existingAccount: true };
-      }
-      if (!this.isNoAccountError(probe.error)) {
-        window.customodoroLogger.error("AUTH_SERVICE_OTP_REQUEST_FAILED");
-        throw new Error(this.friendlyAuthError(probe.error));
-      }
-      // Genuinely new — create the account and send the code
-      const { error } = await send(true, true);
-      if (error) {
-        window.customodoroLogger.error("AUTH_SERVICE_OTP_REQUEST_FAILED");
-        throw new Error(this.friendlyAuthError(error));
-      }
-      return { email: normalizedEmail, needsVerification: true, existingAccount: false };
-    }
-
     const { error } = await send(true, true);
     if (error) {
       window.customodoroLogger.error("AUTH_SERVICE_OTP_REQUEST_FAILED");
       throw new Error(this.friendlyAuthError(error));
     }
     return { email: normalizedEmail, needsVerification: true };
-  }
-
-  // Supabase's "refuse to send without signup" error — our only (and
-  // deliberate) signal that no account exists for an email
-  isNoAccountError(error) {
-    const message = ((error && error.message) || "").toLowerCase();
-    return (
-      (error && error.code) === "otp_disabled" ||
-      message.includes("signups not allowed") ||
-      message.includes("user not found")
-    );
   }
 
   // Step 2 of sign-in: exchange the emailed code for a session.

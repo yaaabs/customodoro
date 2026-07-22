@@ -2097,78 +2097,7 @@
                   </div>
                 </div>
 
-                <div class="sync-auth-choice" id="sync-auth-choice">
-                  <button
-                    type="button"
-                    class="sync-choice-btn"
-                    id="sync-choice-existing"
-                  >
-                    <span class="sync-choice-icon">
-                      <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      >
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                        <circle cx="12" cy="7" r="4" />
-                      </svg>
-                    </span>
-                    <span class="sync-choice-text">
-                      <span class="sync-choice-title"
-                        >I already have an account</span
-                      >
-                      <span class="sync-choice-sub"
-                        >Sign back in and pick up right where you left
-                        off.</span
-                      >
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    class="sync-choice-btn"
-                    id="sync-choice-new"
-                  >
-                    <span class="sync-choice-icon">
-                      <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      >
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                        <circle cx="9" cy="7" r="4" />
-                        <line x1="19" y1="8" x2="19" y2="14" />
-                        <line x1="22" y1="11" x2="16" y2="11" />
-                      </svg>
-                    </span>
-                    <span class="sync-choice-text">
-                      <span class="sync-choice-title">I'm new here</span>
-                      <span class="sync-choice-sub"
-                        >Back up your progress and sync across devices.</span
-                      >
-                    </span>
-                  </button>
-                </div>
-
-                <div
-                  class="sync-auth-form"
-                  id="sync-auth-form"
-                  style="display: none"
-                >
-                  <button type="button" class="sync-back-btn" id="sync-back-btn">
-                    <svg viewBox="0 0 24 24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                    Back
-                  </button>
-
+                <div class="sync-auth-form" id="sync-auth-form">
                   <div class="sync-form-group">
                     <label class="sync-form-label">Email Address</label>
                     <input
@@ -2183,24 +2112,7 @@
                       style="display: none"
                     ></div>
                     <div class="sync-form-note">
-                      We'll email you a 6-digit code. No password needed!
-                    </div>
-                  </div>
-
-                  <div
-                    class="sync-form-group"
-                    id="sync-username-group"
-                    style="display: none"
-                  >
-                    <label class="sync-form-label">Display Name</label>
-                    <input
-                      type="text"
-                      class="sync-form-input"
-                      id="sync-username-input"
-                      placeholder="How should we call you?"
-                    />
-                    <div class="sync-form-note">
-                      Shown on the leaderboard. You can leave this empty.
+                      We'll email you a 6-digit code. No password required.
                     </div>
                   </div>
 
@@ -2210,7 +2122,7 @@
                       id="sync-login-btn"
                       style="width: 100%"
                     >
-                      <span class="sync-btn-text">Send My Code</span>
+                      <span class="sync-btn-text">Continue with email</span>
                       <span class="sync-btn-spinner" style="display: none">
                         <svg
                           width="16"

@@ -49,9 +49,8 @@ class SyncUI {
       "Verify your email below to continue syncing — your data is safe and waiting.";
     container.insertBefore(notice, container.firstChild);
 
-    // Legacy users obviously "already have an account" — skip the choice
-    // screen and land on the sign-in form with their email prefilled
-    this.showFormStep("existing");
+    // Legacy users land on the same one-email OTP form, prefilled for them.
+    this.showFormStep();
     const legacyEmail = window.authService.getLegacyEmail();
     if (this.elements.emailInput && !this.elements.emailInput.value && legacyEmail) {
       this.elements.emailInput.value = legacyEmail;
@@ -69,18 +68,9 @@ class SyncUI {
       // Form elements
       emailInput: document.getElementById("sync-email-input"),
       emailError: document.getElementById("sync-email-error"),
-      usernameInput: document.getElementById("sync-username-input"),
-      usernameGroup: document.getElementById("sync-username-group"),
-
-      // Two-step flow: choice screen → form
-      authChoice: document.getElementById("sync-auth-choice"),
       authForm: document.getElementById("sync-auth-form"),
-      choiceExisting: document.getElementById("sync-choice-existing"),
-      choiceNew: document.getElementById("sync-choice-new"),
-      backBtn: document.getElementById("sync-back-btn"),
 
       // Buttons
-      registerBtn: document.getElementById("sync-register-btn"),
       loginBtn: document.getElementById("sync-login-btn"),
       manualSyncBtn: document.getElementById("sync-manual-btn"),
       exportBtn: document.getElementById("sync-export-btn"),
@@ -127,16 +117,7 @@ class SyncUI {
       });
     }
 
-    // Button events — one unified "Continue with Email" button
-    // (the old separate register button no longer exists in the markup)
-    if (this.elements.registerBtn) {
-      this.elements.registerBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        this.handleLogin();
-      });
-    }
-
+    // One unified "Continue with email" button.
     if (this.elements.loginBtn) {
       this.elements.loginBtn.addEventListener("click", (e) => {
         e.preventDefault();
@@ -181,31 +162,6 @@ class SyncUI {
       });
     }
 
-    if (this.elements.usernameInput) {
-      this.elements.usernameInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") {
-          this.handleLogin();
-        }
-      });
-    }
-
-    // Two-door entry: pick "existing" or "new", then see a tailored form
-    if (this.elements.choiceExisting) {
-      this.elements.choiceExisting.addEventListener("click", () =>
-        this.showFormStep("existing"),
-      );
-    }
-    if (this.elements.choiceNew) {
-      this.elements.choiceNew.addEventListener("click", () =>
-        this.showFormStep("new"),
-      );
-    }
-    if (this.elements.backBtn) {
-      this.elements.backBtn.addEventListener("click", () =>
-        this.showChoiceStep(),
-      );
-    }
-
     // Clear inline validation as soon as the user starts fixing the field
     if (this.elements.emailInput) {
       this.elements.emailInput.addEventListener("input", () =>
@@ -214,43 +170,18 @@ class SyncUI {
     }
   }
 
-  // Step 2: the email form, tailored to the door the user picked.
-  // Both modes run the exact same OTP flow underneath — only the wording
-  // and visible fields differ.
-  showFormStep(mode) {
-    this.authMode = mode;
-
-    if (this.elements.authChoice) {
-      this.elements.authChoice.style.display = "none";
-    }
+  // There is deliberately one passwordless entry point for everyone.
+  showFormStep() {
     if (this.elements.authForm) {
       this.elements.authForm.style.display = "block";
     }
-    if (this.elements.usernameGroup) {
-      this.elements.usernameGroup.style.display =
-        mode === "new" ? "block" : "none";
-    }
-
-    const textSpan = this.elements.loginBtn?.querySelector(".sync-btn-text");
-    if (textSpan) {
-      textSpan.textContent =
-        mode === "new" ? "Create My Account" : "Send My Sign-In Code";
-    }
-
     this.clearEmailError();
     this.elements.emailInput?.focus();
   }
 
-  // Step 1: back to the choice screen (misclick-friendly)
+  // Kept as a compatibility alias for callers from the previous UI.
   showChoiceStep() {
-    this.authMode = null;
-    if (this.elements.authForm) {
-      this.elements.authForm.style.display = "none";
-    }
-    if (this.elements.authChoice) {
-      this.elements.authChoice.style.display = "flex";
-    }
-    this.clearEmailError();
+    this.showFormStep();
   }
 
   // Inline email validation — toasts render behind the settings modal,
@@ -351,11 +282,7 @@ class SyncUI {
       this.elements.notLoggedIn.style.display = "block";
     if (this.elements.loggedIn) this.elements.loggedIn.style.display = "none";
 
-    // Fresh visit (or just logged out): start from the choice screen —
-    // unless a legacy session already fast-tracked into the form
-    if (!this.authMode) {
-      this.showChoiceStep();
-    }
+    this.showFormStep();
 
     // Keep the settings "Account & Sync" value hint in sync
     if (typeof window.updateSettingsNavHints === "function") {
@@ -515,52 +442,6 @@ class SyncUI {
     }
   }
 
-  // Handle register
-  async handleRegister() {
-    if (!window.authService) {
-      window.customodoroLogger.error("SYNC_UI_AUTHSERVICE_NOT_AVAILABLE");
-      this.showToast(
-        "Sync service not available. Please refresh the page.",
-        "error",
-      );
-      return;
-    }
-
-    const email = this.elements.emailInput?.value.trim();
-    const username = this.elements.usernameInput?.value.trim();
-
-
-    if (!email) {
-      this.showToast("Please enter your email address", "error");
-      return;
-    }
-
-    if (!this.isValidEmail(email)) {
-      this.showToast("Please enter a valid email address", "error");
-      return;
-    }
-
-    try {
-      // Check if user has local data - if so, show confirmation modal
-      const hasLocalData = this.hasSignificantLocalData();
-      if (hasLocalData) {
-        // Show confirmation modal before registering
-        this.showSyncConfirmModal(email, username, "register");
-      } else {
-        // No significant local data, ask for confirmation before registering
-        const confirmed = confirm(
-          "Are you sure you want to create an account and sync your data with this email?",
-        );
-        if (!confirmed) return;
-        await this.doRegister(email, username);
-      }
-    } catch (error) {
-      window.customodoroLogger.error("SYNC_UI_IN_REGISTRATION_FLOW");
-      // Fallback: try register directly
-      await this.doRegister(email, username);
-    }
-  }
-
   // Handle login
   async handleLogin() {
     if (!window.authService) {
@@ -591,7 +472,7 @@ class SyncUI {
       const hasLocalData = this.hasSignificantLocalData();
 
       if (hasLocalData) {
-        this.showSyncConfirmModal(email, "", "login");
+        this.showSyncConfirmModal(email);
       } else {
         // No local data, proceed directly
         await this.doLogin(email);
@@ -703,7 +584,6 @@ class SyncUI {
   // Clear form
   clearForm() {
     if (this.elements.emailInput) this.elements.emailInput.value = "";
-    if (this.elements.usernameInput) this.elements.usernameInput.value = "";
   }
 
   // Validate email
@@ -778,7 +658,7 @@ class SyncUI {
   }
 
   // Show sync confirmation modal
-  showSyncConfirmModal(email, username, action) {
+  showSyncConfirmModal(email) {
 
     // Remove any existing custom modal first
     const existingModal = document.getElementById("custom-sync-modal");
@@ -817,7 +697,7 @@ class SyncUI {
     }
 
     // Build a single, tone-appropriate note (no emoji, design-system colors)
-    const actionVerb = action === "register" ? "Creating" : "Signing into";
+    const actionVerb = "Continuing with";
     let warningHTML = "";
     if (warningLevel === "critical") {
       warningHTML = `
@@ -853,7 +733,7 @@ class SyncUI {
           <div class="otp-icon" aria-hidden="true">${iconSvg}</div>
 
           <h2 class="sync-confirm-title" id="sync-confirm-title">
-            ${action === "register" ? "Create account &amp; sync" : "Sign in &amp; sync"}
+            Continue &amp; sync
           </h2>
           <p class="sync-confirm-email">${safeEmail}</p>
 
@@ -958,11 +838,7 @@ class SyncUI {
           try {
             // Close first to ensure UI responsiveness while async work runs
             closeModal();
-            if (action === "register") {
-              await this.doRegister(email, username);
-            } else if (action === "login") {
-              await this.doLogin(email);
-            }
+            await this.doLogin(email);
           } catch (err) {
             window.customodoroLogger.error("SYNC_UI_DURING_SYNC_PROCEED_ACTION");
             // Show a non-blocking toast error if something bad happens
@@ -1051,34 +927,6 @@ class SyncUI {
         currentStreak: 0,
         totalPoints: 0,
       };
-    }
-  }
-
-  // Actually perform registration
-  async doRegister(email, username) {
-    this.setButtonLoading(this.elements.registerBtn, true);
-
-    // Safety timeout to re-enable button after 10 seconds
-    const timeoutId = setTimeout(() => {
-      this.setButtonLoading(this.elements.registerBtn, false);
-    }, 10000);
-
-    try {
-      // Passwordless flow: request a 6-digit code (creates the account
-      // automatically if the email is new; username rides along for it)
-      await window.authService.requestOtp(email, username);
-
-      // Mark browser as having used sync
-      this.markBrowserAsUsedWithSync();
-
-      this.showEmailVerificationModal(email);
-      this.showToast("We emailed you a 6-digit sign-in code", "info");
-    } catch (error) {
-      window.customodoroLogger.error("SYNC_UI_REGISTRATION");
-      this.showEmailError(error.message);
-    } finally {
-      clearTimeout(timeoutId);
-      this.setButtonLoading(this.elements.registerBtn, false);
     }
   }
 
@@ -1331,27 +1179,15 @@ class SyncUI {
     }, 10000);
 
     try {
-      // Passwordless flow: request a 6-digit code, then verify in the modal.
-      // The chosen door (new vs existing) decides how strictly we send.
-      const username = this.elements.usernameInput?.value.trim() || "";
-      const result = await window.authService.requestOtp(
-        email,
-        username,
-        this.authMode || "auto",
-      );
+      // Passwordless flow: send the same code whether this is a first visit
+      // or a returning user. Supabase creates a new identity only after OTP
+      // verification succeeds.
+      await window.authService.requestOtp(email);
 
       // Mark browser as having used sync
       this.markBrowserAsUsedWithSync();
 
-      // Picked "I'm new here" but the email already has an account?
-      // Be honest about it — the code signs them into the EXISTING account.
-      let notice = null;
-      if (this.authMode === "new" && result.existingAccount) {
-        notice =
-          "Good news — this email already has an account! We sent a sign-in code instead. Entering it signs you into your existing account.";
-      }
-
-      this.showEmailVerificationModal(email, notice);
+      this.showEmailVerificationModal(email);
       this.showToast("We emailed you a 6-digit code", "info");
     } catch (error) {
       window.customodoroLogger.error("SYNC_UI_LOGIN");

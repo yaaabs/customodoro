@@ -19,7 +19,11 @@
     },
   };
 
-  const PRODUCTION_HOSTNAMES = ["customodoro.vercel.app"];
+  const PRODUCTION_HOSTNAMES = [
+    "www.customodoro.app",
+    "customodoro.app",
+    "customodoro.vercel.app",
+  ];
 
   function resolveEnvironment() {
     const override = localStorage.getItem("customodoro-supabase-env");
