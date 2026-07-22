@@ -6,14 +6,14 @@
 
 ## App
 
-- [Classic Pomodoro Timer](https://customodoro.vercel.app/): 25-minute countdown with customizable intervals, streaks, and analytics
-- [Reverse Pomodoro Timer / Flowmodoro](https://customodoro.vercel.app/reverse): Count-up timer that earns breaks based on work duration
+- [Classic Pomodoro Timer](https://www.customodoro.app/): 25-minute countdown with customizable intervals, streaks, and analytics
+- [Reverse Pomodoro Timer / Flowmodoro](https://www.customodoro.app/reverse): Count-up timer that earns breaks based on work duration
 
 ## Learn
 
-- [What is the Pomodoro Technique?](https://customodoro.vercel.app/pomodoro): Educational article on the Pomodoro method and its variants
-- [How Customodoro was built](https://customodoro.vercel.app/LEARN.md): Vanilla JS, PWA, Supabase, and Service Worker implementation notes
+- [What is the Pomodoro Technique?](https://www.customodoro.app/pomodoro): Educational article on the Pomodoro method and its variants
+- [How Customodoro was built](https://www.customodoro.app/LEARN.md): Vanilla JS, PWA, Supabase, and Service Worker implementation notes
 
 ## Optional
 
-- [Feedback & Bug Reports](https://customodoro.vercel.app/feedback)
+- [Feedback & Bug Reports](https://www.customodoro.app/feedback)

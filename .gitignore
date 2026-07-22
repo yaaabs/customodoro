@@ -1,0 +1,34 @@
+# Documentation and local planning notes
+/docs/
+
+# Dependencies and package-manager artifacts
+node_modules/
+.pnp/
+.pnp.js
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Test coverage and build output
+coverage/
+dist/
+build/
+.cache/
+
+# Vercel
+.vercel/
+
+# Editor and operating-system files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db

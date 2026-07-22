@@ -167,4 +167,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-Built with ❤️ by [YabuTech](https://yabutech.vercel.app) | [GitHub](https://github.com/yaaabs) | [Live Demo](https://customodoro.vercel.app)
+Built with ❤️ by [YabuTech](https://yabutech.vercel.app) | [GitHub](https://github.com/yaaabs) | [Live Demo](https://www.customodoro.app)

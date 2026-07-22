@@ -3,8 +3,8 @@
 > A customizable, local-first Pomodoro timer for structured sprints, open-ended
 > focus, and everything in between.
 
-[![Live app](https://img.shields.io/badge/Live_app-Open_Customodoro-e53935?style=for-the-badge)](https://customodoro.vercel.app/)
-[![Reverse mode](https://img.shields.io/badge/Reverse_mode-Try_Flowmodoro-24292f?style=for-the-badge)](https://customodoro.vercel.app/reverse)
+[![Live app](https://img.shields.io/badge/Live_app-Open_Customodoro-e53935?style=for-the-badge)](https://www.customodoro.app/)
+[![Reverse mode](https://img.shields.io/badge/Reverse_mode-Try_Flowmodoro-24292f?style=for-the-badge)](https://www.customodoro.app/reverse)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 
 ![Customodoro social preview](images/customodoro_card.png)
@@ -130,10 +130,10 @@ or follow Customodoro on
 
 ## Try it
 
-- [Classic Pomodoro](https://customodoro.vercel.app/)
-- [Reverse Pomodoro / Flowmodoro](https://customodoro.vercel.app/reverse)
-- [Pomodoro Technique guide](https://customodoro.vercel.app/pomodoro)
-- [Feedback and bug reports](https://customodoro.vercel.app/feedback)
+- [Classic Pomodoro](https://www.customodoro.app/)
+- [Reverse Pomodoro / Flowmodoro](https://www.customodoro.app/reverse)
+- [Pomodoro Technique guide](https://www.customodoro.app/pomodoro)
+- [Feedback and bug reports](https://www.customodoro.app/feedback)
 
 To install Customodoro, open the live app in a supported browser and choose
 **Install app** or **Add to Home Screen**.

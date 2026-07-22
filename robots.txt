@@ -22,4 +22,4 @@ User-agent: GoogleOther
 Allow: /
 
 # Sitemap location
-Sitemap: https://customodoro.vercel.app/sitemap.xml
+Sitemap: https://www.customodoro.app/sitemap.xml
