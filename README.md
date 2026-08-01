@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD033 -->
+
 # 🍅 Customodoro
 
 > A customizable, local-first Pomodoro timer for structured sprints, open-ended

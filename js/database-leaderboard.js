@@ -777,7 +777,7 @@ class DatabaseLeaderboardModal {
     this.currentPeriod = 'all_time';
     this.isVisible = false;
     
-    // 🎯 CONFIGURATION: Change this number to adjust how many users are shown in leaderboard
+    // CONFIGURATION: Change this number to adjust how many users are shown in leaderboard
     this.MAX_LEADERBOARD_USERS = 20; // Change this to 10, 50, 100, etc.
 
     // Founder-only tools (username-based)
@@ -785,7 +785,7 @@ class DatabaseLeaderboardModal {
     
     // User badges configuration
     this.userBadges = {
-      // 🎖️ STATIC BADGES - Manually assigned special recognitions
+      // STATIC BADGES - Manually assigned special recognitions
       'Clari': [
         { type: 'rph', icon: '💊', label: 'RPh' },
         { type: 'vip', icon: '💎', label: 'VIP' },
@@ -794,7 +794,7 @@ class DatabaseLeaderboardModal {
         { type: 'founder', icon: '🚀', label: 'Founder' }
       ],
       
-      // 🏆 DYNAMIC BADGES - Automatically awarded based on leaderboard performance
+      // DYNAMIC BADGES - Automatically awarded based on leaderboard performance
       // These will be calculated dynamically and override any manual assignments
       // Format: Will be populated by calculateDynamicBadges() method
     };
@@ -817,7 +817,7 @@ class DatabaseLeaderboardModal {
     this.init();
   }
 
-  // 🏆 Calculate and assign dynamic badges based on current leaderboard standings
+  // Calculate and assign dynamic badges based on current leaderboard standings
   async calculateDynamicBadges() {
     // Cache badges for 5 minutes to avoid repeated calculations
     if (this.dynamicBadgesCache && 
@@ -839,14 +839,14 @@ class DatabaseLeaderboardModal {
 
       const dynamicBadges = {};
 
-      // 🎯 CATEGORY AWARDS - #1 in each category
+      // CATEGORY AWARDS - #1 in each category
       if (focusData.rankings.length > 0) {
         const focusKing = focusData.rankings[0].username;
         if (!dynamicBadges[focusKing]) dynamicBadges[focusKing] = [];
         dynamicBadges[focusKing].push({ type: 'monthly-focus-champion', icon: '🎯', label: 'Focus King' });
       }
 
-      // 📝 SESSIONS AWARD - #1 by total sessions
+      // SESSIONS AWARD - #1 by total sessions
       if (sessionsData && sessionsData.rankings && sessionsData.rankings.length > 0) {
         const sessionMaster = sessionsData.rankings[0].username;
         if (!dynamicBadges[sessionMaster]) dynamicBadges[sessionMaster] = [];
@@ -866,7 +866,7 @@ class DatabaseLeaderboardModal {
         dynamicBadges[streakLegend].push({ type: 'monthly-streak-champion', icon: '🔥', label: 'Streak Legend' });
       }
 
-      // 🏆 MAJOR AWARD - Champion (Best Average Ranking)
+      // MAJOR AWARD - Champion (Best Average Ranking)
       // Calculate average ranking across exactly 3 core categories: Focus Points, Sessions, Current Streak
       const allUsers = new Set([
         ...focusData.rankings.map(u => u.username),
@@ -902,7 +902,7 @@ class DatabaseLeaderboardModal {
         dynamicBadges[championUser].push({ type: 'champion', icon: '🏆', label: 'Champion' });
       }
 
-      // 🎖️ Merge static badges with dynamic badges
+      // Merge static badges with dynamic badges
       Object.keys(this.userBadges).forEach(username => {
         const staticBadges = this.userBadges[username] || [];
         const dynamicUserBadges = dynamicBadges[username] || [];

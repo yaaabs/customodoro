@@ -372,7 +372,7 @@
     //================================================================//
 
     //================================================================//
-    studybuddy: [
+    Kumari: [
       // Session Master Badge for May
       {
         title: "Session Master",
@@ -405,8 +405,49 @@
         description: "Recognized for completing the most sessions in June.",
         date: "2026-07-01",
       },
+
+      // Session Master Badge for July
+      {
+        title: "Session Master",
+        icon: "images/badges/custom-badges/2026-07/july-session.webp",
+        description: "Recognized for completing the most sessions in July.",
+        date: "2026-08-01",
+      },
     ],
     //================================================================//
+    //================================================================//
+    kookiejarfull: [
+      // Focus King Badge for July
+      {
+        title: "Focus King",
+        icon: "images/badges/custom-badges/2026-07/july-focus-points.webp",
+        description: "Crowned for earning the highest Focus Points in July.",
+        date: "2026-08-01",
+      },
+
+      // Overall Champion Badge for July
+      {
+        title: "Overall Champion",
+        icon: "images/badges/custom-badges/2026-07/july-champion.webp",
+        description:
+          "Awarded for being the top overall performer with the highest average across all categories in July.",
+        date: "2026-08-01",
+      },
+    ],
+    //================================================================//
+
+    //================================================================//
+    "Jec Jec": [
+      // Streak Legend Badge for July
+      {
+        title: "Streak Legend",
+        icon: "images/badges/custom-badges/2026-07/july-streak.webp",
+        description: "Honored for holding the longest streak in July.",
+        date: "2026-08-01",
+      },
+    ],
+    //================================================================//
+
 
   };
 

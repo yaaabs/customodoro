@@ -1214,7 +1214,7 @@ body.theme-color .footer-divider {
   text-align: right;
 }
 
-/* ✅ Responsive controls for Contribution Graph */
+/* Responsive controls for Contribution Graph */
 #contribution-graph .contrib-subheader {
   display: flex;
   align-items: center;

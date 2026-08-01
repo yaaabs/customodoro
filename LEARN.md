@@ -14,7 +14,7 @@ Customodoro is a feature-rich Pomodoro timer web application built with vanilla 
 
 ### Project Structure
 
-```
+```text
 Customodoro/
 ├── audio/           # Sound effects and background music
 ├── css/             # Stylesheets

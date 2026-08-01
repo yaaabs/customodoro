@@ -93,7 +93,7 @@ class AuthService {
   // Clear user-specific session data on logout to prevent cross-account data bleeding
   clearUserSessionData() {
 
-    // 🚨 COMPREHENSIVE LIST: All keys that contain user-specific data (NOT settings/preferences)
+    // COMPREHENSIVE LIST: All keys that contain user-specific data (NOT settings/preferences)
     const sessionDataKeys = [
       // Primary user data
       "customodoroStatsByDay", // Productivity stats - USER SPECIFIC
@@ -116,7 +116,7 @@ class AuthService {
       "userProgress", // If exists - USER SPECIFIC
     ];
 
-    // 📱 MOBILE FIX: More aggressive pattern matching for mobile browsers
+    // MOBILE FIX: More aggressive pattern matching for mobile browsers
     const additionalPatterns = [
       "customodoro-",
       "session-",
@@ -155,14 +155,14 @@ class AuthService {
       }
     });
 
-    // 📱 MOBILE FIX: Also clear sessionStorage for mobile browsers
+    // MOBILE FIX: Also clear sessionStorage for mobile browsers
     try {
       sessionStorage.clear();
     } catch (error) {
       window.customodoroLogger.error("AUTH_SERVICE_FAILED_TO_CLEAR_SESSIONSTORAGE");
     }
 
-    // 📱 MOBILE FIX: Request service worker cache clearing for mobile
+    // MOBILE FIX: Request service worker cache clearing for mobile
     if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
       try {
         navigator.serviceWorker.controller.postMessage({
@@ -334,7 +334,7 @@ class AuthService {
   logout() {
     this.clearAuth();
 
-    // 📱 MOBILE FIX: Force page reload on mobile browsers after logout
+    // MOBILE FIX: Force page reload on mobile browsers after logout
     // Mobile browsers are more aggressive with caching and need a hard reset
     const isMobile =
       /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(

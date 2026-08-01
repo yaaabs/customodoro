@@ -32,3 +32,13 @@ build/
 *~
 .DS_Store
 Thumbs.db
+
+# Local project guidance and development tooling
+.agents/
+.codex/
+architecture/
+extensions/pomodoro/
+rules/
+scripts/
+.github/copilot-instructions.md
+AGENTS.md

@@ -1,5 +1,5 @@
-const CACHE_NAME = "customodoro-static-v7.5.2";
-const ASSETS_CACHE = "customodoro-assets-v6.2.2"; // Bump to v6.2.2
+const CACHE_NAME = "customodoro-static-v7.5.3";
+const ASSETS_CACHE = "customodoro-assets-v6.2.3";
 const swLogger = (() => {
   const nativeError = console.error.bind(console);
   const emittedErrors = new Set();
@@ -198,7 +198,7 @@ self.addEventListener("message", (event) => {
     );
   }
 
-  // 📱 MOBILE FIX: Handle user cache clearing for logout
+  // MOBILE FIX: Handle user cache clearing for logout
   if (event.data && event.data.type === "CLEAR_USER_CACHE") {
 
     // Clear caches that might contain user-specific data

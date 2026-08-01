@@ -611,7 +611,7 @@ class SyncManager {
   // Merge server data with local data
   mergeServerData(serverData) {
 
-    // 🛡️ SAFETY CHECK: Don't merge empty data over existing data
+    // SAFETY CHECK: Don't merge empty data over existing data
     const protectFromEmptyMerge = (localData, serverData, dataType) => {
       if (!serverData) {
         return false; // Don't merge
@@ -1101,9 +1101,9 @@ class SyncManager {
     URL.revokeObjectURL(url);
   }
 
-  // 🚨 SECURITY: Check if browser has any user-specific data
+  // SECURITY: Check if browser has any user-specific data
   hasAnyLocalUserData() {
-    // 🚨 COMPREHENSIVE LIST: Check for ALL user-specific data
+    // COMPREHENSIVE LIST: Check for ALL user-specific data
     const userDataKeys = [
       // Primary user data
       "customodoroStatsByDay",
@@ -1136,7 +1136,7 @@ class SyncManager {
     });
   }
 
-  // 🚨 SECURITY: Check if local data belongs to current user
+  // SECURITY: Check if local data belongs to current user
   async isLocalDataFromCurrentUser() {
     const user = window.authService?.getCurrentUser();
     if (!user) return false;
@@ -1164,10 +1164,10 @@ class SyncManager {
     return true; // Assume data is clean if checks pass
   }
 
-  // 🚨 SECURITY: Clear local user data to prevent contamination
+  // SECURITY: Clear local user data to prevent contamination
   clearLocalUserData() {
 
-    // 🚨 COMPREHENSIVE LIST: Must match auth-service clearUserSessionData()
+    // COMPREHENSIVE LIST: Must match auth-service clearUserSessionData()
     const userDataKeys = [
       // Primary user data
       "customodoroStatsByDay", // Productivity stats - USER SPECIFIC
@@ -1190,7 +1190,7 @@ class SyncManager {
       "userProgress", // If exists - USER SPECIFIC
     ];
 
-    // 📱 MOBILE FIX: More aggressive pattern matching for mobile browsers
+    // MOBILE FIX: More aggressive pattern matching for mobile browsers
     const additionalPatterns = [
       "customodoro-",
       "session-",
@@ -1228,7 +1228,7 @@ class SyncManager {
       }
     });
 
-    // 📱 MOBILE FIX: Also clear sessionStorage
+    // MOBILE FIX: Also clear sessionStorage
     try {
       sessionStorage.clear();
     } catch (error) {
