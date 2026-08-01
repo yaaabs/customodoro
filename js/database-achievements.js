@@ -515,11 +515,80 @@
     return null;
   }
 
+  const ACHIEVEMENT_READ_STATE_KEY = "customodoro-achievement-read-v1";
+  let currentAchievementIdentity = null;
+
+  function getBadgeId(badge) {
+    return JSON.stringify([
+      badge?.title || "",
+      badge?.icon || "",
+      badge?.date || "",
+    ]);
+  }
+
+  function getReadBadgeIds(identity) {
+    if (!identity) return new Set();
+
+    try {
+      const stored = JSON.parse(
+        localStorage.getItem(ACHIEVEMENT_READ_STATE_KEY) || "{}",
+      );
+      const ids = stored?.[identity];
+      return new Set(Array.isArray(ids) ? ids.filter((id) => typeof id === "string") : []);
+    } catch (error) {
+      return new Set();
+    }
+  }
+
+  function saveReadBadgeIds(identity, readIds) {
+    if (!identity) return;
+
+    try {
+      const stored = JSON.parse(
+        localStorage.getItem(ACHIEVEMENT_READ_STATE_KEY) || "{}",
+      );
+      stored[identity] = Array.from(readIds);
+      localStorage.setItem(ACHIEVEMENT_READ_STATE_KEY, JSON.stringify(stored));
+    } catch (error) {
+      window.customodoroLogger?.error?.(
+        "DATABASE_ACHIEVEMENTS_FAILED_TO_SAVE_READ_STATE",
+      );
+    }
+  }
+
+  function markBadgeAsRead(badge) {
+    if (!currentAchievementIdentity || !badge) return;
+
+    const readIds = getReadBadgeIds(currentAchievementIdentity);
+    const badgeId = getBadgeId(badge);
+    if (readIds.has(badgeId)) return;
+
+    readIds.add(badgeId);
+    saveReadBadgeIds(currentAchievementIdentity, readIds);
+
+    document.querySelectorAll(".badge").forEach((element) => {
+      if (element.dataset.badgeId !== badgeId) return;
+      element.classList.remove("badge--unread");
+      element.removeAttribute("data-badge-unread");
+      element.setAttribute("aria-label", badge.title || "Badge");
+      const marker = element.querySelector(".badge-new-marker");
+      if (marker && typeof marker.remove === "function") marker.remove();
+    });
+  }
+
+  function isBadgeUnread(badge) {
+    return !getReadBadgeIds(currentAchievementIdentity).has(getBadgeId(badge));
+  }
+
   function createBadgeEl(badge, index) {
     const wrap = document.createElement("div");
-    wrap.className = "badge";
+    const unread = isBadgeUnread(badge);
+    wrap.className = `badge${unread ? " badge--unread" : ""}`;
     wrap.setAttribute("role", "button");
     wrap.setAttribute("tabindex", "0");
+    wrap.setAttribute("aria-label", `${unread ? "New badge: " : ""}${badge.title || "Badge"}`);
+    wrap.dataset.badgeId = getBadgeId(badge);
+    if (unread) wrap.dataset.badgeUnread = "true";
 
     const img = document.createElement("img");
     img.className = "badge-icon";
@@ -527,6 +596,14 @@
     img.alt = badge.title;
     img.title = badge.title;
     wrap.appendChild(img);
+
+    if (unread) {
+      const marker = document.createElement("span");
+      marker.className = "badge-new-marker";
+      marker.textContent = "NEW";
+      marker.setAttribute("aria-hidden", "true");
+      wrap.appendChild(marker);
+    }
 
     wrap.dataset.badgeIndex = index;
     wrap.dataset.badgeTitle = badge.title;
@@ -922,6 +999,7 @@
 
     currentIndex = index;
     const badge = currentBadges[index];
+    markBadgeAsRead(badge);
 
     const el = modalEl;
     const img = el.querySelector(".badge-modal-icon");
@@ -1602,6 +1680,8 @@
       showNoLogin(container);
       return;
     }
+
+    currentAchievementIdentity = identityKey;
 
     const rawBadges = findUserAchievements(identityKey);
     // Note: don't early-return when there are no hardcoded badges for this user.

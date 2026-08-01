@@ -109,6 +109,7 @@ class AuthService {
 
       // Modal state (could be user-specific)
       "seenModalVersion", // Seen update modal version - USER SPECIFIC
+      "customodoro-achievement-read-v1", // Read achievement badges - USER SPECIFIC
 
       // Any other potential user data patterns
       "lastFocusSession", // If exists - USER SPECIFIC

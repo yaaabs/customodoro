@@ -4603,6 +4603,7 @@ body {
 }
 
 .achievements-card .badge {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -4612,6 +4613,54 @@ body {
   padding: 0;
   border-radius: 50%;
   background: transparent;
+  cursor: pointer;
+  outline: none;
+}
+
+.achievements-card .badge:focus-visible {
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px rgba(255, 214, 10, 0.9);
+}
+
+.achievements-card .badge--unread .badge-icon {
+  border-color: #ffd60a;
+  box-shadow: 0 0 0 3px rgba(255, 214, 10, 0.28),
+    0 6px 22px rgba(0, 0, 0, 0.55);
+}
+
+.achievements-card .badge-new-marker {
+  position: absolute;
+  top: 4%;
+  right: 4%;
+  z-index: 1;
+  min-width: 34px;
+  padding: 4px 6px;
+  border: 2px solid #181a1b;
+  border-radius: 999px;
+  background: #e63946;
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-align: center;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .achievements-card .badge--unread .badge-new-marker {
+    animation: badgeNewPulse 1.8s ease-in-out infinite;
+  }
+}
+
+@keyframes badgeNewPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
 }
 
 .achievements-card .badge-icon {
@@ -4661,6 +4710,13 @@ body {
     width: 70%;
     height: 70%;
     border-width: 3px;
+  }
+  .achievements-card .badge-new-marker {
+    top: 2%;
+    right: 2%;
+    min-width: 30px;
+    padding: 3px 5px;
+    font-size: 0.56rem;
   }
 }
 
