@@ -57,18 +57,41 @@ describe("legal pages and responsive footer", () => {
       "Supabase",
       "Render",
       "24 months",
+      // The under-13 statement lives here, not in the Terms.
+      "not directed to children under 13",
+      "guardian",
     ]) {
       assert.ok(privacy.includes(disclosure), `Privacy Policy is missing ${disclosure}`);
     }
 
-    for (const disclosure of [
-      "at least 13",
-      "guardian",
-      "MIT License",
-      "Philippines",
-    ]) {
+    for (const disclosure of ["MIT License", "Philippines"]) {
       assert.ok(terms.includes(disclosure), `Terms are missing ${disclosure}`);
     }
+
+    // A plain timer needs no age gate to be used.
+    assert.doesNotMatch(terms, /at least 13|Eligibility and minors/);
+  });
+
+  test("the privacy policy matches what the code actually does", () => {
+    const privacy = read("privacy.html");
+    const syncManager = read("js/sync-manager.js");
+
+    // sync-manager POSTs local history once signed in, so the policy must not
+    // claim local data never leaves the device.
+    assert.match(syncManager, /\/api\/user\/\$\{[^}]+\}\/sync/);
+    assert.doesNotMatch(privacy, /not automatically sent to YabuTech/);
+    assert.match(privacy, /If you sign in, the sessions, tasks,/);
+
+    // Claims about what is never requested must stay true.
+    for (const file of fs.readdirSync(path.join(repoRoot, "js"))) {
+      const source = read(`js/${file}`);
+      assert.doesNotMatch(source, /navigator\.geolocation|getUserMedia/, file);
+    }
+    assert.match(privacy, /does not request precise location/);
+
+    // Notifications are claimed and really are implemented.
+    assert.match(read("js/script.js"), /Notification/);
+    assert.match(privacy, /Browser notification permission is managed by your/);
   });
 
   test("both documents describe cloud features as live, and say the leaderboard is public", () => {
