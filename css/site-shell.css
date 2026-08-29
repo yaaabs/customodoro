@@ -273,6 +273,7 @@ body.focus-mode-active .page-outro {
   font-size: 0.78rem;
 }
 
+.footer-copy a,
 .footer-meta a {
   display: inline-flex;
   align-items: center;
@@ -281,6 +282,7 @@ body.focus-mode-active .page-outro {
   border-bottom: 1px solid transparent;
 }
 
+.footer-copy a:hover,
 .footer-meta a:hover {
   color: var(--outro-text);
   border-bottom-color: var(--outro-border);

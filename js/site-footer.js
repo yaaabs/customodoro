@@ -53,11 +53,10 @@
           </nav>
         </div>
         <div class="footer-bottom">
-          <p class="footer-copy">&copy; <span class="copyright-year">2026</span> YabuTech &middot; Customodoro v3.7.12</p>
+          <p class="footer-copy">&copy; <span class="copyright-year">2026</span> <a href="https://yabutech.vercel.app" target="_blank" rel="noopener noreferrer">YabuTech</a> &middot; Customodoro v3.7.12</p>
           <p class="footer-meta">
-            <a href="https://www.linkedin.com/in/brian-yabut/" target="_blank" rel="noopener noreferrer">Built by Brian Yabut</a>
+            <a href="https://www.linkedin.com/in/brian-yabut/" target="_blank" rel="noopener noreferrer">Handcrafted by Brian Yabut</a>
             <a href="mailto:brianyabutech@gmail.com">Contact</a>
-            <a href="https://wakey2x.vercel.app/" target="_blank" rel="noopener noreferrer">Try Wakey</a>
             <a href="https://github.com/yaaabs/customodoro" target="_blank" rel="noopener noreferrer">MIT License</a>
           </p>
         </div>

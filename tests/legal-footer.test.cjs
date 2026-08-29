@@ -94,6 +94,24 @@ describe("legal pages and responsive footer", () => {
     assert.match(privacy, /Browser notification permission is managed by your/);
   });
 
+  test("emphasis in the legal pages is balanced and stays a skim aid", () => {
+    for (const page of ["privacy.html", "terms.html"]) {
+      const html = read(page);
+      const open = (html.match(/<strong>/g) || []).length;
+      const close = (html.match(/<\/strong>/g) || []).length;
+      assert.equal(open, close, `${page} has unbalanced <strong> tags`);
+      assert.ok(open > 0, `${page} has no emphasis at all`);
+
+      // Bold everything and nothing stands out; keep it under a tenth.
+      const article = html.slice(html.indexOf("<article"), html.indexOf("</article>"));
+      const count = (text) => text.replace(/<[^>]*>/g, " ").split(/\s+/).filter(Boolean).length;
+      const bolded = (article.match(/<strong>[\s\S]*?<\/strong>/g) || [])
+        .reduce((sum, run) => sum + count(run), 0);
+      const ratio = bolded / count(article);
+      assert.ok(ratio < 0.1, `${page} bolds ${(ratio * 100).toFixed(1)}% of its words`);
+    }
+  });
+
   test("both documents describe cloud features as live, and say the leaderboard is public", () => {
     const privacy = read("privacy.html");
     const terms = read("terms.html");
@@ -112,6 +130,7 @@ describe("legal pages and responsive footer", () => {
     }
 
     assert.match(privacy, /<strong>The leaderboard is public\.<\/strong>/);
+    assert.match(terms, /<strong>The leaderboard is public:<\/strong>/);
     assert.match(privacy, /never shown on the leaderboard/);
     assert.match(privacy, /Account, sync, and leaderboard data/);
     assert.match(terms, /The leaderboard is public/);
@@ -162,6 +181,19 @@ describe("legal pages and responsive footer", () => {
       script,
       /<a href="https:\/\/github\.com\/yaaabs\/customodoro"[^>]*>MIT License<\/a>/,
     );
+    assert.match(
+      script,
+      /<a href="https:\/\/yabutech\.vercel\.app"[^>]*>YabuTech<\/a>/,
+    );
+    assert.match(
+      script,
+      /<a href="https:\/\/www\.linkedin\.com\/in\/brian-yabut\/"[^>]*>Handcrafted by Brian Yabut<\/a>/,
+    );
+    assert.doesNotMatch(script, /Wakey|wakey2x/);
+    // Every external footer link opens safely.
+    for (const link of script.match(/<a href="https?:\/\/[^"]+"[^>]*>/g) || []) {
+      assert.match(link, /rel="noopener noreferrer"/, link);
+    }
     assert.match(script, /role", "contentinfo"/);
     assert.match(script, /aria-label", "Customodoro footer"/);
     assert.match(script, /class="footer-nav" aria-label="Site links"/);
