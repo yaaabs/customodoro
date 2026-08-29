@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Privacy Policy | Customodoro</title>
+    <meta
+      name="description"
+      content="Learn how Customodoro handles local timer data, optional account and sync data, the leaderboard, hosting information, and feedback."
+    />
+    <meta name="author" content="Brian Yabut, YabuTech" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://www.customodoro.app/privacy" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Customodoro" />
+    <meta property="og:title" content="Privacy Policy | Customodoro" />
+    <meta
+      property="og:description"
+      content="How Customodoro handles local app data, optional cloud accounts, the leaderboard, hosting information, and feedback."
+    />
+    <meta property="og:url" content="https://www.customodoro.app/privacy" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#e53935" />
+    <link rel="apple-touch-icon" href="favicon/apple-touch-icon.png?v=1.1" />
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png?v=1.1" />
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png?v=1.1" />
+    <link rel="stylesheet" href="css/style.css?v=4.2.0" />
+    <link rel="stylesheet" href="css/legal.css?v=2.1.0" />
+    <link rel="stylesheet" href="css/site-shell.css?v=1.2.0" />
+  </head>
+  <body class="legal-body">
+    <script>
+      (function () {
+        const savedTheme = localStorage.getItem("siteTheme") || "light";
+        const allowedThemes = new Set([
+          "light",
+          "dark",
+          "yourname",
+          "rain",
+          "custom",
+          "color",
+        ]);
+        const theme = allowedThemes.has(savedTheme) ? savedTheme : "light";
+        document.body.classList.add("theme-" + theme);
+        if (theme === "custom") {
+          const customBackground = localStorage.getItem("customThemeBackground");
+          if (customBackground) {
+            document.body.style.backgroundImage = `url(${customBackground})`;
+          }
+        }
+      })();
+    </script>
+
+    <a class="legal-skip-link" href="#legal-content">Skip to Privacy Policy</a>
+
+    <div class="legal-page container">
+      <header class="legal-header">
+        <a class="brand-lockup" href="/">
+          <img class="brand-mark" src="favicon/android-chrome-192x192.png" width="32" height="32" alt="" decoding="async" />
+          <span>Customodoro</span>
+        </a>
+      </header>
+
+      <main class="legal-main" id="legal-content">
+        <article class="legal-article">
+          <h1>Privacy Policy</h1>
+
+          <p class="legal-updated">Last modified: August 30, 2026</p>
+
+          <p class="legal-lead">
+            Customodoro is designed to work without an account. Most timer,
+            task, theme, and productivity information stays in your browser.
+            This policy explains what remains local, what service providers may
+            process, and what changes if you choose to create an account for
+            cross-device sync and the leaderboard.
+          </p>
+
+
+          <section id="summary">
+            <h2>At a glance</h2>
+            <div class="legal-table-wrap" role="region" tabindex="0" aria-label="Privacy summary table">
+              <table class="legal-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Information</th>
+                    <th scope="col">Where it is handled</th>
+                    <th scope="col">Why</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td data-label="Information">Timer preferences, tasks, themes, and productivity history</td>
+                    <td data-label="Where it is handled">Your browser or installed PWA</td>
+                    <td data-label="Why">Run and personalize the timer</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Information">IP address, browser/device details, timestamps, and request/security logs</td>
+                    <td data-label="Where it is handled">Our hosting provider</td>
+                    <td data-label="Why">Deliver and protect the website</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Information">Feedback form responses</td>
+                    <td data-label="Where it is handled">NoteForms after you choose to open and submit the external form</td>
+                    <td data-label="Why">Respond to feedback and fix problems</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Information">Account, sync, and leaderboard records, if you choose to sign up</td>
+                    <td data-label="Where it is handled">Supabase and our application backend on Render</td>
+                    <td data-label="Why">Sign you in, sync your progress across devices, and rank the leaderboard</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <ul class="legal-list">
+              <li>
+                We do not run behavioral advertising or behavioral analytics.
+              </li>
+              <li>
+                We do not sell personal information.
+              </li>
+              <li>
+                We do not process payments.
+              </li>
+              <li>
+                We do not use your tasks or productivity history to make decisions that have legal or similarly significant effects.
+              </li>
+            </ul>
+          </section>
+
+          <section id="scope">
+            <h2>Scope and controller</h2>
+            <p>
+              This policy applies to the Customodoro website, its installable
+              Progressive Web App, the Classic and Reverse timers, the Pomodoro
+              guide, and communications sent to Customodoro.
+            </p>
+            <dl class="legal-definition-list">
+              <dt>Controller</dt>
+              <dd>Brian Yabut, operating as YabuTech in the Philippines.</dd>
+              <dt>Contact</dt>
+              <dd><a href="mailto:brianyabutech@gmail.com">brianyabutech@gmail.com</a></dd>
+              <dt>Service</dt>
+              <dd>Customodoro at <a href="https://www.customodoro.app/">customodoro.app</a>.</dd>
+            </dl>
+            <p>
+              Third-party websites opened from Customodoro apply their own
+              privacy policies. This policy does not control their independent
+              processing.
+            </p>
+          </section>
+
+          <section id="information">
+            <h2>Information we handle</h2>
+
+            <h3>Information stored locally</h3>
+            <p>
+              Customodoro uses browser storage so the app can remember your
+              settings and work offline. Depending on the features you use,
+              local information may include:
+            </p>
+            <ul>
+              <li>work, break, automation, sound, and music preferences;</li>
+              <li>theme choices, color choices, and a custom background image you upload;</li>
+              <li>task titles, task descriptions, completion state, order, and selected task;</li>
+              <li>session dates, durations, timer mode, daily totals, focus points, and streak calculations;</li>
+              <li>timezone and migration information used to assign sessions to the correct day;</li>
+              <li>achievement-read state, update notices, focus-mode state, and similar interface preferences; and</li>
+              <li>cached app files, images, and audio needed for PWA and offline operation.</li>
+            </ul>
+            <p>
+              This local information is not automatically sent to YabuTech by
+              the current app. Other people who can access your device or
+              browser profile may be able to view it.
+            </p>
+
+            <h3>Technical and hosting information</h3>
+            <p>
+              When your browser requests Customodoro files, our hosting provider
+              may process the request IP address, approximate location derived
+              from the IP address, browser and device type, requested URL,
+              referring page, response information, and timestamps. These data
+              are used to deliver the service, maintain reliability, prevent
+              abuse, and investigate security problems.
+            </p>
+
+            <h3>Feedback and communications</h3>
+            <p>
+              The Feedback page links to an external NoteForms form. NoteForms
+              is not loaded automatically. If you open or submit that form,
+              NoteForms may process the answers you provide and technical usage
+              data under its own policy. If you email us, we process your email
+              address, message, attachments, and our replies.
+            </p>
+            <p>
+              Do not place passwords, government identifiers, financial data,
+              health records, or other highly sensitive information in tasks or
+              feedback.
+            </p>
+
+            <h3>Account, sync, and leaderboard data</h3>
+            <p>
+              An account is optional and Customodoro works fully without one.
+              If you create an account, we store an email address, display
+              name, user ID, account and verification timestamps, and the
+              sessions, tasks, streaks, and daily productivity history you
+              sync, so the same progress is available on your other devices.
+            </p>
+            <p>
+              <strong>The leaderboard is public.</strong> If you take part,
+              the display name on your account and your focus totals are
+              visible to anyone who opens the leaderboard, including people
+              without an account. Choose a display name you are comfortable
+              showing publicly. Your email address, your tasks, and their
+              contents are never shown on the leaderboard.
+            </p>
+
+            <h3>Information we do not actively collect</h3>
+            <p>
+              The current app does not request precise location, contacts,
+              camera or microphone recordings, payment-card data, or advertising
+              identifiers. Browser notification permission is managed by your
+              browser; notification content is generated on your device.
+            </p>
+          </section>
+
+          <section id="purposes">
+            <h2>Purposes and legal bases</h2>
+            <p>We process information only for the following purposes:</p>
+            <ul>
+              <li><strong>Provide the service:</strong> deliver the website, run requested features, remember local choices, and respond to requests.</li>
+              <li><strong>Security and reliability:</strong> prevent abuse, diagnose failures, protect users, and maintain the service.</li>
+              <li><strong>Accounts and sync:</strong> create and secure your account, synchronize your progress between devices, rank the leaderboard, and fulfill verified access, correction, export, or deletion requests.</li>
+              <li><strong>Legal compliance:</strong> meet lawful obligations and establish, exercise, or defend legal claims.</li>
+            </ul>
+            <p>
+              Under Philippine law, these activities rely as applicable on your
+              consent for information you voluntarily submit, the need to
+              provide a service you request, legitimate interests that do not
+              override your rights, and legal obligations. Where the GDPR or UK
+              GDPR applies, the corresponding bases are consent, contract,
+              legitimate interests in operating and securing the service, and
+              compliance with law.
+            </p>
+          </section>
+
+          <section id="providers">
+            <h2>Service providers, disclosures, and transfers</h2>
+            <p>We use or retain information with the following provider categories:</p>
+            <ul>
+              <li><strong>Vercel:</strong> website hosting, content delivery, and associated request/security logs.</li>
+              <li><strong>NoteForms:</strong> the optional external feedback form after you choose to open it.</li>
+              <li><strong>Supabase:</strong> the cloud database holding account, sync, and leaderboard records for people who sign up.</li>
+              <li><strong>Render:</strong> the application backend that handles account and synchronization requests, plus associated service logs.</li>
+            </ul>
+            <p>
+              Providers may process information outside the Philippines,
+              including in locations where they or their subprocessors operate.
+              We use provider agreements and reasonable safeguards appropriate
+              to the service. You may contact us for current provider or transfer
+              details relevant to your information.
+            </p>
+            <p>
+              We may also disclose information if reasonably necessary to obey a
+              valid legal process, protect rights or safety, investigate abuse,
+              or complete a reorganization or transfer of the service subject to
+              applicable safeguards. We do not disclose personal information to
+              data brokers or for cross-context behavioral advertising.
+            </p>
+          </section>
+
+          <section id="retention">
+            <h2>Retention</h2>
+            <ul>
+              <li><strong>Local app data:</strong> remains until you delete it, clear browser/site storage, reset the app, or uninstall the PWA, subject to browser-controlled cache eviction.</li>
+              <li><strong>Feedback and related correspondence:</strong> retained for up to 24 months after submission or the last related correspondence, unless a longer period is reasonably needed for security, legal compliance, or a dispute.</li>
+              <li><strong>Account, sync, and leaderboard data:</strong> retained while your account is active, and deleted after a verified deletion request or within a reasonable period after account closure, unless law requires limited further retention.</li>
+              <li><strong>Hosting and security logs:</strong> retained under the hosting plan's configured or provider-controlled period and only as long as reasonably needed for delivery, reliability, abuse prevention, security, or legal obligations.</li>
+            </ul>
+            <p>
+              When information is no longer needed, we will delete, anonymize,
+              or securely dispose of it where reasonably possible. Provider
+              backups may require additional time to cycle out.
+            </p>
+          </section>
+
+          <section id="choices">
+            <h2>Your choices and local controls</h2>
+            <ul>
+              <li>Use the timer without an account.</li>
+              <li>Decline browser notifications or revoke them in browser/site settings.</li>
+              <li>Avoid opening the external feedback form and contact us by email instead.</li>
+              <li>Clear Customodoro's site data through your browser's privacy or storage settings.</li>
+              <li>Uninstall the PWA and clear the site's stored data if you no longer want local records retained.</li>
+            </ul>
+            <p>
+              Clearing a service-worker cache alone may not delete localStorage.
+              Use your browser's “clear site data” control to remove both cached
+              files and locally stored preferences/history.
+            </p>
+          </section>
+
+          <section id="rights">
+            <h2>Your privacy rights</h2>
+            <p>
+              Subject to applicable law, you may have rights to be informed,
+              object, access, correct or rectify, erase or block, and receive a
+              portable copy of personal information. You may also have the right
+              to withdraw consent where processing relies on consent, seek
+              damages where provided by law, and complain to a regulator.
+            </p>
+            <p>
+              Send requests to
+              <a href="mailto:brianyabutech@gmail.com">brianyabutech@gmail.com</a>.
+              Describe the request and the email used for the former account, if
+              applicable. We will use reasonable, proportionate steps to verify
+              identity before disclosing or deleting account-linked data.
+            </p>
+
+            <h3>Philippines</h3>
+            <p>
+              Philippine data subjects may exercise rights under the Data
+              Privacy Act of 2012 and may file a complaint with the
+              <a href="https://privacy.gov.ph/" target="_blank" rel="noopener noreferrer">National Privacy Commission</a>.
+            </p>
+
+            <h3>EEA and United Kingdom</h3>
+            <p>
+              Where applicable, you may also request restriction, object to
+              legitimate-interest processing, receive portable data, and lodge a
+              complaint with your local supervisory authority. Customodoro does
+              not use solely automated decision-making with legal or similarly
+              significant effects.
+            </p>
+
+            <h3>United States</h3>
+            <p>
+              Residents of states with applicable consumer privacy laws may have
+              rights to know, access, correct, delete, or obtain a copy of
+              covered personal information and to appeal certain request
+              decisions. Customodoro does not sell personal information or share
+              it for cross-context behavioral advertising. We will not
+              discriminate against you for exercising an applicable privacy
+              right.
+            </p>
+          </section>
+
+          <section id="security">
+            <h2>Security</h2>
+            <p>
+              We use reasonable administrative and technical measures intended
+              to protect information, including encrypted HTTPS connections and
+              provider-managed hosting and database infrastructure. No
+              internet transmission or storage
+              method can be guaranteed completely secure. Protect access to your
+              device and browser profile, especially when tasks contain private
+              details.
+            </p>
+            <p>
+              If an incident requires notice under applicable law, that notice
+              will be provided separately. Updating this Privacy Policy is not a
+              substitute for an incident notice.
+            </p>
+          </section>
+
+          <section id="children">
+            <h2>Children</h2>
+            <p>
+              Customodoro is not directed to children under 13, and people under
+              13 should not submit personal information. Users who are minors
+              must have permission from a parent or legal guardian where
+              required. If you believe a child provided personal information,
+              contact us so we can investigate and take appropriate action.
+            </p>
+          </section>
+
+          <section id="changes">
+            <h2>Changes and contact</h2>
+            <p>
+              We may update this policy when the service, providers, or legal
+              requirements change. We will change the “Last modified” date and,
+              for material changes, provide an appropriate notice in the app.
+            </p>
+            <p>
+              Questions or privacy requests may be sent to Brian Yabut
+              (YabuTech) at
+              <a href="mailto:brianyabutech@gmail.com">brianyabutech@gmail.com</a>.
+            </p>
+          </section>
+        </article>
+      </main>
+
+      <div class="page-outro">
+        <footer class="footer" role="contentinfo" aria-label="Customodoro footer">
+          <div class="footer-inner">
+            <div class="footer-top">
+              <a class="footer-brand" href="/">
+                <img class="footer-brand-mark" src="favicon/android-chrome-192x192.png" width="28" height="28" alt="" decoding="async" />
+                <span class="footer-brand-name">Customodoro</span>
+              </a>
+              <nav class="footer-nav" aria-label="Site links">
+                <a href="/">Home</a>
+                <a href="/reverse">Reverse</a>
+                <a href="/pomodoro">Guide</a>
+                <a href="/#about">About</a>
+                <a href="/feedback">Feedback</a>
+                <a href="/privacy">Privacy</a>
+                <a href="/terms">Terms</a>
+                <a href="/LICENSE">License</a>
+              </nav>
+            </div>
+            <div class="footer-bottom">
+              <p class="footer-copy">&copy; <span class="copyright-year">2026</span> YabuTech &middot; Customodoro v3.7.11 &middot; Local-first, no ads</p>
+              <p class="footer-meta">
+                <a href="https://www.linkedin.com/in/brian-yabut/" target="_blank" rel="noopener noreferrer">Built by Brian Yabut</a>
+                <a href="mailto:brianyabutech@gmail.com">Contact</a>
+                <a href="https://wakey2x.vercel.app/" target="_blank" rel="noopener noreferrer">Try Wakey</a>
+              </p>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <script src="js/site-footer.js?v=2.1.0"></script>
+    <script src="js/copyright-year.js?v=1.0.0" defer></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/sw.js").catch(() => {});
+        });
+      }
+    </script>
+  </body>
+</html>

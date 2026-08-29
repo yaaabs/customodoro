@@ -476,10 +476,6 @@ body.theme-custom .guide-page {
   line-height: 1.5;
 }
 
-.guide-page > .footer {
-  margin-top: 18px;
-}
-
 @media (max-width: 860px) {
   .guide-cycle {
     grid-template-columns: repeat(2, minmax(0, 1fr));

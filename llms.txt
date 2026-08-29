@@ -14,6 +14,11 @@
 - [What is the Pomodoro Technique?](https://www.customodoro.app/pomodoro): Educational article on the Pomodoro method and its variants
 - [How Customodoro was built](https://www.customodoro.app/LEARN.md): Vanilla JS, PWA, Supabase, and Service Worker implementation notes
 
+## Legal
+
+- [Privacy Policy](https://www.customodoro.app/privacy): Local app data, optional accounts and sync, the public leaderboard, hosting information, and feedback
+- [Terms and Conditions](https://www.customodoro.app/terms): Rules and conditions for using Customodoro
+
 ## Optional
 
 - [Feedback & Bug Reports](https://www.customodoro.app/feedback)

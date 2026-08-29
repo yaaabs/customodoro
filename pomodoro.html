@@ -4,16 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Preconnect to Google Fonts for faster loading -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-    <!-- Inter Font - Expanded Weight Range -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-
     <!-- PWA for iOS -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -123,10 +113,11 @@
     <link rel="manifest" href="manifest.json" />
 
     <!-- Essential CSS -->
-    <link rel="stylesheet" href="css/style.css?v=2.3.6" />
+    <link rel="stylesheet" href="css/style.css?v=4.2.0" />
     <link rel="stylesheet" href="css/features.css?v=1.0.0" />
     <link rel="stylesheet" href="css/utilities.css?v=1.0.6" />
     <link rel="stylesheet" href="css/pomodoro-guide.css?v=1.0.4" />
+    <link rel="stylesheet" href="css/site-shell.css?v=1.2.0" />
   </head>
   <body class="pomodoro-mode">
     <script>
@@ -401,129 +392,36 @@
         </article>
       </main>
       <!-- UPDATE!) -->
-      <footer class="footer">
-        <div class="footer-content">
-          <div class="footer-brand">
-            © <span class="copyright-year">2026</span> <strong>Customodoro</strong>
-            <span class="footer-version">v3.7.11</span>
-            • Handcrafted by <strong><em>YabuTech</em></strong>
+      <div class="page-outro">
+        <footer class="footer" role="contentinfo" aria-label="Customodoro footer">
+          <div class="footer-inner">
+            <div class="footer-top">
+              <a class="footer-brand" href="/">
+                <img class="footer-brand-mark" src="favicon/android-chrome-192x192.png" width="28" height="28" alt="" decoding="async" />
+                <span class="footer-brand-name">Customodoro</span>
+              </a>
+              <nav class="footer-nav" aria-label="Site links">
+                <a href="/">Home</a>
+                <a href="/reverse">Reverse</a>
+                <a href="/pomodoro">Guide</a>
+                <a href="#about" id="about-link-footer">About</a>
+                <a href="/feedback">Feedback</a>
+                <a href="/privacy">Privacy</a>
+                <a href="/terms">Terms</a>
+                <a href="/LICENSE">License</a>
+              </nav>
+            </div>
+            <div class="footer-bottom">
+              <p class="footer-copy">&copy; <span class="copyright-year">2026</span> YabuTech &middot; Customodoro v3.7.11 &middot; Local-first, no ads</p>
+              <p class="footer-meta">
+                <a href="https://www.linkedin.com/in/brian-yabut/" target="_blank" rel="noopener noreferrer">Built by Brian Yabut</a>
+                <a href="mailto:brianyabutech@gmail.com">Contact</a>
+                <a href="https://wakey2x.vercel.app/" target="_blank" rel="noopener noreferrer">Try Wakey</a>
+              </p>
+            </div>
           </div>
-          <nav class="footer-links">
-            <a href="#" id="about-link-footer">
-              <svg
-                class="footer-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="16" x2="12" y2="12"></line>
-                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-              </svg>
-              <span>About</span>
-            </a>
-            <span class="footer-divider">•</span>
-            <a href="mailto:brianyabutech@gmail.com">
-              <svg
-                class="footer-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path
-                  d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
-                ></path>
-                <polyline points="22,6 12,13 2,6"></polyline>
-              </svg>
-              <span>Contact</span>
-            </a>
-            <span class="footer-divider">•</span>
-            <a
-              href="https://wakey2x.vercel.app/"
-              target="_blank"
-              rel="noopener"
-            >
-              <svg
-                class="footer-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path
-                  d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
-                ></path>
-                <polyline points="15 3 21 3 21 9"></polyline>
-                <line x1="10" y1="14" x2="21" y2="3"></line>
-              </svg>
-              <span>Try Other App</span>
-            </a>
-            <span class="footer-divider">•</span>
-            <a
-              href="https://www.linkedin.com/in/brian-yabut/"
-              target="_blank"
-              rel="noopener"
-            >
-              <svg
-                class="footer-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path
-                  d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
-                ></path>
-                <rect x="2" y="9" width="4" height="12"></rect>
-                <circle cx="4" cy="4" r="2"></circle>
-              </svg>
-              <span>Connect</span>
-            </a>
-            <span class="footer-divider">•</span>
-            <a href="/feedback">
-              <svg
-                class="footer-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path
-                  d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
-                ></path>
-              </svg>
-              <span>Feedback</span>
-            </a>
-          </nav>
-        </div>
-      </footer>
+        </footer>
+      </div>
 
       <!-- About Modal -->
       <div class="about-info-modal-overlay" id="about-info-modal-overlay">
@@ -572,6 +470,7 @@
 
     <script src="js/app-logger.js?v=1.0.0"></script>
     <script src="js/theme-manager.js?v=2.3.6"></script>
+    <script src="js/site-footer.js?v=2.1.0" defer></script>
     <script src="js/about-modal.js?v=2.3.5"></script>
     <script src="js/copyright-year.js?v=1.0.0" defer></script>
   </body>

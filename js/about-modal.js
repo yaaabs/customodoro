@@ -25,6 +25,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  if (window.location.hash === "#about") {
+    openAboutModal();
+  }
+
   if (aboutModalOverlay) {
     aboutModalOverlay.addEventListener("click", (e) => {
       if (e.target === aboutModalOverlay) {

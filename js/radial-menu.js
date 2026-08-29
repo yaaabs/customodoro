@@ -24,6 +24,58 @@
 
     // Add sound effects
     addSoundEffects();
+
+    // Keep the button legible once the content band scrolls under it
+    trackOutroBand();
+  }
+
+  /**
+   * The button floats over whatever happens to be behind it. Above the fold
+   * that is the timer colour; scroll on and the .page-outro band slides
+   * underneath, which would leave a pale button on a pale surface. Toggling a
+   * class while the two overlap lets the stylesheet flip the button to the
+   * band's own colour tokens, so it stays readable in every theme.
+   */
+  function trackOutroBand() {
+    const container = document.querySelector(".radial-menu-container");
+    const band = document.querySelector(".page-outro");
+    if (!container || !band) return;
+
+    let queued = false;
+
+    const sync = () => {
+      queued = false;
+      const button = container.getBoundingClientRect();
+      const surface = band.getBoundingClientRect();
+      // A hidden band (focus mode) collapses to zeroes and never overlaps.
+      const overlapping =
+        surface.height > 0 &&
+        surface.top < button.bottom &&
+        surface.bottom > button.top;
+      container.classList.toggle("is-over-outro", overlapping);
+    };
+
+    const schedule = () => {
+      if (queued) return;
+      queued = true;
+      window.requestAnimationFrame(sync);
+    };
+
+    // style.css can make <body> the scrolling element rather than the
+    // viewport, and scroll events do not bubble, so listen in the capture
+    // phase to catch them wherever they originate.
+    window.addEventListener("scroll", schedule, {
+      passive: true,
+      capture: true,
+    });
+    window.addEventListener("resize", schedule, { passive: true });
+
+    // The band grows when the FAQ disclosure opens.
+    if (typeof ResizeObserver === "function") {
+      new ResizeObserver(schedule).observe(band);
+    }
+
+    sync();
   }
 
   // Create the radial menu HTML structure

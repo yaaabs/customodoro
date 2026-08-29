@@ -169,6 +169,7 @@ The web app deliberately keeps a small footprint:
 - `localStorage` for local-first state;
 - a separate Express backend for optional account sync;
 - Supabase-backed leaderboard reads;
+- first-class Privacy Policy and Terms and Conditions pages;
 - Node's built-in test runner for timer coverage.
 
 There is no bundler or framework runtime. Scripts communicate through a small
@@ -192,6 +193,8 @@ index.html                 Classic Pomodoro app
 reverse.html               Reverse Pomodoro app
 pomodoro.html              Educational Pomodoro guide
 feedback.html              Feedback page
+privacy.html               Privacy Policy
+terms.html                 Terms and Conditions
 css/                       Shared and feature styles
 js/                        Timers, settings, sync, stats, audio, and UI
 tests/                     Browser harness and timer tests
@@ -204,9 +207,10 @@ For deeper implementation details, see
 [`architecture/FRONTEND_ARCHITECTURE.md`](architecture/FRONTEND_ARCHITECTURE.md).
 
 > [!NOTE]
-> Customodoro is installable and caches selected static assets, but the current
-> web app should not be described as fully offline: account sync, leaderboard
-> data, and some restoration paths still require network access.
+> Customodoro is installable and caches its core timer and legal pages, but it
+> should not be described as fully offline: account sync, leaderboard data, the
+> external feedback form, and some restoration paths still require network
+> access.
 
 ## Contributing
 

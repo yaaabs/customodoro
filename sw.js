@@ -1,5 +1,5 @@
-const CACHE_NAME = "customodoro-static-v7.5.3";
-const ASSETS_CACHE = "customodoro-assets-v6.2.3";
+const CACHE_NAME = "customodoro-static-v8.3.0";
+const ASSETS_CACHE = "customodoro-assets-v7.1.0";
 const swLogger = (() => {
   const nativeError = console.error.bind(console);
   const emittedErrors = new Set();
@@ -27,6 +27,10 @@ const urlsToCache = [
   "/pomodoro.html",
   "/feedback",
   "/feedback.html",
+  "/privacy",
+  "/privacy.html",
+  "/terms",
+  "/terms.html",
 
   // ═══════════════════════════════════════════════════════════════════
   // Favicons & Manifests
@@ -44,6 +48,8 @@ const urlsToCache = [
   // CSS Files (All stylesheets for offline use)
   // ═══════════════════════════════════════════════════════════════════
   "/css/style.css",
+  "/css/legal.css",
+  "/css/site-shell.css",
   "/css/burnup-tracker.css",
   "/css/features.css",
   "/css/media-players.css",
@@ -72,6 +78,7 @@ const urlsToCache = [
   "/js/mini-music-player.js",
   "/js/most-used-pomodoro.js",
   "/js/radial-menu.js",
+  "/js/site-footer.js",
   "/js/settings.js",
   "/js/sync-manager.js",
   "/js/sync-ui.js",
@@ -96,14 +103,21 @@ const requiredPrecacheUrls = [
   "/index.html",
   "/reverse",
   "/reverse.html",
+  "/privacy",
+  "/privacy.html",
+  "/terms",
+  "/terms.html",
   "/manifest.json",
   "/css/style.css",
+  "/css/legal.css",
+  "/css/site-shell.css",
   "/css/features.css",
   "/js/app-logger.js",
   "/js/timezone-manager.js",
   "/js/midnight-splitter.js",
   "/js/script.js",
   "/js/reversePomodoro.js",
+  "/js/site-footer.js",
   "/js/lockedin-mode.js",
   "/js/settings.js",
   "/js/auth-service.js",

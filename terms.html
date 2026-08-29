@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Terms and Conditions | Customodoro</title>
+    <meta
+      name="description"
+      content="Terms and Conditions governing use of the Customodoro timer, PWA, local features, and related services."
+    />
+    <meta name="author" content="Brian Yabut, YabuTech" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://www.customodoro.app/terms" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Customodoro" />
+    <meta property="og:title" content="Terms and Conditions | Customodoro" />
+    <meta
+      property="og:description"
+      content="The rules and conditions for using the Customodoro timer and installable PWA."
+    />
+    <meta property="og:url" content="https://www.customodoro.app/terms" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#e53935" />
+    <link rel="apple-touch-icon" href="favicon/apple-touch-icon.png?v=1.1" />
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png?v=1.1" />
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png?v=1.1" />
+    <link rel="stylesheet" href="css/style.css?v=4.2.0" />
+    <link rel="stylesheet" href="css/legal.css?v=2.1.0" />
+    <link rel="stylesheet" href="css/site-shell.css?v=1.2.0" />
+  </head>
+  <body class="legal-body">
+    <script>
+      (function () {
+        const savedTheme = localStorage.getItem("siteTheme") || "light";
+        const allowedThemes = new Set([
+          "light",
+          "dark",
+          "yourname",
+          "rain",
+          "custom",
+          "color",
+        ]);
+        const theme = allowedThemes.has(savedTheme) ? savedTheme : "light";
+        document.body.classList.add("theme-" + theme);
+        if (theme === "custom") {
+          const customBackground = localStorage.getItem("customThemeBackground");
+          if (customBackground) {
+            document.body.style.backgroundImage = `url(${customBackground})`;
+          }
+        }
+      })();
+    </script>
+
+    <a class="legal-skip-link" href="#legal-content">Skip to Terms and Conditions</a>
+
+    <div class="legal-page container">
+      <header class="legal-header">
+        <a class="brand-lockup" href="/">
+          <img class="brand-mark" src="favicon/android-chrome-192x192.png" width="32" height="32" alt="" decoding="async" />
+          <span>Customodoro</span>
+        </a>
+      </header>
+
+      <main class="legal-main" id="legal-content">
+        <article class="legal-article">
+          <h1>Terms and Conditions</h1>
+
+          <p class="legal-updated">Last modified: August 30, 2026</p>
+
+          <p class="legal-lead">
+            These Terms and Conditions govern your use of Customodoro. They are
+            intended to set clear, reasonable rules for a free, locally focused
+            productivity timer and its installable Progressive Web App.
+          </p>
+
+
+          <section id="acceptance">
+            <h2>Acceptance of these terms</h2>
+            <p>
+              By accessing or using Customodoro, you agree to these Terms and
+              acknowledge the <a href="/privacy">Privacy Policy</a>. If you do
+              not agree, do not use the service. A Privacy Policy is a notice
+              about data handling; it is not itself a request for blanket
+              consent.
+            </p>
+            <p>
+              “Customodoro,” “we,” “us,” and “our” refer to the Customodoro
+              service operated by Brian Yabut as YabuTech in the Philippines.
+            </p>
+          </section>
+
+          <section id="eligibility">
+            <h2>Eligibility and minors</h2>
+            <p>
+              You must be at least 13 years old to use Customodoro on your own.
+              If you are under the age of legal majority where you live, you
+              must have permission from a parent or legal guardian. The service
+              is not directed to children under 13, and children under 13 should
+              not submit personal information.
+            </p>
+            <p>
+              If you use the service for an organization, school, or other
+              person, you confirm that you have authority to accept these Terms
+              on their behalf.
+            </p>
+          </section>
+
+          <section id="service">
+            <h2>What Customodoro provides</h2>
+            <p>
+              Customodoro provides Classic Pomodoro and Reverse Pomodoro timers,
+              task tools, timer settings, local productivity history, themes,
+              sounds and music, achievements, educational material, browser
+              notifications, and PWA/offline functionality.
+            </p>
+            <ul class="legal-list">
+              <li>
+                An account is optional. The timer works fully without one.
+              </li>
+              <li>
+                Most settings and productivity information are stored in your browser.
+              </li>
+              <li>
+                Offline operation requires a successful first load and depends on browser storage and service-worker support.
+              </li>
+              <li>
+                Notifications require browser and operating-system permission and may not fire reliably when a device restricts background activity.
+              </li>
+              <li>
+                Clearing browser storage, using private browsing, changing browser profiles, or uninstalling the PWA may remove local data.
+              </li>
+            </ul>
+            <p>
+              An optional free account adds cross-device sync and the
+              leaderboard. The leaderboard is public: the display name on your
+              account and your focus totals are visible to anyone who opens it.
+              Choose a display name you are comfortable showing publicly, and
+              do not impersonate another person or organization.
+            </p>
+          </section>
+
+          <section id="content">
+            <h2>Your content and account data</h2>
+            <p>
+              You keep ownership of task text, descriptions, settings, and other
+              content you create. You give us only the limited permission needed
+              to display and process that content on your device and, if you
+              use an account, to store and synchronize it as described in the
+              <a href="/privacy">Privacy Policy</a>.
+            </p>
+            <p>
+              You are responsible for your content and for keeping your device
+              and browser profile secure. Do not enter content that is unlawful,
+              infringes another person's rights, or contains passwords,
+              government identifiers, financial credentials, health records, or
+              other information requiring stronger safeguards than a personal
+              timer is designed to provide.
+            </p>
+            <p>
+              Account holders may request access, export, correction, or
+              deletion by emailing
+              <a href="mailto:brianyabutech@gmail.com">brianyabutech@gmail.com</a>.
+            </p>
+          </section>
+
+          <section id="acceptable-use">
+            <h2>Acceptable use</h2>
+            <p>You may not use the hosted service to:</p>
+            <ul>
+              <li>break the law, encourage unlawful conduct, or violate another person's rights;</li>
+              <li>impersonate another person or misrepresent your connection to Customodoro;</li>
+              <li>probe, bypass, or obtain unauthorized access to accounts, systems, data, or security controls;</li>
+              <li>introduce malware, overload the service, interfere with operation, or disrupt other users;</li>
+              <li>scrape or automate requests in a way that harms the service or bypasses reasonable technical limits; or</li>
+              <li>use Customodoro branding to suggest sponsorship or endorsement without written permission.</li>
+            </ul>
+            <p>
+              These hosted-service rules do not take away rights granted under
+              the MIT License for source code covered by that license.
+            </p>
+          </section>
+
+          <section id="ownership">
+            <h2>Ownership, open-source code, and media</h2>
+            <h3>Customodoro service and branding</h3>
+            <p>
+              Customodoro's name, branding, original visual design, original
+              written material, and other non-open-source materials are owned by
+              YabuTech or used with permission. These Terms do not transfer
+              those rights to you.
+            </p>
+
+            <h3>MIT-licensed source code</h3>
+            <p>
+              Source code identified in the public repository as covered by the
+              <a href="/LICENSE">MIT License</a> remains governed by that
+              license. The MIT License may allow copying, modification,
+              distribution, sublicensing, and commercial use subject to its
+              notice and warranty terms. If these Terms conflict with the MIT
+              License for covered code, the MIT License controls for that code.
+            </p>
+
+            <h3>Music, audio, artwork, and third-party material</h3>
+            <p>
+              Music, recordings, album art, fonts, research references, and
+              other third-party materials remain owned by their respective
+              rights holders and are used under applicable permissions or
+              licenses. Access through the hosted app does not grant permission
+              to extract, redistribute, sell, publicly perform, or reuse those
+              materials outside the app unless the relevant rights holder or
+              license separately permits it.
+            </p>
+          </section>
+
+          <section id="third-parties">
+            <h2>Third-party services and links</h2>
+            <p>
+              Customodoro may link to external resources, including the optional
+              NoteForms feedback form, LinkedIn, research sources, another
+              YabuTech app, and provider or open-source pages. External services
+              are controlled by their operators. We are not responsible for
+              their content, availability, security, or privacy practices.
+              Review their terms before using them.
+            </p>
+          </section>
+
+          <section id="availability">
+            <h2>Availability, suspension, and changes</h2>
+            <p>
+              We may maintain, update, change, suspend, or discontinue all or
+              part of Customodoro. Features can fail because of browser limits,
+              device settings, connectivity, provider outages, bugs, or other
+              circumstances. We do not promise uninterrupted availability or
+              preservation of local browser data.
+            </p>
+            <p>
+              We may block access to the hosted service when reasonably needed
+              to protect users, systems, legal rights, or service reliability,
+              or when these Terms are materially violated.
+            </p>
+          </section>
+
+          <section id="disclaimers">
+            <h2>Important disclaimers</h2>
+            <p>
+              Customodoro is a general productivity tool. It is not medical,
+              mental-health, educational, employment, financial, or other
+              professional advice. Timer intervals, streaks, points, sounds,
+              research summaries, and focus techniques may not suit every
+              person or situation. Stop or adjust your use if it causes
+              discomfort, unsafe distraction, or unhealthy work patterns.
+            </p>
+            <p>
+              To the extent permitted by law, the hosted service is provided
+              “as is” and “as available,” without warranties that it will be
+              error-free, secure, uninterrupted, fit for a particular purpose,
+              or produce specific productivity, health, academic, or
+              professional results. Rights and warranties that cannot lawfully
+              be excluded remain unaffected.
+            </p>
+          </section>
+
+          <section id="liability">
+            <h2>Limitation of liability</h2>
+            <p>
+              To the fullest extent permitted by applicable law, YabuTech will
+              not be liable for indirect, incidental, special, exemplary,
+              punitive, or consequential losses arising from your use of or
+              inability to use the service, including lost productivity, lost
+              opportunities, or loss of locally stored data.
+            </p>
+            <p>
+              Nothing in these Terms excludes or limits liability that cannot be
+              excluded by law, including liability arising from fraud, willful
+              misconduct, or other non-excludable obligations. The MIT License
+              separately states the warranty and liability terms for code
+              covered by that license.
+            </p>
+          </section>
+
+          <section id="law">
+            <h2>Governing law and disputes</h2>
+            <p>
+              These Terms are governed by the laws of the Republic of the
+              Philippines, without overriding mandatory consumer protections
+              that apply where you live. Before starting formal proceedings,
+              please contact us and make a good-faith effort to resolve the
+              concern. Disputes that cannot be resolved will be submitted to a
+              court of competent jurisdiction in the Philippines, unless
+              applicable law requires another forum.
+            </p>
+            <p>
+              If any part of these Terms is held invalid or unenforceable, it
+              will be limited or removed only to the extent necessary, and the
+              remaining parts will continue to apply. A failure to enforce a
+              provision is not a waiver of it.
+            </p>
+          </section>
+
+          <section id="contact">
+            <h2>Changes and contact</h2>
+            <p>
+              We may update these Terms to reflect service, legal, or security
+              changes. We will update the “Last modified” date and provide an
+              appropriate notice for material changes. Continued use after the
+              updated Terms take effect means you accept them, except where law
+              requires a different form of agreement.
+            </p>
+            <p>
+              Questions about these Terms may be sent to Brian Yabut (YabuTech)
+              at <a href="mailto:brianyabutech@gmail.com">brianyabutech@gmail.com</a>.
+            </p>
+          </section>
+        </article>
+      </main>
+
+      <div class="page-outro">
+        <footer class="footer" role="contentinfo" aria-label="Customodoro footer">
+          <div class="footer-inner">
+            <div class="footer-top">
+              <a class="footer-brand" href="/">
+                <img class="footer-brand-mark" src="favicon/android-chrome-192x192.png" width="28" height="28" alt="" decoding="async" />
+                <span class="footer-brand-name">Customodoro</span>
+              </a>
+              <nav class="footer-nav" aria-label="Site links">
+                <a href="/">Home</a>
+                <a href="/reverse">Reverse</a>
+                <a href="/pomodoro">Guide</a>
+                <a href="/#about">About</a>
+                <a href="/feedback">Feedback</a>
+                <a href="/privacy">Privacy</a>
+                <a href="/terms">Terms</a>
+                <a href="/LICENSE">License</a>
+              </nav>
+            </div>
+            <div class="footer-bottom">
+              <p class="footer-copy">&copy; <span class="copyright-year">2026</span> YabuTech &middot; Customodoro v3.7.11 &middot; Local-first, no ads</p>
+              <p class="footer-meta">
+                <a href="https://www.linkedin.com/in/brian-yabut/" target="_blank" rel="noopener noreferrer">Built by Brian Yabut</a>
+                <a href="mailto:brianyabutech@gmail.com">Contact</a>
+                <a href="https://wakey2x.vercel.app/" target="_blank" rel="noopener noreferrer">Try Wakey</a>
+              </p>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <script src="js/site-footer.js?v=2.1.0"></script>
+    <script src="js/copyright-year.js?v=1.0.0" defer></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/sw.js").catch(() => {});
+        });
+      }
+    </script>
+  </body>
+</html>

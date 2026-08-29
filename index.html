@@ -11,18 +11,9 @@
       content="xrFqm4zYAPEHRFkuFblD3N7PwmiMngvskCl9ARVp01E"
     />
 
-    <!-- Preconnect to Google Fonts for faster loading -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-    <!-- Inter Font - Expanded Weight Range -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
 
     <!-- Preload main CSS for performance -->
-    <link rel="stylesheet" href="css/style.css?v=3.9.5" />
+    <link rel="stylesheet" href="css/style.css?v=4.2.0" />
 
     <!-- ═══════════════════════════════════════════════════════════════════════════════
        SEO META TAGS
@@ -236,6 +227,7 @@
     <link rel="stylesheet" href="css/features.css?v=1.0.7" />
 
     <link rel="stylesheet" href="css/utilities.css?v=1.0.6" />
+    <link rel="stylesheet" href="css/site-shell.css?v=1.2.0" />
 
     <!-- Supabase Client -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
@@ -703,240 +695,148 @@
         </div>
       </div>
 
-      <section
-        class="pomodoro-preview"
-        aria-label="Introduction to Pomodoro Technique"
-      >
-        <div class="preview-content">
-          <h2 class="article-title">📚 What is the Pomodoro Technique?</h2>
-          <p class="article-preview">
-            Think in tomatoes, not hours. The Pomodoro Technique is a
-            time management method that breaks your workday into focused
-            25-minute sessions, followed by refreshing breaks. Created by
-            <b>Francesco Cirillo</b>, this approach helps many people structure
-            focus time and recovery time.
-          </p>
-          <div class="preview-features">
-            <span class="feature-tag">🧠 Enhanced Mental Clarity</span>
-            <span class="feature-tag">⚡ 25-Minute Focus Session</span>
-            <span class="feature-tag">🎯 Focus Session Tracking</span>
-            <span class="feature-tag">📚 Master Time Management</span>
-          </div>
-
-          <a href="/pomodoro" class="learn-more-btn">
-            Learn More About the Pomodoro Technique
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-              <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
-          </a>
-        </div>
-      </section>
-
-      <section class="seo-content" aria-label="About Customodoro">
-        <div class="seo-content-inner">
-          <div class="seo-content-intro">
-            <span class="seo-content-eyebrow">Focus your way</span>
-            <h2>What is Customodoro?</h2>
-            <p>
-              A free, customizable Pomodoro timer with Classic countdowns and
-              Reverse Pomodoro (Flowmodoro) sessions. Start instantly, shape
-              your focus routine, and keep your progress with or without an
-              account.
+      <div class="page-outro">
+        <div class="page-outro-inner">
+        <section
+          class="pomodoro-preview"
+          aria-label="Introduction to Pomodoro Technique"
+        >
+          <div class="preview-content">
+            <h2 class="article-title">📚 What is the Pomodoro Technique?</h2>
+            <p class="article-preview">
+              Think in tomatoes, not hours. The Pomodoro Technique is a
+              time management method that breaks your workday into focused
+              25-minute sessions, followed by refreshing breaks. Created by
+              <b>Francesco Cirillo</b>, this approach helps many people structure
+              focus time and recovery time.
             </p>
-          </div>
-
-          <details class="seo-content-details">
-            <summary>
-              <span>Explore features and common questions</span>
-              <span class="seo-summary-icon" aria-hidden="true"></span>
-            </summary>
-
-            <div class="seo-content-expanded">
-              <div class="seo-content-column">
-                <h3>Two ways to focus</h3>
-                <p>
-                  Classic Pomodoro counts down from a fixed interval. Reverse
-                  Pomodoro is a count-up focus mode that lets you work freely,
-                  then calculates a break from how long you worked.
-                </p>
-
-                <h3>Key features</h3>
-                <ul class="seo-feature-list">
-                  <li>Customizable intervals, sounds, and themes</li>
-                  <li>Daily focus streaks and productivity insights</li>
-                  <li>Achievements and a global leaderboard</li>
-                  <li>Installable PWA with offline timer access</li>
-                  <li>Optional cross-device account sync</li>
-                </ul>
-              </div>
-
-              <div class="seo-content-column">
-                <h3>Frequently asked questions</h3>
-                <dl class="seo-faq-list">
-                  <dt>Is Customodoro free?</dt>
-                  <dd>
-                    Yes. No account is required to start, and Customodoro is
-                    open source under the MIT license.
-                  </dd>
-
-                  <dt>What is Reverse Pomodoro?</dt>
-                  <dd>
-                    Also called Flowmodoro, it counts up while you focus and
-                    calculates your break from how long you worked.
-                  </dd>
-
-                  <dt>Does it work offline?</dt>
-                  <dd>
-                    Yes. Install Customodoro as a PWA and the timer can run
-                    offline after the first successful load.
-                  </dd>
-                </dl>
-              </div>
+            <div class="preview-features">
+              <span class="feature-tag">🧠 Enhanced Mental Clarity</span>
+              <span class="feature-tag">⚡ 25-Minute Focus Session</span>
+              <span class="feature-tag">🎯 Focus Session Tracking</span>
+              <span class="feature-tag">📚 Master Time Management</span>
             </div>
 
-            <div class="seo-content-actions">
-              <a href="/reverse">Try Reverse Pomodoro</a>
-              <a href="/pomodoro">Learn the Pomodoro Technique</a>
-            </div>
-          </details>
-        </div>
-      </section>
-
-      <!-- UPDATE!) -->
-      <footer class="footer">
-        <div class="footer-content">
-          <div class="footer-brand">
-            © <span class="copyright-year">2026</span> <strong>Customodoro</strong>
-            <span class="footer-version">v3.7.11</span>
-            • Handcrafted by <strong><em>YabuTech</em></strong>
+            <a href="/pomodoro" class="learn-more-btn">
+              Learn More About the Pomodoro Technique
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </a>
           </div>
-          <nav class="footer-links">
-            <a href="#" id="about-link-footer">
-              <svg
-                class="footer-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="16" x2="12" y2="12"></line>
-                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-              </svg>
-              <span>About</span>
-            </a>
-            <span class="footer-divider">•</span>
-            <a href="mailto:brianyabutech@gmail.com">
-              <svg
-                class="footer-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path
-                  d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
-                ></path>
-                <polyline points="22,6 12,13 2,6"></polyline>
-              </svg>
-              <span>Contact</span>
-            </a>
-            <span class="footer-divider">•</span>
-            <a
-              href="https://wakey2x.vercel.app/"
-              target="_blank"
-              rel="noopener"
-            >
-              <svg
-                class="footer-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path
-                  d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
-                ></path>
-                <polyline points="15 3 21 3 21 9"></polyline>
-                <line x1="10" y1="14" x2="21" y2="3"></line>
-              </svg>
-              <span>Try Other App</span>
-            </a>
-            <span class="footer-divider">•</span>
-            <a
-              href="https://www.linkedin.com/in/brian-yabut/"
-              target="_blank"
-              rel="noopener"
-            >
-              <svg
-                class="footer-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path
-                  d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
-                ></path>
-                <rect x="2" y="9" width="4" height="12"></rect>
-                <circle cx="4" cy="4" r="2"></circle>
-              </svg>
-              <span>Connect</span>
-            </a>
-            <span class="footer-divider">•</span>
-            <a href="/feedback">
-              <svg
-                class="footer-icon"
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path
-                  d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
-                ></path>
-              </svg>
-              <span>Feedback</span>
-            </a>
-          </nav>
+        </section>
+
+        <section class="seo-content" aria-label="About Customodoro">
+          <div class="seo-content-inner">
+            <div class="seo-content-intro">
+              <span class="seo-content-eyebrow">Focus your way</span>
+              <h2>What is Customodoro?</h2>
+              <p>
+                A free, customizable Pomodoro timer with Classic countdowns and
+                Reverse Pomodoro (Flowmodoro) sessions. Start instantly, shape
+                your focus routine, and keep your progress with or without an
+                account.
+              </p>
+            </div>
+
+            <details class="seo-content-details">
+              <summary>
+                <span>Explore features and common questions</span>
+                <span class="seo-summary-icon" aria-hidden="true"></span>
+              </summary>
+
+              <div class="seo-content-expanded">
+                <div class="seo-content-column">
+                  <h3>Two ways to focus</h3>
+                  <p>
+                    Classic Pomodoro counts down from a fixed interval. Reverse
+                    Pomodoro is a count-up focus mode that lets you work freely,
+                    then calculates a break from how long you worked.
+                  </p>
+
+                  <h3>Key features</h3>
+                  <ul class="seo-feature-list">
+                    <li>Customizable intervals, sounds, and themes</li>
+                    <li>Daily focus streaks and productivity insights</li>
+                    <li>Achievements and a global leaderboard</li>
+                    <li>Installable PWA with offline timer access</li>
+                    <li>Optional cross-device account sync</li>
+                  </ul>
+                </div>
+
+                <div class="seo-content-column">
+                  <h3>Frequently asked questions</h3>
+                  <dl class="seo-faq-list">
+                    <dt>Is Customodoro free?</dt>
+                    <dd>
+                      Yes. No account is required to start, and Customodoro is
+                      open source under the MIT license.
+                    </dd>
+
+                    <dt>What is Reverse Pomodoro?</dt>
+                    <dd>
+                      Also called Flowmodoro, it counts up while you focus and
+                      calculates your break from how long you worked.
+                    </dd>
+
+                    <dt>Does it work offline?</dt>
+                    <dd>
+                      Yes. Install Customodoro as a PWA and the timer can run
+                      offline after the first successful load.
+                    </dd>
+                  </dl>
+                </div>
+              </div>
+
+              <div class="seo-content-actions">
+                <a href="/reverse">Try Reverse Pomodoro</a>
+                <a href="/pomodoro">Learn the Pomodoro Technique</a>
+              </div>
+            </details>
+          </div>
+        </section>
         </div>
-      </footer>
+
+        <footer class="footer" role="contentinfo" aria-label="Customodoro footer">
+          <div class="footer-inner">
+            <div class="footer-top">
+              <a class="footer-brand" href="/">
+                <img class="footer-brand-mark" src="favicon/android-chrome-192x192.png" width="28" height="28" alt="" decoding="async" />
+                <span class="footer-brand-name">Customodoro</span>
+              </a>
+              <nav class="footer-nav" aria-label="Site links">
+                <a href="/">Home</a>
+                <a href="/reverse">Reverse</a>
+                <a href="/pomodoro">Guide</a>
+                <a href="#about" id="about-link-footer">About</a>
+                <a href="/feedback">Feedback</a>
+                <a href="/privacy">Privacy</a>
+                <a href="/terms">Terms</a>
+                <a href="/LICENSE">License</a>
+              </nav>
+            </div>
+            <div class="footer-bottom">
+              <p class="footer-copy">&copy; <span class="copyright-year">2026</span> YabuTech &middot; Customodoro v3.7.11 &middot; Local-first, no ads</p>
+              <p class="footer-meta">
+                <a href="https://www.linkedin.com/in/brian-yabut/" target="_blank" rel="noopener noreferrer">Built by Brian Yabut</a>
+                <a href="mailto:brianyabutech@gmail.com">Contact</a>
+                <a href="https://wakey2x.vercel.app/" target="_blank" rel="noopener noreferrer">Try Wakey</a>
+              </p>
+            </div>
+          </div>
+        </footer>
+      </div>
     </div>
 
     <!-- Fullscreen Button -->
@@ -2478,11 +2378,12 @@
     <script src="js/lockedin-mode.js?v=2.3.9" defer></script>
     <script src="js/locked-in-info-modal.js?v=2.3.5" defer></script>
     <script src="js/focus-mode.js?v=2.3.5" defer></script>
-    <script src="js/radial-menu.js?v=2.3.7" defer></script>
+    <script src="js/radial-menu.js?v=2.4.0" defer></script>
 
     <script src="js/bgm-player.js?v=2.3.7" defer></script>
     <script src="js/mini-music-player.js?v=2.3.6" defer></script>
 
+    <script src="js/site-footer.js?v=2.1.0" defer></script>
     <script src="js/about-modal.js?v=2.3.5" defer></script>
     <script src="js/theme-manager.js?v=2.6.3" defer></script>
 

@@ -11,6 +11,8 @@ const scannedTargets = [
   "reverse.html",
   "pomodoro.html",
   "feedback.html",
+  "privacy.html",
+  "terms.html",
   "sw.js",
   "extensions/pomodoro",
 ];
