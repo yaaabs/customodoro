@@ -53,7 +53,7 @@
           </nav>
         </div>
         <div class="footer-bottom">
-          <p class="footer-copy">&copy; <span class="copyright-year">2026</span> YabuTech &middot; Customodoro v3.7.11</p>
+          <p class="footer-copy">&copy; <span class="copyright-year">2026</span> YabuTech &middot; Customodoro v3.7.12</p>
           <p class="footer-meta">
             <a href="https://www.linkedin.com/in/brian-yabut/" target="_blank" rel="noopener noreferrer">Built by Brian Yabut</a>
             <a href="mailto:brianyabutech@gmail.com">Contact</a>

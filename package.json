@@ -1,6 +1,6 @@
 {
   "name": "customodoro",
-  "version": "3.7.11",
+  "version": "3.7.12",
   "description": "Customodoro - Vanilla JS Pomodoro Timer",
   "private": true,
   "scripts": {
