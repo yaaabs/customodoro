@@ -3,9 +3,9 @@
 
   function normalizePath(pathname) {
     const cleanPath = pathname
-      .replace(//(?:index)?.html$/i, "/")
-      .replace(/.html$/i, "")
-      .replace(//$/, "");
+      .replace(/\/(?:index)?\.html$/i, "/")
+      .replace(/\.html$/i, "")
+      .replace(/\/$/, "");
     return cleanPath || "/";
   }
 
@@ -13,7 +13,7 @@
     const currentPath = normalizePath(window.location.pathname);
     footer.querySelectorAll('.footer-nav a[href^="/"]').forEach((link) => {
       const targetPath = normalizePath(new URL(link.href, window.location.href).pathname);
-      if (targetPath === currentPath && targetPath !== "/LICENSE") {
+      if (targetPath === currentPath) {
         link.setAttribute("aria-current", "page");
       }
     });
@@ -31,10 +31,10 @@
 
     footer.setAttribute("role", "contentinfo");
     footer.setAttribute("aria-label", "Customodoro footer");
-    if (document.querySelector(".radial-menu-container")) {
-      footer.classList.add("footer--action-safe");
-    }
 
+    // Clearance for the floating action button is a stylesheet concern:
+    // this script is deferred and runs before radial-menu.js builds the
+    // button, so it cannot reliably detect one here.
     footer.innerHTML = `
       <div class="footer-inner">
         <div class="footer-top">
@@ -50,15 +50,15 @@
             <a href="/feedback">Feedback</a>
             <a href="/privacy">Privacy</a>
             <a href="/terms">Terms</a>
-            <a href="/LICENSE">License</a>
           </nav>
         </div>
         <div class="footer-bottom">
-          <p class="footer-copy">&copy; <span class="copyright-year">2026</span> YabuTech &middot; Customodoro v3.7.11 &middot; Local-first, no ads</p>
+          <p class="footer-copy">&copy; <span class="copyright-year">2026</span> YabuTech &middot; Customodoro v3.7.11</p>
           <p class="footer-meta">
             <a href="https://www.linkedin.com/in/brian-yabut/" target="_blank" rel="noopener noreferrer">Built by Brian Yabut</a>
             <a href="mailto:brianyabutech@gmail.com">Contact</a>
             <a href="https://wakey2x.vercel.app/" target="_blank" rel="noopener noreferrer">Try Wakey</a>
+            <a href="/LICENSE">MIT License</a>
           </p>
         </div>
       </div>

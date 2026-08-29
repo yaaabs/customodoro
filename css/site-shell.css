@@ -326,9 +326,14 @@ body.focus-mode-active .page-outro {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
 }
 
-/* Keep the last line clear of the floating radial action button. */
+/*
+ * Keep the last line clear of the floating action button. This is done in CSS
+ * rather than JavaScript on purpose: site-footer.js is deferred and renders
+ * before radial-menu.js builds the button, so it cannot detect one. :has()
+ * re-evaluates when the button is added, whenever that happens.
+ */
 @media (max-width: 37.49rem) {
-  .footer--action-safe {
+  body:has(.radial-menu-container) .footer {
     padding-bottom: 5.5rem;
   }
 

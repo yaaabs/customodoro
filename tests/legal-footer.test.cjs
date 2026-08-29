@@ -130,10 +130,12 @@ describe("legal pages and responsive footer", () => {
       "Feedback",
       "Privacy",
       "Terms",
-      "License",
     ]) {
       assert.match(script, new RegExp(`>${label}</a>`));
     }
+    // The licence is fine print, not a destination alongside real pages.
+    assert.doesNotMatch(script, /class="footer-nav"[\s\S]*?>License<[\s\S]*?<\/nav>/);
+    assert.match(script, /<a href="\/LICENSE">MIT License<\/a>/);
     assert.match(script, /role", "contentinfo"/);
     assert.match(script, /aria-label", "Customodoro footer"/);
     assert.match(script, /class="footer-nav" aria-label="Site links"/);
@@ -141,7 +143,12 @@ describe("legal pages and responsive footer", () => {
     assert.doesNotMatch(script, /footer-group|footer-link-list|<details/);
 
     assert.match(shell, /\.footer-nav a\s*\{[^}]*min-height:\s*44px/s);
-    assert.match(shell, /\.footer--action-safe\s*\{[^}]*padding-bottom:\s*5\.5rem/s);
+    // Clearance for the FAB must not depend on script order (both are deferred).
+    assert.match(
+      shell,
+      /body:has\(\.radial-menu-container\) \.footer\s*\{[^}]*padding-bottom:\s*5\.5rem/s,
+    );
+    assert.doesNotMatch(script, /footer--action-safe/);
     assert.match(shell, /@media \(prefers-reduced-motion: reduce\)/);
     assert.doesNotMatch(read("css/style.css"), /\.footer(?:-|\s*\{)/);
   });
