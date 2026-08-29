@@ -190,6 +190,11 @@ describe("legal pages and responsive footer", () => {
       /<a href="https:\/\/www\.linkedin\.com\/in\/brian-yabut\/"[^>]*>Handcrafted by Brian Yabut<\/a>/,
     );
     assert.doesNotMatch(script, /Wakey|wakey2x/);
+    // YabuTech redirects but must not be painted as a link on any device.
+    assert.match(
+      shell,
+      /\.footer-copy a,\s*\.footer-copy a:visited\s*\{[^}]*color:\s*inherit/s,
+    );
     // Every external footer link opens safely.
     for (const link of script.match(/<a href="https?:\/\/[^"]+"[^>]*>/g) || []) {
       assert.match(link, /rel="noopener noreferrer"/, link);
@@ -260,6 +265,16 @@ describe("legal pages and responsive footer", () => {
     assert.match(shell, /\.page-outro\s*\{[^}]*margin-left:\s*calc\(50% - 50vw\)/s);
     assert.match(shell, /body:has\(\.page-outro\)\s*\{[^}]*padding-bottom:\s*0/s);
     assert.match(shell, /body\.focus-mode-active \.page-outro/);
+
+    // A transparent track let the timer colour show beside the band, which
+    // made the band look like it stopped short of the edge.
+    assert.match(
+      shell,
+      /body::-webkit-scrollbar-track\s*\{[^}]*background-color:\s*var\(--outro-surface\)/s,
+    );
+    assert.match(shell, /scrollbar-color:\s*var\(--scrollbar-thumb\) var\(--outro-surface\)/);
+    assert.match(shell, /body\.theme-dark[\s\S]{0,120}\{\s*color-scheme: dark/);
+    assert.doesNotMatch(read("css/style.css"), /scrollbar/);
 
     for (const page of publicPages) {
       const html = read(page);
