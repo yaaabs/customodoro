@@ -155,7 +155,7 @@ body.focus-mode-active .page-outro {
   color: var(--outro-muted);
   font-size: 0.875rem;
   line-height: 1.6;
-  text-align: left;
+  text-align: center;
   background: none;
   border: 0;
   border-top: 1px solid var(--outro-border);
@@ -171,16 +171,18 @@ body.focus-mode-active .page-outro {
 }
 
 .footer-inner {
+  display: flex;
   max-width: 46rem;
+  flex-direction: column;
+  align-items: center;
   margin: 0 auto;
 }
 
 .footer-top {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem 1.5rem;
+  gap: 0.65rem;
 }
 
 /* ------------------------------------------------------------- brand mark */
@@ -213,6 +215,7 @@ body.focus-mode-active .page-outro {
 .footer-nav {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 0 0.1rem;
 }
 
@@ -245,12 +248,12 @@ body.focus-mode-active .page-outro {
 
 .footer-bottom {
   display: flex;
-  flex-wrap: wrap;
+  width: 100%;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.35rem 1.5rem;
-  margin-top: 0.9rem;
-  padding-top: 0.9rem;
+  gap: 0.4rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
   border-top: 1px solid var(--outro-border);
 }
 
@@ -264,6 +267,7 @@ body.focus-mode-active .page-outro {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
   gap: 0 0.9rem;
   margin: 0;
   font-size: 0.78rem;
@@ -337,18 +341,13 @@ body.focus-mode-active .page-outro {
     padding-bottom: 5.5rem;
   }
 
-  .footer-top,
-  .footer-bottom {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .footer-nav {
-    margin-left: -0.6rem;
-  }
-
   .footer-nav a {
+    padding: 0.3rem 0.5rem;
     font-size: 0.82rem;
+  }
+
+  .footer-meta {
+    gap: 0 0.75rem;
   }
 }
 

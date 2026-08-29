@@ -135,7 +135,10 @@ describe("legal pages and responsive footer", () => {
     }
     // The licence is fine print, not a destination alongside real pages.
     assert.doesNotMatch(script, /class="footer-nav"[\s\S]*?>License<[\s\S]*?<\/nav>/);
-    assert.match(script, /<a href="\/LICENSE">MIT License<\/a>/);
+    assert.match(
+      script,
+      /<a href="https:\/\/github\.com\/yaaabs\/customodoro"[^>]*>MIT License<\/a>/,
+    );
     assert.match(script, /role", "contentinfo"/);
     assert.match(script, /aria-label", "Customodoro footer"/);
     assert.match(script, /class="footer-nav" aria-label="Site links"/);
@@ -149,6 +152,14 @@ describe("legal pages and responsive footer", () => {
       /body:has\(\.radial-menu-container\) \.footer\s*\{[^}]*padding-bottom:\s*5\.5rem/s,
     );
     assert.doesNotMatch(script, /footer--action-safe/);
+
+    // Everything reads as one centred column at every width.
+    assert.match(shell, /\.footer\s*\{[^}]*text-align:\s*center/s);
+    assert.match(shell, /\.footer-inner\s*\{[^}]*align-items:\s*center/s);
+    assert.match(shell, /\.footer-nav\s*\{[^}]*justify-content:\s*center/s);
+    assert.match(shell, /\.footer-bottom\s*\{[^}]*align-items:\s*center/s);
+    assert.match(shell, /\.footer-meta\s*\{[^}]*justify-content:\s*center/s);
+    assert.doesNotMatch(shell, /align-items:\s*flex-start/);
     assert.match(shell, /@media \(prefers-reduced-motion: reduce\)/);
     assert.doesNotMatch(read("css/style.css"), /\.footer(?:-|\s*\{)/);
   });

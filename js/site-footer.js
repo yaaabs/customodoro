@@ -58,7 +58,7 @@
             <a href="https://www.linkedin.com/in/brian-yabut/" target="_blank" rel="noopener noreferrer">Built by Brian Yabut</a>
             <a href="mailto:brianyabutech@gmail.com">Contact</a>
             <a href="https://wakey2x.vercel.app/" target="_blank" rel="noopener noreferrer">Try Wakey</a>
-            <a href="/LICENSE">MIT License</a>
+            <a href="https://github.com/yaaabs/customodoro" target="_blank" rel="noopener noreferrer">MIT License</a>
           </p>
         </div>
       </div>
