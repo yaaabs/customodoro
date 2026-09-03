@@ -42,3 +42,9 @@ rules/
 scripts/
 .github/copilot-instructions.md
 AGENTS.md
+
+# Versioned operational assets used by the monthly badge workflow.
+/supabase/
+!/scripts/
+scripts/*
+!/scripts/monthly-leaderboard-badges.js

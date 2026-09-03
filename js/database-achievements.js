@@ -1631,7 +1631,31 @@
     return { maxStreak: maxRun, unlocks: resultUnlocks };
   }
 
-  function loadAchievements(containerId) {
+  function getPersistedMonthlyBadges(userObj) {
+    const userId = userObj && typeof userObj === "object" ? userObj.userId : null;
+    const client = window.leaderboardModal?.leaderboard?.supabase;
+    if (!userId || !client) return Promise.resolve([]);
+
+    return client
+      .from("monthly_badge_awards")
+      .select("title, description, icon_path, awarded_on, month_key, category")
+      .eq("user_id", userId)
+      .order("awarded_on", { ascending: false })
+      .then(({ data, error }) => {
+        if (error) throw error;
+        return (data || []).map((award) => ({
+          title: award.title,
+          description: award.description,
+          icon: award.icon_path,
+          date: award.awarded_on,
+          monthKey: award.month_key,
+          category: award.category,
+        }));
+      })
+      .catch(() => []);
+  }
+
+  function loadAchievements(containerId, persistedMonthlyBadges = null) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
@@ -1683,7 +1707,16 @@
 
     currentAchievementIdentity = identityKey;
 
-    const rawBadges = findUserAchievements(identityKey);
+    const rawBadges = [
+      ...findUserAchievements(identityKey),
+      ...(Array.isArray(persistedMonthlyBadges) ? persistedMonthlyBadges : []),
+    ];
+
+    if (persistedMonthlyBadges === null && userObj && typeof userObj === "object") {
+      getPersistedMonthlyBadges(userObj).then((badges) => {
+        if (badges.length > 0) loadAchievements(containerId, badges);
+      });
+    }
     // Note: don't early-return when there are no hardcoded badges for this user.
     // We will still compute streak badges from frontend productivity stats and render them.
 

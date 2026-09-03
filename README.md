@@ -28,6 +28,16 @@ leaderboard participation.
 | **Classic** | Counts down through customizable work, short-break, and long-break sessions | Study blocks, planned sprints, and repeatable routines |
 | **Reverse** | Counts focused time upward and awards a break based on the work completed | Deep work, creative flow, and tasks with uncertain duration |
 
+## Monthly leaderboard badges
+
+Apply [`supabase/migrations/20260903000000_monthly_badges.sql`](supabase/migrations/20260903000000_monthly_badges.sql) once in the Supabase SQL editor. Then add the four month-prefixed WebP assets and create a local `.env` with `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`.
+
+```bash
+npm run monthly-badges -- 2026-08
+```
+
+The command saves an immutable snapshot and can be safely rerun. The normal migration contains no destructive operation. For the rare case of a verified incorrect finalized month, review and explicitly apply [`supabase/manual/force-correct-monthly-badges.sql`](supabase/manual/force-correct-monthly-badges.sql) before using `--force-correct`.
+
 Reverse mode includes a standard one-hour workflow and a dynamic mode for
 longer sessions with configurable break tiers.
 
