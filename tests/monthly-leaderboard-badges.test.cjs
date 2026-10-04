@@ -11,6 +11,9 @@ const {
   parseWinnersFile,
   applyManualWinners,
 } = require("../scripts/monthly-leaderboard-badges.js");
+const { createHarness } = require("./helpers/browser-harness.cjs");
+
+const repoRoot = path.resolve(__dirname, "..");
 
 function user(user_id, username, dates) {
   return { user_id, username, data: { productivityStatsByDay: dates } };
@@ -78,4 +81,30 @@ test("winners.txt picks override the calculated winners", () => {
   assert.equal(winners.winners.overall_champion.userId, "b");
   assert.throws(() => parseWinnersFile("focus: Ben\n"), /missing: session, streak, champion/);
   assert.throws(() => applyManualWinners(calculateMonthlyWinners(users, month), { ...picks, total_focus: "Nobody" }, users, month), /No account/);
+});
+
+function renderedBadges(username) {
+  const harness = createHarness({ repoRoot });
+  harness.evaluate(`window.authService = { getCurrentUser() { return { username: ${JSON.stringify(username)} }; } };`);
+  harness.loadScript("js/database-achievements.js");
+  harness.evaluate(`
+    const container = document.createElement("div");
+    container.id = "achievements";
+    document.body.appendChild(container);
+    window.loadAchievements("achievements");
+  `);
+  return JSON.parse(harness.evaluate("JSON.stringify(Array.from(document.querySelectorAll('.badge')).map((el) => ({ title: el.dataset.badgeTitle, desc: el.dataset.badgeDesc, date: el.dataset.badgeDate })))"));
+}
+
+test("September 2026 winners receive their hardcoded badges", () => {
+  const september = (badges) => badges.filter((badge) => badge.desc.endsWith("in September.") && badge.date === "2026-10-01").map((badge) => badge.title).sort();
+  assert.deepEqual(september(renderedBadges("bb")), ["Focus King"]);
+  assert.deepEqual(september(renderedBadges("Kumari")), ["Overall Champion", "Session Master", "Streak Legend"]);
+});
+
+test("every hardcoded custom badge icon exists on disk", () => {
+  const source = fs.readFileSync(path.join(repoRoot, "js", "database-achievements.js"), "utf8");
+  const icons = [...source.matchAll(/icon: "(images\/badges\/custom-badges\/[^"]+)"/g)].map((match) => match[1]);
+  assert.ok(icons.length > 40);
+  assert.deepEqual(icons.filter((icon) => !fs.existsSync(path.join(repoRoot, icon))), []);
 });

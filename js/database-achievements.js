@@ -364,7 +364,7 @@
       // Focus King Badge for April
       {
         title: "Focus King",
-        icon: "images/badges/custom-badges/2026-04/april-focus-points.webp",
+        icon: "images/badges/custom-badges/2026-04/april-focus-points.png",
         description: "Crowned for earning the highest Focus Points in April.",
         date: "2026-05-01",
       },
@@ -413,6 +413,31 @@
         description: "Recognized for completing the most sessions in July.",
         date: "2026-08-01",
       },
+
+      // Session Master Badge for September
+      {
+        title: "Session Master",
+        icon: "images/badges/custom-badges/2026-09/sept-session.webp",
+        description: "Recognized for completing the most sessions in September.",
+        date: "2026-10-01",
+      },
+
+      // Streak Legend Badge for September
+      {
+        title: "Streak Legend",
+        icon: "images/badges/custom-badges/2026-09/sept-streak.webp",
+        description: "Honored for holding the longest streak in September.",
+        date: "2026-10-01",
+      },
+
+      // Overall Champion Badge for September
+      {
+        title: "Overall Champion",
+        icon: "images/badges/custom-badges/2026-09/sept-champion.webp",
+        description:
+          "Awarded for being the top overall performer with the highest average across all categories in September.",
+        date: "2026-10-01",
+      },
     ],
     //================================================================//
     //================================================================//
@@ -444,6 +469,19 @@
         icon: "images/badges/custom-badges/2026-07/july-streak.webp",
         description: "Honored for holding the longest streak in July.",
         date: "2026-08-01",
+      },
+    ],
+    //================================================================//
+
+    //================================================================//
+    bb: [
+      // Focus King Badge for September
+      {
+        title: "Focus King",
+        icon: "images/badges/custom-badges/2026-09/sept-focus.webp",
+        description:
+          "Crowned for earning the highest Focus Points in September.",
+        date: "2026-10-01",
       },
     ],
     //================================================================//
