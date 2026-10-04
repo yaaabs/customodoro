@@ -8,6 +8,8 @@ const {
   getBadgeAssets,
   calculateMonthlyWinners,
   buildAwards,
+  parseWinnersFile,
+  applyManualWinners,
 } = require("../scripts/monthly-leaderboard-badges.js");
 
 function user(user_id, username, dates) {
@@ -59,4 +61,21 @@ test("ties use alphabetical username order", () => {
   ], month);
   assert.equal(winners.winners.total_focus.username, "Amy");
   assert.equal(winners.winners.total_sessions.username, "Amy");
+});
+
+test("winners.txt picks override the calculated winners", () => {
+  const month = parseMonthKey("2026-08", new Date(2026, 8, 3));
+  const users = [
+    user("a", "Amy", { "2026-08-01": { total_minutes: 900, classic: 20 } }),
+    user("b", "Ben", { "2026-08-01": { total_minutes: 100, classic: 2 } }),
+  ];
+  const picks = parseWinnersFile("# August\nfocus: ben\nsession: Amy\nstreak: Ben\nchampion: Ben\n");
+  const winners = applyManualWinners(calculateMonthlyWinners(users, month), picks, users, month);
+  assert.equal(winners.winners.total_focus.username, "Ben");
+  assert.equal(winners.winners.total_focus.score, 20);
+  assert.equal(winners.topByCategory.total_focus[0].userId, "b");
+  assert.equal(winners.winners.total_sessions.username, "Amy");
+  assert.equal(winners.winners.overall_champion.userId, "b");
+  assert.throws(() => parseWinnersFile("focus: Ben\n"), /missing: session, streak, champion/);
+  assert.throws(() => applyManualWinners(calculateMonthlyWinners(users, month), { ...picks, total_focus: "Nobody" }, users, month), /No account/);
 });

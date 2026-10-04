@@ -36,6 +36,8 @@ Apply [`supabase/migrations/20260903000000_monthly_badges.sql`](supabase/migrati
 npm run monthly-badges -- 2026-08
 ```
 
+To pick the winners yourself, add a `winners.txt` next to that month's badge images (lines like `focus: username`, plus `session:`, `streak:` and `champion:`). It is gitignored, and the command uses it instead of the calculated winners.
+
 The command saves an immutable snapshot and can be safely rerun. The normal migration contains no destructive operation. For the rare case of a verified incorrect finalized month, review and explicitly apply [`supabase/manual/force-correct-monthly-badges.sql`](supabase/manual/force-correct-monthly-badges.sql) before using `--force-correct`.
 
 Reverse mode includes a standard one-hour workflow and a dynamic mode for

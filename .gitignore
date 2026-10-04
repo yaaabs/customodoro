@@ -48,3 +48,4 @@ AGENTS.md
 !/scripts/
 scripts/*
 !/scripts/monthly-leaderboard-badges.js
+images/badges/custom-badges/*/winners.txt
