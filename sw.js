@@ -1,4 +1,4 @@
-const CACHE_NAME = "customodoro-static-v8.6.0";
+const CACHE_NAME = "customodoro-static-v8.6.1";
 const ASSETS_CACHE = "customodoro-assets-v7.1.0";
 const swLogger = (() => {
   const nativeError = console.error.bind(console);

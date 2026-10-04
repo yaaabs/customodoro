@@ -399,16 +399,12 @@ class DatabaseLeaderboard {
     }
 
     try {
-      const { data: snapshots, error } = await this.supabase
-        .from('monthly_leaderboard_snapshots')
-        .select('month_key, participant_count')
-        .order('month_key', { ascending: true });
-      if (error) throw error;
-
-      const participantCounts = Object.fromEntries((snapshots || []).map((snapshot) => [
-        snapshot.month_key,
-        snapshot.participant_count || 0,
-      ]));
+      // Finalized snapshots override the live counts; months not finalized yet still show live activity.
+      const [liveCounts, finalizedCounts] = await Promise.all([
+        this.getLiveMonthlyParticipantCounts(),
+        this.getFinalizedSnapshotCounts(),
+      ]);
+      const participantCounts = { ...liveCounts, ...finalizedCounts };
       const sortedMonthKeys = Object.keys(participantCounts).sort();
       const today = this.getUserTodayDate();
       const currentYear = today.getFullYear();
@@ -441,6 +437,42 @@ class DatabaseLeaderboard {
         latestMonthKey: null,
       };
     }
+  }
+
+  async getLiveMonthlyParticipantCounts() {
+    const users = await this.getAllLeaderboardUsers();
+    const participantCounts = {};
+
+    users.forEach((user) => {
+      const activeMonths = new Set();
+      Object.entries(this.extractProductivityStats(user.data)).forEach(([dateKey, dayData]) => {
+        if (dayData && (dayData.total_minutes || 0) > 0) activeMonths.add(dateKey.slice(0, 7));
+      });
+      activeMonths.forEach((monthKey) => {
+        participantCounts[monthKey] = (participantCounts[monthKey] || 0) + 1;
+      });
+    });
+
+    return participantCounts;
+  }
+
+  // Snapshots are optional: a missing or unreadable table must not break the history tab.
+  async getFinalizedSnapshotCounts() {
+    const { data: snapshots, error } = await this.supabase
+      .from('monthly_leaderboard_snapshots')
+      .select('month_key, participant_count');
+    if (error) {
+      window.customodoroLogger.error("DATABASE_LEADERBOARD_FETCHING_FINALIZED_MONTHLY_SNAPSHOTS");
+      return {};
+    }
+    return Object.fromEntries((snapshots || []).map((snapshot) => [
+      snapshot.month_key,
+      snapshot.participant_count || 0,
+    ]));
+  }
+
+  async getMonthlyHistory(year, month) {
+    return (await this.getFinalizedMonthlySnapshot(year, month)) || this.getMonthlyWinners(year, month);
   }
 
   async getFinalizedMonthlySnapshot(year, month) {
@@ -1034,7 +1066,7 @@ class DatabaseLeaderboardModal {
         status: 'available',
         participantCount,
         label: 'Ready',
-        hint: `${participantCount} participant${participantCount === 1 ? '' : 's'} recorded activity in this finalized snapshot.`,
+        hint: `${participantCount} participant${participantCount === 1 ? '' : 's'} recorded activity in this month.`,
         downloadable: true,
       };
     }
@@ -1043,8 +1075,8 @@ class DatabaseLeaderboardModal {
       key: monthKey,
       status: 'empty',
       participantCount: 0,
-      label: 'Awaiting awards',
-      hint: 'This completed month will appear after its badge awards are finalized.',
+      label: 'No history',
+      hint: 'No completed winners snapshot is available for this month.',
       downloadable: false,
     };
   }
@@ -1128,7 +1160,7 @@ class DatabaseLeaderboardModal {
             ? 'Month still open'
             : state.status === 'future'
               ? 'Coming later'
-              : 'Awaiting awards';
+              : 'No winners saved';
 
         return `
           <button
@@ -1171,7 +1203,7 @@ class DatabaseLeaderboardModal {
         <div class="leaderboard-history-controls-top">
           <div class="leaderboard-history-controls-copy">
             <span class="leaderboard-history-kicker">Monthly Winners History</span>
-            <p class="leaderboard-history-controls-text">Monthly winners unlock after their badges are finalized. Current and future months stay grayed out. Guest and local-only users are not included.</p>
+            <p class="leaderboard-history-controls-text">Completed months unlock automatically. Current and future months stay grayed out until they are ready. Guest and local-only users are not included.</p>
           </div>
           <div class="leaderboard-history-toolbar">
             <select class="leaderboard-export-select" id="leaderboard-history-year" aria-label="Select history year">
@@ -1223,7 +1255,7 @@ class DatabaseLeaderboardModal {
       return cached.data;
     }
 
-    const data = await this.leaderboard.getFinalizedMonthlySnapshot(year, month);
+    const data = await this.leaderboard.getMonthlyHistory(year, month);
     this.historyPreviewCache[cacheKey] = {
       data,
       timestamp: Date.now(),
@@ -1440,7 +1472,7 @@ class DatabaseLeaderboardModal {
         `;
       }
 
-      const winners = await this.leaderboard.getFinalizedMonthlySnapshot(year, month);
+      const winners = await this.leaderboard.getMonthlyHistory(year, month);
       if (!winners || !winners.totalParticipants) {
         throw new Error('No winners data found');
       }
