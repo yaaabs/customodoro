@@ -49,3 +49,5 @@ AGENTS.md
 scripts/*
 !/scripts/monthly-leaderboard-badges.js
 images/badges/custom-badges/*/winners.txt
+
+.claude/

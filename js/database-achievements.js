@@ -486,6 +486,43 @@
     ],
     //================================================================//
 
+    //================================================================//
+    tokubetsu: [
+      // Focus King Badge for October
+      {
+        title: "Focus King",
+        icon: "images/badges/custom-badges/2026-10/oct-focus.webp",
+        description: "Crowned for earning the highest Focus Points in October.",
+        date: "2026-10-01",
+      },
+
+      // Session Master Badge for October
+      {
+        title: "Session Master",
+        icon: "images/badges/custom-badges/2026-10/oct-session.webp",
+        description: "Recognized for completing the most sessions in October.",
+        date: "2026-10-01",
+      },
+
+      // Streak Legend Badge for October
+      {
+        title: "Streak Legend",
+        icon: "images/badges/custom-badges/2026-10/oct-streak.webp",
+        description: "Honored for holding the longest streak in October.",
+        date: "2026-10-01",
+      },
+
+      // Overall Champion Badge for October
+      {
+        title: "Overall Champion",
+        icon: "images/badges/custom-badges/2026-10/oct-champion.webp",
+        description:
+          "Awarded for being the top overall performer with the highest average across all categories in October.",
+        date: "2026-10-01",
+      },
+    ],
+    //================================================================//
+
 
   };
 
@@ -1745,10 +1782,12 @@
 
     currentAchievementIdentity = identityKey;
 
-    const rawBadges = [
-      ...findUserAchievements(identityKey),
-      ...(Array.isArray(persistedMonthlyBadges) ? persistedMonthlyBadges : []),
-    ];
+    const hardcodedBadges = findUserAchievements(identityKey);
+    // Skip database awards already listed above (the award script writes both).
+    const extraBadges = (Array.isArray(persistedMonthlyBadges) ? persistedMonthlyBadges : []).filter(
+      (badge) => !hardcodedBadges.some((known) => known.icon === badge.icon),
+    );
+    const rawBadges = [...hardcodedBadges, ...extraBadges];
 
     if (persistedMonthlyBadges === null && userObj && typeof userObj === "object") {
       getPersistedMonthlyBadges(userObj).then((badges) => {

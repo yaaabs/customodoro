@@ -30,15 +30,18 @@ leaderboard participation.
 
 ## Monthly leaderboard badges
 
-Apply [`supabase/migrations/20260903000000_monthly_badges.sql`](supabase/migrations/20260903000000_monthly_badges.sql) once in the Supabase SQL editor. Then add the four month-prefixed WebP assets and create a local `.env` with `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`.
+1. Drop the four month-prefixed WebP badge images into `images/badges/custom-badges/YYYY-MM/` (for example `oct-focus.webp`, `oct-session.webp`, `oct-streak.webp`, `oct-champion.webp`).
+2. Run the script for the most recent month (add a `YYYY-MM` to pick another one). It needs a local `.env` with `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` to read the leaderboard.
+3. It writes the winners' badges into `js/database-achievements.js`: added to the user's existing entry, or as a new entry below the last user. Badges already listed are skipped, so rerunning is safe.
 
 ```bash
-npm run monthly-badges -- 2026-08
+npm run monthly-badges -- --dry-run   # preview the winners and the entries it would add
+npm run monthly-badges                # write them
 ```
 
 To pick the winners yourself, add a `winners.txt` next to that month's badge images (lines like `focus: username`, plus `session:`, `streak:` and `champion:`). It is gitignored, and the command uses it instead of the calculated winners.
 
-The command saves an immutable snapshot and can be safely rerun. The normal migration contains no destructive operation. For the rare case of a verified incorrect finalized month, review and explicitly apply [`supabase/manual/force-correct-monthly-badges.sql`](supabase/manual/force-correct-monthly-badges.sql) before using `--force-correct`.
+Optional: `--finalize` also saves an immutable leaderboard snapshot to Supabase (apply [`supabase/migrations/20260903000000_monthly_badges.sql`](supabase/migrations/20260903000000_monthly_badges.sql) and the `20261004000000` fix once first). For a verified incorrect finalized month, review and apply [`supabase/manual/force-correct-monthly-badges.sql`](supabase/manual/force-correct-monthly-badges.sql) before using `--force-correct`.
 
 Reverse mode includes a standard one-hour workflow and a dynamic mode for
 longer sessions with configurable break tiers.

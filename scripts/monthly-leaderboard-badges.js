@@ -15,6 +15,11 @@ const CATEGORY_META = {
   overall_champion: { title: "Overall Champion", suffix: "champion", description: (month) => `Awarded for being the top overall performer with the highest average across all categories in ${month}.` },
 };
 
+function previousMonthKey(today = new Date()) {
+  const previous = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+  return `${previous.getFullYear()}-${String(previous.getMonth() + 1).padStart(2, "0")}`;
+}
+
 function parseMonthKey(value, today = new Date()) {
   if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(value || "")) throw new Error("Month must use YYYY-MM.");
   const [year, oneBasedMonth] = value.split("-").map(Number);
@@ -118,6 +123,69 @@ function buildAwards(winners, month, assets) {
   });
 }
 
+const ACHIEVEMENTS_FILE = path.join(ROOT, "js", "database-achievements.js");
+const SEPARATOR = "    //================================================================//";
+
+function formatAchievement(award, monthName) {
+  const description = JSON.stringify(award.description);
+  const oneLine = `        description: ${description},`;
+  return [
+    `      // ${award.title} Badge for ${monthName}`,
+    "      {",
+    `        title: ${JSON.stringify(award.title)},`,
+    `        icon: ${JSON.stringify(award.icon_path)},`,
+    oneLine.length <= 80 ? oneLine : `        description:\n          ${description},`,
+    `        date: ${JSON.stringify(award.awarded_on)},`,
+    "      },",
+  ].join("\n");
+}
+
+// Adds each award to the hardcodedAchievements map: appended to the user's existing block,
+// or a new block below the last user. Awards whose icon is already listed for the user are skipped.
+function addAwardsToSource(source, awards, monthName) {
+  const start = source.indexOf("const hardcodedAchievements = {");
+  const end = start < 0 ? -1 : source.indexOf("\n  };", start);
+  if (end < 0) throw new Error("Could not find hardcodedAchievements in js/database-achievements.js.");
+  let body = source.slice(start, end);
+  const byUser = new Map();
+  awards.forEach((award) => {
+    const key = award.username.toLowerCase();
+    if (!byUser.has(key)) byUser.set(key, { username: award.username, awards: [] });
+    byUser.get(key).awards.push(award);
+  });
+  const added = [];
+  for (const { username, awards: list } of byUser.values()) {
+    const blocks = [...body.matchAll(/^    ("[^"\n]+"|[A-Za-z_$][\w$]*): \[\n/gm)];
+    const existing = blocks.find((match) => match[1].replace(/^"|"$/g, "").toLowerCase() === username.toLowerCase());
+    if (existing) {
+      const blockStart = existing.index + existing[0].length;
+      const close = body.indexOf("\n    ],", blockStart);
+      const fresh = list.filter((award) => !body.slice(blockStart, close).includes(JSON.stringify(award.icon_path)));
+      if (!fresh.length) continue;
+      body = body.slice(0, close) + "\n\n" + fresh.map((award) => formatAchievement(award, monthName)).join("\n\n") + body.slice(close);
+      added.push({ username, awards: fresh, newUser: false });
+    } else {
+      const last = blocks[blocks.length - 1];
+      let insertAt = body.indexOf("\n    ],", last.index) + "\n    ],".length;
+      if (body.slice(insertAt).startsWith("\n" + SEPARATOR)) insertAt += 1 + SEPARATOR.length;
+      const key = /^[A-Za-z_$][\w$]*$/.test(username) ? username : JSON.stringify(username);
+      const block = `\n\n${SEPARATOR}\n    ${key}: [\n${list.map((award) => formatAchievement(award, monthName)).join("\n\n")}\n    ],\n${SEPARATOR}`;
+      body = body.slice(0, insertAt) + block + body.slice(insertAt);
+      added.push({ username, awards: list, newUser: true });
+    }
+  }
+  return { source: source.slice(0, start) + body + source.slice(end), added };
+}
+
+function syncAchievementsFile(awards, monthName, write, file = ACHIEVEMENTS_FILE) {
+  const source = fs.readFileSync(file, "utf8");
+  const { source: next, added } = addAwardsToSource(source, awards, monthName);
+  if (write && next !== source) fs.writeFileSync(file, next);
+  const verb = write ? "Added" : "Would add";
+  added.forEach(({ username, awards: list, newUser }) => console.log(`${verb} to js/database-achievements.js: ${username}${newUser ? " (new user)" : ""} → ${list.map((award) => award.title).join(", ")}`));
+  if (!added.length) console.log("js/database-achievements.js already has these badges.");
+}
+
 function readEnv(file = path.join(ROOT, ".env")) {
   if (!fs.existsSync(file)) return;
   fs.readFileSync(file, "utf8").split(/\r?\n/).forEach((line) => { const match = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*?)\s*$/); if (match && !process.env[match[1]]) process.env[match[1]] = match[2].replace(/^['"]|['"]$/g, ""); });
@@ -128,9 +196,9 @@ function request(url, options, body) {
 }
 
 async function run(argv = process.argv.slice(2)) {
-  const force = argv.includes("--force-correct"); const monthArg = argv.find((arg) => !arg.startsWith("--"));
+  const force = argv.includes("--force-correct"); const finalize = force || argv.includes("--finalize");
   const dryRun = argv.includes("--dry-run");
-  const month = parseMonthKey(monthArg); const assets = getBadgeAssets(month);
+  const month = parseMonthKey(argv.find((arg) => !arg.startsWith("--")) || previousMonthKey()); const assets = getBadgeAssets(month);
   readEnv(); const url = process.env.SUPABASE_URL; const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) throw new Error("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required in .env.");
   const headers = { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" };
@@ -150,11 +218,17 @@ async function run(argv = process.argv.slice(2)) {
   if (winners.manualWinners) console.log(`Using winners from ${path.relative(ROOT, winnersFile)}`);
   const awards = buildAwards(winners, month, assets);
   const summary = Object.entries(CATEGORY_META).map(([category, meta]) => `${meta.title} → ${winners.winners[category]?.username || "none"}`).join(", ");
-  if (dryRun) { console.log(`Dry run ${month.key} (${winners.totalParticipants} participants): ${summary}`); return null; }
-  const result = await request(`${url}/rest/v1/rpc/finalize_monthly_badges`, { method: "POST", headers }, { p_month_key: month.key, p_participant_count: winners.totalParticipants, p_snapshot_data: winners, p_awards: awards, p_force_correct: force });
+  if (dryRun) { console.log(`Dry run ${month.key} (${winners.totalParticipants} participants): ${summary}`); syncAchievementsFile(awards, month.monthName, false); return null; }
+  let finalWinners = winners; let result = null;
+  if (finalize) {
+  result = await request(`${url}/rest/v1/rpc/finalize_monthly_badges`, { method: "POST", headers }, { p_month_key: month.key, p_participant_count: winners.totalParticipants, p_snapshot_data: winners, p_awards: awards, p_force_correct: force });
   console.log(`${force ? "Corrected" : "Finalized"} ${month.key}: ${summary}`);
+  if (result && result.snapshot_data && result.snapshot_data.winners) finalWinners = result.snapshot_data;
+  }
+  else console.log(`${month.key}: ${summary}`);
+  syncAchievementsFile(buildAwards(finalWinners, month, assets), month.monthName, true);
   return result;
 }
 
 if (require.main === module) run().catch((error) => { console.error(`Monthly badge awards failed: ${error.message}`); process.exitCode = 1; });
-module.exports = { parseMonthKey, getBadgeAssets, calculateMonthlyWinners, buildAwards, extractProductivityStats, longestStreak, parseWinnersFile, applyManualWinners };
+module.exports = { parseMonthKey, getBadgeAssets, calculateMonthlyWinners, buildAwards, extractProductivityStats, longestStreak, parseWinnersFile, applyManualWinners, addAwardsToSource };

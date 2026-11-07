@@ -3,6 +3,7 @@ const os = require("os");
 const path = require("path");
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
+const vm = require("node:vm");
 const {
   parseMonthKey,
   getBadgeAssets,
@@ -10,6 +11,7 @@ const {
   buildAwards,
   parseWinnersFile,
   applyManualWinners,
+  addAwardsToSource,
 } = require("../scripts/monthly-leaderboard-badges.js");
 const { createHarness } = require("./helpers/browser-harness.cjs");
 
@@ -107,4 +109,20 @@ test("every hardcoded custom badge icon exists on disk", () => {
   const icons = [...source.matchAll(/icon: "(images\/badges\/custom-badges\/[^"]+)"/g)].map((match) => match[1]);
   assert.ok(icons.length > 40);
   assert.deepEqual(icons.filter((icon) => !fs.existsSync(path.join(repoRoot, icon))), []);
+});
+
+test("addAwardsToSource appends to existing users and inserts new users below the last one", () => {
+  const source = fs.readFileSync(path.join(repoRoot, "js", "database-achievements.js"), "utf8");
+  const award = (username, title, suffix) => ({ username, title, description: `Test award for ${username} in October.`, icon_path: `images/badges/custom-badges/2026-10/oct-${suffix}.webp`, awarded_on: "2026-11-01" });
+  const awards = [award("kumari", "Focus King", "focus"), award("Brand New", "Session Master", "session"), award("Zed", "Streak Legend", "streak")];
+  const { source: next, added } = addAwardsToSource(source, awards, "October");
+  assert.deepEqual(added.map((entry) => [entry.username, entry.newUser]), [["kumari", false], ["Brand New", true], ["Zed", true]]);
+  const sandbox = {};
+  vm.runInNewContext(next.match(/const hardcodedAchievements = \{[\s\S]*?\n  \};/)[0].replace("const hardcodedAchievements =", "result ="), sandbox);
+  const original = {};
+  vm.runInNewContext(source.match(/const hardcodedAchievements = \{[\s\S]*?\n  \};/)[0].replace("const hardcodedAchievements =", "result ="), original);
+  assert.deepEqual(Object.keys(sandbox.result), [...Object.keys(original.result), "Brand New", "Zed"]);
+  assert.equal(sandbox.result.Kumari.at(-1).icon, "images/badges/custom-badges/2026-10/oct-focus.webp");
+  assert.equal(sandbox.result["Brand New"][0].date, "2026-11-01");
+  assert.equal(addAwardsToSource(next, awards, "October").added.length, 0);
 });
