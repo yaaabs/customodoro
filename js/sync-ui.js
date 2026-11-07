@@ -516,7 +516,7 @@ class SyncUI {
 
     if (
       confirm(
-        "Are you sure you want to sign out? Your local data will remain on this device.",
+        "Are you sure you want to sign out? Your data stays saved in your account; sign in again to get it back.",
       )
     ) {
       window.authService.logout();

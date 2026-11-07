@@ -41,7 +41,11 @@ npm run monthly-badges                # write them
 
 To pick the winners yourself, add a `winners.txt` next to that month's badge images (lines like `focus: username`, plus `session:`, `streak:` and `champion:`). It is gitignored, and the command uses it instead of the calculated winners.
 
-Optional: `--finalize` also saves an immutable leaderboard snapshot to Supabase (apply [`supabase/migrations/20260903000000_monthly_badges.sql`](supabase/migrations/20260903000000_monthly_badges.sql) and the `20261004000000` fix once first). For a verified incorrect finalized month, review and apply [`supabase/manual/force-correct-monthly-badges.sql`](supabase/manual/force-correct-monthly-badges.sql) before using `--force-correct`.
+Before writing the file, the command saves an immutable snapshot of the month to Supabase, so History can no longer change when accounts are duplicated or renamed. Accounts whose days are an exact copy of an older account are counted once. Apply [`supabase/migrations/20260903000000_monthly_badges.sql`](supabase/migrations/20260903000000_monthly_badges.sql) and [`20261004000000_fix_monthly_badges_month_key_check.sql`](supabase/migrations/20261004000000_fix_monthly_badges_month_key_check.sql) once first.
+
+To freeze months that were announced before snapshots existed, run `npm run monthly-badges -- YYYY-MM --snapshot-only`. It skips the images and the achievements file, and keeps the announced winners from `js/database-achievements.js` wherever the calculation disagrees.
+
+For a verified incorrect finalized month, review and apply [`supabase/manual/force-correct-monthly-badges.sql`](supabase/manual/force-correct-monthly-badges.sql) before using `--force-correct`.
 
 Reverse mode includes a standard one-hour workflow and a dynamic mode for
 longer sessions with configurable break tiers.

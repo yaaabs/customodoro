@@ -61,14 +61,26 @@ function longestStreak(stats, startKey, endKey) {
 function calculateMonthlyWinners(users, month) {
   const startKey = `${month.key}-01`;
   const endKey = `${month.key}-${String(new Date(month.year, month.month + 1, 0).getDate()).padStart(2, "0")}`;
-  const stats = users.map((user) => {
+  // A re-registered account carries a copy of the old account's days. Oldest account wins; the copy is skipped.
+  // ponytail: only exact day-by-day copies with 3+ active days are caught; a copy that drifted still counts twice.
+  const seenCopies = new Set();
+  const byAge = [...users].sort((a, b) => String(a.created_at || "9999").localeCompare(String(b.created_at || "9999")));
+  const stats = byAge.map((user) => {
     const productivity = extractProductivityStats(user.data);
-    let minutes = 0, sessions = 0;
-    Object.keys(productivity).filter((key) => key >= startKey && key <= endKey).forEach((key) => {
+    let minutes = 0, sessions = 0, activeDays = 0;
+    const days = Object.keys(productivity).filter((key) => key >= startKey && key <= endKey).sort();
+    days.forEach((key) => {
       const day = productivity[key] || {}; minutes += Number(day.total_minutes || 0); sessions += Number(day.classic || 0) + Number(day.reverse || 0);
+      if (Number(day.total_minutes || 0) > 0) activeDays += 1;
     });
-    return { userId: user.user_id, username: user.username, totalFocusPoints: Math.floor(minutes / 5), totalSessions: sessions, longestStreak: longestStreak(productivity, startKey, endKey) };
-  }).filter((entry) => entry.username && (entry.totalFocusPoints > 0 || entry.totalSessions > 0 || entry.longestStreak > 0));
+    const fingerprint = JSON.stringify(days.map((key) => [key, productivity[key]]));
+    return { userId: user.user_id, username: user.username, totalFocusPoints: Math.floor(minutes / 5), totalSessions: sessions, longestStreak: longestStreak(productivity, startKey, endKey), activeDays, fingerprint };
+  }).filter((entry) => entry.username && (entry.totalFocusPoints > 0 || entry.totalSessions > 0 || entry.longestStreak > 0))
+    .filter((entry) => {
+      if (entry.activeDays < 3) return true;
+      if (seenCopies.has(entry.fingerprint)) return false;
+      seenCopies.add(entry.fingerprint); return true;
+    });
   const rank = (key) => [...stats].sort((a, b) => b[key] - a[key] || a.username.localeCompare(b.username));
   const focus = rank("totalFocusPoints"), sessions = rank("totalSessions"), streak = rank("longestStreak");
   const rankMaps = [focus, sessions, streak].map((entries) => new Map(entries.map((entry, index) => [entry.userId, index + 1])));
@@ -116,10 +128,12 @@ function applyManualWinners(computed, picks, users, month) {
 }
 
 function buildAwards(winners, month, assets) {
-  const awardedOn = `${month.key}-${String(new Date(month.year, month.month + 1, 1).getDate()).padStart(2, "0")}`;
+  // Badges are dated the 1st of the following month, the day winners are announced.
+  const next = new Date(month.year, month.month + 1, 1);
+  const awardedOn = `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, "0")}-01`;
   return Object.entries(CATEGORY_META).map(([category, meta]) => {
     const winner = winners.winners[category]; if (!winner) throw new Error(`No ${category} winner exists for ${month.key}.`);
-    return { user_id: winner.userId, username: winner.username, category, title: meta.title, description: meta.description(month.monthName), icon_path: assets[category], awarded_on: awardedOn };
+    return { username: winner.username, title: meta.title, description: meta.description(month.monthName), icon_path: assets[category], awarded_on: awardedOn };
   });
 }
 
@@ -186,6 +200,21 @@ function syncAchievementsFile(awards, monthName, write, file = ACHIEVEMENTS_FILE
   if (!added.length) console.log("js/database-achievements.js already has these badges.");
 }
 
+const TITLE_TO_CATEGORY = Object.fromEntries(Object.entries(CATEGORY_META).map(([category, meta]) => [meta.title, category]));
+
+function announcedWinners(source, monthKey) {
+  const start = source.indexOf("const hardcodedAchievements = {");
+  const end = source.indexOf("\n  };", start);
+  const sandbox = {};
+  require("vm").runInNewContext(source.slice(start, end + 4).replace("const hardcodedAchievements =", "result ="), sandbox);
+  const announced = {};
+  Object.entries(sandbox.result).forEach(([username, badges]) => badges.forEach((badge) => {
+    const category = TITLE_TO_CATEGORY[badge.title];
+    if (category && String(badge.icon).includes(`custom-badges/${monthKey}/`)) announced[category] = username;
+  }));
+  return announced;
+}
+
 function readEnv(file = path.join(ROOT, ".env")) {
   if (!fs.existsSync(file)) return;
   fs.readFileSync(file, "utf8").split(/\r?\n/).forEach((line) => { const match = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*?)\s*$/); if (match && !process.env[match[1]]) process.env[match[1]] = match[2].replace(/^['"]|['"]$/g, ""); });
@@ -195,40 +224,66 @@ function request(url, options, body) {
   return new Promise((resolve, reject) => { const req = https.request(url, options, (res) => { let data = ""; res.on("data", (chunk) => data += chunk); res.on("end", () => { if (res.statusCode < 200 || res.statusCode >= 300) return reject(new Error(`Supabase request failed (${res.statusCode}): ${data}`)); try { resolve(data ? JSON.parse(data) : null); } catch (error) { reject(error); } }); }); req.on("error", reject); if (body) req.write(JSON.stringify(body)); req.end(); });
 }
 
-async function run(argv = process.argv.slice(2)) {
-  const force = argv.includes("--force-correct"); const finalize = force || argv.includes("--finalize");
-  const dryRun = argv.includes("--dry-run");
-  const month = parseMonthKey(argv.find((arg) => !arg.startsWith("--")) || previousMonthKey()); const assets = getBadgeAssets(month);
-  readEnv(); const url = process.env.SUPABASE_URL; const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) throw new Error("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required in .env.");
-  const headers = { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" };
+async function fetchUsers(url, headers) {
   const users = [];
   const pageSize = 1000;
   for (let start = 0; ; start += pageSize) {
-    const batch = await request(`${url}/rest/v1/users?select=user_id,username,data`, {
+    const batch = await request(`${url}/rest/v1/users?select=user_id,username,created_at,data`, {
       method: "GET",
       headers: { ...headers, Range: `${start}-${start + pageSize - 1}` },
     });
     users.push(...(batch || []));
     if (!batch || batch.length < pageSize) break;
   }
+  return users;
+}
+
+// Old months were announced already, so the posted winners (hardcoded achievements) are the truth.
+// Pins each category the calculation disagrees with; applyManualWinners throws if that account is gone or ambiguous.
+function keepAnnouncedWinners(winners, users, month) {
+  const announced = announcedWinners(fs.readFileSync(ACHIEVEMENTS_FILE, "utf8"), month.key);
+  const differs = Object.keys(announced).filter((category) => announced[category].toLowerCase() !== String(winners.winners[category]?.username || "").toLowerCase());
+  differs.forEach((category) => console.log(`${month.key} ${CATEGORY_META[category].title}: calculated ${winners.winners[category]?.username || "none"}, keeping announced ${announced[category]}`));
+  return differs.length ? applyManualWinners(winners, Object.fromEntries(differs.map((category) => [category, announced[category]])), users, month) : winners;
+}
+
+const summarize = (winners) => Object.entries(CATEGORY_META).map(([category, meta]) => `${meta.title} → ${winners.winners[category]?.username || "none"}`).join(", ");
+
+async function run(argv = process.argv.slice(2)) {
+  const force = argv.includes("--force-correct");
+  const dryRun = argv.includes("--dry-run");
+  const snapshotOnly = argv.includes("--snapshot-only");
+  const month = parseMonthKey(argv.find((arg) => !arg.startsWith("--")) || previousMonthKey());
+  const assets = snapshotOnly ? null : getBadgeAssets(month);
+  readEnv(); const url = process.env.SUPABASE_URL; const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) throw new Error("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required in .env.");
+  const headers = { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" };
+  const users = await fetchUsers(url, headers);
+
   const winnersFile = path.join(ROOT, "images", "badges", "custom-badges", month.key, "winners.txt");
-  const computed = calculateMonthlyWinners(users, month);
-  const winners = fs.existsSync(winnersFile) ? applyManualWinners(computed, parseWinnersFile(fs.readFileSync(winnersFile, "utf8")), users, month) : computed;
-  if (winners.manualWinners) console.log(`Using winners from ${path.relative(ROOT, winnersFile)}`);
-  const awards = buildAwards(winners, month, assets);
-  const summary = Object.entries(CATEGORY_META).map(([category, meta]) => `${meta.title} → ${winners.winners[category]?.username || "none"}`).join(", ");
-  if (dryRun) { console.log(`Dry run ${month.key} (${winners.totalParticipants} participants): ${summary}`); syncAchievementsFile(awards, month.monthName, false); return null; }
-  let finalWinners = winners; let result = null;
-  if (finalize) {
-  result = await request(`${url}/rest/v1/rpc/finalize_monthly_badges`, { method: "POST", headers }, { p_month_key: month.key, p_participant_count: winners.totalParticipants, p_snapshot_data: winners, p_awards: awards, p_force_correct: force });
-  console.log(`${force ? "Corrected" : "Finalized"} ${month.key}: ${summary}`);
-  if (result && result.snapshot_data && result.snapshot_data.winners) finalWinners = result.snapshot_data;
+  let winners = calculateMonthlyWinners(users, month);
+  if (fs.existsSync(winnersFile)) {
+    winners = applyManualWinners(winners, parseWinnersFile(fs.readFileSync(winnersFile, "utf8")), users, month);
+    console.log(`Using winners from ${path.relative(ROOT, winnersFile)}`);
   }
-  else console.log(`${month.key}: ${summary}`);
-  syncAchievementsFile(buildAwards(finalWinners, month, assets), month.monthName, true);
+  if (snapshotOnly) winners = keepAnnouncedWinners(winners, users, month);
+
+  if (dryRun) {
+    console.log(`Dry run ${month.key} (${winners.totalParticipants} participants): ${summarize(winners)}`);
+    if (!snapshotOnly) syncAchievementsFile(buildAwards(winners, month, assets), month.monthName, false);
+    return null;
+  }
+
+  // The snapshot is saved first: it freezes the month, so later duplicate accounts or renames cannot rewrite History.
+  // No award rows are sent: badges live in js/database-achievements.js, and monthly_badge_awards.user_id is a uuid
+  // column that cannot hold legacy ids like "user_1781452682597_...".
+  const result = await request(`${url}/rest/v1/rpc/finalize_monthly_badges`, { method: "POST", headers }, { p_month_key: month.key, p_participant_count: winners.totalParticipants, p_snapshot_data: winners, p_awards: [], p_force_correct: force });
+  // An already-saved month returns its stored snapshot; badges follow that, not a fresh calculation.
+  const saved = result?.snapshot_data?.winners ? result.snapshot_data : winners;
+  console.log(`${force ? "Corrected" : "Snapshot saved"} ${month.key}: ${summarize(saved)}`);
+  if (!snapshotOnly) syncAchievementsFile(buildAwards(saved, month, assets), month.monthName, true);
   return result;
 }
 
 if (require.main === module) run().catch((error) => { console.error(`Monthly badge awards failed: ${error.message}`); process.exitCode = 1; });
-module.exports = { parseMonthKey, getBadgeAssets, calculateMonthlyWinners, buildAwards, extractProductivityStats, longestStreak, parseWinnersFile, applyManualWinners, addAwardsToSource };
+module.exports = { parseMonthKey, getBadgeAssets, calculateMonthlyWinners, buildAwards, extractProductivityStats, longestStreak, parseWinnersFile, applyManualWinners, addAwardsToSource, announcedWinners };

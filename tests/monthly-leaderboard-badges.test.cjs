@@ -12,6 +12,7 @@ const {
   parseWinnersFile,
   applyManualWinners,
   addAwardsToSource,
+  announcedWinners,
 } = require("../scripts/monthly-leaderboard-badges.js");
 const { createHarness } = require("./helpers/browser-harness.cjs");
 
@@ -125,4 +126,43 @@ test("addAwardsToSource appends to existing users and inserts new users below th
   assert.equal(sandbox.result.Kumari.at(-1).icon, "images/badges/custom-badges/2026-10/oct-focus.webp");
   assert.equal(sandbox.result["Brand New"][0].date, "2026-11-01");
   assert.equal(addAwardsToSource(next, awards, "October").added.length, 0);
+});
+
+test("a re-registered copy of an account is counted once, keeping the older account", () => {
+  const month = parseMonthKey("2026-07", new Date(2026, 7, 3));
+  const days = { "2026-07-01": { total_minutes: 300, classic: 6 }, "2026-07-02": { total_minutes: 300, classic: 6 }, "2026-07-03": { total_minutes: 300, classic: 6 } };
+  const users = [
+    { ...user("new", "NewName", days), created_at: "2026-07-20T00:00:00" },
+    { ...user("old", "OldName", days), created_at: "2025-09-01T00:00:00" },
+    user("other", "Other", { "2026-07-01": { total_minutes: 50, classic: 1 } }),
+  ];
+  const winners = calculateMonthlyWinners(users, month);
+  assert.equal(winners.totalParticipants, 2);
+  assert.deepEqual(winners.topByCategory.total_focus.map((entry) => entry.username), ["OldName", "Other"]);
+  // Two real people with one identical short day are not merged.
+  const twins = calculateMonthlyWinners([user("a", "A", { "2026-07-01": { total_minutes: 25, classic: 1 } }), user("b", "B", { "2026-07-01": { total_minutes: 25, classic: 1 } })], month);
+  assert.equal(twins.totalParticipants, 2);
+});
+
+test("announcedWinners reads each month's winners from the hardcoded achievements", () => {
+  const source = fs.readFileSync(path.join(repoRoot, "js", "database-achievements.js"), "utf8");
+  assert.deepEqual(announcedWinners(source, "2026-09"), { total_focus: "bb", total_sessions: "Kumari", longest_streak: "Kumari", overall_champion: "Kumari" });
+});
+
+test("badges are dated the 1st of the following month, rolling over the year", () => {
+  const winner = { username: "A", userId: "a", score: 1 };
+  const winners = { winners: { total_focus: winner, total_sessions: winner, longest_streak: winner, overall_champion: winner } };
+  const assets = { total_focus: "f", total_sessions: "s", longest_streak: "l", overall_champion: "c" };
+  assert.equal(buildAwards(winners, parseMonthKey("2026-10", new Date(2026, 10, 7)), assets)[0].awarded_on, "2026-11-01");
+  assert.equal(buildAwards(winners, parseMonthKey("2025-12", new Date(2026, 10, 7)), assets)[0].awarded_on, "2026-01-01");
+});
+
+test("August and October 2026 winners are in the hardcoded achievements, dated the next month", () => {
+  // Read the data directly: rendered badges are paged 8 at a time, so a 9th badge would not be in the DOM.
+  const source = fs.readFileSync(path.join(repoRoot, "js", "database-achievements.js"), "utf8");
+  assert.deepEqual(announcedWinners(source, "2026-08"), { total_focus: "kookiejarfull", total_sessions: "Kumari", longest_streak: "Jec Jec", overall_champion: "kookiejarfull" });
+  assert.deepEqual(announcedWinners(source, "2026-10"), { total_focus: "tokubetsu", total_sessions: "tokubetsu", longest_streak: "tokubetsu", overall_champion: "tokubetsu" });
+  const datesFor = (folder) => new Set([...source.matchAll(/icon: "([^"]+)",[\s\S]*?date: "([^"]+)"/g)].filter((match) => match[1].includes(`/${folder}/`)).map((match) => match[2]));
+  assert.deepEqual([...datesFor("2026-08")], ["2026-09-01"]);
+  assert.deepEqual([...datesFor("2026-10")], ["2026-11-01"]);
 });

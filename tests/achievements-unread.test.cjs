@@ -4,17 +4,20 @@ const assert = require("node:assert/strict");
 const { createHarness } = require("./helpers/browser-harness.cjs");
 
 const repoRoot = path.resolve(__dirname, "..");
+const FIXTURE_BADGE = `window.addAchievementForUser("Fixture User", { title: "Streak Legend", icon: "images/badges/custom-badges/2026-07/july-streak.webp", description: "Fixture badge.", date: "2026-08-01" });`;
 
 function setupAchievementsHarness(storageBacking = {}) {
   const harness = createHarness({ repoRoot, storageBacking });
   harness.evaluate(`
     window.authService = {
       getCurrentUser() {
-        return { username: "Jec Jec" };
+        return { username: "Fixture User" };
       },
     };
   `);
   harness.loadScript("js/database-achievements.js");
+  // A made-up user with one badge, so real monthly awards never change these counts.
+  harness.evaluate(FIXTURE_BADGE);
   harness.evaluate(`
     const container = document.createElement("div");
     container.id = "achievements-container";
@@ -34,42 +37,24 @@ test("achievement badges remain unread until opened and persist as read", () => 
   harness.evaluate("document.querySelector('.badge--unread').dispatchEvent({ type: 'click' })");
 
   assert.equal(harness.evaluate("document.querySelectorAll('.badge--unread').length"), 0);
-  assert.match(storage["customodoro-achievement-read-v1"], /Jec Jec/);
+  assert.match(storage["customodoro-achievement-read-v1"], /Fixture User/);
 
   const rerendered = setupAchievementsHarness(storage);
   assert.equal(rerendered.evaluate("document.querySelectorAll('.badge--unread').length"), 0);
 });
 
-test("persisted monthly awards merge with existing and first-time winner badges", () => {
-  const existing = createHarness({ repoRoot });
-  existing.evaluate(`
-    window.authService = { getCurrentUser() { return { userId: "winner", username: "Jec Jec" }; } };
+test("a signed-in user with no hardcoded badges sees the empty state", () => {
+  const harness = createHarness({ repoRoot });
+  harness.evaluate(`
+    window.authService = { getCurrentUser() { return { userId: "new-user", username: "Nobody Yet" }; } };
   `);
-  existing.loadScript("js/database-achievements.js");
-  existing.evaluate(`
+  harness.loadScript("js/database-achievements.js");
+  harness.evaluate(`
     const container = document.createElement("div");
-    container.id = "existing-awards";
+    container.id = "empty-awards";
     document.body.appendChild(container);
-    window.loadAchievements("existing-awards", [{
-      title: "Overall Champion", description: "August winner", icon: "images/badges/custom-badges/2026-08/aug-champion.webp", date: "2026-09-01"
-    }]);
+    window.loadAchievements("empty-awards");
   `);
-  assert.equal(existing.evaluate("document.querySelectorAll('.badge').length"), 2);
-  assert.equal(existing.evaluate("document.querySelectorAll('.badge')[1].dataset.badgeTitle"), "Overall Champion");
-
-  const firstTime = createHarness({ repoRoot });
-  firstTime.evaluate(`
-    window.authService = { getCurrentUser() { return { userId: "new-winner", username: "New Winner" }; } };
-  `);
-  firstTime.loadScript("js/database-achievements.js");
-  firstTime.evaluate(`
-    const container = document.createElement("div");
-    container.id = "new-awards";
-    document.body.appendChild(container);
-    window.loadAchievements("new-awards", [{
-      title: "Focus King", description: "August winner", icon: "images/badges/custom-badges/2026-08/aug-focus.webp", date: "2026-09-01"
-    }]);
-  `);
-  assert.equal(firstTime.evaluate("document.querySelectorAll('.badge').length"), 1);
-  assert.equal(firstTime.evaluate("document.querySelector('.badge').dataset.badgeTitle"), "Focus King");
+  assert.equal(harness.evaluate("document.querySelectorAll('.badge').length"), 0);
+  assert.match(harness.evaluate("document.querySelector('.no-badge').textContent"), /No badges collected yet/);
 });

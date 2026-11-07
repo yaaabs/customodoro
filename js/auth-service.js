@@ -335,17 +335,11 @@ class AuthService {
   logout() {
     this.clearAuth();
 
-    // MOBILE FIX: Force page reload on mobile browsers after logout
-    // Mobile browsers are more aggressive with caching and need a hard reset
-    const isMobile =
-      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent,
-      );
-    if (isMobile) {
-      setTimeout(() => {
-        window.location.reload(true); // Force reload from server
-      }, 500); // Small delay to ensure cleanup completes
-    }
+    // Reload on every device: without it the old account's stats stay in memory, get saved back to
+    // localStorage, and a new registration uploads them as a duplicate account.
+    setTimeout(() => {
+      window.location.reload(true); // Force reload from server
+    }, 500); // Small delay to ensure cleanup completes
   }
 
   // Get current localStorage data for migration

@@ -438,6 +438,14 @@
           "Awarded for being the top overall performer with the highest average across all categories in September.",
         date: "2026-10-01",
       },
+
+      // Session Master Badge for August
+      {
+        title: "Session Master",
+        icon: "images/badges/custom-badges/2026-08/aug-session.webp",
+        description: "Recognized for completing the most sessions in August.",
+        date: "2026-09-01",
+      },
     ],
     //================================================================//
     //================================================================//
@@ -458,6 +466,23 @@
           "Awarded for being the top overall performer with the highest average across all categories in July.",
         date: "2026-08-01",
       },
+
+      // Focus King Badge for August
+      {
+        title: "Focus King",
+        icon: "images/badges/custom-badges/2026-08/aug-focus.webp",
+        description: "Crowned for earning the highest Focus Points in August.",
+        date: "2026-09-01",
+      },
+
+      // Overall Champion Badge for August
+      {
+        title: "Overall Champion",
+        icon: "images/badges/custom-badges/2026-08/aug-champion.webp",
+        description:
+          "Awarded for being the top overall performer with the highest average across all categories in August.",
+        date: "2026-09-01",
+      },
     ],
     //================================================================//
 
@@ -469,6 +494,14 @@
         icon: "images/badges/custom-badges/2026-07/july-streak.webp",
         description: "Honored for holding the longest streak in July.",
         date: "2026-08-01",
+      },
+
+      // Streak Legend Badge for August
+      {
+        title: "Streak Legend",
+        icon: "images/badges/custom-badges/2026-08/aug-streak.webp",
+        description: "Honored for holding the longest streak in August.",
+        date: "2026-09-01",
       },
     ],
     //================================================================//
@@ -493,7 +526,7 @@
         title: "Focus King",
         icon: "images/badges/custom-badges/2026-10/oct-focus.webp",
         description: "Crowned for earning the highest Focus Points in October.",
-        date: "2026-10-01",
+        date: "2026-11-01",
       },
 
       // Session Master Badge for October
@@ -501,7 +534,7 @@
         title: "Session Master",
         icon: "images/badges/custom-badges/2026-10/oct-session.webp",
         description: "Recognized for completing the most sessions in October.",
-        date: "2026-10-01",
+        date: "2026-11-01",
       },
 
       // Streak Legend Badge for October
@@ -509,7 +542,7 @@
         title: "Streak Legend",
         icon: "images/badges/custom-badges/2026-10/oct-streak.webp",
         description: "Honored for holding the longest streak in October.",
-        date: "2026-10-01",
+        date: "2026-11-01",
       },
 
       // Overall Champion Badge for October
@@ -518,7 +551,7 @@
         icon: "images/badges/custom-badges/2026-10/oct-champion.webp",
         description:
           "Awarded for being the top overall performer with the highest average across all categories in October.",
-        date: "2026-10-01",
+        date: "2026-11-01",
       },
     ],
     //================================================================//
@@ -1214,28 +1247,9 @@
   }
 
   // Helpers to compute gold shades for streak badges
-  function clamp(v, a, b) {
-    return Math.max(a, Math.min(b, v));
-  }
-  function hexToRgb(hex) {
-    const h = hex.replace("#", "");
-    return [
-      parseInt(h.substring(0, 2), 16),
-      parseInt(h.substring(2, 4), 16),
-      parseInt(h.substring(4, 6), 16),
-    ];
-  }
   function rgbToHex(r, g, b) {
     const toHex = (n) => ("0" + Math.round(n).toString(16)).slice(-2);
     return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
-  }
-  function interpHex(a, b, t) {
-    const ra = hexToRgb(a),
-      rb = hexToRgb(b);
-    const r = ra[0] + (rb[0] - ra[0]) * t;
-    const g = ra[1] + (rb[1] - ra[1]) * t;
-    const bl = ra[2] + (rb[2] - ra[2]) * t;
-    return rgbToHex(r, g, bl);
   }
   // More perceptually-distinct gold steps for streak badges.
   // Use a discrete mapping keyed to the common badge days so nearby badges are easier to distinguish.
@@ -1706,31 +1720,7 @@
     return { maxStreak: maxRun, unlocks: resultUnlocks };
   }
 
-  function getPersistedMonthlyBadges(userObj) {
-    const userId = userObj && typeof userObj === "object" ? userObj.userId : null;
-    const client = window.leaderboardModal?.leaderboard?.supabase;
-    if (!userId || !client) return Promise.resolve([]);
-
-    return client
-      .from("monthly_badge_awards")
-      .select("title, description, icon_path, awarded_on, month_key, category")
-      .eq("user_id", userId)
-      .order("awarded_on", { ascending: false })
-      .then(({ data, error }) => {
-        if (error) throw error;
-        return (data || []).map((award) => ({
-          title: award.title,
-          description: award.description,
-          icon: award.icon_path,
-          date: award.awarded_on,
-          monthKey: award.month_key,
-          category: award.category,
-        }));
-      })
-      .catch(() => []);
-  }
-
-  function loadAchievements(containerId, persistedMonthlyBadges = null) {
+  function loadAchievements(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
 
@@ -1782,18 +1772,8 @@
 
     currentAchievementIdentity = identityKey;
 
-    const hardcodedBadges = findUserAchievements(identityKey);
-    // Skip database awards already listed above (the award script writes both).
-    const extraBadges = (Array.isArray(persistedMonthlyBadges) ? persistedMonthlyBadges : []).filter(
-      (badge) => !hardcodedBadges.some((known) => known.icon === badge.icon),
-    );
-    const rawBadges = [...hardcodedBadges, ...extraBadges];
-
-    if (persistedMonthlyBadges === null && userObj && typeof userObj === "object") {
-      getPersistedMonthlyBadges(userObj).then((badges) => {
-        if (badges.length > 0) loadAchievements(containerId, badges);
-      });
-    }
+    // Monthly badges come only from hardcodedAchievements (written by npm run monthly-badges).
+    const rawBadges = [...findUserAchievements(identityKey)];
     // Note: don't early-return when there are no hardcoded badges for this user.
     // We will still compute streak badges from frontend productivity stats and render them.
 
